@@ -1,0 +1,327 @@
+minus = -
+quotes = "
+colon = :
+digit = 0-9
+letter = a-z A-Z _
+idSymbol = digit letter
+fileSymbol = digit letter .
+spacing = tab space
+nothing = tab space newline
+op = + - / * =
+closure = ) ] }
+
+
+ERROR expected: \0 expected
+ERROR syntaxError: Syntax error
+ERROR invalid: Invalid \0
+ERROR error: \0
+
+
+root: codeLines(0)
+
+codeLines: CREATE(0,code_main) codeLinesBody
+codeLinesBody: {
+	nothing: >>
+	eof: RETURN(\0)
+	"}": RETURN(\0)
+	"#": >> CLEAR {
+		letter: >>
+		other: STORE(1) skip() {
+			fileSymbol: >>
+			other: STORE(2) INSERT(0,directive[name:\1,file:\2]) codeLinesBody
+		}
+	}
+	other: codeLine(1) INSERT(0,\1)
+}
+
+codeLine: {
+  nothing: >>
+	letter: CLEAR >> {
+		idSymbol: >>
+		other: STORE(2) SWITCH(2) {
+			"for": EXPECT("(") for
+      "do": code(2) RETURN(do[code:\2])
+			"if": EXPECT("(") value(0) EXPECT(")") code(1) SAVEPOS token(2) SWITCH(2) {
+        "else": code(2) RETURN(if_else[condition:\0,code_then:\1,code_else:\2])
+        other: LOADPOS RETURN(if[condition:\0,code_then:\1])
+      }
+      "break": {
+        spacing: SKIP
+        "(": >> number(0) EXPECT(")") RETURN(break[times:\0])
+        other: RETURN(break)
+      }
+      "end": RETURN(end)
+      other: afterId
+		}
+	}
+  "[": >> array(1) INSERT(0,\1) {
+    nothing: >>
+    "[": >> index
+    ".": >> dot
+    other: expected("Index_or_dot")
+  }
+	other: syntaxError
+}
+
+for: id(0) CREATE(0,variable:\0) {
+  nothing: >>
+  "=": >> value(1) {
+    nothing: >>
+    ";": >> value(2) EXPECT(";") codeLine(3) forSeparator(4) standardFor
+    ".": >> EXPECT(".") {
+      "<": >> value(2) forSeparator(4) lessRangeFor
+      other: value(2) forSeparator(4) fullRangeFor
+    }
+    other: syntaxError
+  }
+  letter: token(1) SWITCH(1) {
+    "at": id(1) CREATE(1,variable:\0) token(2) SWITCH(2) {
+      "in": value(2) forSeparator(4) atInFor
+      other: expected("in")
+    }
+    "in": value(1) forSeparator(4) inFor
+    "indexin": value(1) forSeparator(4) indexInFor
+    "keyin": value(1) forSeparator(4) indexInFor
+    other: expected("=,_at,_in_or_indexin")
+  }
+  other: syntaxError
+}
+
+forSeparator: {
+  nothing: >>
+  ")": >> code(0) RETURN(\0)
+  ";": >> CREATE(0,code) for(1) INSERT(0,\1) RETURN(\0)
+  other: expected("; or )")
+}
+standardFor: RETURN(for[init:[equate[\0,\1]],condition:\2,iteration:\3,code:\4])
+lessRangeFor: RETURN(for[init:[equate[\0,\1]],condition[less[\0,\2]],iteration[increment[\0]],code:\4])
+fullRangeFor: RETURN(for[init:[equate[\0,\1]],condition[lessOrEqual[\0,\2]],iteration[increment[\0]],code:\4])
+atInFor: RETURN(for_each[item:[\0],index[\1],object:\2,code_each:\4])
+inFor: RETURN(for_each[item:[\0],index[variable:index],object:[\1],code_each:\4])
+indexInFor: RETURN(for_each_index[index:[\0],object:\1,code:\4])
+
+afterId: CREATE(0,value) {
+  nothing: >>
+  "(": >> SAVEPOS CREATE(1,function:\2) functionParameter
+  other: var
+}
+functionParameter: {
+  nothing: >>
+  letter: id(3) INSERT(1,parameter:\3) {
+    nothing: >>
+    ",": >> functionParameter
+    ")": >> paramEnd
+    other: notFunctionDef
+  }
+  ")": >> paramEnd
+  other: notFunctionDef
+}
+paramEnd: {
+  nothing: >>
+  "{": >> code(2) INSERT(1,\2) RETURN(\1)
+  "-": >> EXPECT(">") value(2) INSERT(1,code[return:\2]) RETURN(\1)
+  other: notFunctionDef
+}
+notFunctionDef: LOADPOS INSERT(0,variable:\2) functionCall
+index: value(1) EXPECT("]") INSERT(0,atIndex) INSERT(0,\1) {
+  nothing: >>
+  "[": >> index
+  ".": >> dot
+  "(": >> functionCall
+  op: operator
+  other: syntaxError
+}
+dot: INSERT(0,dot) {
+  nothing: >>
+  letter: id(1) INSERT(0,field:\1) var
+  other: expected("Identifier")
+}
+var: INSERT(0,variable:\2) {
+  nothing: >>
+  ".": >> dot
+  "(": >> functionCall
+  "[": >> index
+  op: operator
+  other: syntaxError
+}
+functionCall: CREATE(1,parameters) parameterValue
+parameterValue: value(2) INSERT(1,\2) {
+  nothing: >>
+  ",": >> parameterValue
+  ")": >> INSERT(0,functionCall) INSERT(0,\1) {
+    nothing: >>
+    ".": >> dot
+    "(": >> functionCall
+    "[": >> index
+    op: operator
+    other: PROCESS(0) RETURN(\0)
+  }
+  other: expected("Comma_or_closing_round_bracket")
+}
+operator: PROCESS(0) {
+  nothing: >>
+  "=": >> value(1) RETURN(equate[\0,\1])
+  "+": >> {
+    "=": >> value(1) RETURN(add[\0,\1])
+    "+": >> RETURN(increment[\0])
+    other: invalid("operator")
+  }
+  "-": >> {
+    "=": >> value(1) RETURN(subtract[\0,\1])
+    "-": >> RETURN(decrement[\0])
+    other: invalid("operator")
+  }
+  "*": >> EXPECT("=") value(1) RETURN(multiply[\0,\1])
+  "\": >> EXPECT("=") value(1) RETURN(divide[\0,\1])
+  other: invalid("operator")
+}
+
+array: CREATE(0,array) arrayItem
+arrayItem: value(1) INSERT(0,\1) {
+  nothing: >>
+  ",": >> arrayItem
+  "]": >> RETURN(\0)
+  other: expected("Comma_or_closing_square_bracket")
+}
+
+code: {
+	nothing: >>
+	"{": >> codeLines(0) EXPECT("}") RETURN(\0)
+	other: CREATE(0,code) codeLine(1) INSERT(0,\1) RETURN(\0)
+}
+
+skip: {
+	nothing: >>
+	other: CLEAR RETURN
+}
+
+token: {
+  nothing: >>
+  letter: CLEAR >> {
+    idSymbol: >>
+    other: STORE(0) RETURN(\0)
+  }
+  other: CLEAR STORE(0) RETURN(\0)
+}
+
+id: {
+  nothing: >>
+  letter: CLEAR >> {
+    idSymbol: >>
+    other: STORE(0) RETURN(\0)
+  }
+  other: expected("Identifier")
+}
+
+value: CREATE(0,value) variable
+variable: {
+  nothing: >>
+  closure: PROCESS(0) RETURN(\0)
+  digit: number(1) INSERT(0,\1) separator
+  letter: id(1) INSERT(0,variable:\1) separator
+  minus: >> CLEAR {
+    digit: number(1) INSERT(0,\1) separator
+    other: value(1) INSERT(0,negative[value:\1]) separator
+  }
+  "!": >> value(1) INSERT(0,not[value:\1]) separator
+  "(": >> value(1) EXPECT(")") INSERT(0,eval[value:\1]) separator
+  "[": >> array(1) INSERT(0,\1) separator
+  quotes: >> CLEAR CREATE(1,stringSequence) string
+  other: expected("Value")
+}
+string: {
+  "\": SKIP {
+    quotes: >> string
+    "\": >> string
+    "(": STORE(2) >> SWITCH(2) {
+      "": stringValue
+      other: INSERT(1,string:\2) stringValue
+    }
+    other: invalid("escape_sequence")
+  }
+  quotes: STORE(2) >> SWITCH(2) {
+    "": INSERT(0,\1) separator
+    other: INSERT(1,string:\2) INSERT(0,\1) separator
+  }
+  other: >>
+}
+stringValue: value(2) EXPECT(")") INSERT(1,value:\2) CLEAR string
+
+parameters: CREATE(1,parameters) parameter
+parameter: value(2) INSERT(1,\2) {
+  nothing: >>
+  ",": >> parameter
+  ")": >> INSERT(0,functionCall) INSERT(0,\1) separator
+  other: expected("Comma_or_closing_round_bracket")
+}
+separator: {
+  nothing: >>
+  ".": SAVEPOS >> {
+    ".": LOADPOS PROCESS(0) RETURN(\0)
+    other: INSERT(0,dot) variable
+  }
+  "(": >> parameters
+  "[": >> value(1) EXPECT("]") INSERT(0,atIndex) INSERT(0,\1)
+  "+": >> INSERT(0,addition) variable
+  "-": >> INSERT(0,subtraction) variable
+  "*": >> INSERT(0,multiplication) variable
+  "/": >> INSERT(0,division) variable
+  "=": >> {
+    "=": >> INSERT(0,equal) variable
+    other: invalid("separator")
+  }
+  "!": >> {
+    "=": >> INSERT(0,notequal) variable
+    other: invalid("separator")
+  }
+  "<": >> {
+    "=": >> INSERT(0,lessOrEqual) variable
+    other: INSERT(0,less) variable
+  }
+  ">": >> {
+    "=": >> INSERT(0,moreOrEqual) variable
+    other: INSERT(0,more) variable
+  }
+  "&": >> {
+    "&": >> INSERT(0,and) variable
+    other: INSERT(0,bitAnd) variable
+  }
+  "|": >> {
+    "|": >> INSERT(0,or) variable
+    other: INSERT(0,bitOr) variable
+  }
+  "?": >> INSERT(0,ifOp) variable
+  colon: >> INSERT(0,elseOp) variable
+  other: PROCESS(0) RETURN(\0)
+}
+
+number: CLEAR >> {
+  digit: >>
+  ".": {
+    digit: >>
+    other: STORE(1) RETURN(decimal:\1) RETURN
+  }
+  other: STORE(1) RETURN(integer:\1) RETURN
+}
+
+
+dot.priority = 17
+functionCall.priority = 17
+atIndex.priority = 17
+multiplication.priority = 14
+division.priority = 14
+mod.priority = 14
+addition.priority = 13
+subtraction.priority = 13
+bitAnd.priority = 11
+bitOr.priority = 9
+notequal.priority = 7
+equal.priority = 7
+less.priority = 7
+lessOrEqual.priority = 7
+more.priority = 7
+moreOrEqual.priority = 7
+and.priority = 6
+or.priority = 6
+ifOp.priority = 4
+elseOp.priority = 4

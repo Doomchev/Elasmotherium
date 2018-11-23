@@ -1,0 +1,25 @@
+2018.11.23 (version 0.3.1)
+  + XPC: multiple loops in one for operator
+  + XPC, JEC: // comments
+  + JEC: for loops
+  * EE, JEC: new format of tokens (as escape sequences)
+
+2018.11.22 (version 0.3)
+  + PE: expression parser (shutting-yard algorithm with ternary conditional operator)
+  + XPC: ranges in for loop
+  + JEC: other numeric and boolean operators
+  + JEC: if-then-else clause
+  * XPC: # changed to \
+  ! XPC: arrays in expressions
+  ! XPC: operators
+  ! XPC: if-then-else clause
+  ! JEC: function calls
+  
+2018.11.13 (version 0.2)
+  * PE, XPC: fully rewritten
+
+2018.11.07 (version 0.1)
+  + Parsing engine (PE)
+  + XEPL parsing code (XPC)
+  + Exporting engine (EE)
+  + Javascript export code (JEC)

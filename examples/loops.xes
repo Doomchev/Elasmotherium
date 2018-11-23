@@ -1,0 +1,14 @@
+#import base
+
+list = ["zero", "one", "two"]
+for(index = 0 ..< list.length) print("\(list[index]) = \(index)")
+for(value in list) print("\(value)")
+for(value at index in list) print("\(value) = \(index)")
+for(index indexin list) print("\(index)")
+for(index = 0; index < list.length; index++) print("\(list[index]) = \(index)")
+
+result = 35
+for(a = 0 .. 9; b = 0 .. 9) {
+  print("\(a) * \(b) = \(a*b)")
+  if(a * b == result) break(2)
+}
