@@ -11,6 +11,7 @@ public class StoredNodeValue extends Node {
 
   @Override
   public Node resolve() {
+    if(currentScope.variables[index] == null) parsingError("Null variable " + index);
     Node node = currentScope.variables[index].resolve();
     node.type = type;
     return node;

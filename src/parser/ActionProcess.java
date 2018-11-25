@@ -1,5 +1,6 @@
 package parser;
 
+import java.util.Collections;
 import java.util.Stack;
 
 public class ActionProcess extends Action {
@@ -17,9 +18,11 @@ public class ActionProcess extends Action {
   @Override
   public Action execute() {
     Node listNode = currentScope.variables[index];
+    if(log) System.out.println(" PROCESS " + listNode.toString());
+    if(listNode.children.isEmpty()) return nextAction;
     for(Node node : listNode.children) {
       Category type = node.type;
-      if(type.priority == 0) {
+      if(type.priority == 0 || !node.children.isEmpty()) {
         valueStack.push(node);
       } else {
         while(!opStack.empty()) {
@@ -31,21 +34,26 @@ public class ActionProcess extends Action {
         }
         opStack.push(node);
       }
+      if(log) log();
     }
     
-    while(!opStack.empty()) popOp();
+    while(!opStack.empty()) {
+      popOp();
+      if(log) log();
+    }
     
-    listNode.children.clear();
-    listNode.children.add(valueStack.pop());
-    
-    if(!valueStack.empty()) lineError("Syntax error");
+    if(valueStack.size() != 1) parsingCodeError("Syntax error");
+    Node value = valueStack.pop();
+    listNode.children = value.children;
+    listNode.type = value.type;
+    listNode.caption = value.caption;
     
     return nextAction;
   }
 
   private void popOp() {
     Node op = opStack.pop();
-    if(valueStack.size() < 2) lineError("Syntax error");
+    if(valueStack.size() < 2) parsingCodeError("Syntax error");
     if(op.type == rules.cElse) {
       Node value = valueStack.pop();
       valueStack.peek().children.add(value);
@@ -54,5 +62,13 @@ public class ActionProcess extends Action {
       op.children.addFirst(valueStack.pop());
       valueStack.push(op);
     }
+  }
+  
+  private void log() {
+    System.out.print("\n    ");
+    for(int i = 0; i < opStack.size(); i++) System.out.print(opStack.get(i).toString() + ", "); 
+    System.out.print("\n    ");
+    for(int i = 0; i < valueStack.size(); i++) System.out.print(valueStack.get(i).toString() + ", "); 
+    System.out.println();
   }
 }

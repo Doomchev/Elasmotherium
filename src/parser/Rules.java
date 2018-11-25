@@ -12,7 +12,7 @@ public class Rules extends Base {
   public final HashMap<String, SymbolMask> masks = new HashMap<>();
   public SymbolMask getMask(String name) {
     SymbolMask mask = masks.get(name);
-    if(mask == null) lineError("Cannot find symbol mask \"" + name + "\"");
+    if(mask == null) parsingCodeError("Cannot find symbol mask \"" + name + "\"");
     return mask;
   }
   
@@ -48,7 +48,8 @@ public class Rules extends Base {
         if(line.contains(".priority")) {
           String[] parts = line.split("=");
           parts[0] = parts[0].split("\\.")[0];
-          getCategory(parts[0].trim()).priority = Integer.parseInt(parts[1].trim());
+          getCategory(parts[0].trim()).priority = Integer.parseInt(
+              parts[1].trim());
         } else if(equalPos >= 0 && (equalPos < colonPos || colonPos < 0)) {
           SymbolMask mask = new SymbolMask();
           for(String symbol : line.substring(equalPos + 1).trim().split(" ")) {
@@ -58,7 +59,8 @@ public class Rules extends Base {
               mask.set(symbol.charAt(0), symbol.charAt(2));
             } else if(symbol.length() >= 2) {
               SymbolMask mask2 = masks.get(symbol);
-              if(mask2 == null) lineError("Mask \"" + symbol + "\" is not found");
+              if(mask2 == null) parsingCodeError("Mask \"" + symbol
+                  + "\" is not found");
               mask.or(mask2);
             }
           }
@@ -67,17 +69,18 @@ public class Rules extends Base {
           String[] parts = line.substring(6).split(":");
           errors.put(parts[0].trim(), new Error(parts[1].trim()));
         } else {
-          if(colonPos < 0 && equalPos < 0) lineError(": or = expected");
+          if(colonPos < 0 && equalPos < 0) parsingCodeError(": or = expected");
           Category category = getCategory(line.substring(0, colonPos).trim());
           if(category.action != null)
-            lineError("Category \"" + category.name + "\" is already defined");
+            parsingCodeError("Category \"" + category.name
+                + "\" is already defined");
           category.action = actionChain(line.substring(colonPos + 1), null);
         }
       }
     } catch (FileNotFoundException ex) {
-      error(fileName + " not found.");
+      error("I/O error", fileName + " not found.");
     } catch (IOException ex) {
-      error(fileName + "Cannot read " + fileName + ".");
+      error("I/O error", fileName + "Cannot read " + fileName + ".");
     }
     
     root = getCategory("root");
@@ -89,7 +92,7 @@ public class Rules extends Base {
       throws IOException {
     Action firstAction = null, currentAction = null;
     boolean exit = false;
-    loop: for(String command : commands.trim().split(" ")) {
+    for(String command : commands.trim().split(" ")) {
       Action action;
       int bracketPos = command.indexOf('(');
       String name = bracketPos < 0 ? command : command.substring(0, bracketPos);
@@ -104,7 +107,7 @@ public class Rules extends Base {
           if(n == 0) {
             strucParam = toStructure(params);
           } else {
-            if(c != ',') lineError("Comma expected");
+            if(c != ',') parsingCodeError("Comma expected");
             intParam = Integer.parseInt(params.substring(0, n));
             strucParam = toStructure(params.substring(n + 1));
           }
@@ -115,6 +118,7 @@ public class Rules extends Base {
       }
 
       //System.out.println(name);
+      ActionSwitch switchAction = null;
       switch(name) {
         case "RETURN":
           action = new ActionReturn(strucParam);
@@ -130,8 +134,11 @@ public class Rules extends Base {
           break;
         case "INSERT":
           if(intParam < 0 || strucParam == null)
-              lineError("INSERT requires 2 parameters");
+              parsingCodeError("INSERT requires 2 parameters");
           action = new ActionInsert(intParam, strucParam);
+          break;
+        case "ADD":
+          action = new ActionAdd(stringParam(params));
           break;
         case "STORE":
           action = new ActionStore(intParam);
@@ -152,57 +159,41 @@ public class Rules extends Base {
           action = new ActionForward();
           break;
         case "{":
-          String line;
-          ActionSwitchSymbol switchSymbol = new ActionSwitchSymbol();
-          Action back = new ActionGoToAction(switchSymbol);
-          while(true) {
-            if((line = reader.readLine()) == null)
-              lineError("Unexpected end of file");
-            lineNum++;
-            line = line.trim();
-            if(line.equals("}")) break;
-            int colonPos = line.indexOf(':');
-            String mask = line.substring(0, colonPos).trim();
-            Action symbolAction = actionChain(line.substring(colonPos + 1), back);
-            if(mask.startsWith("\"")) {
-              if(mask.length() != 3) lineError("Invalid token");
-              switchSymbol.setAction(stringParam(mask).charAt(0), symbolAction);
-            } else if(mask.equals("other")) {
-              switchSymbol.setAction(symbolAction);
-            } else {
-              SymbolMask symbolMask = getMask(mask);
-              if(symbolMask == null)
-                lineError("Mask \"" + mask + "\" is not found");
-              switchSymbol.setAction(symbolMask, symbolAction);
-            }
-          }
-          action = switchSymbol;
-          exit = true;
-          break;
+          switchAction = new ActionSwitchSymbol();
         case "SWITCH":
-          ActionSwitchToken switchToken = new ActionSwitchToken(intParam);
-          back = new ActionGoToAction(switchToken);
+          if(switchAction == null) switchAction = new ActionSwitchToken(intParam);
+        case "SWITCHTYPE":
+          if(switchAction == null) switchAction = new ActionSwitchType(intParam);
+          
+          String line;
+          Action back = new ActionGoToAction(switchAction);
           while(true) {
             if((line = reader.readLine()) == null)
-              lineError("Unexpected end of file");
+              parsingCodeError("Unexpected end of file");
             lineNum++;
             line = line.trim();
             if(line.equals("}")) break;
             int colonPos = line.indexOf(':');
-            if(intParam < 0) lineError("No integer parameter in SWITCH");
+            if(colonPos < 0) parsingCodeError(": expected");
             String token = line.substring(0, colonPos).trim();
-            Action tokenAction = actionChain(line.substring(colonPos + 1), back);
+            Action actionChain = actionChain(line.substring(colonPos + 1), back);
             if(token.startsWith("\"")) {
-              if(!token.endsWith("\""))
-                lineError("Invalid token");
-              switchToken.addEntry(stringParam(token), tokenAction);
+              switchAction.setStringAction(stringParam(token), actionChain);
             } else if(token.equals("other")) {
-              switchToken.defaultAction = tokenAction;
-            } else {
-              lineError("Invalid token");
+              switchAction.setOtherAction(actionChain);
+            } else switch(name) {
+              case "{":
+                SymbolMask symbolMask = getMask(token);
+                if(symbolMask == null) parsingCodeError("Mask \"" + token + "\" is not found");
+                switchAction.setMaskAction(symbolMask, actionChain);
+                break;
+              case "SWITCH":
+                parsingCodeError("Invalid token");
+              default:
+                switchAction.setCategoryAction(getCategory(token), actionChain);
             }
           }
-          action = switchToken;
+          action = switchAction;
           exit = true;
           break;
         default:
@@ -215,7 +206,8 @@ public class Rules extends Base {
               action = new ActionSub(getCategory(name), intParam);
             }
           } else {
-            if(!params.isEmpty()) error = error.derive(params.replace("_"," "));
+            if(!params.isEmpty()) error = error.derive(
+                stringParam(params).replace("_"," "));
             action = error;
           }
       }
@@ -241,7 +233,7 @@ public class Rules extends Base {
       if(c < '0' || c > '9') break;
       pos++;
     }
-    if(start == pos) lineError("Integer number expected");
+    if(start == pos) parsingCodeError("Integer number expected");
     return Integer.parseInt(strucString.substring(start, pos));
   }
   
@@ -264,7 +256,7 @@ public class Rules extends Base {
     int tokStart = pos;
     Node node = new Node(null);
     while(true) {
-      if(pos >= strucString.length()) lineError("Unexpected end of structure");
+      if(pos >= strucString.length()) parsingCodeError("Unexpected end of structure");
       char c = strucString.charAt(pos);
       pos++;
       switch(c) {
@@ -277,13 +269,13 @@ public class Rules extends Base {
           tokStart = -1;
           break;
         case ':':
-          if(node.type != null || tokStart < 0) lineError("Unexpected :");
+          if(node.type != null || tokStart < 0) parsingCodeError("Unexpected :");
           setNodeParam(node, tokStart);
           tokStart = pos;
           break;
         case ',':
           if(parent == null) {
-            lineError("Unexpected comma");
+            parsingCodeError("Unexpected comma");
           } else {
             parent.add(node);
           }
@@ -305,12 +297,13 @@ public class Rules extends Base {
           if(c >= 'a' || c <= 'z') break;
           if(c >= '0' || c <= '9') break;
           if(c == '_') break;
-          lineError("Syntax error");
+          parsingCodeError("Syntax error");
       }
     }
   }
 
   private String stringParam(String str) {
+    if(!str.endsWith("\"") || str.length() < 2) parsingCodeError("Invalid token");
     return str.substring(1, str.length() - 1);
   }
 }

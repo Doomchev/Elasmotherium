@@ -17,10 +17,9 @@ ERROR invalid: Invalid \0
 ERROR error: \0
 
 
-root: codeLines(0)
+root: codeLines(0) CREATE(0,code_main:\0)
 
-codeLines: CREATE(0,code_main) codeLinesBody
-codeLinesBody: {
+codeLines: CREATE(0,code) {
 	nothing: >>
 	eof: RETURN(\0)
 	"}": RETURN(\0)
@@ -28,11 +27,33 @@ codeLinesBody: {
 		letter: >>
 		other: STORE(1) skip() {
 			fileSymbol: >>
-			other: STORE(2) INSERT(0,directive[name:\1,file:\2]) codeLinesBody
+			other: STORE(2) INSERT(0,directive[name:\1,file:\2]) codeLines
 		}
 	}
 	other: codeLine(1) INSERT(0,\1)
 }
+
+code: {
+	nothing: >>
+	"{": >> codeLines(0) EXPECT("}") RETURN(\0)
+	other: CREATE(0,code) codeLine(1) INSERT(0,\1) RETURN(\0)
+}
+
+skip: {
+	nothing: >>
+	other: CLEAR RETURN
+}
+
+id: {
+  nothing: >>
+  letter: CLEAR >> {
+    idSymbol: >>
+    other: STORE(0) RETURN(\0)
+  }
+  other: CLEAR STORE(0) RETURN(\0)
+}
+
+// code line
 
 codeLine: {
   nothing: >>
@@ -41,17 +62,27 @@ codeLine: {
 		other: STORE(2) SWITCH(2) {
 			"for": EXPECT("(") for
       "do": code(2) RETURN(do[code:\2])
-			"if": EXPECT("(") value(0) EXPECT(")") code(1) SAVEPOS token(2) SWITCH(2) {
-        "else": code(2) RETURN(if_else[condition:\0,code_then:\1,code_else:\2])
-        other: LOADPOS RETURN(if[condition:\0,code_then:\1])
+			"if": EXPECT("(") value(0) EXPECT(")") code(1) SAVEPOS id(2) SWITCH(2) {
+        "else": code(2) RETURN(if_else[condition[\0],code_then:\1,code_else:\2])
+        other: LOADPOS RETURN(if[condition[\0],code_then:\1])
       }
       "break": {
         spacing: SKIP
         "(": >> number(0) EXPECT(")") RETURN(break[times:\0])
         other: RETURN(break)
       }
+      "return": {
+        nothing: >>
+        "(": >> value(0) EXPECT(")") RETURN(return[\0])
+        other: RETURN(return_null)
+      }
       "end": RETURN(end)
-      other: afterId
+      other: {
+        nothing: >>
+        "(": >> SAVEPOS CREATE(0,value) CREATE(1,function:\2) functionParameter
+        "{": >> CREATE(0,class:\2) objectBody
+        other: CREATE(0,value[variable:\2]) var
+      }
 		}
 	}
   "[": >> array(1) INSERT(0,\1) {
@@ -60,8 +91,16 @@ codeLine: {
     ".": >> dot
     other: expected("Index_or_dot")
   }
+  "/": >> EXPECT("/") comment() codeLine
 	other: syntaxError
 }
+
+comment: {
+  newline: RETURN
+  other: >>
+}
+
+// for loop
 
 for: id(0) CREATE(0,variable:\0) {
   nothing: >>
@@ -74,8 +113,8 @@ for: id(0) CREATE(0,variable:\0) {
     }
     other: syntaxError
   }
-  letter: token(1) SWITCH(1) {
-    "at": id(1) CREATE(1,variable:\0) token(2) SWITCH(2) {
+  letter: id(1) SWITCH(1) {
+    "at": id(1) CREATE(1,variable:\0) id(2) SWITCH(2) {
       "in": value(2) forSeparator(4) atInFor
       other: expected("in")
     }
@@ -91,43 +130,69 @@ forSeparator: {
   nothing: >>
   ")": >> code(0) RETURN(\0)
   ";": >> CREATE(0,code) for(1) INSERT(0,\1) RETURN(\0)
-  other: expected("; or )")
+  other: expected(";_or_)")
 }
-standardFor: RETURN(for[init:[equate[\0,\1]],condition:\2,iteration:\3,code:\4])
-lessRangeFor: RETURN(for[init:[equate[\0,\1]],condition[less[\0,\2]],iteration[increment[\0]],code:\4])
-fullRangeFor: RETURN(for[init:[equate[\0,\1]],condition[lessOrEqual[\0,\2]],iteration[increment[\0]],code:\4])
-atInFor: RETURN(for_each[item:[\0],index[\1],object:\2,code_each:\4])
-inFor: RETURN(for_each[item:[\0],index[variable:index],object:[\1],code_each:\4])
-indexInFor: RETURN(for_each_index[index:[\0],object:\1,code:\4])
+standardFor: RETURN(for[init[equate[\0,\1]],condition:\2,iteration:\3,code:\4])
+lessRangeFor: RETURN(for[init[equate[\0,\1]],condition[less[\0,\2]],iteration[increment[\0]],code:\4])
+fullRangeFor: RETURN(for[init[equate[\0,\1]],condition[lessOrEqual[\0,\2]],iteration[increment[\0]],code:\4])
+atInFor: RETURN(for_each[item[\0],index[\1],collection[\2],code_each:\4])
+inFor: RETURN(for_each[item[\0],index[variable:index],collection[\1],code_each:\4])
+indexInFor: RETURN(for_each_index[index:[\0],collection[\1],code:\4])
 
-afterId: CREATE(0,value) {
+// function definition
+
+functionParameter: CREATE(3,parameter) {
   nothing: >>
-  "(": >> SAVEPOS CREATE(1,function:\2) functionParameter
-  other: var
-}
-functionParameter: {
-  nothing: >>
-  letter: id(3) INSERT(1,parameter:\3) {
-    nothing: >>
-    ",": >> functionParameter
-    ")": >> paramEnd
+  letter: id(4) SWITCH(4) {
+    "this": EXPECT(".") id(4) INSERT(3,this:\4) afterParam
+    other: INSERT(3,name:\4) afterParam
+  }
+  ")": >> afterParams
+  other: SWITCHTYPE(0) {
+    object: expected("Letter_or_)")
     other: notFunctionDef
   }
-  ")": >> paramEnd
-  other: notFunctionDef
 }
-paramEnd: {
+afterParam: {
   nothing: >>
-  "{": >> code(2) INSERT(1,\2) RETURN(\1)
-  "-": >> EXPECT(">") value(2) INSERT(1,code[return:\2]) RETURN(\1)
-  other: notFunctionDef
+  "=": >> value(4) INSERT(3,default[\4]) paramEnd
+  other: paramEnd
 }
-notFunctionDef: LOADPOS INSERT(0,variable:\2) functionCall
-index: value(1) EXPECT("]") INSERT(0,atIndex) INSERT(0,\1) {
+paramEnd: INSERT(1,\3) {
   nothing: >>
-  "[": >> index
+  ",": >> functionParameter
+  ")": >> afterParams
+  other: SWITCHTYPE(0) {
+    object: expected(",_or_)")
+    other: notFunctionDef
+  }
+}
+afterParams: {
+  nothing: >>
+  "{": code(2) INSERT(1,\2) definitionEnd
+  "-": >> EXPECT(">") value(2) INSERT(1,code[return[\2]]) definitionEnd
+  other: SWITCHTYPE(0) {
+    object: expected("{_or_->")
+    other: notFunctionDef
+  }
+}
+definitionEnd: SWITCHTYPE(1) {
+  function: RETURN(\1)
+  function_anon: INSERT(0,\1) separator
+  other: INSERT(0,\1) objectBody
+}
+notFunctionDef: SWITCHTYPE(1) {
+  function: LOADPOS INSERT(0,variable:\2) functionCall
+  function_anon: LOADPOS value(1) EXPECT(")") INSERT(0,brackets[\1]) separator
+}
+
+// not function definition
+
+var: {
+  nothing: >>
   ".": >> dot
   "(": >> functionCall
+  "[": >> index
   op: operator
   other: syntaxError
 }
@@ -136,14 +201,17 @@ dot: INSERT(0,dot) {
   letter: id(1) INSERT(0,field:\1) var
   other: expected("Identifier")
 }
-var: INSERT(0,variable:\2) {
+index: value(1) EXPECT("]") INSERT(0,atIndex) INSERT(0,\1) {
   nothing: >>
+  "[": >> index
   ".": >> dot
   "(": >> functionCall
-  "[": >> index
   op: operator
   other: syntaxError
 }
+
+// function call
+
 functionCall: CREATE(1,parameters) parameterValue
 parameterValue: value(2) INSERT(1,\2) {
   nothing: >>
@@ -158,7 +226,19 @@ parameterValue: value(2) INSERT(1,\2) {
   }
   other: expected("Comma_or_closing_round_bracket")
 }
-operator: PROCESS(0) {
+
+parameters: CREATE(1,parameters) parameter
+parameter: value(2) INSERT(1,\2) {
+  nothing: >>
+  ",": >> parameter
+  ")": >> INSERT(0,functionCall) INSERT(0,\1) separator
+  other: expected("Comma_or_closing_round_bracket")
+}
+
+// operator
+
+operator: PROCESS(0) operatorBody
+operatorBody: {
   nothing: >>
   "=": >> value(1) RETURN(equate[\0,\1])
   "+": >> {
@@ -172,46 +252,15 @@ operator: PROCESS(0) {
     other: invalid("operator")
   }
   "*": >> EXPECT("=") value(1) RETURN(multiply[\0,\1])
-  "\": >> EXPECT("=") value(1) RETURN(divide[\0,\1])
-  other: invalid("operator")
-}
-
-array: CREATE(0,array) arrayItem
-arrayItem: value(1) INSERT(0,\1) {
-  nothing: >>
-  ",": >> arrayItem
-  "]": >> RETURN(\0)
-  other: expected("Comma_or_closing_square_bracket")
-}
-
-code: {
-	nothing: >>
-	"{": >> codeLines(0) EXPECT("}") RETURN(\0)
-	other: CREATE(0,code) codeLine(1) INSERT(0,\1) RETURN(\0)
-}
-
-skip: {
-	nothing: >>
-	other: CLEAR RETURN
-}
-
-token: {
-  nothing: >>
-  letter: CLEAR >> {
-    idSymbol: >>
-    other: STORE(0) RETURN(\0)
+  "/": >> {
+    "/": comment() operatorBody
+    "=": value(1) RETURN(divide[\0,\1])
+    other: invalid("operator")
   }
-  other: CLEAR STORE(0) RETURN(\0)
+  other: RETURN(\0)
 }
 
-id: {
-  nothing: >>
-  letter: CLEAR >> {
-    idSymbol: >>
-    other: STORE(0) RETURN(\0)
-  }
-  other: expected("Identifier")
-}
+// value
 
 value: CREATE(0,value) variable
 variable: {
@@ -221,23 +270,46 @@ variable: {
   letter: id(1) INSERT(0,variable:\1) separator
   minus: >> CLEAR {
     digit: number(1) INSERT(0,\1) separator
-    other: value(1) INSERT(0,negative[value:\1]) separator
+    other: value(1) INSERT(0,negative[\1]) separator
   }
-  "!": >> value(1) INSERT(0,not[value:\1]) separator
-  "(": >> value(1) EXPECT(")") INSERT(0,eval[value:\1]) separator
+  "!": >> value(1) INSERT(0,not[\1]) separator
+  "(": >> SAVEPOS CREATE(1,function_anon) functionParameter
   "[": >> array(1) INSERT(0,\1) separator
-  quotes: >> CLEAR CREATE(1,stringSequence) string
+  "{": >> object(1) INSERT(0,\1) separator
+  quotes: >> CLEAR string
   other: expected("Value")
 }
+
+// number
+
+number: CLEAR >> {
+  digit: >>
+  ".": {
+    digit: >>
+    other: STORE(1) RETURN(decimal:\1) RETURN
+  }
+  other: STORE(1) RETURN(integer:\1) RETURN
+}
+
+// string
+
 string: {
   "\": SKIP {
-    quotes: >> string
-    "\": >> string
-    "(": STORE(2) >> SWITCH(2) {
-      "": stringValue
-      other: INSERT(1,string:\2) stringValue
-    }
-    other: invalid("escape_sequence")
+    "(": CREATE(1,stringSequence) stringBrackets
+    other: ADD("\") >> string
+  }
+  quotes: STORE(2) >> INSERT(0,string:\2) separator
+  other: >>
+}
+stringBrackets: STORE(2) >> SWITCH(2) {
+  "": stringValue
+  other: INSERT(1,string:\2) stringValue
+}
+stringValue: value(2) EXPECT(")") INSERT(1,\2) CLEAR stringSequence
+stringSequence: {
+  "\": SKIP {
+    "(": stringBrackets
+    other: ADD("\") >> stringSequence
   }
   quotes: STORE(2) >> SWITCH(2) {
     "": INSERT(0,\1) separator
@@ -245,15 +317,33 @@ string: {
   }
   other: >>
 }
-stringValue: value(2) EXPECT(")") INSERT(1,value:\2) CLEAR string
 
-parameters: CREATE(1,parameters) parameter
-parameter: value(2) INSERT(1,\2) {
+// array
+
+array: CREATE(0,array) arrayItem
+arrayItem: value(1) INSERT(0,\1) {
   nothing: >>
-  ",": >> parameter
-  ")": >> INSERT(0,functionCall) INSERT(0,\1) separator
-  other: expected("Comma_or_closing_round_bracket")
+  ",": >> arrayItem
+  "]": >> RETURN(\0)
+  other: expected("Comma_or_closing_square_bracket")
 }
+
+//object
+
+object: CREATE(0,object) objectBody
+objectBody: {
+  nothing: >>
+  letter: id(1) {
+    colon: >> value(2) INSERT(0,entry[variable:\1,\2]) objectBody
+    "(": >> CREATE(1,method:\1) functionParameter
+    other: expected(":_or_(")
+  }
+  "(": >> CREATE(1,constructor) functionParameter
+  "}": >> RETURN(\0)
+} 
+
+// separator
+
 separator: {
   nothing: >>
   ".": SAVEPOS >> {
@@ -265,7 +355,10 @@ separator: {
   "+": >> INSERT(0,addition) variable
   "-": >> INSERT(0,subtraction) variable
   "*": >> INSERT(0,multiplication) variable
-  "/": >> INSERT(0,division) variable
+  "/": >> {
+    "/": comment()
+    other: INSERT(0,division) variable
+  }
   "=": >> {
     "=": >> INSERT(0,equal) variable
     other: invalid("separator")
@@ -295,15 +388,7 @@ separator: {
   other: PROCESS(0) RETURN(\0)
 }
 
-number: CLEAR >> {
-  digit: >>
-  ".": {
-    digit: >>
-    other: STORE(1) RETURN(decimal:\1) RETURN
-  }
-  other: STORE(1) RETURN(integer:\1) RETURN
-}
-
+// priorities
 
 dot.priority = 17
 functionCall.priority = 17

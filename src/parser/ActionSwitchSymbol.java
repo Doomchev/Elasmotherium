@@ -1,18 +1,21 @@
 package parser;
 
-public class ActionSwitchSymbol extends Action {
+public class ActionSwitchSymbol extends ActionSwitch {
   public Action[] action = new Action[130];
 
+  @Override
+  public void setStringAction(String token, Action action) {
+    if(token.length() != 1) parsingCodeError("Invalid token");
+    this.action[token.charAt(0)] = action;
+  }
 
-  void setAction(Action action) {
+  @Override
+  public void setOtherAction(Action action) {
     for(int n = 0; n < 130; n++) if(this.action[n] == null) this.action[n] = action;
   }
 
-  void setAction(char mask, Action action) {
-    this.action[mask] = action;
-  }
-
-  void setAction(SymbolMask mask, Action action) {
+  @Override
+  public void setMaskAction(SymbolMask mask, Action action) {
     for(int n = 0; n < 130; n++) if(mask.symbols[n]) this.action[n] = action;
   }
 
@@ -26,7 +29,7 @@ public class ActionSwitchSymbol extends Action {
     }
     if(log) System.out.println(" SWITCH TO " + currentChar);
     Action currentAction = action[currentChar];
-    if(currentAction == null) columnError("Unexpected symbol for "
+    if(currentAction == null) parsingError("Unexpected symbol for "
         + currentScope.category.name);
     return currentAction;
   }

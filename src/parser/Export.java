@@ -62,7 +62,7 @@ public class Export extends Base {
             break;
           case 'c':
             pos++;
-            if(line.charAt(pos) != '(') columnError("( expected");
+            if(line.charAt(pos) != '(') parsingError("( expected");
           case '(':
             pos++;
             stringStart = pos;
@@ -83,7 +83,7 @@ public class Export extends Base {
                 seq.appendChunk(getChunkSequence(txt));
               } else {
                 Category childSymbol = rules.categories.get(str);
-                if(childSymbol == null) lineError("Category or constant \""
+                if(childSymbol == null) exportingCodeError("Category or constant \""
                     + str + "\" is not found");
                 seq.appendChunk(new ChunkChild(childSymbol));
               }
@@ -92,7 +92,7 @@ public class Export extends Base {
           default:
             c = line.charAt(pos);
             if(c < '0' || c > '9')
-              lineError("Invalid escape sequence");
+              exportingCodeError("Invalid escape sequence");
             seq.appendChunk(new ChunkChildAtIndex(Integer.parseInt("" + c)));
         }
         stringStart = pos + 1;
@@ -127,9 +127,9 @@ public class Export extends Base {
         }
       }
     } catch (FileNotFoundException ex) {
-      error(fileName + " not found.");
+      error("I/O error", fileName + " not found.");
     } catch (IOException ex) {
-      error(fileName + "Cannot read " + fileName + ".");
+      error("I/O error", fileName + "Cannot read " + fileName + ".");
     }
     
     return this;

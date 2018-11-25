@@ -21,7 +21,7 @@ public class ActionExpect extends Action {
           break;
         default:
           if(c == symbol) return nextAction;
-          columnError(symbol + " expected");
+          parsingError(symbol + " expected");
       }
     }
   }

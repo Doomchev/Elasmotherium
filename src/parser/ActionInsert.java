@@ -12,7 +12,7 @@ class ActionInsert extends Action {
   
   @Override
   public Action execute() {
-    if(currentScope.variables[index] == null) columnError("Null node insertion");
+    if(currentScope.variables[index] == null) parsingError("Null node insertion");
     currentScope.variables[index].children.add(struc.resolve());
     if(log) System.out.println(" INSERT(" + index + ", "
         + struc.resolve().toString() + ")");

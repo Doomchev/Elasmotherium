@@ -11,7 +11,7 @@ public class StoredNode extends Node {
   @Override
   public Node resolve() {
     Node node = currentScope.variables[index];
-    if(node == null) columnError("Variable at index " + index + " is null");
+    if(node == null) parsingError("Variable at index " + index + " is null");
     return currentScope.variables[index].resolve();
   }
 

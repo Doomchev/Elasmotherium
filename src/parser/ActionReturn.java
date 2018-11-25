@@ -9,7 +9,7 @@ class ActionReturn extends Action {
   
   @Override
   public Action execute() {
-    if(scopes.isEmpty()) error("RETURN without function call");
+    if(scopes.isEmpty()) parsingError("RETURN without function call");
     ActionSub sub = currentScope.sub;
     
     if(sub.storingIndex >= 0) {

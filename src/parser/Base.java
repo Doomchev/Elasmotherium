@@ -32,17 +32,21 @@ public class Base {
     textPos++;
   }
   
-  public static void error(String message) {
-    JOptionPane.showMessageDialog(null, message, "Parsing error"
-        , JOptionPane.ERROR_MESSAGE);
+  public static void error(String title, String message) {
+    JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
     throw new RuntimeException();
   }
   
-  public static void lineError(String message) {
-    error(message + " at line " + lineNum);
+  public static void parsingCodeError(String message) {
+    error("Parsing code error", message + " at line " + lineNum);
   }
   
-  public static void columnError(String message) {
-    error(message + " at line " + lineNum + " column " + (textPos - lineStart));
+  public static void exportingCodeError(String message) {
+    error("Exporting code error", message + " at line " + lineNum);
+  }
+  
+  public static void parsingError(String message) {
+    error("Parsing error", message + " at line " + lineNum + " column "
+        + (textPos - lineStart));
   }
 }

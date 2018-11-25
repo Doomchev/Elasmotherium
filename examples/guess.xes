@@ -1,4 +1,3 @@
-#import base
 number = randomInteger(100)
 do {
 	guess = enterString("What number did I guess?")

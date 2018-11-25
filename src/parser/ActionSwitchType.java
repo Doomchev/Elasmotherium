@@ -1,14 +1,16 @@
 package parser;
 
 import java.util.LinkedList;
+import static parser.Base.currentScope;
+import static parser.Base.log;
 
-public class ActionSwitchToken extends ActionSwitch {
+public class ActionSwitchType extends ActionSwitch {
   private static class Entry {
-    private final String token;
+    private final Category category;
     private final Action action;
 
-    public Entry(String token, Action action) {
-      this.token = token;
+    public Entry(Category category, Action action) {
+      this.category = category;
       this.action = action;
     }
   }
@@ -17,13 +19,13 @@ public class ActionSwitchToken extends ActionSwitch {
   public Action defaultAction;
   private final int index;
 
-  public ActionSwitchToken(int index) {
+  public ActionSwitchType(int index) {
     this.index = index;
   }
 
   @Override
   public void setStringAction(String token, Action action) {
-    entries.add(new Entry(token, action));
+    parsingCodeError("String key is not allowed");
   }
 
   @Override
@@ -32,14 +34,20 @@ public class ActionSwitchToken extends ActionSwitch {
   }
 
   @Override
+  public void setCategoryAction(Category category, Action action) {
+    entries.add(new Entry(category, action));
+  }
+
+  @Override
   public Action execute() {
-    String token = currentScope.variables[index].caption;
+    Category type = currentScope.variables[index].type;
     for(Entry entry : entries) {
-      if(entry.token.equals(token)) {
-        if(log) System.out.println(" SWITCH TO " + token);
+      if(entry.category == type) {
+        if(log) System.out.println(" SWITCH TO " + type.name);
         return entry.action;
       }
     }
     return defaultAction;
   }
+
 }

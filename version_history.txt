@@ -1,3 +1,12 @@
+2018.11.24 (version 0.3.2)
+  + XPC: value returns string if there is only one string in string sequence
+  + XPC: default values and this in function definition parameters
+  + XPC, JEC: classes, objects, methods, constructors
+  + XPC, JEC: anonymous functions
+  + XPC, JEC: return
+  + PE: ADD command
+  ! XPC: // comments
+  
 2018.11.23 (version 0.3.1)
   + XPC: multiple loops in one for operator
   + XPC, JEC: // comments
@@ -23,3 +32,12 @@
   + XEPL parsing code (XPC)
   + Exporting engine (EE)
   + Javascript export code (JEC)
+
+  
+Possible improvements:
+  + PE: change ActionGoTo actions to straight links
+  + PE: faster subs with no return value
+  + PE: faster inline subs
+  + PE: intelligent action chain parsing (allowing spaces in commands)
+  + PE: scope pool
+  + PE: subroutines with preserved scope

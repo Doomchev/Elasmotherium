@@ -3,15 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Dropbox/Casplan/src/parser/Node.java</file>
-            <file>file:/D:/Dropbox/Casplan/test/Guess.java</file>
-            <file>file:/D:/Dropbox/Casplan/src/parser/ActionProcess.java</file>
-            <file>file:/D:/Dropbox/Casplan/test/Dialogs.java</file>
-            <file>file:/D:/Dropbox/Casplan/src/parser/Base.java</file>
-            <file>file:/D:/Dropbox/Casplan/src/parser/Rules.java</file>
-            <file>file:/D:/Dropbox/Casplan/test/Factorial.java</file>
-            <file>file:/D:/Dropbox/Casplan/test/Loops.java</file>
-            <file>file:/D:/Dropbox/Casplan/src/parser/Export.java</file>
+            <file>file:/D:/Dropbox/XEPL/test/Dialogs.java</file>
+            <file>file:/D:/Dropbox/XEPL/src/parser/ActionProcess.java</file>
+            <file>file:/D:/Dropbox/XEPL/src/parser/Base.java</file>
+            <file>file:/D:/Dropbox/XEPL/test/SixPawns.java</file>
+            <file>file:/D:/Dropbox/XEPL/src/parser/Rules.java</file>
         </group>
     </open-files>
 </project-private>

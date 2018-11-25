@@ -2,6 +2,7 @@ comma=,
 plus= + 
 end=;\n\i
 codeBlock=
+comma2=,\n\i
 
 *:\c(*)
 root:\c(*,end);
@@ -15,21 +16,25 @@ code_else:{\+\n\i\c(*,end);\-\n\i}
 code_each:\c(*,end);\-\n\i}
 
 function:function \x(\c(parameter,comma)) \(code)
-functionCall:\(variable)(\(parameters))
+function_anon:function(\c(parameter,comma)) \(code)
+functionCall:\0(\1)
 parameters:\c(*,comma)
-parameter:\x
+parameter:\(this)\(name)
+this:\x
+name:\x
 
 if:if(\(condition)) \(code_then)
 if_else:if(\(condition)) \(code_then) else \(code_else)
 condition:\c(*)
 
 for:for(\(init); \(condition); \(iteration)) \(code)
-for_each:for(\(index) = 0; \(index) < \(object).size; \(index)++) {\+\n\i\(item) = \(object)[\(index)];\n\i\(code_each)
-for_each_index:for(\(index) = 0; \(index) < \(object).size; \(index)++) \(code)
+for_each:for(\(index) = 0; \(index) < \(collection).size; \(index)++) {\+\n\i\(item) = \(collection)[\(index)];\n\i\(code_each)
+for_each_index:for(\(index) = 0; \(index) < \(collection).size; \(index)++) \(code)
 
 do:do \(code)
 
 return:return \0
+return_null:return
 break:break
 end:end
 
@@ -40,8 +45,16 @@ decimal:\x
 stringSequence:\c(*,plus)
 string:"\x"
 
-array:[\c(value,comma)]
-equate:\0 = \1
+array:[\c(*,comma)]
+
+object:{\+\n\i\c(*,comma2)\-\n\i}
+entry:\0: \1
+method:\x: function(\c(parameter,comma)) \(code)
+constructor:create: function(\c(parameter,comma)) \(code)
+field:\x
+class:var \x = {\+\n\i\c(*,comma2)\-\n\i}
+
+equate:var \0 = \1
 add:\0 += \1
 subtract:\0 -= \1
 multiply:\0 *= \1
@@ -51,8 +64,9 @@ decrement: \0--
 
 dot:\0.\1
 atIndex:\0[\1]
+brackets:(\0)
 
-adddition:\0 + \1
+addition:\0 + \1
 subtraction:\0 - \1
 multiplication:\0 * \1
 division:\0 / \1

@@ -29,9 +29,9 @@ public class Module extends Base {
       textLength = text.length();
       while(action != null) action = action.execute();
     } catch (FileNotFoundException ex) {
-      error(fileName + " not found.");
+      error("I/O error", fileName + " not found.");
     } catch (IOException ex) {
-      error(fileName + "Cannot read " + fileName + ".");
+      error("I/O error", fileName + "Cannot read " + fileName + ".");
     }
     
     module.rootNode = currentScope.variables[0];

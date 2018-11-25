@@ -1,4 +1,2 @@
-#import base
-
 factorial(num) -> num == 1 ? 1 : factorial(num - 1) * num
-showMessage("Factorial of 5 is \(factorial(5)).")
+print("Factorial of 5 is \(factorial(5)).")

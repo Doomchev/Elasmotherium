@@ -1,3 +1,5 @@
+package stuff;
+
 public class NewClass {
   public static void main(String[] args) {
     int max = 0, k = 0;

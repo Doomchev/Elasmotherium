@@ -1,5 +1,3 @@
-#import base
-
 myName = "Cyrus"
 yourName = enterString("What is your name?")
 
@@ -12,7 +10,7 @@ optionGreet = {
 
 fruits = ["apples", "peaches", "oranges"]
 
-let optionAsk = {
+optionAsk = {
 	caption: "Ask"
 	execute() {
 		fruit = selectOption("Question", "Select fruit you want to ask about:", fruits, 1)
@@ -21,14 +19,14 @@ let optionAsk = {
 	}
 }
 
-let optionExit = {
+optionExit = {
 	caption: "Exit"
 	execute() {
 		end
 	}
 }
 
-let options = [optionGreet, optionAsk, optionExit]
+options = [optionGreet, optionAsk, optionExit]
 do {
 	option = selectOption("Options", "Choose what to do:", options, 0)
 	if(option < 0) end

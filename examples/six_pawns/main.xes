@@ -34,10 +34,10 @@ wnd.render = () {
 }
 
 wnd.onClick = (x, y) {
-	let tileNum = limit(tilemap.getTileX(x - tilemapX), 0, tilemap.cellXQuantity - 1)
-	let tile = tilemap.getTile(tileNum, 0)
+	tileNum = limit(tilemap.getTileX(x - tilemapX), 0, tilemap.cellXQuantity - 1)
+	tile = tilemap.getTile(tileNum, 0)
 	if(tile == white && tileNum < tilemap.cellXQuantity - 1) {
-		let nextTile = tilemap.getTile(tileNum + 1, 0)
+		nextTile = tilemap.getTile(tileNum + 1, 0)
 		if(nextTile == empty) {
 			tilemap.setTile(tileNum, 0, empty)
 			tilemap.setTile(tileNum + 1, 0, tile)
@@ -46,7 +46,7 @@ wnd.onClick = (x, y) {
 			tilemap.setTile(tileNum + 2, 0, tile)
 		}
 	} else if(tile == black && tileNum > 0) {
-		let prevTile = tilemap.getTile(tileNum - 1, 0)
+		prevTile = tilemap.getTile(tileNum - 1, 0)
 		if(prevTile == empty) {
 			tilemap.setTile(tileNum, 0, empty)
 			tilemap.setTile(tileNum - 1, 0, tile)
@@ -56,9 +56,9 @@ wnd.onClick = (x, y) {
 		}
 	}
 	
-	if(tilemap.getTile(0, 0) == white) return null
+	if(tilemap.getTile(0, 0) == white) return
 	for(n = 1 ..< tilemap.cellXQuantity) {
-		if(tilemap.getTile(n - 1, 0) == (tilemap.getTile(n, 0) == white ? black : white)) return null
+		if(tilemap.getTile(n - 1, 0) == (tilemap.getTile(n, 0) == white ? black : white)) return
 	}
 	
 	showMessage("Вы выиграли!")
