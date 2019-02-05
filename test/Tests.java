@@ -1,6 +1,6 @@
 
-import parser.Export;
-import parser.Module;
+import export.Export;
+import base.Module;
 import parser.Rules;
 
 public class Tests {

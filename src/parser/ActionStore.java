@@ -1,5 +1,7 @@
 package parser;
 
+import parser.structure.Node;
+
 public class ActionStore extends Action {
   private final int index;
 
@@ -10,9 +12,9 @@ public class ActionStore extends Action {
   @Override
   public Action execute() {
     String txt = prefix + text.substring(tokenStart, textPos);
-    if(log) System.out.println(" STORE(" + index + ",\"" + txt + "\")");
-    Node node = new Node(currentScope.category, txt);
-    currentScope.variables[index] = node;
+    if(log) log("STORE(" + index + ",\"" + txt + "\")");
+    Node node = new Node(currentParserScope.category, txt);
+    currentParserScope.variables[index] = node;
     prefix = "";
     tokenStart = textPos;
     return nextAction;

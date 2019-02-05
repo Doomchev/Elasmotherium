@@ -1,0 +1,23 @@
+// file.lines
+
+native readLines(String fileName) {
+	return {
+		init() {}
+		next -> return ""
+		hasNext -> true
+	}
+}
+
+// main
+
+import file.lines
+
+createDictionary() {
+	for(word in readLines("words.txt")) {
+		
+	}
+}
+
+generateWord() {
+	
+}

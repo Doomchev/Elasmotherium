@@ -5,7 +5,7 @@ public class ActionSwitchSymbol extends ActionSwitch {
 
   @Override
   public void setStringAction(String token, Action action) {
-    if(token.length() != 1) parsingCodeError("Invalid token");
+    if(token.length() != 1) actionError("Invalid token");
     this.action[token.charAt(0)] = action;
   }
 
@@ -27,10 +27,10 @@ public class ActionSwitchSymbol extends ActionSwitch {
       currentChar = text.charAt(textPos);
       currentChar = currentChar < 128 ? currentChar : 128;
     }
-    if(log) System.out.println(" SWITCH TO " + currentChar);
+    if(log) log("SWITCH TO " + currentChar);
     Action currentAction = action[currentChar];
-    if(currentAction == null) parsingError("Unexpected symbol for "
-        + currentScope.category.name);
+    if(currentAction == null) actionError("Unexpected symbol for "
+        + currentParserScope.category.name);
     return currentAction;
   }
 }

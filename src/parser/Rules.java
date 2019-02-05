@@ -1,34 +1,38 @@
 package parser;
 
+import parser.structure.StoredNode;
+import parser.structure.Node;
+import parser.structure.StoredNodeValue;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class Rules extends Base {
+public class Rules extends ParserBase {
   public Category root, cElse;
   
   public final HashMap<String, SymbolMask> masks = new HashMap<>();
   public SymbolMask getMask(String name) {
     SymbolMask mask = masks.get(name);
-    if(mask == null) parsingCodeError("Cannot find symbol mask \"" + name + "\"");
+    if(mask == null) error("Cannot find symbol mask \"" + name + "\"");
     return mask;
   }
   
   public final HashMap<String, Category> categories = new HashMap<>();
   public final HashMap<String, Error> errors = new HashMap<>();
   public Category getCategory(String name) {
-    Category symbol = categories.get(name);
-    if(symbol == null) {
-      symbol = new Category(name);
-      categories.put(name, symbol);
+    Category category = categories.get(name);
+    if(category == null) {
+      category = new Category(name);
+      categories.put(name, category);
     }
-    return symbol;
+    return category;
   }
   
   private BufferedReader reader;
   public Rules load(String fileName) {
+    currentFileName = fileName;
     masks.clear();
     masks.put("tab", new SymbolMask('\t'));
     masks.put("space", new SymbolMask(' '));
@@ -59,7 +63,7 @@ public class Rules extends Base {
               mask.set(symbol.charAt(0), symbol.charAt(2));
             } else if(symbol.length() >= 2) {
               SymbolMask mask2 = masks.get(symbol);
-              if(mask2 == null) parsingCodeError("Mask \"" + symbol
+              if(mask2 == null) error("Mask \"" + symbol
                   + "\" is not found");
               mask.or(mask2);
             }
@@ -69,10 +73,10 @@ public class Rules extends Base {
           String[] parts = line.substring(6).split(":");
           errors.put(parts[0].trim(), new Error(parts[1].trim()));
         } else {
-          if(colonPos < 0 && equalPos < 0) parsingCodeError(": or = expected");
+          if(colonPos < 0 && equalPos < 0) error(": or = expected");
           Category category = getCategory(line.substring(0, colonPos).trim());
           if(category.action != null)
-            parsingCodeError("Category \"" + category.name
+            error("Category \"" + category.name
                 + "\" is already defined");
           category.action = actionChain(line.substring(colonPos + 1), null);
         }
@@ -107,7 +111,7 @@ public class Rules extends Base {
           if(n == 0) {
             strucParam = toStructure(params);
           } else {
-            if(c != ',') parsingCodeError("Comma expected");
+            if(c != ',') error("Comma expected");
             intParam = Integer.parseInt(params.substring(0, n));
             strucParam = toStructure(params.substring(n + 1));
           }
@@ -134,7 +138,7 @@ public class Rules extends Base {
           break;
         case "INSERT":
           if(intParam < 0 || strucParam == null)
-              parsingCodeError("INSERT requires 2 parameters");
+              error("INSERT requires 2 parameters");
           action = new ActionInsert(intParam, strucParam);
           break;
         case "ADD":
@@ -158,6 +162,9 @@ public class Rules extends Base {
         case ">>":
           action = new ActionForward();
           break;
+        case "INCLUDE":
+          action = new ActionInclude(intParam);
+          break;
         case "{":
           switchAction = new ActionSwitchSymbol();
         case "SWITCH":
@@ -169,12 +176,12 @@ public class Rules extends Base {
           Action back = new ActionGoToAction(switchAction);
           while(true) {
             if((line = reader.readLine()) == null)
-              parsingCodeError("Unexpected end of file");
+              error("Unexpected end of file");
             lineNum++;
             line = line.trim();
             if(line.equals("}")) break;
             int colonPos = line.indexOf(':');
-            if(colonPos < 0) parsingCodeError(": expected");
+            if(colonPos < 0) error(": expected");
             String token = line.substring(0, colonPos).trim();
             Action actionChain = actionChain(line.substring(colonPos + 1), back);
             if(token.startsWith("\"")) {
@@ -184,11 +191,11 @@ public class Rules extends Base {
             } else switch(name) {
               case "{":
                 SymbolMask symbolMask = getMask(token);
-                if(symbolMask == null) parsingCodeError("Mask \"" + token + "\" is not found");
+                if(symbolMask == null) error("Mask \"" + token + "\" is not found");
                 switchAction.setMaskAction(symbolMask, actionChain);
                 break;
               case "SWITCH":
-                parsingCodeError("Invalid token");
+                error("Invalid token");
               default:
                 switchAction.setCategoryAction(getCategory(token), actionChain);
             }
@@ -211,6 +218,7 @@ public class Rules extends Base {
             action = error;
           }
       }
+      action.parserLine = lineNum;
       if(currentAction == null) {
         firstAction = action;
       } else {
@@ -219,6 +227,7 @@ public class Rules extends Base {
       currentAction = action;
       if(exit) break;
     }
+    
     if(lastAction != null) currentAction.nextAction = lastAction;
     return firstAction;
   }
@@ -233,7 +242,7 @@ public class Rules extends Base {
       if(c < '0' || c > '9') break;
       pos++;
     }
-    if(start == pos) parsingCodeError("Integer number expected");
+    if(start == pos) error("Integer number expected");
     return Integer.parseInt(strucString.substring(start, pos));
   }
   
@@ -256,7 +265,7 @@ public class Rules extends Base {
     int tokStart = pos;
     Node node = new Node(null);
     while(true) {
-      if(pos >= strucString.length()) parsingCodeError("Unexpected end of structure");
+      if(pos >= strucString.length()) error("Unexpected end of structure");
       char c = strucString.charAt(pos);
       pos++;
       switch(c) {
@@ -269,13 +278,13 @@ public class Rules extends Base {
           tokStart = -1;
           break;
         case ':':
-          if(node.type != null || tokStart < 0) parsingCodeError("Unexpected :");
+          if(node.type != null || tokStart < 0) error("Unexpected :");
           setNodeParam(node, tokStart);
           tokStart = pos;
           break;
         case ',':
           if(parent == null) {
-            parsingCodeError("Unexpected comma");
+            error("Unexpected comma");
           } else {
             parent.add(node);
           }
@@ -297,13 +306,13 @@ public class Rules extends Base {
           if(c >= 'a' || c <= 'z') break;
           if(c >= '0' || c <= '9') break;
           if(c == '_') break;
-          parsingCodeError("Syntax error");
+          error("Syntax error");
       }
     }
   }
 
   private String stringParam(String str) {
-    if(!str.endsWith("\"") || str.length() < 2) parsingCodeError("Invalid token");
+    if(!str.endsWith("\"") || str.length() < 2) error("Invalid token");
     return str.substring(1, str.length() - 1);
   }
 }

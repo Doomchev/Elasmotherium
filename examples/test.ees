@@ -1,0 +1,15 @@
+Player {
+	String firstName, lastName
+	Int age
+	($firstName, $lastName, $age) {}
+	incrementAge() {
+		$age++
+	}
+	description(String description) -> "\($firstName) \($lastName), \($age) years old, is \(description)"
+}
+
+description = "looking around"
+player = Player("John", "Smith", 36)
+player.incrementAge()
+print(player.description(description))
+

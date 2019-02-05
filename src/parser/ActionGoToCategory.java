@@ -9,11 +9,8 @@ public class ActionGoToCategory extends Action {
   
   @Override
   public Action execute() {
-    if(log) {
-      System.out.println(toString());
-      System.out.println(category.name);
-    }
-    currentScope.category = category;
+    if(log) log(toString() + "\n" + category.name);
+    currentParserScope.category = category;
     return category.action;
   }
 

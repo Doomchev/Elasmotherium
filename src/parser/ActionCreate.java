@@ -1,5 +1,7 @@
 package parser;
 
+import parser.structure.Node;
+
 public class ActionCreate extends Action {
   private final int index;
   private final Node struc;
@@ -12,9 +14,8 @@ public class ActionCreate extends Action {
   
   @Override
   public Action execute() {
-    currentScope.variables[index] = struc.resolve();
-    if(log) System.out.println(" CREATE(" + index + ","
-        + struc.resolve().toString() + ")");
+    currentParserScope.variables[index] = struc.resolve();
+    if(log) log("CREATE(" + index + "," + struc.resolve().toString() + ")");
     return nextAction;
   }
 

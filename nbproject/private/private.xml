@@ -3,11 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Dropbox/XEPL/test/Dialogs.java</file>
-            <file>file:/D:/Dropbox/XEPL/src/parser/ActionProcess.java</file>
-            <file>file:/D:/Dropbox/XEPL/src/parser/Base.java</file>
-            <file>file:/D:/Dropbox/XEPL/test/SixPawns.java</file>
-            <file>file:/D:/Dropbox/XEPL/src/parser/Rules.java</file>
+            <file>file:/D:/Dropbox/ExtEPL/src/parser/structure/StoredNodeValue.java</file>
+            <file>file:/D:/Dropbox/ExtEPL/src/parser/structure/Node.java</file>
+            <file>file:/D:/Dropbox/ExtEPL/src/parser/Rules.java</file>
+            <file>file:/D:/Dropbox/ExtEPL/src/parser/structure/StoredNode.java</file>
+            <file>file:/D:/Dropbox/ExtEPL/src/parser/ActionInsert.java</file>
         </group>
     </open-files>
 </project-private>

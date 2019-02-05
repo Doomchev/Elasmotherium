@@ -1,0 +1,126 @@
+Function {
+	init() {}
+	abstract process(Float[] coords, Int index)
+	process(Float[] coords, function(Float[] coords, Int index)) {
+		for(index = 0; index < coords.size; index += 2) {
+			inline function(coords, index)
+		}
+	}
+}
+
+
+
+Transform extends Function {
+	dx = 0.0, dy = 0.0
+	Float(0..2) angle = 0.0
+	Float(0<..) xScale = 1.0, yScale = 1.0
+	Float _xk1, _yk1, _xk2, _yk2, _xl, _yk
+	Bool keepRatio = yes
+	
+	init() {
+		$_xk = 1.0 / $xScale
+		$_yk = 1.0 / $yScale
+		angle = $angle * PI
+		sinAngle = sin(angle * PI)
+		cosAngle = cos(angle * PI)
+		$_xk1 = cosAngle * $_xk
+		$_yk1 = -sinAngle * $_yk
+		$_xk2 = sinAngle * $_xk
+		$_yk2 = cosAngle * $_yk
+	}
+	
+	process(Float[] coords, Int index) {
+		if($angle = 0) {
+			if($scaleX == 1.0 && $scaleY == 1.0) {
+				inline process(coords, index, (Float[] coords, Int index) {
+					coords[index] = coords[index] + dx
+					coords[index + 1] = coords[index + 1] + dy
+				})
+			} else {
+				if($dx == 0.0 && $dy == 0.0) {
+					inline process(coords, index, (Float[] coords, Int index) {
+						coords[index] = coords[index] * $_xk1
+						coords[index + 1] = coords[index + 1] * $_yk1
+					})
+				} else {
+					inline process(coords, index, (Float[] coords, Int index) {
+						coords[index] = (coords[index] + $dx) * $_xk1
+						coords[index + 1] = (coords[index + 1] + $dy) * $_yk1
+					})
+				}
+			}
+		} else {
+			if($dx == 0.0 && $dy == 0.0) {
+				inline process(coords, index, (Float[] coords, Int index) {
+					x = coords[index]
+					y = coords[index + 1]
+					coords[index] = x * $_xk1 + y * $_yk1
+					coords[index + 1] = x * $_xk2 + y * $_yk2
+				})
+			} else {
+				inline process(coords, index, (Float[] coords, Int index) {
+					x = coords[index] - $dx
+					y = coords[index + 1] - $dy
+					coords[index] = x * $_xk1 + y * $_yk1
+					coords[index + 1] = x * $_xk2 + y * $_yk2
+				})
+			}
+		}
+	}
+	
+	getGUI() -> GUI(Transform) {
+		Column {
+			Row {
+				align = left
+				maximizeWidth = 1
+				Text("DX: ")
+				Text("DY: ")
+				Text("XScale: ")
+				Text("YScale: ")
+				Text("Angle: ")
+			}
+			Row {
+				TextField($dx)
+				TextField($dy)
+				TextField($xScale)
+				TextField($yScale)
+				TextField($angle)
+			}
+		}
+	}
+}
+
+ToRadial extends Function {
+	process(Float[] coords, Int index) {
+		inline process(coords, index, (Float[] coords, Int index) {
+			x = coords[index];
+			y = coords[index + 1];
+			coords[index] = atan2(x, y) / PI;
+			coords[index + 1] = sqrt(x * x + y * y);
+		})
+	}
+}
+
+Loop extends Function {
+	enum Type {
+		horizontal
+		vertical
+	}
+
+	Type type = horizontal
+	Float from 
+	Float(0<..) size
+	process(Float[] coords, Int index) {
+		if(type == horizontal) {
+			inline process(coords, index, (Float[] coords, Int index) {
+				let x = coords[index] - from;
+				coords[index] = x - Math.floor(x / size) * size + from;
+			})
+		}	else {
+			inline process(coords, index, (Float[] coords, Int index) {
+				y = coords[index + 1] - from;
+				coords[index + 1] = y - floor(y / size) * size + from;
+			})
+		}
+	}
+}

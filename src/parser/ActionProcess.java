@@ -1,6 +1,6 @@
 package parser;
 
-import java.util.Collections;
+import parser.structure.Node;
 import java.util.Stack;
 
 public class ActionProcess extends Action {
@@ -17,8 +17,8 @@ public class ActionProcess extends Action {
   private Category elseOp;
   @Override
   public Action execute() {
-    Node listNode = currentScope.variables[index];
-    if(log) System.out.println(" PROCESS " + listNode.toString());
+    Node listNode = currentParserScope.variables[index];
+    if(log) log("PROCESS " + listNode.toString());
     if(listNode.children.isEmpty()) return nextAction;
     for(Node node : listNode.children) {
       Category type = node.type;
@@ -42,7 +42,7 @@ public class ActionProcess extends Action {
       if(log) log();
     }
     
-    if(valueStack.size() != 1) parsingCodeError("Syntax error");
+    if(valueStack.size() != 1) actionError("Syntax error");
     Node value = valueStack.pop();
     listNode.children = value.children;
     listNode.type = value.type;
@@ -53,7 +53,7 @@ public class ActionProcess extends Action {
 
   private void popOp() {
     Node op = opStack.pop();
-    if(valueStack.size() < 2) parsingCodeError("Syntax error");
+    if(valueStack.size() < 2) actionError("Syntax error");
     if(op.type == rules.cElse) {
       Node value = valueStack.pop();
       valueStack.peek().children.add(value);

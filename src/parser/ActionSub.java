@@ -12,11 +12,10 @@ public class ActionSub extends Action {
   @Override
   public Action execute() {
     if(log) {
-      System.out.println(" SUB(" + sub.name + ")");
-      System.out.println(sub.name);
+      log("SUB(" + sub.name + ")\n" + sub.name);
     }
-    scopes.push(currentScope);
-    currentScope = new Scope(sub, this);
+    parserScopes.push(currentParserScope);
+    currentParserScope = new ParserScope(sub, this);
     return sub.action;
   }
 

@@ -1,0 +1,1 @@
+Window("Chessboard", Texture(128, 128, (x, y) -> Color((x >> 4 + y >> 4) & 1 ? 255 : 0)))

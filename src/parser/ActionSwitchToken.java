@@ -33,10 +33,10 @@ public class ActionSwitchToken extends ActionSwitch {
 
   @Override
   public Action execute() {
-    String token = currentScope.variables[index].caption;
+    String token = currentParserScope.variables[index].caption;
     for(Entry entry : entries) {
       if(entry.token.equals(token)) {
-        if(log) System.out.println(" SWITCH TO " + token);
+        if(log) log("SWITCH TO " + token);
         return entry.action;
       }
     }

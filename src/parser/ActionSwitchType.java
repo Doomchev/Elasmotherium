@@ -1,8 +1,8 @@
 package parser;
 
 import java.util.LinkedList;
-import static parser.Base.currentScope;
-import static parser.Base.log;
+import static parser.ParserBase.log;
+import static parser.ParserBase.currentParserScope;
 
 public class ActionSwitchType extends ActionSwitch {
   private static class Entry {
@@ -25,7 +25,7 @@ public class ActionSwitchType extends ActionSwitch {
 
   @Override
   public void setStringAction(String token, Action action) {
-    parsingCodeError("String key is not allowed");
+    actionError("String key is not allowed");
   }
 
   @Override
@@ -40,10 +40,10 @@ public class ActionSwitchType extends ActionSwitch {
 
   @Override
   public Action execute() {
-    Category type = currentScope.variables[index].type;
+    Category type = currentParserScope.variables[index].type;
     for(Entry entry : entries) {
       if(entry.category == type) {
-        if(log) System.out.println(" SWITCH TO " + type.name);
+        if(log) log("SWITCH TO " + type.name);
         return entry.action;
       }
     }

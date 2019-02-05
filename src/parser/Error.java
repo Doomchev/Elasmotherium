@@ -13,7 +13,7 @@ public class Error extends Action {
 
   @Override
   public Action execute() {
-    parsingError(errorText);
+    actionError(errorText);
     return null;
   }
 }

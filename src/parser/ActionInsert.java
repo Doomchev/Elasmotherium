@@ -1,5 +1,7 @@
 package parser;
 
+import parser.structure.Node;
+
 class ActionInsert extends Action {
   private final int index;
   private final Node struc;
@@ -12,10 +14,9 @@ class ActionInsert extends Action {
   
   @Override
   public Action execute() {
-    if(currentScope.variables[index] == null) parsingError("Null node insertion");
-    currentScope.variables[index].children.add(struc.resolve());
-    if(log) System.out.println(" INSERT(" + index + ", "
-        + struc.resolve().toString() + ")");
+    if(currentParserScope.variables[index] == null) actionError("Null node insertion");
+    currentParserScope.variables[index].children.add(struc.resolve());
+    if(log) log("INSERT(" + index + ", " + struc.resolve().toString() + ")");
     return nextAction;
   }
 

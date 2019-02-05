@@ -1,4 +1,0 @@
-for[item: \0, index: \1, object: \2, code: \3] = for[+init: equate[\1, 0], condition: less[\1, dot[\2, field: length]], code:[^equate[\0, atIndex[\2, \1]]], -item, -index, -object]
-for[index: \1, object: \2, code: \3] = for[+init: equate[\1, 0], condition: less[\1, dot[\2, field: length]]]
-for[item: \0, object: \2, code: \3] = for[+init: equate[\new1, 0], condition: less[\new1, dot[\2, field: length]], code:[^equate[\0, atIndex[\2, \new1]]], -item, -index, -object]
-for[init:equate[\0,\1],!iteration] = for[+iteration:increment[\0]]

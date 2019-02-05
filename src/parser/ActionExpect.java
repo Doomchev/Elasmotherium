@@ -9,10 +9,10 @@ public class ActionExpect extends Action {
 
   @Override
   public Action execute() {
-    if(log) System.out.println(" EXPECT " + symbol);
+    if(log) log("EXPECT " + symbol);
     while(true) {
       char c = text.charAt(textPos);
-      textPos++;
+      incrementTextPos();
       switch(c) {
         case ' ':
         case '\t':
@@ -21,7 +21,7 @@ public class ActionExpect extends Action {
           break;
         default:
           if(c == symbol) return nextAction;
-          parsingError(symbol + " expected");
+          actionError(symbol + " expected");
       }
     }
   }

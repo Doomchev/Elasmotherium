@@ -1,5 +1,7 @@
 package parser;
 
+import parser.structure.Node;
+
 class ActionReturn extends Action {
   private final Node structure;
 
@@ -9,20 +11,20 @@ class ActionReturn extends Action {
   
   @Override
   public Action execute() {
-    if(scopes.isEmpty()) parsingError("RETURN without function call");
-    ActionSub sub = currentScope.sub;
+    if(parserScopes.isEmpty()) actionError("RETURN without function call");
+    ActionSub sub = currentParserScope.sub;
     
     if(sub.storingIndex >= 0) {
       Node returnValue = structure.resolve();
-      currentScope = scopes.pop();
-      currentScope.variables[sub.storingIndex] = returnValue;
-      if(log) System.out.println(" RETURN(" + returnValue.toString() + ")");
+      currentParserScope = parserScopes.pop();
+      currentParserScope.variables[sub.storingIndex] = returnValue;
+      if(log) log("RETURN(" + returnValue.toString() + ") to " + sub.storingIndex);
     } else {
-      currentScope = scopes.pop();
-      if(log) System.out.println(" RETURN");
+      currentParserScope = parserScopes.pop();
+      if(log) log("RETURN");
     }
       
-    System.out.println(currentScope.category.toString());
+    if(log) System.out.println(currentParserScope.category.toString());
     return sub.nextAction;
   }
 
