@@ -17,23 +17,13 @@ ERROR invalid: Invalid \0
 ERROR error: \0
 
 
-root: сodeLines(0) CREATE(0,code_main:\0)
+root: сodeLines(0) CREATE(0,code:\0)
 
 сodeLines: CREATE(0,code) codeLinesBody
 codeLinesBody: {
 	nothing: >>
 	eof: RETURN(\0)
 	"}": RETURN(\0)
-	"#": >> CLEAR {
-		letter: >>
-		other: STORE(1) SWITCH(1) {
-			"include": skip() {
-				fileSymbol: >>
-				other: STORE(1) INCLUDE(1) codeLinesBody
-			}
-			other: invalid("directive")
-		}
-	}
 	other: codeLine(1) INSERT(0,\1)
 }
 
@@ -67,7 +57,7 @@ codeLine: {
 			"for": EXPECT("(") for
 			"do": code(2) RETURN(do[code:\2])
 			"if": EXPECT("(") value(0) EXPECT(")") code(1) SAVEPOS id(2) SWITCH(2) {
-        "else": code(2) RETURN(if_else[condition[\0],code:\1,code_else:\2])
+        "else": code(2) RETURN(if_else[condition[\0],code:\1,else:\2])
         other: LOADPOS RETURN(if[condition[\0],code:\1])
       }
       "break": {
@@ -81,11 +71,15 @@ codeLine: {
         other: RETURN(return_null)
       }
       "end": RETURN(end)
+			"global": id(2) {
+				letter: id(3) CREATE(0,value[variable:\3[type:\2,global]]) var
+        other: CREATE(0,value[variable:\2[global]]) var
+			}
       other: {
         nothing: >>
         "(": >> SAVEPOS CREATE(0,value) CREATE(1,function:\2) functionParameter
         "{": >> CREATE(0,class:\2) class
-				letter: id(3) CREATE(0,value[variable:\2[class:\3]]) var
+				letter: id(3) CREATE(0,value[variable:\3[type:\2]]) var
         other: CREATE(0,value[variable:\2]) var
       }
 		}
@@ -151,10 +145,10 @@ functionParameter: {
   nothing: >>
   letter: id(4) {
 		nothing: >>
-		letter: id(5) CREATE(3,parameter:\4[class:\5]) afterParam
+		letter: id(5) CREATE(2,parameter:\5[type:\4]) afterParam
 		other: notFunctionDef
 	}
-	"$": >> id(4) CREATE(3,parameter[this:\4]) afterParam
+	"$": >> id(4) CREATE(2,parameter:\4[this]) afterParam
   ")": >> afterParams
   other: SWITCHTYPE(0) {
     object: expected("Identifier_or_)")
@@ -164,10 +158,10 @@ functionParameter: {
 }
 afterParam: {
   nothing: >>
-  "=": >> value(4) INSERT(3,default[\4]) paramEnd
+  "=": >> value(4) INSERT(2,default[\4]) paramEnd
   other: paramEnd
 }
-paramEnd: INSERT(1,\3) {
+paramEnd: INSERT(1,\2) {
   nothing: >>
   ",": >> functionParameter
   ")": >> afterParams
@@ -295,7 +289,7 @@ variable: {
     other: value(1) INSERT(0,negative[\1]) separator
   }
   "!": >> value(1) INSERT(0,not[\1]) separator
-  "(": >> SAVEPOS CREATE(1,function_anon) functionParameter
+  "(": >> SAVEPOS CREATE(1,function) functionParameter
   "[": >> array(1) INSERT(0,\1) separator
   "{": >> CREATE(1,object) object
   quotes: >> CLEAR string
@@ -365,6 +359,7 @@ class: {
   letter: id(3) {
 		nothing: >>
 		letter: id(1) fieldNames
+		"=": >> value(2) INSERT(0,field:\3[default[\2]]) class
 		"(": >> CREATE(1,method:\3) functionParameter
 		other: expected("Field_name_or_(")
 	}
@@ -374,12 +369,9 @@ class: {
 } 
 fieldNames: {
 	nothing: >>
-	"=": >> value(2) INSERT(0,field:\1[class:\3,\2]) {
-		letter: id(1) fieldNames
-		other: class
-	}
-	",": >> INSERT(0,field:\1[class:\3]) id(1) fieldNames
-	other: INSERT(0,field:\1[class:\3]) class
+	"=": >> value(2) INSERT(0,field:\1[type:\3,default[\2]]) class
+	",": >> INSERT(0,field:\1[type:\3]) id(1) fieldNames
+	other: INSERT(0,field:\1[type:\3]) class
 }
 
 // separator

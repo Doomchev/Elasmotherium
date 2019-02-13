@@ -1,3 +1,9 @@
+2019.02.13 (version 0.8)
+	+ Type inference engine (TEE)
+	+ Java node processing engine (JNPE)
+	+ Java export code (JEC)
+	+ EEPC: "global" keyword
+
 2019.01.05 (version 0.7)
 	+ PE: parser code lines in error messages and parsing log
 	+ EEPC: field and variable types
@@ -45,9 +51,11 @@
   + Javascript export code (JSEC)
 
 To do:  
-	+ PE: inline functions
-	+ PE: ranges
-	+ EEPC: $[] syntax
+	+ inline functions
+	+ ranges
+	+ $[] syntax
+	+ generics
+	+ string slices
 
 Possible improvements:
   + PE: change ActionGoTo actions to straight links

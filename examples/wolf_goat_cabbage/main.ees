@@ -1,9 +1,11 @@
 load("resources.ees")
 
-Sprite.setPosition(position) {
-  $position = position
-  $x = $pivot[position].x
-  $y = $pivot[position].y
+Sprite {
+	Position position
+	setPosition($position) {
+		$x = $pivot[$position].x
+		$y = $pivot[$position].y
+	}
 }
 
 showMessage("Вам надо перевезти волка, козу и капусту на другой берег. В лодку можно брать только одного 

@@ -7,27 +7,22 @@ comma2=,\n\i
 *:\c(*)
 root:\c(*,end);
 
-directive:
-
-code_main:class Main {\+\n\ipublic static void main(String[] args) {\+\n\i\c(*,end);\-\n\i}\-\n\i};
 code:{\+\n\i\c(*,end);\-\n\i}
-code_else:{\+\n\i\c(*,end);\-\n\i}
+else:{\+\n\i\c(*,end);\-\n\i}
 
-function:function \x(\c(parameter,comma)) \(code)
-function_anon:function(\c(parameter,comma)) \(code)
+function:\type \x(\c(parameter,comma)) \(code)
 functionCall:\0(\1)
+new:new \0(\1)
 parameters:\c(*,comma)
-parameter:\x
+parameter:\?type[\(type) ]\x\?default[ = \(default)]
 this:this
 name:\x
 
-if:if(\(condition)) \(code)
-if_else:if(\(condition)) \(code) else \(code_else)
+if:if(\(condition)) \(code)\?else[ else \(else)]
 condition:\c(*)
 
 for:for(\(init); \(condition); \(iteration)) \(code)
 for_each:for(\(index) = 0; \(index) < \(collection).size; \(index)++) \(code)
-for_each_index:for(\(index) = 0; \(index) < \(collection).size; \(index)++) \(code)
 
 do:do \(code)
 
@@ -36,9 +31,10 @@ return_null:return
 break:break
 end:end
 
-variable:\x
+variable:\?type[\(type) ]\?this[this.]\x
 integer:\x
 decimal:\x
+type:\x
 
 stringSequence:\c(*,plus)
 string:"\x"
@@ -47,13 +43,12 @@ array:new Object[]{\c(*,comma)}
 
 object:{\+\n\i\c(*,comma2)\-\n\i}
 entry:public \0 = \1
-method:public \x(\c(parameter,comma)) \(code)
+method:public \?static[static ]\(type) \x(\c(parameter,comma)) \(code)
 constructor:public \x(\c(parameter,comma)) \(code)
-classField:public \x
-class:class \x {\+\n\i\c(*,end)\-\n\i}
-field:\x
+class:public static class \x {\+\n\i\c(*,end)\-\n\i}
+field:\?static[static ]\(type) \x\?default[ = \(default)]
 
-equate:\0 = \1
+equate:\?type[\(type) ]\0 = \1
 add:\0 += \1
 subtract:\0 -= \1
 multiply:\0 *= \1

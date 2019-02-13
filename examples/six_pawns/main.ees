@@ -1,9 +1,5 @@
-#include graphics2d.ees
-
-wnd = Window
-
-board = Texture.load("board.png")
-tilemap = Tilemap(7, 1, Image.map("pawns.png", 3))
+board = Texture("board.png")
+tileMap = TileMap(7, 1, Texture("pawns.png").cut(3))
 
 empty = 0
 white = 1
@@ -16,51 +12,55 @@ rules() {
 }
 
 init() {
-	for(n = 0 ..< tilemap.cellXQuantity) tilemap.setTile(n, 0, n <= 2 ? white : (n >= 4 ? black : empty))
+	for(n = 0 ..< tileMap.cellXQuantity) tileMap[n, 0] = n <= 2 ? white : (n >= 4 ? black : empty)
 }
 
 init()
 rules()
 
-wnd.render = () {
-	tilemapX = (wnd.width - tilemap.cellWidth * 7) / 2
-	tilemapY = (wnd.height - tilemap.cellHeight) / 2 - 31
-	boardX = (wnd.width - board.width) / 2
-	boardY = (wnd.height - board.height) / 2 + 31
-	
-	board.draw(boardX, boardY)
-  tilemap.draw(tilemapX, tilemapY)
-}
+Window("Six pawns", tileMap) {
+	render() {
+		tileMapX = (wnd.width - tileMap.cellWidth * 7) / 2
+		tileMapY = (wnd.height - tileMap.cellHeight) / 2 - 31
+		boardX = (wnd.width - board.width) / 2
+		boardY = (wnd.height - board.height) / 2 + 31
+		
+		board.draw(boardX, boardY)
+		$tileMap.draw(tileMapX, tileMapY)
+	}
 
-wnd.onClick = (x, y) {
-	tileNum = limit(tilemap.getTileX(x - tilemapX), 0, tilemap.cellXQuantity - 1)
-	tile = tilemap.getTile(tileNum, 0)
-	if(tile == white && tileNum < tilemap.cellXQuantity - 1) {
-		nextTile = tilemap.getTile(tileNum + 1, 0)
-		if(nextTile == empty) {
-			tilemap.setTile(tileNum, 0, empty)
-			tilemap.setTile(tileNum + 1, 0, tile)
-		} else if(tileNum < tilemap.cellXQuantity - 2 && tilemap.getTile(tileNum + 2, 0) == empty) {
-			tilemap.setTile(tileNum, 0, empty)
-			tilemap.setTile(tileNum + 2, 0, tile)
-		}
-	} else if(tile == black && tileNum > 0) {
-		prevTile = tilemap.getTile(tileNum - 1, 0)
-		if(prevTile == empty) {
-			tilemap.setTile(tileNum, 0, empty)
-			tilemap.setTile(tileNum - 1, 0, tile)
-		} else if(tileNum > 1 && tilemap.getTile(tileNum - 2, 0) == empty) {
-			tilemap.setTile(tileNum, 0, empty)
-			tilemap.setTile(tileNum - 2, 0, tile)
+	onClick(x, y) {
+		with(tileMap) {
+			tileNum = limit($getTileX(x - tileMapX), 0 .. $cellXQuantity - 1)
+			tile = $[tileNum, 0]
+			if(tile == white && tileNum < $cellXQuantity - 1) {
+				nextTile = $[tileNum + 1, 0]
+				if(nextTile == empty) {
+					$[tileNum, 0] = empty
+					$[tileNum + 1, 0] = tile
+				} else if(tileNum < $cellXQuantity - 2 && $[tileNum + 2, 0] == empty) {
+					$[tileNum, 0] = empty
+					$[tileNum + 2, 0] = tile
+				}
+			} else if(tile == black && tileNum > 0) {
+				prevTile = $[tileNum - 1, 0]
+				if(prevTile == empty) {
+					$[tileNum, 0] = empty
+					$[tileNum - 1, 0] = tile
+				} else if(tileNum > 1 && $[tileNum - 2, 0] == empty) {
+					$[tileNum, 0] = empty
+					$[tileNum - 2, 0] = tile
+				}
+			}
+			
+			if($[0, 0] == white) return
+			for(n = 1 ..< $cellXQuantity) {
+				if($[n - 1, 0] == ($[n, 0] == white ? black : white)) return
+			}
+			
+			showMessage("Вы выиграли!")
+			init()
+			rules()
 		}
 	}
-	
-	if(tilemap.getTile(0, 0) == white) return
-	for(n = 1 ..< tilemap.cellXQuantity) {
-		if(tilemap.getTile(n - 1, 0) == (tilemap.getTile(n, 0) == white ? black : white)) return
-	}
-	
-	showMessage("Вы выиграли!")
-	init()
-	rules()
 }

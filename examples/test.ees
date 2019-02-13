@@ -1,7 +1,9 @@
 Player {
+	($firstName, $lastName, $age) {
+		global lastPlayerName = $firstName + " " + $lastName
+	}
 	String firstName, lastName
-	Int age
-	($firstName, $lastName, $age) {}
+	age = 18
 	incrementAge() {
 		$age++
 	}
@@ -12,4 +14,4 @@ description = "looking around"
 player = Player("John", "Smith", 36)
 player.incrementAge()
 print(player.description(description))
-
+print(lastPlayerName)

@@ -3,90 +3,125 @@ package parser.structure;
 import base.Base;
 import base.Module;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import parser.Category;
 import parser.Rules;
 
 public final class NodeProcessor {
+  public static class NodeScope {
+    Node node;
+    Scope scope;
+
+    public NodeScope(Node node, Scope Scope) {
+      this.node = node;
+      this.scope = Scope;
+    }
+  }
+  
   public class Scope {
     String name;
-    Scope parent;
-    boolean isFixed, isClass;
-    final HashMap<String, Scope> fields = new HashMap<>();
-    final LinkedList<Scope> children = new LinkedList<>();
-    final HashSet<Scope> links = new HashSet<>();
+    Scope parent, parentClass, type = null, valueScope;
+    final HashMap<String, Scope> children = new HashMap<>();
+    final LinkedList<Node> nodes = new LinkedList<>();
     final LinkedList<Scope> params = new LinkedList<>();
+    Node initNode = null, valueNode;
 
-    Scope get(String name, boolean isFixed, boolean isClass) {
-      Scope scope = fields.get(name);
+    Scope get(String name, Scope parentClass) {
+      Scope scope = children.get(name);
       if(scope == null) {
-        scope = new Scope(name, this, isFixed, isClass);
-        fields.put(name, scope);
-      } else {
-        scope.isFixed = isFixed;
+        scope = new Scope(name, this, parentClass);
+        children.put(name, scope);
       }
       return scope;
     }
     
     Scope get(String name) {
-      Scope scope = fields.get(name);
-      if(scope == null) {
-        scope = new Scope(name, this, false, false);
-        fields.put(name, scope);
-      }
-      return scope;
+      return get(name, null);
     }
     
     Scope get(int index) {
       if(params.size() <= index) {
-        Scope scope = new Scope("", this, true, false);
+        Scope scope = new Scope("", this, null);
         params.add(scope);
         return scope;
       } else {
         return params.get(index);
       }
     }
-  
+    
     Scope get(Node node) {
       if(node.type == catVariable) {
-        if(node.caption.equals("this")) return parent;
-        return get(node.caption);
+        if(node.hasChild(catThis)) {
+          Scope classScope = findClass();
+          if(classScope == null) error("This or $ outside class");
+          Scope fieldScope = classScope.children.get(node.caption);
+          if(fieldScope == null) error("Field " + node.caption
+              + " is not found in " + classScope.name);
+          return fieldScope;
+        } else {
+          Scope varScope = get(node.caption);
+          if(varScope == null) error("Variable " + node.caption
+              + " is not found");
+          return varScope;
+        }
       } else if(node.type == catDot) {
-        return get(node.first()).get(node.last().caption);
-      } else if(node.type == catAtIndex) {
-        return get(node.first()).get("value");
-      } else if(node.type == catValue || node.type == catDefault
-          || node.type == catFunctionCall) {
-        return get(node.first());
-      } else if(node.type == catObject) {
-        Scope cl = new Scope("", this, true, true);
-        processClass(node, cl, this);
-        return cl;
-      } else if(node.type == catFunctionAnon) {
-        Scope func = new Scope("", this, true, false);
-        processFunction(node, func, this, false);
-        return func;
+        
+      }
+      error(node.type.name + " is not supported");
+      return null;
+    }
+    
+    Scope findClass() {
+      Scope scope = this;
+      while(scope != null) {
+        if(scope.parentClass != null) return scope;
+        scope = scope.parent;
+      }
+      return null;
+    }
+    
+    Scope find(String name, boolean isField) {
+      return isField ? findField(name) : findVariable(name);
+    }
+    
+    Scope findField(String name) {
+      if(parentClass != null) {
+        Scope field = children.get(name);
+        if(field != null) return field;
+        return parentClass.findField(name);
       } else {
-        return functions.get(node.type).create(node, this);
+        if(parent == null) return null;
+        return parent.findField(name);
       }
     }
     
-    Scope addNew() {
-      Scope scope = new Scope("", this, true, false);
-      children.add(scope);
-      return scope;
+    Scope findVariable(String name) {
+      if(parentClass == null) {
+        Scope scope = children.get(name);
+        if(scope != null) return scope;
+        if(parent == null) return null;
+      }
+      return parent.findVariable(name);
     }
     
-    Scope(String name, Scope parent, boolean fixed, boolean isClass) {
+    Scope(String name, Scope parent, Scope parentClass) {
       this.name = name;
       this.parent = parent;
-      this.isFixed = fixed;
-      this.isClass = isClass;
+      this.parentClass = parentClass;
     }
 
+    Scope(Scope parent) {
+      this("", parent, null);
+    }
+    
     public Scope() {
-      this("", null, true, false);
+      this("", null, null);
+    }
+    
+    void setInit(Node initNode, Node valueNode, Scope valueScope) {
+      this.initNode = initNode;
+      this.valueNode = valueNode;
+      this.valueScope = valueScope;
     }
 
     public String log() {
@@ -94,9 +129,11 @@ public final class NodeProcessor {
     }
     
     String log(String indent) {
-      String str = indent + (isFixed ? "#" : "") + name + "\n";
-      for(Scope scope : fields.values()) str += scope.log(indent + "  ");
-      for(Scope scope : children) str += scope.log(indent + "  ");
+      String str = indent + (parentClass != null ? "class " : (type == null ? ""
+          : type.name + " ")) + name + "\n";
+      for(Scope scope : children.values()) str += scope.log(indent + "  ");
+      if(initNode != null) str += indent + "  = " + initNode.last().toString()
+          + "\n";
       return str;
     }
 
@@ -104,133 +141,65 @@ public final class NodeProcessor {
       return this;
     }
     
-    void addLink(Scope scope) {
-      if(scope == this) return;
-      links.add(scope);
-      scope.links.add(this);
-    }
-    
-    void merge() {
-      if(!isFixed) {
-        Scope parentScope = parent == null ? null : parent.parent;
-        while(parentScope != null) {
-          Scope scope = parentScope.fields.get(name);
-          if(scope != null) {
-            for(Scope linkedScope : links) {
-              if(linkedScope == this) Base.error("error", "error in links");
-              if(scope == this) Base.error("error", "error in links");
-              linkedScope.links.remove(this);
-              scope.addLink(parentScope);
-            }
-          }
-          parentScope = parentScope.parent;
-        }
+    void setTypes() {
+      if(type != null) return;
+      if(initNode == null) {
+        for(Scope scope : children.values()) if(scope.type == null) 
+          scope.setTypes();
+      } else {
+        type = valueScope.getType(valueNode);
+        initNode.getChild(catType).caption = type.name;
       }
-      for(Scope scope : children) scope.merge();
-      for(Scope scope : fields.values()) scope.merge();
+    }
+    
+    Scope getType(Node node) {
+      Function func = functions.get(node.type);
+      if(func == null) error(node.type.name + " is not supported.");
+      return func.getType(node, this);
     }
   }
   
-  class Addition extends Scope {
-    Scope scope0 = null, scope1 = null;
+  static class Function {
+    Scope type;
 
-    Addition() {
+    public Function() {
+    }
+
+    public Function(Scope type) {
+      this.type = type;
     }
     
-    Addition(Node node, Scope scope) {
-      this.scope0 = scope.get(node.first());
-      this.scope1 = scope.get(node.children.get(1));
-    }
-
-    @Override
-    Scope create(Node node, Scope scope) {
-      return new Addition(node, scope);
+    Scope getType(Node node, Scope scope) {
+      return type;
     }
   }
   
-  class Brackets extends Scope {
-    Scope scope;
-    
-    Brackets() {
-    }
-    
-    Brackets(Node node, Scope scope) {
-      this.scope = scope.get(node.first());
-    }
-
-    @Override
-    Scope create(Node node, Scope scope) {
-      return new Brackets(node, scope);
-    }
+  Scope newClass(String name, Scope parent) {
+    Scope scope = new Scope(name, rootScope, parent);
+    rootScope.children.put(name, scope);
+    return scope;
   }
-  
-  class NumericBinary extends Addition {
-    NumericBinary() {
-    }
-    
-    NumericBinary(Node node, Scope scope) {
-      super(node, scope);
-    }
-
-    @Override
-    Scope create(Node node, Scope scope) {
-      return new NumericBinary(node, scope);
-    }
-  }
-  
-  class BooleanBinary extends Addition {
-    BooleanBinary() {
-    }
-    
-    BooleanBinary(Node node, Scope scope) {
-      super(node, scope);
-    }
-
-    @Override
-    Scope create(Node node, Scope scope) {
-      return new BooleanBinary(node, scope);
-    }
-  }
-  
-  class IfOp extends Addition {
-    Scope scope2 = null;
-    
-    IfOp() {
-    }
-    
-    IfOp(Node node, Scope scope) {
-      super(node, scope);
-      this.scope2 = scope.get(node.last());
-    }
-
-    @Override
-    Scope create(Node node, Scope scope) {
-      return new IfOp(node, scope);
-    }
-  }
-  
   
   Scope currentScope, rootScope = new Scope();
   
-  Scope cClass = rootScope.get("Class", true, true);
-  Scope cUnknown = rootScope.get("Unknown", true, true);
-  Scope cBoolean = rootScope.get("Boolean", true, true);
-  Scope cInteger = rootScope.get("Integer", true, true);
-  Scope cString = rootScope.get("String", true, true);
-  Scope cTexture = rootScope.get("Texture", true, true);
-  Scope cArray = rootScope.get("Array", true, true);
-  Scope cList = rootScope.get("List", true, true);
-  HashMap<Category, Scope> functions = new HashMap<>();
-  Category catClass, catConstructor, catMethod, catThis, catParameter
+  Scope cClass = newClass("Class", rootScope);
+  Scope cBoolean = newClass("Boolean", cClass);
+  Scope cConcatenable = newClass("Concatenable", cClass);
+  Scope cNumber = newClass("Integer", cConcatenable);
+  Scope cInteger = newClass("Integer", cNumber);
+  Scope cFloat = newClass("Float", cNumber);
+  Scope cString = newClass("String", cConcatenable);
+  HashMap<Category, Function> functions = new HashMap<>();
+  Category catClass, catConstructor, catMethod, catThis, catParameter, catReturn
       , catDefault, catName, catCode, catFunction, catDo, catFor, catForEach
       , catEquate, catDot, catVariable, catField, catFunctionCall, catAtIndex
-      , catParameters, catEntry, catInteger, catString, catIncrement, catValue
-      , catIf, catIfElse, catCondition, catCodeElse, catInit, catIteration
-      , catIfOp, catObject, catFunctionAnon;
+      , catParameters, catInteger, catString, catIncrement, catValue, catType
+      , catIf, catCondition, catElse, catInit, catIteration, catStatic, catNew
+      , catIfOp, catObject, catGlobal;
 
-  void setFunction(Rules rules, String categories, Scope scope) {
+  void setFunction(Rules rules, String categories, Function func) {
     for(String categoryName : categories.split(" "))
-      functions.put(rules.getCategory(categoryName), scope);
+      functions.put(rules.getCategory(categoryName), func);
   }
   
   public NodeProcessor(Rules rules) {
@@ -238,7 +207,6 @@ public final class NodeProcessor {
     catInteger = rules.getCategory("integer");
     catString = rules.getCategory("string");
     catObject = rules.getCategory("object");
-    catFunctionAnon = rules.getCategory("function_anon");
 
     catConstructor = rules.getCategory("constructor");
     catParameter = rules.getCategory("parameter");
@@ -248,15 +216,13 @@ public final class NodeProcessor {
     catCode = rules.getCategory("code");
     catMethod = rules.getCategory("method");
     catFunction = rules.getCategory("function");
-    catEntry = rules.getCategory("entry");
     catAtIndex = rules.getCategory("atIndex");
     catValue = rules.getCategory("value");
     catIfOp = rules.getCategory("ifOp");
     
     catIf = rules.getCategory("if");
-    catIfElse = rules.getCategory("if_else");
     catCondition = rules.getCategory("condition");
-    catCodeElse = rules.getCategory("code_else");
+    catElse = rules.getCategory("else");
     catDo = rules.getCategory("do");
     catFor = rules.getCategory("for");
     catInit = rules.getCategory("init");
@@ -265,97 +231,298 @@ public final class NodeProcessor {
     catFunctionCall = rules.getCategory("functionCall");
     catCondition = rules.getCategory("condition");
     catIncrement = rules.getCategory("increment");
+    catReturn = rules.getCategory("return");
     
     catThis = rules.getCategory("this");
+    catGlobal = rules.getCategory("global");
     catEquate = rules.getCategory("equate");
     catDot = rules.getCategory("dot");
     catVariable = rules.getCategory("variable");
-    catField = rules.getCategory("classField");
+    catField = rules.getCategory("field");
+    catType = rules.getCategory("type");
+    catStatic = rules.getCategory("static");
+    catNew = rules.getCategory("new");
     
-    setFunction(rules, "integer", cInteger);
-    setFunction(rules, "string", cString);
-    setFunction(rules, "array", cArray);
-    setFunction(rules, "subtraction multiplication division"
-        , new NumericBinary());
-    setFunction(rules, "more less moreOrEqual lessOrEqual equal notEqual not"
-        + " and or", new BooleanBinary());
-    setFunction(rules, "addition", new Addition());
-    setFunction(rules, "brackets", new Brackets());
-    setFunction(rules, "ifOp", new IfOp());
-  }
-  
-  
-
-  private void processFunction(Node node, Scope func, Scope parentScope
-      , boolean isConstructor) {
-    Node codeNode = node.getChild(catCode);
-    for(Node param : node.children) {
-      if(param.type == catParameter) {
-        Node defaultNode = param.getChild(catDefault);
-        if(defaultNode != null) {
-          Node thisNode = isConstructor ? param.getChild(catThis) : null;
-          if(thisNode == null) {
-            func.get(param.caption, true, false)
-                .addLink(parentScope.get(defaultNode));
-          } else {
-            parentScope.get(thisNode.caption, true, false).addLink(parentScope
-                .get(defaultNode));
-          }
-        }
+    setFunction(rules, "integer", new Function(cInteger));
+    setFunction(rules, "string stringSequence", new Function(cString));
+    //setFunction(rules, "array", cArray);
+    setFunction(rules, "addition", new Function() {
+      @Override
+      Scope getType(Node node, Scope scope) {
+        Scope type0 = scope.getType(node.first());
+        Scope type1 = scope.getType(node.last());
+        if(type0 == cString || type1 == cString) return cString;
+        if(type0 == cFloat || type1 == cFloat) return cFloat;
+        return cInteger;
       }
-    }
-    processCode(codeNode, func);
+    });
+    setFunction(rules, "subtraction multiplication division", new Function() {
+      @Override
+      Scope getType(Node node, Scope scope) {
+        Scope type0 = scope.getType(node.first());
+        Scope type1 = scope.getType(node.last());
+        if(type0 == cFloat || type1 == cFloat) return cFloat;
+        return cInteger;
+      }
+    });
+    setFunction(rules
+        , "more less moreOrEqual lessOrEqual equal notEqual not and or"
+        , new Function() {
+      @Override
+      Scope getType(Node node, Scope scope) {
+        return cBoolean;
+      }
+    });
+    setFunction(rules, "brackets ifOp", new Function() {
+      @Override
+      Scope getType(Node node, Scope scope) {
+        return scope.getType(node.last());
+      }
+    });
+    setFunction(rules, "variable", new Function() {
+      @Override
+      Scope getType(Node node, Scope scope) {
+        Scope varScope;
+        if(node.hasChild(catThis)) {
+          varScope = scope.findField(node.caption);
+        } else {
+          varScope = scope.findVariable(node.caption);
+        }
+        if(varScope == null) error("Variable" + node.caption + " is not found.");
+        if(varScope.parentClass != null) return varScope;
+        if(varScope.type == null) varScope.setTypes();
+        return varScope.type;
+      }
+    });
+    setFunction(rules, "dot", new Function() {
+      @Override
+      Scope getType(Node node, Scope scope) {
+        return scope.getType(node.first()).findField(node.last().caption);
+      }
+    });
+    setFunction(rules, "functionCall", new Function() {
+      @Override
+      Scope getType(Node node, Scope scope) {
+        Scope callType = scope.getType(node.first());
+        if(callType.parentClass != null) node.type = catNew;
+        return callType;
+      }
+    });
+    
+    typeSwitch.put("Integer", "long");
+    typeSwitch.put("Float", "double");
   }
   
   public Scope processModule(Module module) {
-    processCode(module.rootNode, rootScope);
-    //rootScope.merge();
+    initCodeScopes(module.rootNode, rootScope, true);
+    setCodeTypes(module.rootNode, rootScope);
+    rootScope.setTypes();
+    process(module.rootNode);
     return rootScope;
   }
   
-  void processCode(Node node, Scope scope) {
-    for(Node childNode : node.children) {
+  void initCodeScopes(Node codeNode, Scope codeScope) {
+    initCodeScopes(codeNode, codeScope, false);
+  }
+  
+  void initCodeScopes(Node codeNode, Scope codeScope, boolean checkVariables) {
+   if(codeNode == null) return;
+    for(Node childNode : codeNode.children) {
       if(childNode.type == catClass) {
-        processClass(childNode, scope.get(childNode.caption, true, true), scope);
-      } else if(childNode.type == catFunction) {
-        processFunction(childNode, scope.get(childNode.caption), scope, false);
-      } else if(childNode.type == catFunctionCall) {
-        Scope callScope = scope.get(childNode.first());
-        LinkedList<Node> list = childNode.getChild(catParameters).children;
-        for(int index = 0; index < list.size(); index++)
-          callScope.get(index).addLink(scope.get(list.get(index)));
+        initClassScopes(childNode, codeScope.get(childNode.caption, cClass));
       } else if(childNode.type == catEquate) {
-        scope.get(childNode.first()).addLink(scope.get(childNode.last()));
-      } else if(childNode.type == catIncrement) {
-        scope.get(childNode.first()).addLink(cInteger);
+        Node varNode = childNode.first();
+        if(checkVariables || varNode.findChild(catGlobal) != null) {
+          if(varNode.type == catVariable) rootScope.get(varNode.caption);
+        }
+      } else if(childNode.type == catFunction) {
+        initFunctionScopes(childNode, codeScope.get(childNode.caption), false);
       } else if(childNode.type == catIf) {
-        processCode(childNode.getChild(catCondition), scope);
-        processCode(childNode.getChild(catCode), scope);
-      } else if(childNode.type == catIfElse) {
-        processCode(childNode.getChild(catCondition), scope);
-        processCode(childNode.getChild(catCode), scope);
-        processCode(childNode.getChild(catCodeElse), scope);
+        initCodeScopes(childNode.findChild(catCode), codeScope);
+        initCodeScopes(childNode.findChild(catElse), codeScope);
+      } else if(childNode.type == catFor || childNode.type == catForEach) {
+        initCodeScopes(childNode.findChild(catCode), codeScope);
+      }
+    }
+  }
+  
+  void initClassScopes(Node classNode, Scope classScope){
+    for(Node child : classNode.children) {
+      if(child.type == catConstructor) {
+        initFunctionScopes(child, classScope.get(child.caption), true);
+      } else if(child.type == catMethod) {
+        initFunctionScopes(child, classScope.get(child.caption), false);
+      } else if(child.type == catField) {
+        Scope fieldScope = classScope.get(child.caption);
+        Node typeNode = child.findChild(catType);
+        if(typeNode != null) {
+          Scope typeScope = classScope.findVariable(typeNode.caption);
+          if(typeScope == null) error("Class " + typeNode.caption
+              + " is not found.");
+          if(typeScope.parentClass == null) error(typeNode.caption
+              + " is not a class.");
+          fieldScope.type = typeScope;
+        }
+      }
+    }
+  }
+  
+  void initFunctionScopes(Node funcNode, Scope funcScope, boolean isConstructor) {
+    Node codeNode = funcNode.findChild(catCode);
+    for(Node param : funcNode.children) {
+      if(param.type == catParameter && param.findChild(catThis) == null)
+        funcScope.get(param.caption);
+    }
+    initCodeScopes(codeNode, funcScope, false);
+  }
+  
+  
+
+  void setCodeTypes(Node node, Scope scope) {
+    setCodeTypes(node, scope, true);
+  }
+  
+  void setCodeTypes(Node codeNode, Scope codeScope, boolean newScopeForVar) {
+    if(codeNode == null) return;
+    for(Node childNode : codeNode.children) {
+      if(childNode.type == catClass) {
+        setClassTypes(childNode, codeScope.get(childNode.caption, cClass));
+      } else if(childNode.type == catFunction) {
+        setFunctionTypes(childNode, codeScope.get(childNode.caption), false);
+      } else if(childNode.type == catEquate) {
+        Node varNode = childNode.first();
+        if(varNode.type == catVariable) {
+          if(!varNode.hasChild(catThis)) {
+            Scope varScope = codeScope.findVariable(varNode.caption);
+            if(varScope == null) {
+              codeScope = new Scope("", codeScope, null);
+              varScope = codeScope.get(varNode.caption);
+            }
+            varScope.setInit(varNode, childNode.last(), codeScope);
+          }
+        }
+      } else if(childNode.type == catReturn) {
+        codeScope.setInit(codeNode.parent, childNode.first(), codeScope);
+      } else if(childNode.type == catIf) {
+        Scope ifScope = new Scope(codeScope);
+        setCodeTypes(childNode.findChild(catCode), ifScope);
+        setCodeTypes(childNode.findChild(catElse), ifScope);
       } else if(childNode.type == catFor) {
-        processCode(childNode.getChild(catInit), scope);
-        processCode(childNode.getChild(catCondition), scope);
-        processCode(childNode.getChild(catIteration), scope);
-        processCode(childNode.getChild(catCode), scope);
-      } else if(childNode.type == catForEach) {
-        processCode(childNode.getChild(catCode), scope);
+        Scope forScope = new Scope(codeScope);
+        setCodeTypes(childNode.findChild(catInit), forScope, false);
+        setCodeTypes(childNode.findChild(catIteration), forScope);
+        setCodeTypes(childNode.findChild(catCode), forScope);
       }
     }
   }
 
-  void processClass(Node node, Scope cl, Scope parentScope) {
-    for(Node childNode : node.children) {
-      if(childNode.type == catConstructor) {
-        processFunction(childNode, cl.get(childNode.caption, true, false), cl, true);
-      } else if(childNode.type == catMethod) {
-        processFunction(childNode, cl.get(childNode.caption, true, false), cl, false);
-      } else if(childNode.type == catEntry) {
-        cl.get(childNode.first().caption, true, false)
-            .addLink(cl.get(childNode.last()));
+  void setClassTypes(Node classNode, Scope classScope) {
+    for(Node child : classNode.children) {
+      if(child.type == catConstructor) {
+        setFunctionTypes(child, classScope.get(child.caption), true);
+      } else if(child.type == catMethod) {
+        setFunctionTypes(child, classScope.get(child.caption), false);
+      } else if(child.type == catField) {
+        Node valueNode = child.findChild(catDefault);
+        if(valueNode != null) classScope.get(child.caption).setInit(child
+            , valueNode.first(), classScope);
       }
     }
+  }
+  
+  void setFunctionTypes(Node funcNode, Scope funcScope, boolean isConstructor) {
+    Node codeNode = funcNode.findChild(catCode);
+    for(Node param : funcNode.children) {
+      if(param.type == catParameter) {
+        if(!param.hasChild(catThis)) {
+          Node defaultNode = param.findChild(catDefault);
+          if(defaultNode != null) funcScope.get(param.caption).setInit(param
+              , defaultNode, funcScope.parent);
+        }
+      }
+    }
+    setCodeTypes(codeNode, funcScope);
+  }
+  
+  
+  HashMap<String, String> typeSwitch = new HashMap<>();
+  Node mainCodeNode, mainClassNode;
+  
+  void process(Node node) {
+    mainCodeNode = new Node(catCode);
+    mainClassNode = new Node(catClass, "Main", new Node(catMethod, "main"
+        , new Node(catParameter, "args", new Node(catType, "String[]"))
+        , new Node(catType, "void"), new Node(catStatic), mainCodeNode));
+    processNode(node);
+    
+    LinkedList<Node> toClass = new LinkedList<>();
+    LinkedList<Node> toMethod = new LinkedList<>();
+    for(Node child : node.children) {
+      if(child.type == catClass) {
+        processClass(child);
+        toClass.add(child);
+      } else {
+        toMethod.add(child);
+      }
+    }
+    for(Node child : toMethod) child.moveTo(mainCodeNode);
+    for(Node child : toClass) child.moveTo(mainClassNode);
+    
+    node.add(mainClassNode);
+  }
+  
+  void processCode(Node codeNode) {
+    for(Node child : codeNode.children) {
+      if(child.type == catClass) processClass(child);
+    }
+  }
+  
+  void processClass(Node classNode) {
+    for(Node child : classNode.children) {
+      if(child.type == catConstructor) {
+        child.caption = classNode.caption;
+        LinkedList<Node> codeLines = child.findChild(catCode).children;
+        for(Node param : child.children) {
+          if(param.type == catParameter && param.hasChild(catThis)) {
+            String caption = param.caption;
+            int index = 0;
+            for(Node field : classNode.children) {
+              if(field.caption.equals(caption)) {
+                param.getChild(catType).caption = field.getChild(catType).caption;
+                param.removeChild(catThis);
+                codeLines.add(index, new Node(catEquate, "", new Node(
+                    catVariable, caption, new Node(catThis)), new Node(
+                    catVariable, caption)));
+                index++;
+              }
+            }
+          }
+        }
+      } else if(child.type == catMethod) {
+        if(!child.hasChild(catType)) child.getChild(catType).caption = "void";
+      }
+    }
+  }
+    
+  void processNode(Node node) {
+    Node typeNode = node.findChild(catType);
+    if(typeNode != null) {
+      String newType = typeSwitch.get(typeNode.caption);
+      if(newType != null) typeNode.caption = newType;
+    }
+    if(node.hasChild(catGlobal)) {
+      mainClassNode.add(new Node(catField, node.caption, new Node(catType
+          , node.findChild(catType).caption), new Node(catStatic)));
+      node.removeChild(catType);
+    }
+    if(node.type == catFunctionCall) {
+      Node callNode = node.first();
+      if(callNode.caption.equals("print")) callNode.caption = "System.out.println";
+    }
+    for(Node child : node.children) processNode(child);
+  }
+  
+  public static void error(String message) {
+    Base.error("Processing error", message);
   }
 }

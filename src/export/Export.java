@@ -68,13 +68,8 @@ public class Export extends Base {
             pos++;
             if(line.charAt(pos) != '(') exportingCodeError("( expected");
           case '(':
-            pos++;
-            stringStart = pos;
-            while(pos < line.length() - 1) {
-              if(line.charAt(pos) == ')') break;
-              pos++;
-            }
-            
+            stringStart = pos + 1;
+            pos = line.indexOf(')', stringStart);
             String str = line.substring(stringStart, pos);
             if(c == 'c') {
               String[] parts = str.split(",");
@@ -92,6 +87,14 @@ public class Export extends Base {
                 seq.appendChunk(new ChunkChild(childSymbol));
               }
             }
+            break;
+          case '?':
+            stringStart = pos + 1;
+            int bracket = line.indexOf('[', stringStart);
+            pos = line.indexOf(']', bracket);
+            seq.appendChunk(new ChunkExists(rules.categories.get(
+                line.substring(stringStart, bracket))
+                , getChunkSequence(line.substring(bracket + 1, pos))));
             break;
           default:
             c = line.charAt(pos);

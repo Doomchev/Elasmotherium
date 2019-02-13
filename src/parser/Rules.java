@@ -252,25 +252,28 @@ public class Rules extends ParserBase {
     return fillStructure(null);
   }
   
-  private void setNodeParam(Node node, int tokStart) {
-    if(tokStart < 0 || tokStart >= pos - 1) return;
-    if(node.type == null) {
-      node.type = getCategory(strucString.substring(tokStart, pos - 1));
+  private Node setNodeParam(Node node, int tokStart) {
+    if(tokStart < 0 || tokStart >= pos - 1) return node;
+    String string = strucString.substring(tokStart, pos - 1);
+    if(string.isEmpty()) return node;
+    if(node == null) {
+      return new Node(getCategory(string));
     } else if(node.caption.isEmpty()) {
-      node.caption = strucString.substring(tokStart, pos - 1);
+      node.caption = string;
     }
+    return node;
   }
   
   private Node fillStructure(Node parent) {
     int tokStart = pos;
-    Node node = new Node(null);
+    Node node = null;
     while(true) {
       if(pos >= strucString.length()) error("Unexpected end of structure");
       char c = strucString.charAt(pos);
       pos++;
       switch(c) {
         case '\\':
-          if(node.type == null) {
+          if(node == null) {
             node = new StoredNode(readNum());
           } else {
             node = new StoredNodeValue(readNum(), node.type);
@@ -278,26 +281,27 @@ public class Rules extends ParserBase {
           tokStart = -1;
           break;
         case ':':
-          if(node.type != null || tokStart < 0) error("Unexpected :");
-          setNodeParam(node, tokStart);
+          if(node != null || tokStart < 0) error("Unexpected :");
+          node = setNodeParam(node, tokStart);
           tokStart = pos;
           break;
         case ',':
           if(parent == null) {
             error("Unexpected comma");
-          } else {
+          } else if(node != null) {
             parent.add(node);
+            setNodeParam(node, tokStart);
+            node = null;
           }
-          setNodeParam(node, tokStart);
-          node = new Node(null);
           tokStart = pos;
           break;
         case ']':
-          setNodeParam(node, tokStart);
-          if(parent != null) parent.add(node);
+          node = setNodeParam(node, tokStart);
+          if(parent != null && node != null) parent.add(node);
           return node;
         case '[':
-          setNodeParam(node, tokStart);
+          node = setNodeParam(node, tokStart);
+          if(node == null) error("Unexpected [");
           fillStructure(node);
           tokStart = pos;
           break;

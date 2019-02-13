@@ -44,6 +44,29 @@ public class Node extends ParserBase {
     node.parent = this;
     return node;
   }
+
+  public boolean hasChild(Category type) {
+    return findChild(type) != null;
+  }
+
+  public Node findChild(Category type) {
+    for(Node child : children) if(child.type == type) return child;
+    return null;
+  }
+  
+  public Node getChild(Category type) {
+    Node child = findChild(type);
+    return child == null ? add(new Node(type)) : child;
+  }
+  
+  public void removeChild(Category type) {
+    children.remove(findChild(type));
+  }
+  
+  public void moveTo(Node node) {
+    parent.children.remove(this);
+    node.add(this);
+  }
   
   public void log(String spaces) {
     System.out.println(spaces + (type == null ? "" : type.name) + ": " + caption);
@@ -65,11 +88,6 @@ public class Node extends ParserBase {
     }
     return (type == null ? "null" : type.name) + (caption.isEmpty() ? "" : ":"
         + caption) + (str.isEmpty() ? "" : "[" + str + "]");
-  }
-
-  Node getChild(Category type) {
-    for(Node child : children) if(child.type == type) return child;
-    return null;
   }
   
   public static void error(String message) {
