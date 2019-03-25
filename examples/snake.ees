@@ -54,7 +54,7 @@ Directions extends Enum<DxDy> {
 	}
 }
 
-tailDxDyFromTile = Map<DxDy, Map<Int, DxDy>> {
+Map<DxDy, Map<Int, DxDy>> tailDxDyFromTile = {
 	left: {
 		horizontal: left
 		leftUp: up
@@ -77,7 +77,7 @@ tailDxDyFromTile = Map<DxDy, Map<Int, DxDy>> {
 	}
 }
 
-bodyTile = Map<DxDy, Map<DxDy, Int>> {
+Map<DxDy, Map<DxDy, Int>> bodyTile = {
 	left: {
 		left: horizontal
 		right: horizontal
@@ -105,7 +105,7 @@ bodyTile = Map<DxDy, Map<DxDy, Int>> {
 }
 
 
-keyDxDy = Map<Key, DxDy> {
+Map<Key, DxDy> keyDxDy = {
 	A: left
 	D: right
 	W: up
@@ -163,7 +163,7 @@ placeApple() {
 game = Hidden.Window("Game") {
 	canvas: MaxIntScaled.Canvas(field)
 	object: Column {
-		Center.Text("Score: \score\")
+		Center.Text("Score: \(score)")
 		$canvas
 	}
 	logicPerSecond: 6

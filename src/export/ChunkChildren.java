@@ -4,11 +4,11 @@ import parser.Category;
 import parser.structure.Node;
 
 public class ChunkChildren extends Chunk {
-  private final Category type;
+  private final Category category;
   private final Chunk delimiter;
 
-  public ChunkChildren(Category type, Chunk delimiter) {
-    this.type = type;
+  public ChunkChildren(Category category, Chunk delimiter) {
+    this.category = category;
     this.delimiter = delimiter;
   }
   
@@ -16,7 +16,7 @@ public class ChunkChildren extends Chunk {
   public String toString(Node node) {
     String str = "";
     for(Node childNode : node.children) {
-      if(childNode.type == type || type == null) {
+      if(childNode.category == category || category == null) {
         if(!str.isEmpty()) {
           Chunk chunk = delimiter;
           while(chunk != null) {

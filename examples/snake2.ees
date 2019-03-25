@@ -24,9 +24,7 @@ options = Window {
 			for(y = 0 ..< height) field[0, y] = field[width - 1, y] = wall
 			placeApple()
 			
-			global score = 0
-			global x = y = 2
-			global dx = 1, dy = 0
+			global score = 0, x = y = 2, dx = 1, dy = 0
 			first = last = Pos(x, y)
 			
 			game.open()

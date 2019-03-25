@@ -10,7 +10,6 @@ public class ParserBase extends Base {
   public static String prefix, path;
   public static int tokenStart, textPos, textLength, lineStart;
   public static char currentChar;
-  public static final boolean log = false;
   public static ParserScope currentParserScope;
   public static final Stack<ParserScope> parserScopes = new Stack<>();
   

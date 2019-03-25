@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import static parser.ParserBase.log;
 import static parser.ParserBase.currentParserScope;
 
-public class ActionSwitchType extends ActionSwitch {
+public class ActionSwitchCategory extends ActionSwitch {
   private static class Entry {
     private final Category category;
     private final Action action;
@@ -19,7 +19,7 @@ public class ActionSwitchType extends ActionSwitch {
   public Action defaultAction;
   private final int index;
 
-  public ActionSwitchType(int index) {
+  public ActionSwitchCategory(int index) {
     this.index = index;
   }
 
@@ -40,10 +40,10 @@ public class ActionSwitchType extends ActionSwitch {
 
   @Override
   public Action execute() {
-    Category type = currentParserScope.variables[index].type;
+    Category category = currentParserScope.variables[index].category;
     for(Entry entry : entries) {
-      if(entry.category == type) {
-        if(log) log("SWITCH TO " + type.name);
+      if(entry.category == category) {
+        if(log) log("SWITCH TO " + category.name);
         return entry.action;
       }
     }

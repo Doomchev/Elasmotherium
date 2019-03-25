@@ -21,12 +21,12 @@ public class ActionProcess extends Action {
     if(log) log("PROCESS " + listNode.toString());
     if(listNode.children.isEmpty()) return nextAction;
     for(Node node : listNode.children) {
-      Category type = node.type;
-      if(type.priority == 0 || !node.children.isEmpty()) {
+      Category category = node.category;
+      if(category.priority == 0 || !node.children.isEmpty()) {
         valueStack.push(node);
       } else {
         while(!opStack.empty()) {
-          if(opStack.lastElement().type.priority >= type.priority) {
+          if(opStack.lastElement().category.priority >= category.priority) {
             popOp();
           } else {
             break;
@@ -45,7 +45,7 @@ public class ActionProcess extends Action {
     if(valueStack.size() != 1) actionError("Syntax error");
     Node value = valueStack.pop();
     listNode.children = value.children;
-    listNode.type = value.type;
+    listNode.category = value.category;
     listNode.caption = value.caption;
     
     return nextAction;
@@ -54,7 +54,7 @@ public class ActionProcess extends Action {
   private void popOp() {
     Node op = opStack.pop();
     if(valueStack.size() < 2) actionError("Syntax error");
-    if(op.type == rules.cElse) {
+    if(op.category == rules.cElse) {
       Node value = valueStack.pop();
       valueStack.peek().children.add(value);
     } else {

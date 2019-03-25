@@ -170,7 +170,7 @@ public class Rules extends ParserBase {
         case "SWITCH":
           if(switchAction == null) switchAction = new ActionSwitchToken(intParam);
         case "SWITCHTYPE":
-          if(switchAction == null) switchAction = new ActionSwitchType(intParam);
+          if(switchAction == null) switchAction = new ActionSwitchCategory(intParam);
           
           String line;
           Action back = new ActionGoToAction(switchAction);
@@ -276,7 +276,7 @@ public class Rules extends ParserBase {
           if(node == null) {
             node = new StoredNode(readNum());
           } else {
-            node = new StoredNodeValue(readNum(), node.type);
+            node = new StoredNodeValue(readNum(), node.category);
           }
           tokStart = -1;
           break;

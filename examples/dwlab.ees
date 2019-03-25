@@ -1,5 +1,5 @@
 Color extends Int32 {
-	Int(0..255) r, g, b, alpha
+	Int r, g, b, alpha
 	($r, $g = $r, $b = $r, $alpha = 255)
 }
 

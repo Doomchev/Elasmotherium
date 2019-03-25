@@ -4,17 +4,17 @@ import parser.Category;
 import parser.structure.Node;
 
 public class ChunkExists extends Chunk {
-  Category childNodeType;
+  Category childNodeCategory;
   Chunk firstChunk;
 
-  public ChunkExists(Category childNodeType, Chunk firstChunk) {
-    this.childNodeType = childNodeType;
+  public ChunkExists(Category childNodeCategory, Chunk firstChunk) {
+    this.childNodeCategory = childNodeCategory;
     this.firstChunk = firstChunk;
   }
   
   @Override
   public String toString(Node node) {
-    if(node.hasChild(childNodeType)) {
+    if(node.hasChild(childNodeCategory)) {
       String str = "";
       Chunk chunk = firstChunk;
       while(chunk != null) {

@@ -92,7 +92,7 @@ public class Export extends Base {
             stringStart = pos + 1;
             int bracket = line.indexOf('[', stringStart);
             pos = line.indexOf(']', bracket);
-            seq.appendChunk(new ChunkExists(rules.categories.get(
+            seq.appendChunk(new ChunkExists(rules.getCategory(
                 line.substring(stringStart, bracket))
                 , getChunkSequence(line.substring(bracket + 1, pos))));
             break;
@@ -145,7 +145,7 @@ public class Export extends Base {
   
   public String exportNode(Node node) {
     Chunk.export = this;
-    Chunk chunk = forms.get(node.type);
+    Chunk chunk = forms.get(node.category);
     if(chunk == null) chunk = defaultForm;
     String str = "";
     while(chunk != null) {

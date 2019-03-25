@@ -4,16 +4,16 @@ import parser.Category;
 import parser.structure.Node;
 
 public class ChunkChild extends Chunk {
-  private final Category type;
+  private final Category category;
 
-  public ChunkChild(Category type) {
-    this.type = type;
+  public ChunkChild(Category category) {
+    this.category = category;
   }
   
   @Override
   public String toString(Node node) {
     for(Node childNode : node.children) {
-      if(childNode.type == type) return export.exportNode(childNode);
+      if(childNode.category == category) return export.exportNode(childNode);
     }
     return node.caption;
   }

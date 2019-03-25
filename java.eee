@@ -1,11 +1,12 @@
 comma=, 
 plus= + 
-end=;\n\i
 codeBlock=
+newl=\n\i
+end=;\n\i
 comma2=,\n\i
 
 *:\c(*)
-root:\c(*,end);
+root:\c(*,end)
 
 code:{\+\n\i\c(*,end);\-\n\i}
 else:{\+\n\i\c(*,end);\-\n\i}
@@ -14,7 +15,7 @@ function:\type \x(\c(parameter,comma)) \(code)
 functionCall:\0(\1)
 new:new \0(\1)
 parameters:\c(*,comma)
-parameter:\?type[\(type) ]\x\?default[ = \(default)]
+parameter:\?type[\(type) ]\x
 this:this
 name:\x
 
@@ -31,10 +32,11 @@ return_null:return
 break:break
 end:end
 
-variable:\?type[\(type) ]\?this[this.]\x
+variable:\?type[\(type) ]\?this[this.]\x\?subtype[<\c(subtype,comma)>]\?get[()]
 integer:\x
 decimal:\x
-type:\x
+type:\x\?subtype[<\c(subtype,comma)>]
+subtype:\x\?subtype[<\c(subtype,comma)>]
 
 stringSequence:\c(*,plus)
 string:"\x"
@@ -42,11 +44,12 @@ string:"\x"
 array:new Object[]{\c(*,comma)}
 
 object:{\+\n\i\c(*,comma2)\-\n\i}
-entry:public \0 = \1
-method:public \?static[static ]\(type) \x(\c(parameter,comma)) \(code)
-constructor:public \x(\c(parameter,comma)) \(code)
-class:public static class \x {\+\n\i\c(*,end)\-\n\i}
-field:\?static[static ]\(type) \x\?default[ = \(default)]
+entry:\0 = \1
+method:\?public[public ]\?static[static ]\(type) \x(\c(parameter,comma)) \(code)
+constructor:\x(\c(parameter,comma)) \(code)
+class:class \x {\+\n\i\c(*,newl)\-\n\i}
+field:\?static[static ]\(type) \x\?default[ = \(default)]\?get[\(get)];
+get:() \(code)
 
 equate:\?type[\(type) ]\0 = \1
 add:\0 += \1

@@ -1,17 +1,17 @@
 Player {
-	($firstName, $lastName, $age) {
-		global lastPlayerName = $firstName + " " + $lastName
-	}
+	($firstName, $lastName, $age) {}
 	String firstName, lastName
 	age = 18
 	incrementAge() {
 		$age++
 	}
-	description(String description) -> "\($firstName) \($lastName), \($age) years old, is \(description)"
+	get description -> "\($firstName) \($lastName), \($age) years old"
 }
 
 description = "looking around"
 player = Player("John", "Smith", 36)
 player.incrementAge()
-print(player.description(description))
-print(lastPlayerName)
+print(player.description)
+
+//List<String> list = ["one", "two", "three"]
+//print(list.first())

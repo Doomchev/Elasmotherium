@@ -8,27 +8,32 @@ import parser.ParserBase;
 
 public class Node extends ParserBase {
   public Node parent;
-  public Category type;
+  public Category category;
   public String caption;
+  public Structure structure;
   public LinkedList<Node> children = new LinkedList<>();
 
-  public Node(Category type, String caption, Node... nodes) {
-    this.type = type;
+  public Node(Category category, String caption, Node... nodes) {
+    this.category = category;
     this.caption = caption;
     this.children.addAll(Arrays.asList(nodes));
   }
   
-  public Node(Category type, Node... nodes) {
-    this(type, "", nodes);
+  public Node(Category category, Node... nodes) {
+    this(category, "", nodes);
   }
   
-  public Node(Category type, String caption) {
-    this.type = type;
+  public Node(Category category, String caption) {
+    this.category = category;
     this.caption = caption;
   }
   
-  public Node(Category type) {
-    this(type, "");
+  public Node(Category category) {
+    this(category, "");
+  }
+  
+  public Scope getScope() {
+    return structure == null ? null : structure.toFunction();
   }
   
   public Node first() {
@@ -45,22 +50,22 @@ public class Node extends ParserBase {
     return node;
   }
 
-  public boolean hasChild(Category type) {
-    return findChild(type) != null;
+  public boolean hasChild(Category category) {
+    return findChild(category) != null;
   }
 
-  public Node findChild(Category type) {
-    for(Node child : children) if(child.type == type) return child;
+  public Node findChild(Category category) {
+    for(Node child : children) if(child.category == category) return child;
     return null;
   }
   
-  public Node getChild(Category type) {
-    Node child = findChild(type);
-    return child == null ? add(new Node(type)) : child;
+  public Node getChild(Category category) {
+    Node child = findChild(category);
+    return child == null ? add(new Node(category)) : child;
   }
   
-  public void removeChild(Category type) {
-    children.remove(findChild(type));
+  public void removeChild(Category category) {
+    children.remove(findChild(category));
   }
   
   public void moveTo(Node node) {
@@ -69,12 +74,13 @@ public class Node extends ParserBase {
   }
   
   public void log(String spaces) {
-    System.out.println(spaces + (type == null ? "" : type.name) + ": " + caption);
+    System.out.println(spaces + (category == null ? "" : category.name) + ": "
+        + caption + (structure == null ? "" : " <" + structure.toPath() + ">"));
     for(Node child : children) child.log(spaces + " ");    
   }
   
   public Node resolve() {
-    Node node = new Node(type, caption);
+    Node node = new Node(category, caption);
     for(Node child : children) node.add(child.resolve());
     return node;
   }
@@ -86,7 +92,7 @@ public class Node extends ParserBase {
       if(!str.isEmpty()) str += ",";
       str += child.toString();
     }
-    return (type == null ? "null" : type.name) + (caption.isEmpty() ? "" : ":"
+    return (category == null ? "null" : category.name) + (caption.isEmpty() ? "" : ":"
         + caption) + (str.isEmpty() ? "" : "[" + str + "]");
   }
   

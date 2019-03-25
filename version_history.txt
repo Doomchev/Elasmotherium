@@ -1,6 +1,20 @@
+2019.03.25 (version 0.10)
+	+ EEPC: abstract methods
+	+ EEPC: native classes and functions (will be skipped during export)
+	+ SPE: generic subtypes
+	* SPE: native class replacement
+	* EEPC: generic subtypes
+	
+2019.03.13 (version 0.9)
+	+ EEPC: generic subtypes
+	+ EEPC, SPE, JEC: getters
+	+ EEPC: // and /* */ comments
+	+ EEPC: "extends" keyword
+	* Separate classes for field structure, function scope and class scope
+
 2019.02.13 (version 0.8)
 	+ Type inference engine (TEE)
-	+ Java node processing engine (JNPE)
+	+ Structure processing engine (SPE)
 	+ Java export code (JEC)
 	+ EEPC: "global" keyword
 

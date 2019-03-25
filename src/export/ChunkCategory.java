@@ -2,9 +2,9 @@ package export;
 
 import parser.structure.Node;
 
-public class ChunkType extends Chunk {
+public class ChunkCategory extends Chunk {
   @Override
   public String toString(Node node) {
-    return node.type.name;
+    return node.category.name;
   }
 }
