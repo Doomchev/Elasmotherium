@@ -1,29 +1,16 @@
 package parser;
 
 import base.Base;
-import parser.structure.Node;
 import java.util.Stack;
 import static base.Module.lineNum;
+import java.util.List;
 
 public class ParserBase extends Base {
   public static StringBuffer text;
   public static String prefix, path;
   public static int tokenStart, textPos, textLength, lineStart;
   public static char currentChar;
-  public static ParserScope currentParserScope;
-  public static final Stack<ParserScope> parserScopes = new Stack<>();
-  
-  public static class ParserScope {
-    public Category category;
-    public ActionSub sub;
-    public int returnIndex;
-    public Node variables[] = new Node[6];
-
-    public ParserScope(Category category, ActionSub sub) {
-      this.category = category;
-      this.sub = sub;
-    }
-  }
+  public static final Stack<ActionSub> returnStack = new Stack<>();
   
   public static Stack<Include> includes = new Stack<>();
   public static class Include {
@@ -67,7 +54,20 @@ public class ParserBase extends Base {
   }
   
   public static void error(String message) {
-    error("Parsing code error", currentFileName + " (" + lineNum + ")\n"
+    if(Action.currentAction != null) {
+      Action.currentAction.actionError(message);
+    } else {
+      error("Parsing code error", currentFileName + " (" + lineNum + ")\n"
         + message);
+    }
+  }
+  
+  public static String listToString(List<? extends Object> list) {
+    String str = "";
+    for(Object object : list) {
+      if(!str.isEmpty()) str += ", ";
+      str += object.toString();
+    }
+    return str;
   }
 }

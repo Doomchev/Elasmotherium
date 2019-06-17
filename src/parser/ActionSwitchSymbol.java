@@ -23,14 +23,12 @@ public class ActionSwitchSymbol extends ActionSwitch {
   public Action execute() {
     if(textPos >= textLength) {
       currentChar = 129;
+      if(log) log("SWITCH TO END");
     } else {
       currentChar = text.charAt(textPos);
+      if(log) log("SWITCH TO " + currentChar);
       currentChar = currentChar < 128 ? currentChar : 128;
     }
-    if(log) log("SWITCH TO " + currentChar);
-    Action currentAction = action[currentChar];
-    if(currentAction == null) actionError("Unexpected symbol for "
-        + currentParserScope.category.name);
-    return currentAction;
+    return action[currentChar];
   }
 }

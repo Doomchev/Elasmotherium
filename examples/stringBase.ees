@@ -1,0 +1,74 @@
+AbstractStringBase<StringType extends String, bits, hashSize> {
+	always(0 > bits >= 32 && hashSize >= bits && hashSize % bits == 0)
+
+	_Entry {
+		Int step, pos
+		getEntry(Int hash)
+		getValue()
+	}
+	_Table extends _Entry {
+		($step, $pos)
+		entries = List<_Entry>(_tableSize)
+		getEntry(Int hash) {
+			return entries[hash]
+		}
+	}
+	_Value extends _Entry {
+		StringType value
+		($value, $step, $pos)
+		getEntry(Int hash) {
+			return this
+		}
+		getValue() {
+			return value
+		}
+	}
+	
+	_tableSize = 2 ^ bits
+	_mask = _tableSize - 1
+	_steps = hashSize / bits
+	_root = null
+	
+	(StringType string) {
+		if(!$_root) {
+			_root = Value(string, 0, 0)
+			return _root;
+		}
+		
+		step = 0
+		pos = -1
+		Int value, prevHash
+		Entry entry = root, parent = null
+		do {
+			Int hash
+			nextStep(string, pos, step, hash)
+			newEntry = entry.getEntry(hash)
+			if(newEntry == entry) {
+				if(entry.equals(string)) {
+					return entry
+				} else {
+					table = Table(step, pos)
+					parent.setEntry(prevHash, table)
+					nextStep(string, pos, step, hash)
+					
+				}
+			} else if(newEntry) {
+			} else {
+			}
+		}
+		return root.getValue()
+	}
+	inline nextStep(string, pos, step, hash) {
+		if(step == 0) {
+			pos++
+			value = string[pos]
+		}
+		hash = value & $_mask
+		step = (step + 1) % $_steps
+		value = value << bits
+	}
+}
+
+StringBase<StringType extends AString, bits = 4> extends AbstractStringBase<StringType, bits, 8)
+
+UStringBase<bits = 4> extends AbstractStringBase<UString, bits, 16)

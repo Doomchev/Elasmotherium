@@ -1,24 +1,26 @@
 package export;
 
-import parser.Category;
-import parser.structure.Node;
+import parser.structure.Entity;
+import parser.structure.ID;
 
 public class ChunkExists extends Chunk {
-  Category childNodeCategory;
+  ID id;
   Chunk firstChunk;
+  boolean condition;
 
-  public ChunkExists(Category childNodeCategory, Chunk firstChunk) {
-    this.childNodeCategory = childNodeCategory;
+  public ChunkExists(ID id, Chunk firstChunk, boolean condition) {
+    this.id = id;
     this.firstChunk = firstChunk;
+    this.condition = condition;
   }
   
   @Override
-  public String toString(Node node) {
-    if(node.hasChild(childNodeCategory)) {
+  public String toString(Entity entity) {
+    if(entity.hasChild(id) == condition) {
       String str = "";
       Chunk chunk = firstChunk;
       while(chunk != null) {
-        str += chunk.toString(node);
+        str += chunk.toString(entity);
         chunk = chunk.nextChunk;
       }
       return str;

@@ -6,16 +6,16 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
-import parser.Category;
-import parser.structure.Node;
 import parser.Rules;
+import parser.structure.ClassEntity;
+import parser.structure.Entity;
+import parser.structure.ID;
 
 public class Export extends Base {
   public Rules rules;
   
   public final HashMap<String, String> constants = new HashMap<>();
-  public final HashMap<Category, Chunk> forms = new HashMap<>();
-  public Chunk defaultForm;
+  public final HashMap<ID, Chunk> forms = new HashMap<>();
 
   public Export(Rules rules) {
     this.rules = rules;
@@ -45,6 +45,7 @@ public class Export extends Base {
             line.substring(stringStart, pos)));
         pos++;
         c = line.charAt(pos);
+        boolean condition = true;
         switch(c) {
           case 'n':
             seq.appendChunk(new ChunkString("\n"));
@@ -66,40 +67,52 @@ public class Export extends Base {
             break;
           case 'c':
             pos++;
-            if(line.charAt(pos) != '(') exportingCodeError("( expected");
+            if(line.charAt(pos) != '(') error("( expected");
           case '(':
             stringStart = pos + 1;
             pos = line.indexOf(')', stringStart);
             String str = line.substring(stringStart, pos);
             if(c == 'c') {
-              String[] parts = str.split(",");
-              seq.appendChunk(new ChunkChildren(parts[0].equals("*") ? null 
-                  : rules.categories.get(parts[0]), parts.length < 2 ? null
-                  : getChunkSequence(constants.get(parts[1]))));
+              String[] param = str.split(":");
+              Chunk chunk = param[0].isEmpty() ? null
+                  : getChunkSequence(constants.get(param[0]));
+              seq.appendChunk(new ChunkChildren(chunk, param.length == 1 ? null
+                  : ID.get(param[1])));
             } else {
               String txt = constants.get(str);
               if(txt != null) {
                 seq.appendChunk(getChunkSequence(txt));
               } else {
-                Category childSymbol = rules.categories.get(str);
-                if(childSymbol == null) exportingCodeError(
-                    "Category or constant \"" + str + "\" is not found");
-                seq.appendChunk(new ChunkChild(childSymbol));
+                String[] param = str.split(":");
+                seq.appendChunk(new ChunkChild(ID.get(param[0])
+                    , param.length == 1 ? null : ID.get(param[1])));
               }
             }
             break;
+          case '!':
+            condition = false;
           case '?':
             stringStart = pos + 1;
-            int bracket = line.indexOf('[', stringStart);
-            pos = line.indexOf(']', bracket);
-            seq.appendChunk(new ChunkExists(rules.getCategory(
-                line.substring(stringStart, bracket))
-                , getChunkSequence(line.substring(bracket + 1, pos))));
+            int bracket = line.indexOf('[', stringStart), depth = 0;
+            pos = bracket + 1;
+            while(true) {
+              if(line.charAt(pos) == '[') {
+                depth++;
+              } else if(line.charAt(pos) == ']') {
+                if(depth == 0) break;
+                depth--;
+              }
+              pos++;
+              if(pos >= line.length()) error("Brackets error.");
+            }
+            seq.appendChunk(new ChunkExists(ID.get(line.substring(stringStart
+                , bracket)), getChunkSequence(line.substring(bracket + 1, pos))
+                , condition));
             break;
           default:
             c = line.charAt(pos);
             if(c < '0' || c > '9')
-              exportingCodeError("Invalid escape sequence");
+              error("Invalid escape sequence");
             seq.appendChunk(new ChunkChildAtIndex(Integer.parseInt("" + c)));
         }
         stringStart = pos + 1;
@@ -127,11 +140,7 @@ public class Export extends Base {
         } else {
           Chunk chunk = getChunkSequence(line.substring(colonPos + 1));
           String name = line.substring(0, colonPos).trim();
-          if(name.equals("*")) {
-            defaultForm = chunk;
-          } else {
-            forms.put(rules.getCategory(name), chunk);
-          }
+          forms.put(ID.get(name), chunk);
         }
       }
     } catch (FileNotFoundException ex) {
@@ -143,19 +152,42 @@ public class Export extends Base {
     return this;
   }
   
-  public String exportNode(Node node) {
-    Chunk.export = this;
-    Chunk chunk = forms.get(node.category);
-    if(chunk == null) chunk = defaultForm;
-    String str = "";
-    while(chunk != null) {
-      str += chunk.toString(node);
-      chunk = chunk.nextChunk;
-    }
-    return str;
+  public String exportEntity(Entity entity) {
+    ID id = entity.getFormId();
+    Chunk chunk = forms.get(id);
+    if(chunk == null) error(id + " is not defined");
+    return exportEntity(entity, chunk);
   }
   
-  public static void exportingCodeError(String message) {
+  public String exportEntity(Entity entity, ID postfix) {
+    ID id = entity.getFormId();
+    ID postfixId = postfix == null ? id : ID.get(id.string + "_" + postfix.string);
+    Chunk chunk = forms.get(postfixId);
+    if(chunk == null) chunk = forms.get(id);
+    if(chunk == null) error(id + " is not defined");
+    return exportEntity(entity, chunk);
+  }
+
+  private String exportEntity(Entity entity, Chunk chunk) {
+    if(entity == null) return "";
+    Chunk.export = this;
+    String str = "";
+    while(chunk != null) {
+      str += chunk.toString(entity);
+      chunk = chunk.nextChunk;
+    }
+    //System.out.println(str);
+    return str;
+  }
+
+  public void log() {
+    for(ClassEntity classEntity : ClassEntity.all.values()) {
+      if(classEntity.isNative) continue;
+      System.out.println("\n" + exportEntity(classEntity));
+    }
+  }
+  
+  public static void error(String message) {
     error("Exporting code error in " + currentFileName, message + " at line "
         + lineNum);
   }

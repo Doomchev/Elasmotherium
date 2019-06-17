@@ -5,13 +5,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import parser.Rules;
-import parser.structure.Node;
-import parser.structure.NodeProcessor;
 
 public class Main {
   static final Rules rules = new Rules().load("standard.eep");
   static final Export export = new Export(rules).load("java.eee");
-  static final NodeProcessor processor = new NodeProcessor(rules);
+  //static final NodeProcessor processor = new NodeProcessor(rules);
   
   public static void main(String[] args) throws IOException {
     processFolder("src/examples", "examples");
@@ -25,18 +23,18 @@ public class Main {
       } else if(file.getName().endsWith(".ees")) {
         
         Module module = Module.read(file.getPath(), rules);
-        processor.processModule(module);
-        module.rootNode.log("");
+        //processor.processModule(module);
+        //module.rootNode.log("");
         
-        for(Node node : module.rootNode.children) {
+        /*for(Node node : module.rootNode.children) {
           FileWriter writer = new FileWriter(path + "/" + node.caption + ".java");
           writer.write("package " + pack + ";\n");
           writer.write("import java.util.LinkedList;\n");
-          /*if(!node.caption.equals("Main")) writer.write("import " + pack
-              + ".Main;\n");*/
-          writer.write(export.exportNode(node));
+          if(!node.caption.equals("Main")) writer.write("import " + pack
+              + ".Main;\n");
+          writer.write(export.exportEntity(node));
           writer.close();
-        }
+        }*/
       }
     }
     

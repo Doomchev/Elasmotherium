@@ -1,16 +1,17 @@
 package parser;
 
-import parser.structure.StoredNode;
-import parser.structure.Node;
-import parser.structure.StoredNodeValue;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import parser.structure.Entity;
+import parser.structure.EntityStack;
+import parser.structure.ID;
+import parser.structure.NativeFunction;
 
 public class Rules extends ParserBase {
-  public Category root, cElse;
+  public Sub root;
   
   public final HashMap<String, SymbolMask> masks = new HashMap<>();
   public SymbolMask getMask(String name) {
@@ -19,18 +20,20 @@ public class Rules extends ParserBase {
     return mask;
   }
   
-  public final HashMap<String, Category> categories = new HashMap<>();
+  public final HashMap<String, Sub> subs = new HashMap<>();
   public final HashMap<String, Error> errors = new HashMap<>();
-  public Category getCategory(String name) {
-    Category category = categories.get(name);
-    if(category == null) {
-      category = new Category(name);
-      categories.put(name, category);
+  
+  public Sub getSub(String name) {
+    Sub sub = subs.get(name);
+    if(sub == null) {
+      sub = new Sub(name, null);
+      subs.put(name, sub);
     }
-    return category;
+    return sub;
   }
   
   private BufferedReader reader;
+  @SuppressWarnings("ResultOfObjectAllocationIgnored")
   public Rules load(String fileName) {
     currentFileName = fileName;
     masks.clear();
@@ -38,7 +41,7 @@ public class Rules extends ParserBase {
     masks.put("space", new SymbolMask(' '));
     masks.put("newline", new SymbolMask('\n').set('\r'));
     masks.put("eof", new SymbolMask(129));
-    categories.clear();
+    subs.clear();
     try {
       reader = new BufferedReader(new FileReader(fileName));
       String line;
@@ -49,12 +52,7 @@ public class Rules extends ParserBase {
         if(line.isEmpty() || line.startsWith("//")) continue;
         int equalPos = line.indexOf('=');
         int colonPos = line.indexOf(':');
-        if(line.contains(".priority")) {
-          String[] parts = line.split("=");
-          parts[0] = parts[0].split("\\.")[0];
-          getCategory(parts[0].trim()).priority = Integer.parseInt(
-              parts[1].trim());
-        } else if(equalPos >= 0 && (equalPos < colonPos || colonPos < 0)) {
+        if(equalPos >= 0 && (equalPos < colonPos || colonPos < 0)) {
           SymbolMask mask = new SymbolMask();
           for(String symbol : line.substring(equalPos + 1).trim().split(" ")) {
             if(symbol.length() == 1) {
@@ -74,11 +72,11 @@ public class Rules extends ParserBase {
           errors.put(parts[0].trim(), new Error(parts[1].trim()));
         } else {
           if(colonPos < 0 && equalPos < 0) error(": or = expected");
-          Category category = getCategory(line.substring(0, colonPos).trim());
-          if(category.action != null)
-            error("Category \"" + category.name
-                + "\" is already defined");
-          category.action = actionChain(line.substring(colonPos + 1), null);
+          String name = line.substring(0, colonPos).trim();
+          Sub sub = getSub(name);
+          if(sub.action != null) error("Sub \"" + name
+              + "\" is already defined");
+          sub.action = actionChain(line.substring(colonPos + 1), null, sub);
         }
       }
     } catch (FileNotFoundException ex) {
@@ -87,12 +85,11 @@ public class Rules extends ParserBase {
       error("I/O error", fileName + "Cannot read " + fileName + ".");
     }
     
-    root = getCategory("root");
-    cElse = getCategory("elseOp");
+    root = subs.get("root");
     return this;
   }
 
-  private Action actionChain(String commands, Action lastAction)
+  private Action actionChain(String commands, Action lastAction, Sub currentSub)
       throws IOException {
     Action firstAction = null, currentAction = null;
     boolean exit = false;
@@ -102,30 +99,13 @@ public class Rules extends ParserBase {
       String name = bracketPos < 0 ? command : command.substring(0, bracketPos);
       String params = bracketPos < 0 ? "" :command.substring(bracketPos + 1
           , command.length() - 1);
-      Node strucParam = null;
-      int intParam = -1;
-      if(!params.startsWith("\"")) {
-        for(int n = 0; n < params.length(); n++) {
-          char c = params.charAt(n);
-          if(c >= '0' && c <= '9') continue;
-          if(n == 0) {
-            strucParam = toStructure(params);
-          } else {
-            if(c != ',') error("Comma expected");
-            intParam = Integer.parseInt(params.substring(0, n));
-            strucParam = toStructure(params.substring(n + 1));
-          }
-          break;
-        }
-        if(strucParam == null && !params.isEmpty())
-          intParam = Integer.parseInt(params);
-      }
 
       //System.out.println(name);
       ActionSwitch switchAction = null;
+      boolean copy = false;
       switch(name) {
         case "RETURN":
-          action = new ActionReturn(strucParam);
+          action = new ActionReturn();
           break;
         case "SKIP":
           action = new ActionSkip();
@@ -136,25 +116,13 @@ public class Rules extends ParserBase {
         case "LOADPOS":
           action = new ActionLoadPos();
           break;
-        case "INSERT":
-          if(intParam < 0 || strucParam == null)
-              error("INSERT requires 2 parameters");
-          action = new ActionInsert(intParam, strucParam);
-          break;
         case "ADD":
           action = new ActionAdd(stringParam(params));
           break;
-        case "STORE":
-          action = new ActionStore(intParam);
-          break;
-        case "PROCESS":
-          action = new ActionProcess(this, intParam);
-          break;
         case "EXPECT":
+          if(params.length() != 3) error("EXPECT command requires one symbol"
+              + " as parameter");
           action = new ActionExpect(params.charAt(1));
-          break;
-        case "CREATE":
-          action = new ActionCreate(intParam, strucParam);
           break;
         case "CLEAR":
           action = new ActionClear();
@@ -162,15 +130,59 @@ public class Rules extends ParserBase {
         case ">>":
           action = new ActionForward();
           break;
-        case "INCLUDE":
-          action = new ActionInclude(intParam);
+        case "CREATE":
+          String[] param = params.split(",");
+          ID id = ID.get(param[0]);
+          if(id == ID.classParameterID) {
+            action = new ActionCreate(null, id, null);
+          } else {
+            NativeFunction function = NativeFunction.all.get(id);
+            EntityStack stack = function == null ? EntityStack.get(id)
+                : EntityStack.call;
+            if(stack == EntityStack.block) {
+              if(param.length != 2) error("CREATE block command requires 2"
+                  + " parameters");
+              action = new ActionCreate(stack, ID.get(param[1]), null);
+            } else {
+              if(param.length != 1) error("CREATE command requires single"
+                  + " parameter");
+              action = new ActionCreate(stack, null, function);
+            }
+          }
+          break;
+        case "COPY":
+          copy = true;
+        case "MOVE":
+          param = params.split(",");
+          NativeFunction function = NativeFunction.all.get(ID.get(param[0]));
+          if(function != null) {
+            action = new ActionMoveNewFunction(function, EntityStack.get(param[1]));
+          } else {
+            EntityStack<Entity> stack0 = EntityStack.get(param[0]);
+            if(param.length == 1) {
+              action = new ActionMove(stack0, stack0, copy);
+            } else {
+              if(param.length != 2) error("MOVE command requires 2 parameters");
+              action = new ActionMove(stack0, EntityStack.get(param[1]), copy);
+            }
+          }
+          break;
+        case "SET":
+          param = params.split(",");
+          if(param.length != 3) error("SET command requires 3 parameters");
+          action = new ActionSet(EntityStack.get(param[0]), ID.get(param[1])
+              , EntityStack.get(param[2]));
+          break;
+        case "USE":
+          action = new ActionUse(ID.get(params));
+          break;
+        case "REMOVE":
+          action = new ActionRemove(EntityStack.get(params));
           break;
         case "{":
           switchAction = new ActionSwitchSymbol();
-        case "SWITCH":
-          if(switchAction == null) switchAction = new ActionSwitchToken(intParam);
-        case "SWITCHTYPE":
-          if(switchAction == null) switchAction = new ActionSwitchCategory(intParam);
+        case "SWITCHID":
+          if(switchAction == null) switchAction = new ActionSwitchID();
           
           String line;
           Action back = new ActionGoToAction(switchAction);
@@ -179,25 +191,24 @@ public class Rules extends ParserBase {
               error("Unexpected end of file");
             lineNum++;
             line = line.trim();
+            if(line.isEmpty() || line.startsWith("//")) continue;
             if(line.equals("}")) break;
             int colonPos = line.indexOf(':');
             if(colonPos < 0) error(": expected");
             String token = line.substring(0, colonPos).trim();
-            Action actionChain = actionChain(line.substring(colonPos + 1), back);
+            Action actionChain = actionChain(line.substring(colonPos + 1), back
+                , currentSub);
             if(token.startsWith("\"")) {
               switchAction.setStringAction(stringParam(token), actionChain);
             } else if(token.equals("other")) {
               switchAction.setOtherAction(actionChain);
-            } else switch(name) {
-              case "{":
-                SymbolMask symbolMask = getMask(token);
-                if(symbolMask == null) error("Mask \"" + token + "\" is not found");
-                switchAction.setMaskAction(symbolMask, actionChain);
-                break;
-              case "SWITCH":
-                error("Invalid token");
-              default:
-                switchAction.setCategoryAction(getCategory(token), actionChain);
+            } else if(name.equals("{")) {
+              SymbolMask symbolMask = getMask(token);
+              if(symbolMask == null) error("Mask \"" + token + "\" is not found");
+              switchAction.setMaskAction(symbolMask, actionChain);
+              //break;
+            } else {
+              error("Invalid token");
             }
           }
           action = switchAction;
@@ -208,9 +219,10 @@ public class Rules extends ParserBase {
           if(error == null) {
             //System.out.println(name);
             if(bracketPos < 0) {
-              action = new ActionGoToCategory(getCategory(name));
+              action = new ActionGoToSub(getSub(name));
             } else {
-              action = new ActionSub(getCategory(name), intParam);
+              action = new ActionSub(getSub(name), currentSub, params.isEmpty()
+                  ? null : getSub(params));
             }
           } else {
             if(!params.isEmpty()) error = error.derive(
@@ -244,75 +256,6 @@ public class Rules extends ParserBase {
     }
     if(start == pos) error("Integer number expected");
     return Integer.parseInt(strucString.substring(start, pos));
-  }
-  
-  private Node toStructure(String params) {
-    strucString = params + "]";
-    pos = 0;
-    return fillStructure(null);
-  }
-  
-  private Node setNodeParam(Node node, int tokStart) {
-    if(tokStart < 0 || tokStart >= pos - 1) return node;
-    String string = strucString.substring(tokStart, pos - 1);
-    if(string.isEmpty()) return node;
-    if(node == null) {
-      return new Node(getCategory(string));
-    } else if(node.caption.isEmpty()) {
-      node.caption = string;
-    }
-    return node;
-  }
-  
-  private Node fillStructure(Node parent) {
-    int tokStart = pos;
-    Node node = null;
-    while(true) {
-      if(pos >= strucString.length()) error("Unexpected end of structure");
-      char c = strucString.charAt(pos);
-      pos++;
-      switch(c) {
-        case '\\':
-          if(node == null) {
-            node = new StoredNode(readNum());
-          } else {
-            node = new StoredNodeValue(readNum(), node.category);
-          }
-          tokStart = -1;
-          break;
-        case ':':
-          if(node != null || tokStart < 0) error("Unexpected :");
-          node = setNodeParam(node, tokStart);
-          tokStart = pos;
-          break;
-        case ',':
-          if(parent == null) {
-            error("Unexpected comma");
-          } else if(node != null) {
-            parent.add(node);
-            setNodeParam(node, tokStart);
-            node = null;
-          }
-          tokStart = pos;
-          break;
-        case ']':
-          node = setNodeParam(node, tokStart);
-          if(parent != null && node != null) parent.add(node);
-          return node;
-        case '[':
-          node = setNodeParam(node, tokStart);
-          if(node == null) error("Unexpected [");
-          fillStructure(node);
-          tokStart = pos;
-          break;
-        default:
-          if(c >= 'A' || c <= 'Z') break;
-          if(c >= 'a' || c <= 'z') break;
-          if(c >= '0' || c <= '9') break;
-          if(c == '_') break;
-          error("Syntax error");
-      }
-    }
   }
 
   private String stringParam(String str) {

@@ -1,21 +1,19 @@
 package parser;
 
 public class ActionSub extends Action {
-  private final Category sub;
-  public final int storingIndex;
+  public final Sub sub, parentSub, errorSub;
 
-  public ActionSub(Category sub, int index) {
+  public ActionSub(Sub sub, Sub parentSub, Sub errorSub) {
     this.sub = sub;
-    this.storingIndex = index;
+    this.parentSub = parentSub;
+    this.errorSub = errorSub;
   }
 
   @Override
   public Action execute() {
-    if(log) {
-      log("SUB(" + sub.name + ")\n" + sub.name);
-    }
-    parserScopes.push(currentParserScope);
-    currentParserScope = new ParserScope(sub, this);
+    if(log) log("SUB " + sub.name + (errorSub == null ? "" : " ON ERROR " 
+        + errorSub.name) + "\n" + sub.name);
+    returnStack.push(this);
     return sub.action;
   }
 

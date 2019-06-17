@@ -1,44 +1,48 @@
 package parser.structure;
 
-import base.Base;
 import java.util.HashMap;
 
-public class Scope extends Structure {
-  final HashMap<String, Structure> children = new HashMap<>();
-  Structure[] params;
+public class Scope {
+  public HashMap<ID, Entity> entries = new HashMap<>();
+  public Scope parentScope;
 
-  Scope(Node node, Scope parent) {
-    super(node, parent);
+  public Scope(Scope parentScope) {
+    this.parentScope = parentScope;
   }
 
-  public Scope() {
-    super(null, null);
+  public void add(NamedEntity entity) {
+    add(entity, entity.name);
+  }
+
+  public void add(Entity entity, ID id) {
+    if(!entries.containsKey(id)) entries.put(id, entity);
   }
   
-  @Override
-  public Scope getScope() {
-    return this;
+  public Entity get(ID id, boolean thisFlag) {
+    return thisFlag ? getClassField(id) : getVariable(id);
   }
   
-  @Override
-  public Scope toFunction() {
-    return this;
-  }
-
-  Scope create(Node node, Scope scope) {
-    return this;
-  }
-
-  @Override
-  String log(String indent) {
-    String str = indent + (type == null ? "null " : type.node.caption + " ")
-        + node.caption + "\n";
-    for(Structure child : children.values()) str += child.log(indent + "  ");
-    return str;
+  public Entity getVariable(ID id) {
+    Entity entity = entries.get(id);
+    if(entity != null && !entity.isClassField()) return entity;
+    if(parentScope == null) return null;
+    return parentScope.getVariable(id);
   }
   
-  public static void error(String message) {
-    Base.error("Processing error", message);
+  public Entity getClassField(ID id) {
+    Entity entity = entries.get(id);
+    if(entity != null && entity.isClassField()) return entity;
+    if(parentScope == null) return null;
+    return parentScope.getClassField(id);
+  }
+
+  public void log(String indent) {
+    for(HashMap.Entry<ID, Entity> entry : entries.entrySet()) {
+      Entity value = entry.getValue();
+      Entity type = value.getType();
+      System.out.println(indent + (type == null ? "? " : type.toString() + " ")
+          + entry.getKey().string + ":");
+      value.logScope(indent + "  ");
+    }
   }
 }
-

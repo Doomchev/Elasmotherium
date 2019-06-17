@@ -1,20 +1,22 @@
 package export;
 
-import parser.Category;
-import parser.structure.Node;
+import static parser.ParserBase.error;
+import parser.structure.Entity;
+import parser.structure.ID;
 
 public class ChunkChild extends Chunk {
-  private final Category category;
+  private final ID id, postfix;
 
-  public ChunkChild(Category category) {
-    this.category = category;
+  public ChunkChild(ID id, ID postfix) {
+    this.id = id;
+    this.postfix = postfix;
   }
   
   @Override
-  public String toString(Node node) {
-    for(Node childNode : node.children) {
-      if(childNode.category == category) return export.exportNode(childNode);
-    }
-    return node.caption;
+  public String toString(Entity entity) {
+    Entity child = entity.getChild(id);
+    if(child == null) error(id.string + " child of " + entity.getName()
+        + " is not found");
+    return export.exportEntity(child, postfix);
   }
 }

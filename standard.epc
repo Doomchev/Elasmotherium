@@ -1,0 +1,686 @@
+minus = -
+quotes = " "
+colon = :
+digit = 0-9
+letter = a-z A-Z _
+idSymbol = digit letter
+fileSymbol = digit letter .
+spacing = tab space
+nothing = tab space newline
+op = + - * =
+closure = ) ] }
+combra = , )
+
+
+ERROR expected: \0 expected
+ERROR syntaxError: Syntax error
+ERROR invalid: Invalid \0
+ERROR error: \0
+
+
+root: CREATE(code) сodeLines()
+
+сodeLines: {
+	nothing: >>
+	"/": comment()
+	eof: RETURN
+	"}": RETURN
+	other: codeLine()
+}
+
+code: CREATE(code) {
+	nothing: >>
+	"/": comment()
+	"{": >> сodeLines() EXPECT("}") RETURN
+	other: codeLine() RETURN
+}
+
+id: {
+  nothing: >>
+	"/": comment()
+  letter: CLEAR >> {
+    idSymbol: >>
+    other: CREATE(id) RETURN
+  }
+  other: expected("Identifier")
+}
+
+// code line
+
+codeLine: SAVEPOS {
+  nothing: >>
+	"/": comment()
+	letter: CLEAR >> {
+		idSymbol: >>
+		other: CREATE(id) SWITCHID {
+			"for": EXPECT("(") CREATE(block,for) for
+			"do": CREATE(block,do) code() SET(block,code,code) MOVE(block,code) RETURN
+			"if": EXPECT("(") CREATE(block,if) formula() SET(block,condition,formula) EXPECT(")") code() SET(block,code,code) SAVEPOS {
+				nothing: >>
+				"/": comment()
+				letter: id() SWITCHID {
+					"else": code() SET(block,else,code) MOVE(block,code) RETURN
+					other: LOADPOS MOVE(block,code) RETURN
+				}
+        other: LOADPOS MOVE(block,code) RETURN
+      }
+      "break": CREATE(break) {
+        spacing: >>
+				"/": comment()
+        "(": >> number() MOVE(value,call) EXPECT(")") MOVE(block,code) RETURN
+        other: MOVE(block,code) RETURN
+      }
+      "return": CREATE(return) {
+				nothing: >>
+				"/": comment()
+        "(": >> formula() MOVE(formula,call) EXPECT(")") MOVE(call,code) RETURN
+        other: MOVE(call,code) RETURN
+      }
+      "end": CREATE(end) MOVE(call,code) RETURN
+			"global": USE(global) id() def 
+			"native": USE(native) id() def
+      other: def
+		}
+	}
+	"$": >> CREATE(formula) id() USE(this) CREATE(variable) MOVE(variable,formula) var
+  "[": >> CREATE(formula) list() MOVE(list,formula) {
+    nothing: >>
+		"/": comment()
+    "[": >> index
+    ".": >> dot
+    other: expected("[_or_.")
+  }
+	other: syntaxError
+}
+
+// comments
+
+comment: >> slashComment
+slashComment: {
+	"/": >> {
+		eof: RETURN
+		newline: >> RETURN
+		other: >>
+	}
+	"*": >> multiLineComment
+	other: expected("*_or_/")
+}
+multiLineComment: {
+	"*": >> {
+		"/": >> RETURN
+		other: multiLineComment
+	}
+	other: >>
+	eof: expected("*/")
+}
+
+// for loop
+
+for: id() CREATE(variable) {
+  nothing: >>
+	"/": comment()
+	// for(variable = formula
+  "=": >> formula() {
+    nothing: >>
+		"/": comment()
+		// for(variable = formula; condition
+    ";": >> CREATE(equate) MOVE(variable,call) MOVE(formula,call) SET(block,init,call) formula() SET(block,condition,formula) {
+			nothing: >>
+			"/": comment()
+			// for(variable = from; condition; iterator)
+			";": codeLine() SET(block,iterator,formula) forSeparator
+			// for(variable = from; condition)
+			")": forSeparator
+		}
+		// for(variable = from ..
+    ".": >> EXPECT(".") CREATE(equate) COPY(variable,call) MOVE(formula,call) SET(block,init,call) {
+			"/": comment()
+			// for(variable = from ..< to
+      "<": >> formula() CREATE(less) MOVE(variable,call) MOVE(formula,call) SET(block,condition,call) forSeparator
+			// for(variable = from .. to
+      other: formula() CREATE(lessOrEqual) MOVE(variable,call) MOVE(formula,call) SET(block,condition,call) forSeparator
+    }
+    other: syntaxError
+  }
+  letter: id() SWITCHID {
+		// for(value at
+    "at": id() CREATE(variable) id() SWITCHID {
+			// for(value at index in formula
+      "in": formula() SET(block,collection,formula) SET(block,index,variable) SET(block,item,variable) forSeparator
+      other: expected("in")
+    }
+		// for(value in
+    "in": formula() SET(block,collection,formula) SET(block,item,variable) forSeparator
+		// for(index indexin
+    "indexin": formula() SET(block,collection,formula) SET(block,index,variable) forSeparator
+		// for(key keyin
+    "keyin": formula() SET(block,collection,formula) SET(block,index,variable) forSeparator
+    other: expected("=,_at,_in_or_indexin")
+  }
+  other: error("Error_in_for_syntax")
+}
+
+forSeparator: {
+  nothing: >>
+	"/": comment()
+  ")": >> code() SET(block,code,code) MOVE(block,code) RETURN
+  ";": >> for
+  other: expected(";_or_)")
+}
+
+// Class[<SubType[,SubType]>][ extends Type[<Type>]] {
+// [Type[<Type>] ]function([Type[<Type>] ]a[ = 0], ...) {
+// [Type[<Type>] ]variable = ...
+// functionCall(formula, ...)
+
+def: {
+	nothing: >>
+	"/": comment()
+	// Type var
+	// Type function
+	letter: CREATE(type) id() {
+		nothing: >>
+		"/": comment()
+		"(": >> CREATE(function) MOVE(type,function) functionDef
+		other: CREATE(variable) MOVE(type,variable) CREATE(formula) MOVE(variable,formula) var
+	}
+	// Class<Param1[,Param2]>
+	// Type<Type>
+	"<": >> CREATE(class) classParameter
+	// call(
+	"(": >> CREATE(function) functionDef 
+	// Class {
+	"{": >> CREATE(class) classBody
+	//var = 
+	other: CREATE(link) defFormula
+}
+functionDef: functionParameter(notFunctionDef) MOVE(function,code) RETURN
+notFunctionDef: REMOVE(function) LOADPOS id() CREATE(link) defFormula
+defFormula: CREATE(formula) MOVE(link,formula) var
+
+classParameter: id(functionType) CREATE(classParameter) {
+	nothing: >>
+	"/": comment()
+	",": >> classParameter
+	">": >> {
+		nothing: >>
+		"/": comment()
+		letter: id() SWITCHID {
+			// Class[<Param1[,Param2]>] extends
+			"extends": id() {
+				nothing: >>
+				"/": comment()
+				// Class[<Param1[,Param2]>] extends Class {
+				"{": >> CREATE(type) MOVE(type,class) classBody
+				// Class[<Param1[,Param2]>] extends Class<Type> {
+				"<": >> type(functionType) MOVE(type,class) EXPECT("{") classBody
+				other: expected("{_or_<")
+			}
+			other: REMOVE(id) functionType
+		}
+		"{": >> classBody
+		other: functionType
+	}
+	other: functionType
+}
+
+// Type<Type> function(
+// Type<Type> var =
+functionType: LOADPOS id() EXPECT("<") type() id() {
+  nothing: >>
+	"/": comment()
+	"(": >> CREATE(function) MOVE(type,function) functionDef
+	"=": CREATE(variable) MOVE(type,variable) CREATE(formula) MOVE(variable,formula) var
+	other: expected("(_or_=")
+}
+
+// [Type[<Type>] ]function(
+// [Type[<Type>] ]call(
+
+functionParameter: {
+  nothing: >>
+	"/": comment()
+  letter: id() {
+		nothing: >>
+		"/": comment()
+		// method(Type var
+		letter: CREATE(type) id() CREATE(variable) MOVE(type,variable) afterFunctionParam
+		// method(Type<Type> var
+		"<": >> type() id() CREATE(variable) MOVE(type,variable) afterFunctionParam
+		// method(var = formula
+		"=": CREATE(variable) afterFunctionParam
+		combra: expected("Type_or_default_value_for_parameter")
+		other: expected("Identifier,_subtype_or_=")
+	}
+	// function($variable
+	"$": >> USE(this) id() CREATE(variable) afterFunctionParam
+	// function()
+	")": >> functionCode
+  other: expected("Identifier,_$_or_)")
+}
+afterFunctionParam: {
+	// [Type[<Type>] ]var = default
+	"=": >> formula(call) MOVE(formula,variable) afterFunctionDefault
+	// Type[<Type>] var
+	other: afterFunctionDefault
+}
+afterFunctionDefault: MOVE(variable,function) {
+	nothing: >>
+	"/": comment()
+	// function(params,
+	",": >> functionParameter
+	// function(params)
+	")": >> functionCode
+	other: expected(",_or_)")
+}
+functionCode: {
+	nothing: >>
+	"/": comment()
+	// function() {
+	"{": code() MOVE(code,function) RETURN
+	// function() ->
+	"-": >> EXPECT(">") formula() CREATE(return) MOVE(formula,call) CREATE(code) MOVE(call,code) MOVE(code,function) RETURN
+	other: expected("->_or_{")
+}
+
+call: LOADPOS id() CREATE(link) CREATE(formula) MOVE(link,formula) functionCall
+
+// type
+
+type: CREATE(type) typeLoop
+typeLoop: id() CREATE(type) {
+	nothing: >>
+	"/": comment()
+	",": >> MOVE(type) typeLoop
+	"<": >> type()
+	">": >> MOVE(type) RETURN
+	other: expected("Comma,_<,_>")
+}
+
+// leftSide()
+// leftSide
+
+var: {
+  nothing: >>
+	"/": >> {
+		"/": slashComment() var
+		"*": slashComment() var
+		other: slashOperator
+	}
+  ".": >> dot
+  "(": >> functionCall
+  "[": >> index
+  op: operator
+  other: syntaxError
+}
+
+// leftSide.
+
+dot: MOVE(dot,formula) {
+  nothing: >>
+	"/": comment()
+  letter: id() CREATE(link) MOVE(link,formula) var
+  other: expected("Identifier")
+}
+
+// leftSide[
+
+index: MOVE(atIndex,formula) formula() EXPECT("]") MOVE(formula) indexBody
+indexBody: {
+  nothing: >>
+	"/": >> {
+		"/": slashComment() indexBody
+		"*": slashComment() indexBody
+		other: slashOperator
+	}
+  "[": >> index
+  ".": >> dot
+  "(": >> functionCall
+  op: operator
+  other: syntaxError
+}
+
+// leftSide(
+
+functionCall: CREATE(parameters) {
+  nothing: >>
+	"/": comment()
+  ")": >> callParameterEnd
+	other: callParameter
+}
+callParameter: formula() MOVE(formula,parameters) {
+  nothing: >>
+	"/": comment()
+  ",": >> callParameter
+  ")": >> callParameterEnd
+  other: expected(",_or_)")
+}
+callParameterEnd: CREATE(call) MOVE(call,formula) MOVE(parameters,formula) callParameterEndBody
+callParameterEndBody: {
+	nothing: >>
+	"/": >> {
+		"/": slashComment() callParameterEndBody
+		"*": slashComment() callParameterEndBody
+		other: slashOperator
+	}
+	".": >> dot
+	"(": >> functionCall
+	"[": >> index
+	"{": >> CREATE(block,object) SET(block,constructor,formula) code() SET(block,code,code) RETURN
+	op: operator
+	other: MOVE(formula,code) RETURN
+}
+
+parameters: CREATE(parameters) {
+  nothing: >>
+	"/": comment()
+  ")": >> parameterEnd
+	other: parameter
+}
+parameter: formula() MOVE(formula,parameters) {
+  nothing: >>
+	"/": comment()
+  ",": >> parameter
+  ")": >> parameterEnd
+  other: expected(",_or_)")
+}
+parameterEnd: CREATE(call) MOVE(call,formula) MOVE(parameters,formula) separator
+
+// operator
+
+operator: {
+  nothing: >>
+  "=": >> CREATE(equate) setOperator
+  "+": >> {
+    "=": >> CREATE(add) setOperator
+    "+": >> CREATE(increment) MOVE(formula,call) MOVE(call,code) RETURN
+    other: invalid("operator")
+  }
+  "-": >> {
+    "=": >> CREATE(subtract) setOperator
+    "-": >> CREATE(decrement) MOVE(formula,call) MOVE(formula,code) RETURN
+    other: invalid("operator")
+  }
+  "*": >> EXPECT("=") CREATE(multiply) setOperator
+  other: RETURN
+}
+slashOperator: {
+	"=": CREATE(divide) setOperator
+	other: expected("/_or_=")
+}
+setOperator: MOVE(formula,call) formula() MOVE(formula,call) MOVE(call,code) RETURN
+
+// formula
+
+formula: CREATE(formula) variable
+variable: SAVEPOS {
+  nothing: >>
+	"/": comment()
+  closure: RETURN
+  digit: number() MOVE(value,formula) separator
+  letter: id() {
+		nothing: >>
+		"/": comment()
+		// Type<Type>(
+		"<": >> type(notType) {
+			"(": >> CREATE(variable) MOVE(type,variable) CREATE(call) MOVE(variable,call)
+			other: notType
+		}
+		other: notType
+	}
+	"$": >> id() USE(this) CREATE(link) MOVE(link,formula) separator
+  minus: >> {
+    digit: number() NEGATE MOVE(value,formula) separator
+    other: >> CREATE(negative) formula() MOVE(formula,call) MOVE(call,formula) separator
+  }
+  "!": >> formula() CREATE(not) MOVE(formula,call) MOVE(call,formula) separator
+	// TODO
+  "(": >> SAVEPOS CLEAR CREATE(id) CREATE(function) SAVEPOS {
+		letter: functionParameter(brackets) MOVE(function,formula) separator
+		")": >> functionCode(brackets) MOVE(function,formula) separator
+		other: brackets
+	}
+	// TODO
+  "[": >> list() MOVE(list,formula) separator
+  "{": >> CREATE(object) object
+  quotes: >> CLEAR string
+  other: expected("Value")
+}
+notType: LOADPOS id() CREATE(link) MOVE(link,formula) separator
+
+anonymousFunction: {
+	nothing: >>
+	"/": comment()
+	// (var
+}
+anonymousFunctionSeparator: {
+	nothing: >>
+	"/": comment()
+	// (var,
+	",": >> anonymousFunction
+	// (var)
+	")": >> {
+		nothing: >>
+		"/": comment()
+		"-": >> {
+			">": >> codeLine() MOVE(code,function) separator
+			other: brackets
+		}
+		"{": code() MOVE(code,function) separator
+		other: brackets
+	}
+	// (Type var)
+	letter: CREATE(type) id() afterAnonymousFunctionParam
+	// (Type<Type> 
+	"<": >> anonymousFunctionTypeSubLoop() {
+		">": {
+		// (Type<Type> var
+			letter: id() CREATE(variable) afterAnonymousFunctionParam
+			other: brackets
+		}
+		other: brackets
+	}
+	other: brackets
+}
+afterAnonymousFunctionParam: CREATE(variable) {
+	nothing: >>
+	"/": comment()
+	// ([Type[<Type>] ]var = default
+	"=": >> formula() MOVE(formula,variable) MOVE(variable,function) anonymousFunction
+	// (Type[<Type>] var
+	other: MOVE(variable,function) anonymousFunction
+}
+brackets: REMOVE(function) LOADPOS formula() EXPECT(")") CREATE(brackets) MOVE(formula,call) MOVE(call,formula) separator
+anonymousFunctionTypeSubLoop: {
+	letter: id() CREATE(type) {
+		nothing: >>
+		"/": comment()
+		",": >> MOVE(type) anonymousFunctionTypeSubLoop
+		"<": >> typeSubLoop()
+		">": >> MOVE(type) RETURN
+		other: RETURN
+	}
+	other: RETURN
+}
+
+// separator
+
+separator: {
+  nothing: >>
+  ".": SAVEPOS >> {
+		".": LOADPOS RETURN
+		other: MOVE(dot,formula) variable
+	}
+  "(": >> parameters
+  "[": >> MOVE(atIndex,formula) formula() EXPECT("]") MOVE(formula) separator
+  "+": >> MOVE(addition,formula) variable
+  "-": >> MOVE(subtraction,formula) variable
+  "*": >> MOVE(multiplication,formula) variable
+  "/": >> {
+    "/": slashComment() separator
+		"*": slashComment() separator
+    other: MOVE(division,formula) variable
+  }
+  "=": >> {
+    "=": >> MOVE(equal,formula) variable
+    other: invalid("separator")
+  }
+  "!": >> {
+    "=": >> MOVE(notequal,formula) variable
+    other: invalid("separator")
+  }
+  "<": >> {
+    "=": >> MOVE(lessOrEqual,formula) variable
+    other: MOVE(less,formula) variable
+  }
+  ">": >> {
+    "=": >> MOVE(moreOrEqual,formula) variable
+    other: MOVE(more,formula) variable
+  }
+  "&": >> {
+    "&": >> MOVE(and,formula) variable
+    other: MOVE(bitAnd,formula) variable
+  }
+  "|": >> {
+    "|": >> MOVE(or,formula) variable
+    other: MOVE(bitOr,formula) variable
+  }
+  "?": >> MOVE(ifOp,formula) variable
+  colon: >> MOVE(elseOp,formula) variable
+  other: RETURN
+}
+
+
+// number
+
+number: CLEAR >> {
+  digit: >>
+  ".": {
+    digit: >>
+    other: CREATE(decimal) RETURN
+  }
+  other: CREATE(integer) RETURN
+}
+
+// string
+
+string: {
+  "\": SKIP {
+    "(": CREATE(stringSequence) stringBrackets
+    other: ADD("\") >> string
+  }
+  quotes: CREATE(string) >> MOVE(string,formula) separator
+  other: >>
+}
+stringBrackets: CREATE(string) >> MOVE(string,stringSequence) stringValue
+stringValue: formula() EXPECT(")") MOVE(formula,stringSequence) CLEAR stringSequence
+stringSequence: {
+  "\": SKIP {
+    "(": stringBrackets
+    other: ADD("\") >> stringSequence
+  }
+  quotes: CREATE(string) >> MOVE(string,stringSequence) MOVE(stringSequence,formula) separator
+  other: >>
+}
+
+// list
+
+list: CREATE(list) listItem
+listItem: formula() MOVE(formula, list) {
+  nothing: >>
+	"/": comment()
+  ",": >> listItem
+  "]": >> RETURN
+  other: expected(",_or_]")
+}
+
+//object
+
+object: {
+  nothing: >>
+	"/": comment()
+  letter: id() CREATE(entry) EXPECT(":") formula() MOVE(formula,entry) MOVE(entry,object)
+  "}": >> MOVE(object,formula) separator
+	other: expected("Identifier_or_}")
+}
+
+// Class[<Parameter[,Parameter]][ extends Class[<Type[<Type>]] {
+
+classBody: {
+  nothing: >>
+	"/": comment()
+  letter: id() SWITCHID {
+		// get field
+		"get": id() USE(get) CREATE(variable) getCode
+		other: {
+			nothing: >>
+			"/": comment()
+			// Type<Type> 
+			"<": >> type() id() SWITCHID {
+				// Type<Type> get field ->
+				"get": id() USE(get) CREATE(variable) MOVE(type,variable) getCode
+				// Type<Type> field, ...
+				other: {
+					nothing: >>
+					"/": comment()
+					//Type<Type> method(
+					"(": >> CREATE(type) CREATE(function) MOVE(type,function) functionParameter() MOVE(function,class) classBody
+					//Type<Type> field, ...
+					other: CREATE(variable) typedFieldNames
+				}
+			}
+			letter: id() SWITCHID {
+				//Type get field ->
+				"get": id() USE(get) CREATE(variable) CREATE(type) MOVE(type,variable) getCode
+				other: {
+					nothing: >>
+					"/": comment()
+					//Type method(
+					"(": >> CREATE(function) CREATE(type) MOVE(type,function) functionParameter() MOVE(function,class) classBody
+					//Type field, ...
+					other: CREATE(variable) CREATE(type) typedFieldNames
+				}
+			}
+			// field = formula
+			"=": >> CREATE(variable) fieldNames
+			// method(
+			"(": >> CREATE(function) functionParameter() MOVE(function,class) classBody
+			other: expected("Field_name,_get,_subtype,_=_or_(_in_class_block")
+		}
+	}
+  "(": >> USE(constructor) CLEAR CREATE(id) CREATE(function) functionParameter() MOVE(function,class) classBody
+  "}": >> RETURN
+	other: expected("Identifier,_}_or_(")
+} 
+fieldNames: formula() MOVE(formula,variable) MOVE(variable,class) fieldNamesLoop
+fieldNamesLoop: {
+	nothing: >>
+	"/": comment()
+	",": >> id() CREATE(variable) {
+		nothing: >>
+		"/": comment()
+		"=": fieldNames
+		other: expected("=")
+	}
+	other: classBody
+}
+typedFieldNames: COPY(type,variable) typedFieldNamesLoop
+typedFieldNamesLoop: {
+	nothing: >>
+	"/": comment()
+	// var = formula
+	"=": >> formula() MOVE(formula,variable) MOVE(variable,class) {
+		",": typedFieldNamesLoop
+		other: REMOVE(type) classBody
+	}
+	// var
+	",": >> MOVE(variable,class) id() CREATE(variable) typedFieldNames
+	other: MOVE(variable,class) REMOVE(type) classBody
+}
+getCode: {
+	nothing: >>
+	"/": comment()
+	"-": >> EXPECT(">") formula() MOVE(formula,variable) MOVE(variable,class) classBody
+	"{": code() MOVE(code,variable) MOVE(variable,class) classBody
+	other: MOVE(variable,class) classBody
+}

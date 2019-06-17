@@ -1,6 +1,6 @@
 package export;
 
-import parser.structure.Node;
+import parser.structure.Entity;
 
 public class ChunkChildAtIndex extends Chunk {
   private final int index;
@@ -10,7 +10,7 @@ public class ChunkChildAtIndex extends Chunk {
   }
   
   @Override
-  public String toString(Node node) {
-    return export.exportNode(node.children.get(index));
+  public String toString(Entity entity) {
+    return export.exportEntity(entity.getChild(index));
   }
 }

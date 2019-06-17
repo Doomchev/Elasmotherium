@@ -1,3 +1,12 @@
+2019.06.17 (version 0.11)
+	+ EE: postfixes for entity child and children
+	* PE: new stack-based parser
+	* PE: new abstract syntax tree structure
+	* EEPC: new parsing language
+	* SPE: new syntax tree processing engine
+	* TEE: new type inference engine
+	* New file extensions
+	
 2019.03.25 (version 0.10)
 	+ EEPC: abstract methods
 	+ EEPC: native classes and functions (will be skipped during export)
@@ -65,16 +74,20 @@
   + Javascript export code (JSEC)
 
 To do:  
-	+ inline functions
 	+ ranges
 	+ $[] syntax
 	+ generics
 	+ string slices
+	+ convert node structure to more complex (with classes, functions and fields)
+	+ empty constructors without {}
+	+ -> for functions without return value
 
 Possible improvements:
+	+ SPE: function unpacking
   + PE: change ActionGoTo actions to straight links
   + PE: faster subs with no return value
   + PE: faster inline subs
   + PE: intelligent action chain parsing (allowing spaces in commands)
   + PE: scope pool
   + PE: subroutines with preserved scope
+	+ IDs of same map instead of node strings

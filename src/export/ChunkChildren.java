@@ -1,31 +1,31 @@
 package export;
 
-import parser.Category;
-import parser.structure.Node;
+import parser.structure.Entity;
+import parser.structure.ID;
 
 public class ChunkChildren extends Chunk {
-  private final Category category;
   private final Chunk delimiter;
+  private final ID postfix;
 
-  public ChunkChildren(Category category, Chunk delimiter) {
-    this.category = category;
+  public ChunkChildren(Chunk delimiter, ID postfix) {
     this.delimiter = delimiter;
+    this.postfix = postfix;
   }
   
   @Override
-  public String toString(Node node) {
+  public String toString(Entity entity) {
     String str = "";
-    for(Node childNode : node.children) {
-      if(childNode.category == category || category == null) {
-        if(!str.isEmpty()) {
-          Chunk chunk = delimiter;
-          while(chunk != null) {
-            str += chunk.toString(node);
-            chunk = chunk.nextChunk;
-          }
+    boolean first = true;
+    for(Entity child : entity.getChildren()) {
+      if(!first) {
+        Chunk chunk = delimiter;
+        while(chunk != null) {
+          str += chunk.toString(child);
+          chunk = chunk.nextChunk;
         }
-        str += export.exportNode(childNode);
       }
+      str += export.exportEntity(child, postfix);
+      first = false;
     }
     return str;
   }

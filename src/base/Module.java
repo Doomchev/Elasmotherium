@@ -2,17 +2,19 @@ package base;
 
 import java.io.File;
 import parser.ParserBase;
-import parser.structure.Node;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import parser.Action;
 import parser.Rules;
+import parser.structure.Code;
+import parser.structure.Entity;
+import parser.structure.EntityStack;
 
 public class Module extends ParserBase {
   public String fileName;
-  public Node rootNode;
+  public Code main;
 
   public Module(String fileName) {
     this.fileName = fileName;
@@ -25,10 +27,10 @@ public class Module extends ParserBase {
     include(fileName);
     
     Action action = rules.root.action;
-    currentParserScope = new ParserScope(rules.root, null);
     while(action != null) action = action.execute();
     
-    module.rootNode = currentParserScope.variables[0];
+    module.main = EntityStack.code.pop();
+    
     return module;
   }  
   

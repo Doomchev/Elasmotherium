@@ -1,10 +1,10 @@
 package export;
 
-import parser.structure.Node;
+import parser.structure.Entity;
 
 public class ChunkTabs extends Chunk {
   @Override
-  public String toString(Node node) {
+  public String toString(Entity entity) {
     return tabs;
   }
 }

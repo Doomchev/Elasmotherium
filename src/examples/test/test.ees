@@ -1,4 +1,4 @@
-native print(String value) {}
+native print(String value)
 
 native List<ValueType> {
 	ValueType get first
@@ -9,16 +9,14 @@ native List<ValueType> {
 }
 
 Player {
-	($firstName, $lastName, $age) {}
+	($firstName, $lastName, $age)
 	String firstName, lastName
 	age = 18
-	incrementAge() {
-		$age++
-	}
+	incrementAge() -> $age++
 	get description -> "\($firstName) \($lastName), \($age) years old"
 }
 
-description = " looking around"
+description = " is looking around"
 player = Player("John", "Smith", 36)
 player.incrementAge()
 print(player.description + description)
@@ -26,6 +24,6 @@ print(player.description + description)
 //List<String> list = ["one", "two", "three"]
 //print(list.first)
 list = List<String>()
-list.add("first")
+list.addFirst("first")
 first = list.first
 print(first)

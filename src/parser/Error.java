@@ -13,7 +13,10 @@ public class Error extends Action {
 
   @Override
   public Action execute() {
-    actionError(errorText);
-    return null;
+    Sub errorActionSub = getErrorActionSub();
+    if(errorActionSub == null) actionError(errorText);
+    if(log) log("ERROR - RETURNING TO " + errorActionSub.name + "\n"
+        + errorActionSub.name);
+    return errorActionSub.action;
   }
 }

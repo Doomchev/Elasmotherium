@@ -8,9 +8,8 @@ public class Dialogs {
     Rules rules = new Rules().load("standard.xep");
     Export export = new Export(rules).load("javascript.xee");
     Module module = Module.read("examples/dialogs.xes", rules);
-    module.rootNode.log("");
-    System.out.println("\n" + export.exportNode(module.rootNode));
-    U s = new U<>(new String[1]);
+    module.log();
+    //System.out.println("\n" + export.exportEntity(module.rootNode));
   }
 }
 

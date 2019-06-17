@@ -1,10 +1,10 @@
 package export;
 
-import parser.structure.Node;
+import parser.structure.Entity;
 
 public class ChunkText extends Chunk {
   @Override
-  public String toString(Node node) {
-    return node.caption;
+  public String toString(Entity entity) {
+    return entity.toString();
   }
 }

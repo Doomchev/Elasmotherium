@@ -1,0 +1,115 @@
+Stacks:
+	id:
+		* text
+	code:
+		* list of function calls
+		* scope
+	class:
+		* name (ID)
+		* list of fields(variables)
+		* list of constructors(functions)
+		* list of methods(functions)
+		* list of flags
+	function:
+		* name (ID)
+		* type
+		* list of parameters(variables)
+		* code
+		* scope
+		* list of flags
+	variable
+		* link to variable base, function or class
+	variable base
+		* name (ID)
+		* type
+		* list of flags
+		* formula for default value
+		* formula for get
+		* code for get
+	type
+		* class name (ID)
+		* class
+		* list of subtypes(types)
+	formula
+		* list of chunks (variables, function calls and parameters)
+	function call
+		* name (ID)
+		* function
+		* list of parameters (variables and function calls)
+	block
+		* type (ID)
+		* list of attributes (ID -> object)
+	value:
+		* integer
+		* decimal
+		* string
+		* list
+		* map
+		* formula
+		* function call
+		* variable
+	list
+		* list of values
+	map:
+		* list of entries
+	entry:
+		* key
+		* value
+	object:
+		* list of entries or / and values
+
+symbol - symbol, symbolSetId or symbol range (symbol-symbol)
+symbolSetId = symbol[ symbol[ ...]]
+
+ERROR id:text - error messsage set up with \0 parameter
+		
+code: [command[ command[ ...]]][ subId/switch] - set of commands which ends with subId or switch
+subId: code - subroutine definition
+
+
+TSP - text start pointer, initially at first text symbol
+TEP - text end pointer, initially at first text symbol
+CP - code pointer
+
+
+switches:
+	{
+		"symbol"/symbolSetId: code - code will be executed if symbol at TEP is equal to specified
+		other: code - mandatory, code will be executed if other cases was not fired
+	}
+	SWITCHID {
+		"text": code - if id is equal to text then executes the code and removes id from top of the stack
+		other: code - mandatory, code will be executed if other cases was not fired
+	}
+	
+native functions: equate, add, subtract, multiply, divide, dot, atIndex, addition, subtraction, multiplicationm, division, equal, less, more, lessOrEqual, moreOrEqual, and, or, bitAnd, bitOr, ifOp, mod, stringSequence, increment, decrement
+	
+commands:
+	>> - moves TEP one symbol forward
+	CLEAR - sets TSP to TEP
+	SKIP - skips symbol under TEP (it will be excluded from range) and moves TEP one symbol forward
+	ADD("text") - adds text to range
+	subId() - CP stores current position and moves to first command of subroutine with given ID
+	subId - CP moves to first command of subroutine with given ID
+	RETURN - CP restores position before subroutine execution and moves to next command
+	EXPECT("symbol") - if symbol at TEP is the given, TEP moves forward otherwise error will be thrown
+	CREATE(type) - creates element of certain type and put it on top of corresponding stack:
+		* id: creates id with code text between TSP(inclusive) and TEP(exclusive), TSP will be set to TEP
+		* class, function, variable: creates object with name of last id of the stack and flags, put it on top of the stack, removes last id from the stack and clears flags
+		* type, call: creates object with name of last id of the stack and removes last id from the stack
+		* block: creates block with type as second parameter
+		* integer, decimal, string: creates value
+		* parameters, formula: creates object
+		* negative, not: creates function
+	MOVE(nativeFunctionType,formula) - moves new native function into the formula
+	MOVE(type) - moves last element of the type stack into the second-to-last element of same stack
+	MOVE(type1,type2) - moves last element of the type1 stack into the last element of type2 stack
+		* MOVE(formula,type) - formula will be converted to call
+		* MOVE(type,code) - type can only be formula, call or block
+		* MOVE(type,formula) - type can only be value
+		* MOVE(type,function) - type can only be value (as parameter) or type
+		* MOVE(type,variable) - type can only be type, value (as default value) or code (as get code)
+		* MOVE(type,class) - type can be only function, variable or type
+		* MOVE(type,call) - type can be only value
+	SET(id,type) - sets attribute of last item of block stack with key = id and value = last element of type stack, removes last element of type stack
+	USE(flagName) - add flag to flags
