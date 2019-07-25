@@ -136,17 +136,21 @@ public class Rules extends ParserBase {
           if(id == ID.classParameterID) {
             action = new ActionCreate(null, id, null);
           } else {
-            NativeFunction function = NativeFunction.all.get(id);
-            EntityStack stack = function == null ? EntityStack.get(id)
-                : EntityStack.call;
-            if(stack == EntityStack.block) {
-              if(param.length != 2) error("CREATE block command requires 2"
-                  + " parameters");
-              action = new ActionCreate(stack, ID.get(param[1]), null);
+            if(id == ID.moduleID) {
+              action = new ActionCreate(null, id, null);
             } else {
-              if(param.length != 1) error("CREATE command requires single"
-                  + " parameter");
-              action = new ActionCreate(stack, null, function);
+              NativeFunction function = NativeFunction.all.get(id);
+              EntityStack stack = function == null ? EntityStack.get(id)
+                  : EntityStack.call;
+              if(stack == EntityStack.block) {
+                if(param.length != 2) error("CREATE block command requires 2"
+                    + " parameters");
+                action = new ActionCreate(stack, ID.get(param[1]), null);
+              } else {
+                if(param.length != 1) error("CREATE command requires single"
+                    + " parameter");
+                action = new ActionCreate(stack, null, function);
+              }
             }
           }
           break;

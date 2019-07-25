@@ -1,5 +1,6 @@
 package parser.structure;
 
+import export.Chunk;
 import java.util.HashMap;
 import java.util.LinkedList;
 import parser.ParserBase;
@@ -21,7 +22,8 @@ public abstract class Entity extends ParserBase {
       , classParameterID = ID.get("classParameter"), dotID = ID.get("dot")
       , definitionID = ID.get("definition"), thisID = ID.get("this")
       , variableID = ID.get("variable"), nativeID = ID.get("native")
-      , fieldID = ID.get("field");
+      , fieldID = ID.get("field"), moduleID = ID.get("module")
+      , lineID = ID.get("line");
   
   public boolean isEmptyFunction() {
     return false;
@@ -54,6 +56,10 @@ public abstract class Entity extends ParserBase {
     return getID();
   }
 
+  public Chunk getForm() {
+    return null;
+  }
+
   int getPriority() {
     return 0;
   }
@@ -70,6 +76,10 @@ public abstract class Entity extends ParserBase {
 
   public Entity getChild(ID id) {
     return null;
+  }
+  
+  public boolean hasFlag(ID id) {
+    return false;
   }
 
   public boolean hasChild(ID id) {
@@ -95,12 +105,28 @@ public abstract class Entity extends ParserBase {
     return null;
   }
 
+  public Chunk getCallForm() {
+    return null;
+  }
+
+  Scope getScope() {
+    return null;
+  }
+
   public FunctionCall toCall() {
+    return null;
+  }
+
+  public Function toFunction() {
     return null;
   }
   
   public Entity toValue() {
     return this;
+  }
+
+  Entity setTypes(Scope parentScope, boolean thisFlag) {
+    return setTypes(parentScope);
   }
 
   public Entity setTypes(Scope parentScope) {

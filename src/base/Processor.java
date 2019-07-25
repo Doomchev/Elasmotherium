@@ -20,24 +20,7 @@ public class Processor extends Base {
       , constructorID = ID.get("constructor");
   
   @SuppressWarnings("null")
-  public static void process(Module module) {
-    for(ClassEntity classEntity : ClassEntity.all.values()) {
-      for(Variable field : classEntity.variables) {
-        if(field.hasFlag(getID)) {
-          classEntity.variables.remove(field);
-          Function method = new Function(field.name);
-          classEntity.methods.add(method);
-          if(field.code != null) {
-            method.code = field.code;
-          } else {
-            method.code = new Code(new FunctionCall(EntityStack.ret, field.value));
-          }
-        }
-      }
-    }
-    
-    populateScopes(module);
-    
+  public static void process() {
     for(ClassEntity classEntity : ClassEntity.all.values()) {
       for(Function method : classEntity.methods) {
         if(method.hasFlag(constructorID)) {
@@ -45,12 +28,28 @@ public class Processor extends Base {
           for(int n = 0; n < method.parameters.size(); n++) {
             Variable parameter = method.parameters.get(n);
             if(parameter.hasFlag(ID.thisID)) {
-              Variable variable = new Variable(parameter.name);
               Variable field = classEntity.getVariable(parameter.name);
-              if(field == null) error("field " + parameter.name + " of "
-                  + classEntity.name.string + " in consructor is not found");
-              variable.type = field.getType();
-              Link link = new Link(field);
+              if(field == null) error("Field \"" + parameter.name
+                  + "\" is not found in constructor of " + classEntity.name);
+              method.parameters.set(n, field);
+            }
+          }
+        }
+      }
+    }
+    
+    populateScopes();
+    
+    for(ClassEntity classEntity : ClassEntity.all.values()) {
+      for(Function method : classEntity.methods) {
+        if(method.hasFlag(constructorID)) {
+          method.name = classEntity.name;
+          for(int n = 0; n < method.parameters.size(); n++) {
+            Variable parameter = method.parameters.get(n);
+            if(parameter.isClassField) {
+              Variable variable = new Variable(parameter.name);
+              variable.type = parameter.getType();
+              Link link = new Link(parameter);
               link.thisFlag = true;
               method.parameters.set(n, variable);
               method.code.lines.addFirst(new FunctionCall(EntityStack.equate
@@ -62,22 +61,22 @@ public class Processor extends Base {
     }
     
     ClassEntity mainClass = new ClassEntity(ID.get("Main_"));
-    Function main = new Function(mainID);
-    main.flags.add(publicID);
-    main.flags.add(staticID);
-    main.type = ClassEntity.voidClass;
+    Function mainFunction = new Function(mainID);
+    mainFunction.flags.add(publicID);
+    mainFunction.flags.add(staticID);
+    mainFunction.type = ClassEntity.voidClass;
     Variable args = new Variable(ID.get("args"));
     args.type = new Type(ID.get("String[]"));
-    main.parameters.add(args);
-    main.code = module.main;
-    mainClass.methods.add(main);
+    mainFunction.parameters.add(args);
+    mainFunction.code = main;
+    mainClass.methods.add(mainFunction);
     
     ClassEntity.intClass.name = ID.get("int");
     ClassEntity.floatClass.name = ID.get("float");
     ClassEntity.voidClass.name = ID.get("void");
     ClassEntity.booleanClass.name = ID.get("boolean");
     
-    LinkedList<Entity> mainCodeLines = module.main.lines;
+    LinkedList<Entity> mainCodeLines = main.lines;
     int n = 0;
     while(n < mainCodeLines.size()) {
       Entity entity = mainCodeLines.get(n);
@@ -90,44 +89,27 @@ public class Processor extends Base {
     }
   }
 
-  private static void populateScopes(Module module) {
+  private static void populateScopes() {
     Scope mainScope = new Scope(null);
-    module.main.scope = mainScope;
+    main.scope = mainScope;
     
     for(ClassEntity classEntity : ClassEntity.all.values()) {
       mainScope.add(classEntity);
     }
-    module.main.addToScope(null);
+    main.addToScope(null);
     
     for(ClassEntity classEntity : ClassEntity.all.values()) {
       classEntity.addToScope(mainScope);
     }
     
-    ID randomID = ID.get("random");
-    Function random = new Function(randomID);
-    random.type = ClassEntity.intClass;
-    ClassEntity.intClass.scope.entries.put(randomID, random);
-    
-    Function print = new Function(ID.get("System.out.println"));
-    print.type = ClassEntity.voidClass;
-    mainScope.entries.put(ID.get("print"), print);
-    
-    Function showMessage = new Function(ID.get("JOptionPane.showMessageDialog"));
-    showMessage.type = ClassEntity.voidClass;
-    mainScope.entries.put(ID.get("showMessage"), showMessage);
-    
-    Function enterString = new Function(ID.get("JOptionPane.showInputDialog"));
-    enterString.type = ClassEntity.stringClass;
-    mainScope.entries.put(ID.get("enterString"), enterString);
-    
-    module.main.setTypes(null);
+    main.setTypes(null);
     for(ClassEntity classEntity : ClassEntity.all.values()) {
       classEntity.setTypes(mainScope);
     }
     
     System.out.println();
     System.out.println("Scope:");
-    module.main.scope.log("  ");
+    main.scope.log("  ");
   }
   
   public static void error(String message) {

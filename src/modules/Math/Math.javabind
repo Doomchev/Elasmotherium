@@ -1,0 +1,22 @@
+import java.lang.Math
+PI -> Math.PI
+E -> Math.E
+Float sin(Float value) -> Math.sin(\(value))
+Float cos(Float value) -> Math.cos(\(value))
+Float tan(Float value) -> Math.tan(\(value))
+Float asin(Float value) -> Math.asin(\(value))
+Float acos(Float value) -> Math.acos(\(value))
+Float atan(Float value) -> Math.atan(\(value))
+Float atan2(Float y, Float x) -> Math.atan2(\(y), \(x))
+Float exp(Float value) -> Math.exp(\(value))
+Float log(Float value) -> Math.log(\(value))
+Float sqrt(Float value) -> Math.sqrt(\(value))
+Int abs(Int value) -> Math.abs(\(value))
+Float abs(Float value) -> Math.abs(\(value))
+Int floor(Float value) -> (int) Math.floor(\(value))
+Int round(Float value) -> (int) Math.round(\(value))
+Int ceil(Float value) -> (int) Math.ceil(\(value))
+Int min(Int value) -> Math.min(\(value))
+Int max(Int value) -> Math.max(\(value))
+Float min(Float value) -> Math.min(\(value))
+Float max(Float value) -> Math.max(\(value))

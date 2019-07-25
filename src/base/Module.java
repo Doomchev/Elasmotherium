@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import parser.Action;
 import parser.Rules;
 import parser.structure.Code;
@@ -13,15 +14,22 @@ import parser.structure.Entity;
 import parser.structure.EntityStack;
 
 public class Module extends ParserBase {
+  public static Module current;
+  
   public String fileName;
-  public Code main;
+  public final LinkedList<Module> modules = new LinkedList<>();
+  public Code mainCode = new Code();
 
   public Module(String fileName) {
     this.fileName = fileName;
   }
   
   public static Module read(String fileName, Rules rules) {
-    Module module = new Module(fileName);
+    return new Module(fileName).read(rules);
+  }
+  
+  public Module read(Rules rules) {
+    current = this;
     path = Paths.get(fileName).getParent().toString() + "/";
     
     include(fileName);
@@ -29,9 +37,11 @@ public class Module extends ParserBase {
     Action action = rules.root.action;
     while(action != null) action = action.execute();
     
-    module.main = EntityStack.code.pop();
+    for(Module module : modules) module.read(rules);
     
-    return module;
+    for(Entity entity : EntityStack.code.pop().lines) main.lines.add(entity);
+    
+    return this;
   }  
   
   public static void include(String fileName) {

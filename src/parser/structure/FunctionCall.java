@@ -1,5 +1,6 @@
 package parser.structure;
 
+import export.Chunk;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -29,6 +30,11 @@ public class FunctionCall extends Value {
   @Override
   public ID getFormId() {
     return function.isNativeFunction() ? function.getFormId() : callID;
+  }
+
+  @Override
+  public Chunk getCallForm() {
+    return function.getForm();
   }
   
   @Override
@@ -71,8 +77,15 @@ public class FunctionCall extends Value {
   }
 
   @Override
+  public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
+    return setTypes(parentScope);
+  }
+
+  @Override
   public Entity setTypes(Scope parentScope) {
-    return function.setCallTypes(parameters, parentScope);
+    Entity entity = function.setCallTypes(parameters, parentScope);
+    for(Entity parameter : parameters) parameter.setTypes(parentScope);
+    return entity;
   }
 
   @Override

@@ -1,22 +1,35 @@
 package parser.structure;
 
+import export.Chunk;
 import java.util.LinkedList;
 
 public class Function extends FlagEntity {
-  public Code code;
+  public Code code = new Code();
   public Value formula;
   public Entity type = null;
   public final LinkedList<Variable> parameters = new LinkedList<>();
   public boolean isClassField = false;
+  public Chunk form = null;
+  public Function next = null;
   
   public Function(ID name) {
     this.name = name;
     addFlags();
   }
+
+  @Override
+  boolean isClassField() {
+    return isClassField;
+  }
   
   @Override
   public ID getID() {
     return functionID;
+  }
+
+  @Override
+  public Chunk getForm() {
+    return form;
   }
   
   @Override
@@ -38,6 +51,11 @@ public class Function extends FlagEntity {
   }
 
   @Override
+  public Function toFunction() {
+    return this;
+  }
+
+  @Override
   public void addToScope(Scope parentScope) {
     parentScope.add(this);
     code.scope = new Scope(parentScope);
@@ -51,6 +69,8 @@ public class Function extends FlagEntity {
     if(code == null) return ClassEntity.voidClass;
     type = ClassEntity.unknownClass;
     type = code.getReturnType(code.scope);
+    for(Variable variable : parameters) variable.setTypes(parentScope);
+    code.setTypes(parentScope);
     return type;
   }
 

@@ -132,7 +132,7 @@ options = Window("Options") {
 			game.open()
 		}
 	}
-	object: Column {
+	object: Column() {
 		Table(2) {
 			Right.Text("Field width: ")
 			TextField(#width, 10..100)

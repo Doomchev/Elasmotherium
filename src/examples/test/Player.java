@@ -1,18 +1,21 @@
 package examples.test;
-import java.util.LinkedList;
-class Player {
-  Player(String firstName, String lastName, long age) {
+
+public class Player {
+  String firstName;
+  String lastName;
+  int age = 18;
+  String description() {
+    return this.firstName + " " + this.lastName + ", " + this.age + " years old";
+  };
+  Player(String firstName, String lastName, int age) {
     this.age = age;
     this.lastName = lastName;
     this.firstName = firstName;
   }
-  String firstName;
-  String lastName;
-  long age = 18;
   void incrementAge() {
-     this.age++;
+    this.age++;
   }
-  String description() {
-    return this.firstName + " " + this.lastName + ", " + this.age + " years old";
-  };
+  void incrementAge(int value) {
+    this.age += value;
+  }
 }

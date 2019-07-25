@@ -1,42 +1,47 @@
 package base;
 
+import static base.Base.JAVA;
+import static base.Base.workingPath;
 import export.Export;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 import parser.Rules;
+import parser.structure.ClassEntity;
 
 public class Main {
-  static final Rules rules = new Rules().load("standard.eep");
-  static final Export export = new Export(rules).load("java.eee");
-  //static final NodeProcessor processor = new NodeProcessor(rules);
-  
   public static void main(String[] args) throws IOException {
-    processFolder("src/examples", "examples");
-  }
-  
-  static void processFolder(String path, String pack) throws IOException {
-    File[] files = new File(path).listFiles();
-    for(File file : files) {
-      if(file.isDirectory()) {
-        processFolder(file.getCanonicalPath(), pack + "." + file.getName());
-      } else if(file.getName().endsWith(".ees")) {
-        
-        Module module = Module.read(file.getPath(), rules);
-        //processor.processModule(module);
-        //module.rootNode.log("");
-        
-        /*for(Node node : module.rootNode.children) {
-          FileWriter writer = new FileWriter(path + "/" + node.caption + ".java");
-          writer.write("package " + pack + ";\n");
-          writer.write("import java.util.LinkedList;\n");
-          if(!node.caption.equals("Main")) writer.write("import " + pack
-              + ".Main;\n");
-          writer.write(export.exportEntity(node));
-          writer.close();
-        }*/
+    JFileChooser chooser = new JFileChooser(workingPath + "src/examples");
+    chooser.setFileFilter(new FileFilter() {
+      @Override
+      public boolean accept(File file) {
+        return file.isDirectory() || file.getName().endsWith(".es");
+      }
+      @Override
+      public String getDescription() {
+        return "Extensible Engine source";
+      }
+    });
+    int ret = chooser.showDialog(null, "Select source file for compilation");
+    if(ret == JFileChooser.APPROVE_OPTION) {
+      Rules rules = new Rules().load("standard.epc");
+      String fileName = chooser.getSelectedFile().getPath();
+      String path = chooser.getSelectedFile().getParent() + "/";
+      String pack = "package examples." +  chooser.getSelectedFile()
+          .getParentFile().getName() + ";\n\n";
+      Module module = Module.read(fileName, rules);
+      Processor.process();
+      Export export = new Export(rules).load(module, JAVA);
+      for(ClassEntity classEntity : ClassEntity.all.values()) {
+        if(classEntity.isNative) continue;
+        FileWriter writer = new FileWriter(path + classEntity.name + ".java");
+        writer.write(pack);
+        writer.write(export.exportEntity(classEntity));
+        writer.close();
       }
     }
-    
   }
 }

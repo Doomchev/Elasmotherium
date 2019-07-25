@@ -253,6 +253,11 @@ public class ClassEntity extends FlagEntity {
   }
 
   @Override
+  Scope getScope() {
+    return scope;
+  }
+
+  @Override
   public ClassEntity toClass() {
     return this;
   }

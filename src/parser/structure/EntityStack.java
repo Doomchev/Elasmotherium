@@ -63,7 +63,6 @@ public class EntityStack<EntityType> extends ParserBase {
     public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
       Variable variable = parameters.getFirst().createVariable(parentScope);
       if(variable == null) return super.setTypes(parentScope);
-      
       variable.value = parameters.getLast();
       return variable.setTypes(parentScope);
     }
@@ -233,8 +232,8 @@ public class EntityStack<EntityType> extends ParserBase {
     new NativeFunction("dot", 17) {
       @Override
       public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
-        Entity type = parameters.getFirst().setTypes(parentScope);
-        return type.getFieldType(parameters.getLast().getNameID());
+        Entity parentType = parameters.getFirst().setTypes(parentScope);
+        return parameters.getLast().setTypes(parentType.getScope(), true);
       }
     };
     new NativeFunction("atIndex", 17);

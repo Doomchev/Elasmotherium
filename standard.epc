@@ -79,10 +79,11 @@ codeLine: SAVEPOS {
       "end": CREATE(end) MOVE(call,code) RETURN
 			"global": USE(global) id() def 
 			"native": USE(native) id() def
+			"import": id() CREATE(module) RETURN
       other: def
 		}
 	}
-	"$": >> CREATE(formula) id() USE(this) CREATE(variable) MOVE(variable,formula) var
+	"$": >> CREATE(formula) id() USE(this) CREATE(link) MOVE(link,formula) var
   "[": >> CREATE(formula) list() MOVE(list,formula) {
     nothing: >>
 		"/": comment()
@@ -181,14 +182,14 @@ def: {
 	letter: CREATE(type) id() {
 		nothing: >>
 		"/": comment()
-		"(": >> CREATE(function) MOVE(type,function) functionDef
+		"(": >> USE(static) CREATE(function) MOVE(type,function) functionDef
 		other: CREATE(variable) MOVE(type,variable) CREATE(formula) MOVE(variable,formula) var
 	}
 	// Class<Param1[,Param2]>
 	// Type<Type>
 	"<": >> CREATE(class) classParameter
 	// call(
-	"(": >> CREATE(function) functionDef 
+	"(": >> USE(static) CREATE(function) functionDef 
 	// Class {
 	"{": >> CREATE(class) classBody
 	//var = 
@@ -280,7 +281,7 @@ functionCode: {
 	"{": code() MOVE(code,function) RETURN
 	// function() ->
 	"-": >> EXPECT(">") formula() CREATE(return) MOVE(formula,call) CREATE(code) MOVE(call,code) MOVE(code,function) RETURN
-	other: expected("->_or_{")
+	other: RETURN
 }
 
 call: LOADPOS id() CREATE(link) CREATE(formula) MOVE(link,formula) functionCall

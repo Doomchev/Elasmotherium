@@ -17,6 +17,7 @@ public abstract class FlagEntity extends NamedEntity {
     return getChild(id) != null;
   }
 
+  @Override
   public boolean hasFlag(ID id) {
     return flags.contains(id);
   }

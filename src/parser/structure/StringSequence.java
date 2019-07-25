@@ -17,6 +17,7 @@ public class StringSequence extends Value {
   
   @Override
   public Entity setTypes(Scope parentScope) {
+    for(Value value : chunks) value.setTypes(parentScope);
     return ClassEntity.stringClass;
   }
   

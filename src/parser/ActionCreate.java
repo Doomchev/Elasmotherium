@@ -1,5 +1,6 @@
 package parser;
 
+import base.Module;
 import parser.structure.Block;
 import parser.structure.Entity;
 import parser.structure.EntityStack;
@@ -25,7 +26,11 @@ public class ActionCreate extends Action {
       if(log) log("CREATE CLASS PARAMETER");
       ID id = EntityStack.id.pop();
       EntityStack.classStack.peek().parameters.add(new Variable(id));
-    } if(stack.isStringBased()) {
+    } else if(type == Entity.moduleID) {
+      String name = EntityStack.id.pop().string;
+      Module.current.modules.add(new Module(modulesPath + name + "/" + name
+          + ".es"));
+    } else if(stack.isStringBased()) {
       String string = prefix + text.substring(tokenStart, textPos);
       if(log) log("CREATE " + stack.name.string + "(" + string + ")");
       stack.push(stack.createFromString(string));

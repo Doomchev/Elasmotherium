@@ -1,7 +1,9 @@
 package export;
 
 import base.Base;
+import base.Module;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -9,6 +11,8 @@ import java.util.HashMap;
 import parser.Rules;
 import parser.structure.ClassEntity;
 import parser.structure.Entity;
+import parser.structure.Function;
+import parser.structure.FunctionCall;
 import parser.structure.ID;
 
 public class Export extends Base {
@@ -124,10 +128,23 @@ public class Export extends Base {
     return seq.firstChunk;
   }
   
-  public Export load(String fileName) {
+  public Export load(Module rootModule, String language) {
+    load(language + ".eec");
+    
+    for(Module module : rootModule.modules) {
+      String bindFileName = module.fileName;
+      bindFileName = bindFileName.substring(0
+          , bindFileName.lastIndexOf(".") + 1) + language + "bind";
+      if(new File(bindFileName).exists()) load(bindFileName);
+    }
+    
+    return this;
+  }
+  
+  private Export load(String fileName) {
     currentFileName = fileName;
     try {
-      BufferedReader reader = new BufferedReader(new FileReader(fileName));
+      BufferedReader reader = new BufferedReader(new FileReader(currentFileName));
       String line;
       lineNum = 0;
       while((line = reader.readLine()) != null) {
@@ -138,15 +155,25 @@ public class Export extends Base {
         if(equalPos >= 0 && (equalPos < colonPos || colonPos < 0)) {
           constants.put(line.substring(0, equalPos), line.substring(equalPos + 1));
         } else {
-          Chunk chunk = getChunkSequence(line.substring(colonPos + 1));
+          Chunk chunk = getChunkSequence(line.substring(colonPos + 1).trim());
           String name = line.substring(0, colonPos).trim();
-          forms.put(ID.get(name), chunk);
+          int bracketPos = name.indexOf("(");
+          if(bracketPos >= 0) {
+            if(!name.endsWith(")")) error(") expected");
+            Entity entity = main.scope.getVariable(ID.get(name.substring(0
+                , bracketPos)));
+            Function function = entity == null ? null : entity.toFunction();
+            if(function == null) error(name + " is not found");
+            function.form = chunk;
+          } else {
+            forms.put(ID.get(name), chunk);
+          }
         }
       }
     } catch (FileNotFoundException ex) {
-      error("I/O error", fileName + " not found.");
+      error("I/O error", currentFileName + " not found.");
     } catch (IOException ex) {
-      error("I/O error", fileName + "Cannot read " + fileName + ".");
+      error("I/O error", currentFileName + "Cannot read " + currentFileName + ".");
     }
     
     return this;
@@ -154,18 +181,25 @@ public class Export extends Base {
   
   public String exportEntity(Entity entity) {
     ID id = entity.getFormId();
-    Chunk chunk = forms.get(id);
-    if(chunk == null) error(id + " is not defined");
+    Chunk chunk = entity.getCallForm();
+    if(chunk == null) {
+      chunk = forms.get(id);
+      if(chunk == null) error(id + " is not defined");
+    }
     return exportEntity(entity, chunk);
   }
   
   public String exportEntity(Entity entity, ID postfix) {
-    ID id = entity.getFormId();
-    ID postfixId = postfix == null ? id : ID.get(id.string + "_" + postfix.string);
-    Chunk chunk = forms.get(postfixId);
-    if(chunk == null) chunk = forms.get(id);
-    if(chunk == null) error(id + " is not defined");
-    return exportEntity(entity, chunk);
+    Chunk chunk = entity.getCallForm();
+    String colon = chunk == null ? "" : (postfix == ID.lineID ? ";" : "");
+    if(chunk == null) {
+      ID id = entity.getFormId();
+      ID postfixId = postfix == null ? id : ID.get(id.string + "_" + postfix.string);
+      chunk = forms.get(postfixId);
+      if(chunk == null) chunk = forms.get(id);
+      if(chunk == null) error(id + " is not defined");
+    }
+    return exportEntity(entity, chunk) + colon;
   }
 
   private String exportEntity(Entity entity, Chunk chunk) {

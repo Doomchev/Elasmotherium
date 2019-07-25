@@ -1,5 +1,6 @@
 package parser.structure;
 
+import export.Chunk;
 import java.util.LinkedList;
 import parser.Action;
 
@@ -31,7 +32,18 @@ public class Link extends Value {
   }
 
   @Override
+  public Chunk getForm() {
+    return entity.getForm();
+  }
+
+  @Override
+  public Chunk getCallForm() {
+    return entity.getCallForm();
+  }
+
+  @Override
   public Entity getChild(ID id) {
+    if(id == valueID) return entity;
     return entity.getChild(id);
   }
 
@@ -48,12 +60,17 @@ public class Link extends Value {
   }
 
   @Override
-  public Entity setTypes(Scope parentScope) {
+  Entity setTypes(Scope parentScope, boolean isClassField) {
     if(entity == null) {
-      entity = parentScope.get(name, thisFlag);
+      entity = parentScope.get(name, isClassField);
       if(entity == null) error(name + " is not found");
     }
     return entity.setTypes(parentScope);
+  }
+
+  @Override
+  public Entity setTypes(Scope parentScope) {
+    return setTypes(parentScope, thisFlag);
   }
 
   @Override

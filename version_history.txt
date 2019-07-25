@@ -1,36 +1,42 @@
+2019.07.25 (version 0.12)
+	+ PE: import keyword, modules and java binding support
+	+ EE: user functions
+	* EE, JEC: proper use of semicolons
+
 2019.06.17 (version 0.11)
 	+ EE: postfixes for entity child and children
+	+ ID system (instead of strings)
 	* PE: new stack-based parser
 	* PE: new abstract syntax tree structure
-	* EEPC: new parsing language
+	* PC: new parsing language
 	* SPE: new syntax tree processing engine
 	* TEE: new type inference engine
 	* New file extensions
 	
 2019.03.25 (version 0.10)
-	+ EEPC: abstract methods
-	+ EEPC: native classes and functions (will be skipped during export)
+	+ PC: abstract methods
+	+ PC: native classes and functions (will be skipped during export)
 	+ SPE: generic subtypes
 	* SPE: native class replacement
-	* EEPC: generic subtypes
+	* PC: generic subtypes
 	
 2019.03.13 (version 0.9)
-	+ EEPC: generic subtypes
-	+ EEPC, SPE, JEC: getters
-	+ EEPC: // and /* */ comments
-	+ EEPC: "extends" keyword
+	+ PC: generic subtypes
+	+ PC, SPE, JEC: getters
+	+ PC: // and /* */ comments
+	+ PC: "extends" keyword
 	* Separate classes for field structure, function scope and class scope
 
 2019.02.13 (version 0.8)
 	+ Type inference engine (TEE)
 	+ Structure processing engine (SPE)
 	+ Java export code (JEC)
-	+ EEPC: "global" keyword
+	+ PC: "global" keyword
 
 2019.01.05 (version 0.7)
 	+ PE: parser code lines in error messages and parsing log
-	+ EEPC: field and variable types
-	+ EEPC: $ prefix
+	+ PC: field and variable types
+	+ PC: $ prefix
 	* PE, EE: error messages
 	* PE: parsing logging
 	! PE: node resolving
@@ -40,46 +46,46 @@
 	
 2018.11.24 (version 0.5)
   + PE: ADD command
-  + EEPC: value returns string if there is only one string in string sequence
-  + EEPC: default values and this in function definition parameters
-  + EEPC, JSEC: classes, objects, methods, constructors
-  + EEPC, JSEC: anonymous functions
-  + EEPC, JSEC: return
+  + PC: value returns string if there is only one string in string sequence
+  + PC: default values and this in function definition parameters
+  + PC, JSEC: classes, objects, methods, constructors
+  + PC, JSEC: anonymous functions
+  + PC, JSEC: return
   ! PE: // comments
   
 2018.11.23 (version 0.4)
   + PE, EE: // comments
-  + EEPC: multiple loops in one for operator
+  + PC: multiple loops in one for operator
   + JSEC: for loops
   * EE, JSEC: new format of tokens (as escape sequences)
 
 2018.11.22 (version 0.3)
   + PE: expression parser (shutting-yard algorithm with ternary conditional operator)
-  + EEPC: ranges in for loop
+  + PC: ranges in for loop
   + JSEC: other numeric and boolean operators
   + JSEC: if-then-else clause
-  * EEPC: # changed to \
-  ! EEPC: arrays in expressions
-  ! EEPC: operators
-  ! EEPC: if-then-else clause
+  * PC: # changed to \
+  ! PC: arrays in expressions
+  ! PC: operators
+  ! PC: if-then-else clause
   ! JSEC: function calls
   
 2018.11.13 (version 0.2)
-  * PE, EEPC: fully rewritten
+  * PE, PC: fully rewritten
 
 2018.11.07 (version 0.1)
   + Parsing engine (PE)
-  + ExtEPL parsing code (EEPC)
+  + Parsing code (PC)
   + Exporting engine (EE)
   + Javascript export code (JSEC)
 
 To do:  
+	+ java code binding
+	+ abstract get fields, methods and constructors
+	+ type conversion
 	+ ranges
 	+ $[] syntax
-	+ generics
 	+ string slices
-	+ convert node structure to more complex (with classes, functions and fields)
-	+ empty constructors without {}
 	+ -> for functions without return value
 
 Possible improvements:
@@ -90,4 +96,3 @@ Possible improvements:
   + PE: intelligent action chain parsing (allowing spaces in commands)
   + PE: scope pool
   + PE: subroutines with preserved scope
-	+ IDs of same map instead of node strings

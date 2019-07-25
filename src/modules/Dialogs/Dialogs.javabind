@@ -1,0 +1,6 @@
+//showMessage(String, String): javax.swing.JOptionPane.showMessageDialog(null, \0, \1, JOptionPane.INFORMATION_MESSAGE)
+showMessage(String): javax.swing.JOptionPane.showMessageDialog(null, \0)
+//String enterString(String, String): javax.swing.JOptionPane.showInputDialog(null, \0, \1, JOptionPane.INFORMATION_MESSAGE)
+enterString(String): javax.swing.JOptionPane.showInputDialog(\0)
+//Int enterInt(String, String): Integer.parseInt(javax.swing.JOptionPane.showInputDialog(null, \0, \1, JOptionPane.INFORMATION_MESSAGE))
+enterInt(String): Integer.parseInt(javax.swing.JOptionPane.showInputDialog(\0))

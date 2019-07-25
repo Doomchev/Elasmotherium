@@ -10,6 +10,6 @@ public class SixPawns {
     //System.out.println(new NodeProcessor(rules).processModule(module).log());
     
     Export export = new Export(rules).load("java.eec");
-    System.out.println("\n" + export.exportEntity(module.main));
+    System.out.println("\n" + export.exportEntity(module.mainCode));
   }
 }

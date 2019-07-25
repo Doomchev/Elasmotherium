@@ -17,6 +17,7 @@ public class ChunkChildren extends Chunk {
     String str = "";
     boolean first = true;
     for(Entity child : entity.getChildren()) {
+      if(child.hasFlag(ID.nativeID)) continue;
       if(!first) {
         Chunk chunk = delimiter;
         while(chunk != null) {

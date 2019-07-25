@@ -1,5 +1,7 @@
 package examples.patterns;
 
+import modules.texture.Texture;
+
 public class Main {
   public static void main(String[] args) {
     new Window("Chessboard", new Texture(128, 128, new Int32_Int_Int_() {
