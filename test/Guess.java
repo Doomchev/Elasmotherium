@@ -8,8 +8,8 @@ import parser.Rules;
 public class Guess extends Base {
   public static void main(String[] args) {
     Rules rules = new Rules().load("standard.epc");
-    Module module = Module.read("src/examples/guess/guess.es", rules);
+    Module module = Module.read("examples/guess.es", rules);
     Processor.process();
-    new Export(rules).load(module, JAVA).log();
+    //new Export(rules).load(module, JAVA).log();
   }
 }

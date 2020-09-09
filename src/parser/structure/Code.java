@@ -1,6 +1,8 @@
 package parser.structure;
 
 import java.util.LinkedList;
+import parser.structure.Scope.ScopeEntry;
+import vm.I64Allocate;
 
 public class Code extends Entity {
   public final LinkedList<Entity> lines = new LinkedList<>();
@@ -24,18 +26,8 @@ public class Code extends Entity {
   }
 
   @Override
-  public Entity getReturnType(Scope parentScope) {
-    for(Entity entity : lines) {
-      Entity type = entity.getReturnType(parentScope);
-      if(type != null) return type;
-    }
-    return ClassEntity.voidClass;
-  }
-
-  @Override
-  public Entity setTypes(Scope parentScope) {
+  public void setTypes(Scope parentScope) {
     for(Entity entity : lines) entity.setTypes(scope);
-    return null;
   }
 
   @Override
@@ -51,6 +43,11 @@ public class Code extends Entity {
   @Override
   void moveToVariable(Variable variable) {
     variable.code = this;
+  }
+
+  @Override
+  public void toByteCode() {
+    for(Entity entity : lines) entity.toByteCode();
   }
 
   @Override

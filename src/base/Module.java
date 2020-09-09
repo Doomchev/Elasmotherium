@@ -39,7 +39,8 @@ public class Module extends ParserBase {
     
     for(Module module : modules) module.read(rules);
     
-    for(Entity entity : EntityStack.code.pop().lines) main.lines.add(entity);
+    for(Entity entity : EntityStack.code.pop().lines)
+      main.code.lines.add(entity);
     
     return this;
   }  

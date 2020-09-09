@@ -12,7 +12,6 @@ import parser.Rules;
 import parser.structure.ClassEntity;
 import parser.structure.Entity;
 import parser.structure.Function;
-import parser.structure.FunctionCall;
 import parser.structure.ID;
 
 public class Export extends Base {
@@ -160,7 +159,7 @@ public class Export extends Base {
           int bracketPos = name.indexOf("(");
           if(bracketPos >= 0) {
             if(!name.endsWith(")")) error(") expected");
-            Entity entity = main.scope.getVariable(ID.get(name.substring(0
+            Entity entity = main.code.scope.getVariable(ID.get(name.substring(0
                 , bracketPos)));
             Function function = entity == null ? null : entity.toFunction();
             if(function == null) error(name + " is not found");

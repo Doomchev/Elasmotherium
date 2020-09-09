@@ -1,115 +1,77 @@
 package base;
 
-import java.util.LinkedList;
-import javax.swing.JOptionPane;
 import parser.structure.ClassEntity;
-import parser.structure.Code;
-import parser.structure.Entity;
-import parser.structure.EntityStack;
 import parser.structure.Function;
 import parser.structure.FunctionCall;
 import parser.structure.ID;
-import parser.structure.Link;
-import parser.structure.Scope;
-import parser.structure.Type;
 import parser.structure.Variable;
+import vm.VMInput;
+import vm.VMPrint;
+import vm.VMRandom;
+import vm.VMShowMessage;
 
 public class Processor extends Base {
   public static ID getID = ID.get("get"), mainID = ID.get("main")
-      , publicID = ID.get("public"), staticID = ID.get("static")
-      , constructorID = ID.get("constructor");
+      , publicID = ID.get("public"), staticID = ID.get("static");
+      
   
   @SuppressWarnings("null")
   public static void process() {
-    for(ClassEntity classEntity : ClassEntity.all.values()) {
-      for(Function method : classEntity.methods) {
-        if(method.hasFlag(constructorID)) {
-          method.name = classEntity.name;
-          for(int n = 0; n < method.parameters.size(); n++) {
-            Variable parameter = method.parameters.get(n);
-            if(parameter.hasFlag(ID.thisID)) {
-              Variable field = classEntity.getVariable(parameter.name);
-              if(field == null) error("Field \"" + parameter.name
-                  + "\" is not found in constructor of " + classEntity.name);
-              method.parameters.set(n, field);
-            }
-          }
-        }
-      }
-    }
+    for(ClassEntity classEntity : ClassEntity.all.values())
+      globalScope.add(classEntity);
     
-    populateScopes();
+    main.addToScope(globalScope);
+    for(ClassEntity classEntity : ClassEntity.all.values())
+      classEntity.addToScope(globalScope);
     
-    for(ClassEntity classEntity : ClassEntity.all.values()) {
-      for(Function method : classEntity.methods) {
-        if(method.hasFlag(constructorID)) {
-          method.name = classEntity.name;
-          for(int n = 0; n < method.parameters.size(); n++) {
-            Variable parameter = method.parameters.get(n);
-            if(parameter.isClassField) {
-              Variable variable = new Variable(parameter.name);
-              variable.type = parameter.getType();
-              Link link = new Link(parameter);
-              link.thisFlag = true;
-              method.parameters.set(n, variable);
-              method.code.lines.addFirst(new FunctionCall(EntityStack.equate
-                  , link, variable));
-            }
-          }
-        }
-      }
-    }
+    addFunction(new Function(ID.get("print")) {
+      @Override
+      public void functionToByteCode(FunctionCall call) {
+        addCommand(new VMPrint());
+      }      
+    }, ClassEntity.voidClass, ClassEntity.stringClass);
     
-    ClassEntity mainClass = new ClassEntity(ID.get("Main_"));
-    Function mainFunction = new Function(mainID);
-    mainFunction.flags.add(publicID);
-    mainFunction.flags.add(staticID);
-    mainFunction.type = ClassEntity.voidClass;
-    Variable args = new Variable(ID.get("args"));
-    args.type = new Type(ID.get("String[]"));
-    mainFunction.parameters.add(args);
-    mainFunction.code = main;
-    mainClass.methods.add(mainFunction);
+    addFunction(new Function(ID.get("input")) {
+      @Override
+      public void functionToByteCode(FunctionCall call) {
+        addCommand(new VMInput());
+      }      
+    }, ClassEntity.stringClass, ClassEntity.stringClass);
     
-    ClassEntity.intClass.name = ID.get("int");
-    ClassEntity.floatClass.name = ID.get("float");
-    ClassEntity.voidClass.name = ID.get("void");
-    ClassEntity.booleanClass.name = ID.get("boolean");
+    addFunction(new Function(ID.get("random")) {
+      @Override
+      public void functionToByteCode(FunctionCall call) {
+        addCommand(new VMRandom());
+      }      
+    }, ClassEntity.i64Class, ClassEntity.i64Class);
     
-    LinkedList<Entity> mainCodeLines = main.lines;
-    int n = 0;
-    while(n < mainCodeLines.size()) {
-      Entity entity = mainCodeLines.get(n);
-      if(entity.getClass() == Function.class) {
-        mainClass.methods.add((Function) entity);
-        mainCodeLines.remove(n);
-      } else {
-        n++;
-      }
-    }
-  }
-
-  private static void populateScopes() {
-    Scope mainScope = new Scope(null);
-    main.scope = mainScope;
-    
-    for(ClassEntity classEntity : ClassEntity.all.values()) {
-      mainScope.add(classEntity);
-    }
-    main.addToScope(null);
-    
-    for(ClassEntity classEntity : ClassEntity.all.values()) {
-      classEntity.addToScope(mainScope);
-    }
-    
-    main.setTypes(null);
-    for(ClassEntity classEntity : ClassEntity.all.values()) {
-      classEntity.setTypes(mainScope);
-    }
+    addFunction(new Function(ID.get("showMessage")) {
+      @Override
+      public void functionToByteCode(FunctionCall call) {
+        addCommand(new VMShowMessage());
+      }      
+    }, ClassEntity.voidClass, ClassEntity.stringClass);
     
     System.out.println();
-    System.out.println("Scope:");
-    main.scope.log("  ");
+    System.out.println("Global scope:");
+    globalScope.log("  ");
+    System.out.println("Main scope:");
+    main.code.scope.log("  ");
+    
+    main.setTypes(null);
+    for(ClassEntity classEntity : ClassEntity.all.values())
+      classEntity.setTypes(globalScope);
+  }
+
+  private static void addFunction(Function function, ClassEntity returnType
+      , ClassEntity... parameters) {
+    function.type = returnType;
+    for(ClassEntity type : parameters) {
+      Variable variable = new Variable(ID.variableID);
+      variable.type = type;
+      function.parameters.add(variable);
+    }
+    globalScope.add(function, function.name);
   }
   
   public static void error(String message) {

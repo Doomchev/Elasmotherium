@@ -1,6 +1,6 @@
-number = Int.random(100)
+I64 number = random(100)
 do {
-	Int guess = enterString("What number did I guess?")
+	I64 guess = input("What number did I guess?")
 	if(guess < number) {
 		showMessage("Your number is too small!")
 	} else if(guess > number) {
@@ -10,4 +10,3 @@ do {
 		end
 	}
 }
-

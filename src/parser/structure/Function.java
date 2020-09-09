@@ -2,6 +2,9 @@ package parser.structure;
 
 import export.Chunk;
 import java.util.LinkedList;
+import java.util.ListIterator;
+import static parser.structure.Entity.addCommand;
+import vm.I64Allocate;
 
 public class Function extends FlagEntity {
   public Code code = new Code();
@@ -10,7 +13,7 @@ public class Function extends FlagEntity {
   public final LinkedList<Variable> parameters = new LinkedList<>();
   public boolean isClassField = false;
   public Chunk form = null;
-  public Function next = null;
+  public int i64quantity = -1;
   
   public Function(ID name) {
     this.name = name;
@@ -58,25 +61,24 @@ public class Function extends FlagEntity {
   @Override
   public void addToScope(Scope parentScope) {
     parentScope.add(this);
-    code.scope = new Scope(parentScope);
-    for(Variable variable : parameters) code.scope.add(variable, variable.name);
+    Scope scope = code.scope;
+    scope = new Scope(parentScope);
+    currentFunction = this;
+    for(Variable variable : parameters) {
+      scope.add(variable, variable.name);
+      variable.setAllocation();
+    }
     code.addToScope(null);
-  }
-  
-  @Override
-  public Entity setTypes(Scope parentScope) {
-    if(type != null) return type;
-    if(code == null) return ClassEntity.voidClass;
-    type = ClassEntity.unknownClass;
-    type = code.getReturnType(code.scope);
-    for(Variable variable : parameters) variable.setTypes(parentScope);
-    code.setTypes(parentScope);
-    return type;
   }
 
   @Override
-  public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
-    return setTypes(parentScope);
+  public void setTypes(Scope parentScope) {
+    code.setTypes(parentScope);
+  }
+
+  @Override
+  public void setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
+    setTypes(parentScope);
   }
 
   @Override
@@ -94,9 +96,27 @@ public class Function extends FlagEntity {
   void moveToCode(Code code) {
     code.lines.add(this);
   }
+
+  @Override
+  public void toByteCode() {
+    if(i64quantity >= 0) addCommand(new I64Allocate(i64quantity + 1));
+    code.toByteCode();
+  }
+
+  public void toByteCode(FunctionCall call) {
+    ListIterator<Variable> iterator = parameters.listIterator();
+    for(Entity parameter : call.parameters) {
+      parameter.toByteCode();
+      if(!iterator.hasNext()) error("Too many parameters in " + getName());
+      conversion(parameter.getType(), iterator.next().type);
+    }
+    if(iterator.hasNext()) error("Too few parameters in " + getName());
+    functionToByteCode(call);
+  }
   
   @Override
   public void logScope(String indent) {
-    if(code != null) code.logScope(indent);
+    if(code.scope != null) code.logScope(indent);
   }
 }
+ 

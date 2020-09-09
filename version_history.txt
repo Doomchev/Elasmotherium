@@ -1,3 +1,17 @@
+2020.09.09 (version 0.13)
+	+ AST: Numeric value types (I8, I16, I32, I64, F32, F64)
+	+ AST: Function call return type and covertTo type
+	+ Low-level code generation (LLCG):
+	+ LLCG: do block, if block, main function, string sequence
+	+ LLCG: Type conversion
+	+ LLCG: Variable indexation and allocation quantity counting
+	+ Virtual machine (VM) for low-level code with stacks, command adding function and goto linking support
+	+ VM: Commands (I64Allocate, I64Push, I64Equate, I64StackPush, I64Add, StringPush, I64ToString, StringAdd, VMPrint, VMEnd
+			, VMRandom, VMInput, StringToI64, I64Less, IfFalseGoto, VMShowMessage, VMGoto, I64More)
+	* LLCG: Native functions type inference
+	* AST: Converted scope entries hash map to list of entries
+	- Type inference
+
 2019.07.25 (version 0.12)
 	+ PE: import keyword, modules and java binding support
 	+ EE: user functions
@@ -76,11 +90,11 @@
 2018.11.07 (version 0.1)
   + Parsing engine (PE)
   + Parsing code (PC)
+	+ Abstract syntax tree (AST)
   + Exporting engine (EE)
   + Javascript export code (JSEC)
 
 To do:  
-	+ java code binding
 	+ abstract get fields, methods and constructors
 	+ type conversion
 	+ ranges

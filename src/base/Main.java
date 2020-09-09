@@ -1,12 +1,10 @@
 package base;
 
-import static base.Base.JAVA;
 import static base.Base.workingPath;
 import export.Export;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Paths;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import parser.Rules;
@@ -14,7 +12,7 @@ import parser.structure.ClassEntity;
 
 public class Main {
   public static void main(String[] args) throws IOException {
-    JFileChooser chooser = new JFileChooser(workingPath + "src/examples");
+    JFileChooser chooser = new JFileChooser(workingPath + "examples");
     chooser.setFileFilter(new FileFilter() {
       @Override
       public boolean accept(File file) {
@@ -34,10 +32,10 @@ public class Main {
           .getParentFile().getName() + ";\n\n";
       Module module = Module.read(fileName, rules);
       Processor.process();
-      Export export = new Export(rules).load(module, JAVA);
+      Export export = new Export(rules).load(module, Base.JAVA);
       for(ClassEntity classEntity : ClassEntity.all.values()) {
         if(classEntity.isNative) continue;
-        FileWriter writer = new FileWriter(path + classEntity.name + ".java");
+        FileWriter writer = new FileWriter(path + classEntity.name + ".go");
         writer.write(pack);
         writer.write(export.exportEntity(classEntity));
         writer.close();

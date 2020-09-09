@@ -3,12 +3,18 @@ package parser.structure;
 import export.Chunk;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.ListIterator;
+import vm.Command;
+import vm.I64Allocate;
+import vm.VMBase;
 
 public class FunctionCall extends Value {
-  public Entity function;
+  public Function function;
+  public ID functionName;
+  public boolean thisFlag;
   public final LinkedList<Entity> parameters = new LinkedList<>();
 
-  public FunctionCall(Entity function) {
+  public FunctionCall(Function function) {
     this.function = function;
   }
 
@@ -19,7 +25,8 @@ public class FunctionCall extends Value {
   
   @Override
   public boolean isEmptyFunction() {
-    return function == null || (function.isEmptyFunction() && parameters.isEmpty());
+    return function == null || (function.isEmptyFunction()
+        && parameters.isEmpty());
   }
   
   @Override
@@ -38,7 +45,7 @@ public class FunctionCall extends Value {
   }
   
   @Override
-  int getPriority() {
+  public int getPriority() {
     return function == null ? 17 : function.getPriority();
   }
 
@@ -65,27 +72,30 @@ public class FunctionCall extends Value {
   }
 
   @Override
-  public Entity getReturnType(Scope parentScope) {
-    if(function == EntityStack.ret && parameters.size() >= 1)
-      return parameters.getFirst().setTypes(parentScope);
-    return null;
-  }
-
-  @Override
   public Entity getType() {
     return function.getType();
   }
 
   @Override
-  public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
-    return setTypes(parentScope);
+  public void addToScope(Scope scope) {
+    if(parameters.isEmpty()) return;
+    parameters.getFirst().addToScope(scope);
   }
 
   @Override
-  public Entity setTypes(Scope parentScope) {
-    Entity entity = function.setCallTypes(parameters, parentScope);
+  public void setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
+    setTypes(parentScope);
+  }
+
+  @Override
+  public void setTypes(Scope parentScope) {
+    if(functionName != null) {
+      Entity functionEntity = parentScope.get(functionName, thisFlag);
+      if(functionEntity == null) error(functionName + " is not found");
+      function = functionEntity.toFunction();
+    }
     for(Entity parameter : parameters) parameter.setTypes(parentScope);
-    return entity;
+    function.setCallTypes(parameters, parentScope);
   }
 
   @Override
@@ -96,6 +106,11 @@ public class FunctionCall extends Value {
   @Override
   void moveToCode(Code code) {
     code.lines.add(this);
+  }
+
+  @Override
+  public void toByteCode() {
+    function.toByteCode(this);
   }
 
   @Override

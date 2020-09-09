@@ -1,6 +1,20 @@
 package parser.structure;
 
+import static parser.structure.Entity.addCommand;
+import vm.I64ToString;
+
 public abstract class Value extends Entity {
+  Entity convertTo;
+
+  void setFunction(FunctionCall op) {
+    error("Cannot set function.");
+  }
+
+  @Override
+  public void setConvertTo(Entity type) {
+    convertTo = type;
+  }
+
   @Override
   void moveToStringSequence(StringSequence sequence) {
     sequence.chunks.add(this);

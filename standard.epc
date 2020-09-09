@@ -80,7 +80,7 @@ codeLine: SAVEPOS {
 			"global": USE(global) id() def 
 			"native": USE(native) id() def
 			"import": id() CREATE(module) RETURN
-      other: def
+			other: def
 		}
 	}
 	"$": >> CREATE(formula) id() USE(this) CREATE(link) MOVE(link,formula) var
@@ -170,7 +170,7 @@ forSeparator: {
 }
 
 // Class[<SubType[,SubType]>][ extends Type[<Type>]] {
-// [Type[<Type>] ]function([Type[<Type>] ]a[ = 0], ...) {
+// Type[<Type>] function([Type[<Type>] ]a[ = 0], ...) {
 // [Type[<Type>] ]variable = ...
 // functionCall(formula, ...)
 
@@ -182,7 +182,10 @@ def: {
 	letter: CREATE(type) id() {
 		nothing: >>
 		"/": comment()
+		// Type function
 		"(": >> USE(static) CREATE(function) MOVE(type,function) functionDef
+		// Type var
+		"=": >> CREATE(variable) MOVE(type,variable) formula() MOVE(formula,variable) MOVE(variable,code) RETURN
 		other: CREATE(variable) MOVE(type,variable) CREATE(formula) MOVE(variable,formula) var
 	}
 	// Class<Param1[,Param2]>
@@ -192,7 +195,7 @@ def: {
 	"(": >> USE(static) CREATE(function) functionDef 
 	// Class {
 	"{": >> CREATE(class) classBody
-	//var = 
+	// var = 
 	other: CREATE(link) defFormula
 }
 functionDef: functionParameter(notFunctionDef) MOVE(function,code) RETURN
@@ -230,8 +233,10 @@ classParameter: id(functionType) CREATE(classParameter) {
 functionType: LOADPOS id() EXPECT("<") type() id() {
   nothing: >>
 	"/": comment()
+	// Type<Type> function(
 	"(": >> CREATE(function) MOVE(type,function) functionDef
-	"=": CREATE(variable) MOVE(type,variable) CREATE(formula) MOVE(variable,formula) var
+	// Type<Type> var =
+	"=": CREATE(variable) MOVE(type,variable) formula() MOVE(formula,variable) MOVE(variable,code) RETURN
 	other: expected("(_or_=")
 }
 
@@ -249,9 +254,9 @@ functionParameter: {
 		// method(Type<Type> var
 		"<": >> type() id() CREATE(variable) MOVE(type,variable) afterFunctionParam
 		// method(var = formula
-		"=": CREATE(variable) afterFunctionParam
+		"=": expected("Type")
 		combra: expected("Type_or_default_value_for_parameter")
-		other: expected("Identifier,_subtype_or_=")
+		other: expected("Identifier_or_subtype")
 	}
 	// function($variable
 	"$": >> USE(this) id() CREATE(variable) afterFunctionParam
@@ -558,9 +563,9 @@ number: CLEAR >> {
   digit: >>
   ".": {
     digit: >>
-    other: CREATE(decimal) RETURN
+    other: CREATE(f64) RETURN
   }
-  other: CREATE(integer) RETURN
+  other: CREATE(i64) RETURN
 }
 
 // string

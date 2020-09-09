@@ -37,10 +37,9 @@ public class Type extends NamedEntity {
   }
 
   @Override
-  public Entity setTypes(Scope parentScope) {
+  public void setTypes(Scope parentScope) {
     typeClass = parentScope.getVariable(name).toClass();
     for(Type subtype : subtypes) subtype.setTypes(parentScope);
-    return this;
   }
 
   @Override
@@ -66,6 +65,11 @@ public class Type extends NamedEntity {
   @Override
   void moveToFunction(Function function) {
     function.type = this;
+  }
+
+  @Override
+  public int getStackIndex() {
+    return typeClass.getStackIndex();
   }
 
   @Override

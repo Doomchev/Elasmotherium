@@ -4,14 +4,19 @@ import export.Chunk;
 import java.util.HashMap;
 import java.util.LinkedList;
 import parser.ParserBase;
+import vm.Command;
+import vm.I64ToString;
+import vm.StringToI64;
+import vm.VMBase;
 
 public abstract class Entity extends ParserBase {
   public static HashMap<String, ID> allIDs = new HashMap<>();
-  
+  public static Function currentFunction;
   public static final ID idID = ID.get("id"), blockID = ID.get("block")
       , classID = ID.get("class"), codeID = ID.get("code")
       , valueID = ID.get("value"), formulaID = ID.get("formula")
-      , integerID = ID.get("integer"), decimalID = ID.get("decimal")
+      , i8ID = ID.get("i8"), i16ID = ID.get("i16"), i32ID = ID.get("i32")
+      , i64ID = ID.get("i64"), f32ID = ID.get("f32"), f64ID = ID.get("f64")
       , functionID = ID.get("function"), callID = ID.get("call")
       , listID = ID.get("list"), mapID = ID.get("map")
       , mapEntryID = ID.get("mapEntry"), objectID = ID.get("object")
@@ -25,6 +30,86 @@ public abstract class Entity extends ParserBase {
       , fieldID = ID.get("field"), moduleID = ID.get("module")
       , lineID = ID.get("line");
   
+  public static ClassEntity voidClass = new ClassEntity(ID.get("Void"), false);
+  public static ClassEntity classClass = new ClassEntity(ID.get("Class"), true);
+  public static ClassEntity unknownClass = new ClassEntity(ID.get("unknown")
+      , false);
+  public static ClassEntity i8Class = new ClassEntity(ID.get("I8"), true) {
+    @Override
+    boolean isNumber() {
+      return true;
+    }
+
+    @Override
+    public int getClassPriority() {
+      return 0;
+    }
+  };
+  public static ClassEntity i16Class = new ClassEntity(ID.get("I16"), true) {
+    @Override
+    boolean isNumber() {
+      return true;
+    }
+
+    @Override
+    public int getClassPriority() {
+      return 1;
+    }
+  };
+  public static ClassEntity i32Class = new ClassEntity(ID.get("I32"), true) {
+    @Override
+    boolean isNumber() {
+      return true;
+    }
+
+    @Override
+    public int getClassPriority() {
+      return 2;
+    }    
+  };
+  public static ClassEntity i64Class = new ClassEntity(ID.get("I64"), true) {
+    @Override
+    boolean isNumber() {
+      return true;
+    }
+
+    @Override
+    public int getClassPriority() {
+      return 3;
+    }    
+  };
+  public static ClassEntity f32Class = new ClassEntity(ID.get("F32"), true) {
+    @Override
+    boolean isNumber() {
+      return true;
+    }
+
+    @Override
+    public int getClassPriority() {
+      return 10;
+    }    
+  };
+  public static ClassEntity f64Class = new ClassEntity(ID.get("F64"), true) {
+    @Override
+    boolean isNumber() {
+      return true;
+    }
+
+    @Override
+    public int getClassPriority() {
+      return 11;
+    }    
+  };
+  public static ClassEntity stringClass = new ClassEntity(ID.get("String")
+      , true) {
+    @Override
+    public int getClassPriority() {
+      return 20;
+    }    
+  };
+  public static ClassEntity booleanClass = new ClassEntity(ID.get("Boolean")
+      , true);
+  
   public boolean isEmptyFunction() {
     return false;
   }
@@ -34,7 +119,7 @@ public abstract class Entity extends ParserBase {
   }
   
   boolean isNumber() {
-    return  false;
+    return false;
   }
   
   public boolean isNativeFunction() {
@@ -60,8 +145,12 @@ public abstract class Entity extends ParserBase {
     return null;
   }
 
-  int getPriority() {
+  public int getPriority() {
     return 0;
+  }
+
+  public int getClassPriority() {
+    return 30;
   }
 
   public ClassEntity toClass() {
@@ -95,11 +184,6 @@ public abstract class Entity extends ParserBase {
     return null;
   }
 
-  public Entity getReturnType(Scope parentScope) {
-    setTypes(parentScope);
-    return null;
-  }
-
   Entity getFieldType(ID fieldName) {
     error("Cannot get field types for " + getName());
     return null;
@@ -109,8 +193,12 @@ public abstract class Entity extends ParserBase {
     return null;
   }
 
-  Scope getScope() {
+  public Scope getScope() {
     return null;
+  }
+  
+  public int getStackIndex() {
+    return -1;
   }
 
   public FunctionCall toCall() {
@@ -125,20 +213,25 @@ public abstract class Entity extends ParserBase {
     return this;
   }
 
-  Entity setTypes(Scope parentScope, boolean thisFlag) {
-    return setTypes(parentScope);
-  }
-
-  public Entity setTypes(Scope parentScope) {
+  public Variable toVariable() {
     return null;
-  }
-
-  public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
-    return setTypes(parentScope);
   }
   
-  public Variable createVariable(Scope parentScope) {
-    return null;
+  public void setIndex(int index) {
+  }
+
+  public void setConvertTo(Entity type) {
+  }
+
+  public void setTypes(Scope parentScope, boolean thisFlag) {
+    setTypes(parentScope);
+  }
+
+  public void setTypes(Scope parentScope) {
+  }
+
+  public void setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
+    setTypes(parentScope);
   }
 
   public void addToScope(Scope scope) {
@@ -194,6 +287,45 @@ public abstract class Entity extends ParserBase {
 
   void moveToObjectEntry(ObjectEntry entry) {
     error("Cannot insert " + getName() + " into object entry");
+  }
+
+  public void toByteCode() {
+  }
+  
+  public void functionToByteCode(FunctionCall call) {
+  }
+  
+  public static void addCommand(Command command) {
+    VMBase.commandNumber++;
+    command.number = VMBase.commandNumber;
+    if(VMBase.currentCommand == null) {
+      if(VMBase.startingCommand == null) VMBase.startingCommand = command;
+    } else {
+      VMBase.currentCommand.nextCommand = command;
+    }
+    if(!VMBase.gotos.isEmpty()) {
+      for(Command gotoCommand : VMBase.gotos) gotoCommand.setGoto(command);
+      VMBase.gotos.clear();
+    }
+    VMBase.currentCommand = command;
+    VMBase.commands[VMBase.commandNumber] = command;
+  }
+
+  public void conversion(Entity from, Entity to) {
+    if(from == to || to == null) return;
+    if(from == ClassEntity.i64Class) {
+      if(to == ClassEntity.stringClass) {
+        addCommand(new I64ToString());
+        return;
+      }
+    } else if(from == ClassEntity.stringClass) {
+      if(to == ClassEntity.i64Class) {
+        addCommand(new StringToI64());
+        return;        
+      }
+    }
+    error("Conversion from " + from.toString() + " to " + to.toString()
+        + " is not implemented.");
   }
   
   public void logScope(String indent) {

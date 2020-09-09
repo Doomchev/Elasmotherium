@@ -1,19 +1,16 @@
 package parser.structure;
 
+import vm.StringPush;
+
 public class StringValue extends Value {
-  public ID string;
+  public ID value;
 
   public StringValue(ID string) {
-    this.string = string;
+    this.value = string;
   }
 
   @Override
   public Entity getType() {
-    return ClassEntity.stringClass;
-  }
-  
-  @Override
-  public Entity setTypes(Scope parentScope) {
     return ClassEntity.stringClass;
   }
   
@@ -24,11 +21,16 @@ public class StringValue extends Value {
 
   @Override
   void moveToStringSequence(StringSequence sequence) {
-    if(!string.string.isEmpty()) sequence.chunks.add(this);
+    if(!value.string.isEmpty()) sequence.chunks.add(this);
+  }
+
+  @Override
+  public void toByteCode() {
+    addCommand(new StringPush(value.string));
   }
 
   @Override
   public String toString() {
-    return string.string;
+    return value.string;
   }
 }

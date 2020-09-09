@@ -6,9 +6,9 @@ import parser.Rules;
 public class Dialogs {
   public static void main(String[] args) {
     Rules rules = new Rules().load("standard.xep");
-    Export export = new Export(rules).load("javascript.xee");
+    //Export export = new Export(rules).load("javascript.xee");
     Module module = Module.read("examples/dialogs.xes", rules);
-    module.log();
+    //module.log();
     //System.out.println("\n" + export.exportEntity(module.rootNode));
   }
 }

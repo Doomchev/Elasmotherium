@@ -93,7 +93,7 @@ public class Formula extends Entity {
     if(valueStack.size() < 2) error("Syntax error");
     if(op.function == null) {
       valueStack.pop().moveToFunctionCall(op);
-      op.function = valueStack.pop();
+      valueStack.pop().setFunction(op);
       valueStack.push(op);
       if(log) System.out.println("PUSH VALUES TO FUNCTION " + op.toString());
     } else if (op.function.getID() == elseOpID) {

@@ -9,7 +9,7 @@ public class SixPawns {
     Module module = Module.read("examples/six_pawns/main.es", rules);
     //System.out.println(new NodeProcessor(rules).processModule(module).log());
     
-    Export export = new Export(rules).load("java.eec");
-    System.out.println("\n" + export.exportEntity(module.mainCode));
+    //Export export = new Export(rules).load("java.eec");
+    //System.out.println("\n" + export.exportEntity(module.mainCode));
   }
 }

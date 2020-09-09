@@ -1,11 +1,18 @@
 package parser.structure;
 
 import java.util.LinkedList;
+import vm.Command;
+import vm.IfFalseGoto;
+import vm.VMBase;
+import vm.VMGoto;
 
 public class Block extends Entity {
   ID type;
   public final LinkedList<Entry> entries = new LinkedList<>();
 
+  public final ID doID = ID.get("do"), ifID = ID.get("if")
+      , conditionID = ID.get("condition"), elseID = ID.get("else");
+  
   public static class Entry {
     ID key;
     Entity value;
@@ -42,21 +49,6 @@ public class Block extends Entity {
   }
 
   @Override
-  public Entity getReturnType(Scope parentScope) {
-    for(Entry entry : entries) {
-      Entity returnType = entry.value.getReturnType(parentScope);
-      if(type != null) return returnType;
-    }
-    return null;
-  }
-
-  @Override
-  public Entity setTypes(Scope parentScope) {
-    for(Entry entry : entries) entry.value.setTypes(parentScope);
-    return null;
-  }
-
-  @Override
   public void move(Entity entity) {
     entity.moveToBlock(this);
   }
@@ -73,13 +65,44 @@ public class Block extends Entity {
   
   @Override
   public void logScope(String indent) {
-    System.out.println(type.string + ":");
+    System.out.println(indent + type.string + ":");
     indent += "  ";
     for(Entry entry : entries) {
       System.out.println(indent + entry.key.string + ":");
       entry.value.logScope(indent);
     }
-    
+  }
+
+  @Override
+  public void setTypes(Scope parentScope) {
+    for(Entry entry : entries) entry.value.setTypes(parentScope);
+  }
+
+  @Override
+  public void toByteCode() {
+    if(type == doID) {
+      Command command = VMBase.currentCommand;
+      getChild(codeID).toByteCode();
+      addCommand(new VMGoto(command.nextCommand));
+    } else if(type == ifID) {
+      getChild(conditionID).toByteCode();
+      Command ifFalse = new IfFalseGoto();
+      addCommand(ifFalse);
+      getChild(codeID).toByteCode();
+      Entity elseCode = getChild(elseID);
+      if(elseCode != null) {
+        Command thenGoto = new VMGoto();
+        addCommand(thenGoto);
+        VMBase.gotos.add(ifFalse);
+        VMBase.currentCommand = null;
+        elseCode.toByteCode();
+        VMBase.gotos.add(thenGoto);
+      } else {
+        VMBase.gotos.add(ifFalse);
+      }
+    } else {
+      error(type.string + " is not implemented.");
+    }
   }
 
   @Override

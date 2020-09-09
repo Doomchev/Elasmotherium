@@ -4,6 +4,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Stack;
 import parser.ParserBase;
+import static parser.structure.Entity.addCommand;
+import vm.I64Add;
+import vm.I64Equate;
+import vm.I64Less;
+import vm.I64More;
+import vm.StringAdd;
+import vm.VMEnd;
 
 @SuppressWarnings("ResultOfObjectAllocationIgnored")
 public class EntityStack<EntityType> extends ParserBase {
@@ -56,15 +63,25 @@ public class EntityStack<EntityType> extends ParserBase {
     }
   };
   
-  public static final NativeFunction end = new NativeFunction("end", 17);
+  public static final NativeFunction end = new NativeFunction("end", 17) {
+    @Override
+    public void functionToByteCode(FunctionCall call) {
+      addCommand(new VMEnd());
+    }
+  };
   public static final NativeFunction ret = new NativeFunction("return", 17);
   public static final NativeFunction equate = new NativeFunction("equate", 18) {
     @Override
-    public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
-      Variable variable = parameters.getFirst().createVariable(parentScope);
-      if(variable == null) return super.setTypes(parentScope);
-      variable.value = parameters.getLast();
-      return variable.setTypes(parentScope);
+    public void functionToByteCode(FunctionCall call) {
+      int index = call.parameters.getFirst().getStackIndex();
+      if(index >= 0) {
+        Entity type0 = call.getType();
+        if(type0 == ClassEntity.i64Class) {
+          addCommand(new I64Equate(index));
+        } else {
+          error("Equate of " + type0.toString() + " is not implemented.");
+        }
+      }
     }
   };
 
@@ -105,27 +122,87 @@ public class EntityStack<EntityType> extends ParserBase {
       }
     };
     
-    new EntityStack(ID.integerID, valueStack) {
+    new EntityStack(ID.i8ID, valueStack) {
       @Override
       public boolean isStringBased() {
         return true;
       }
 
       @Override
-      public IntegerValue createFromString(String string) {
-        return new IntegerValue(Integer.parseInt(string));
+      public I8Value createFromString(String string) {
+        if(string.endsWith("i8"))
+          string = string.substring(0, string.length() - 2);
+        return new I8Value(Byte.parseByte(string));
       }
     };
     
-    new EntityStack(ID.decimalID, valueStack) {
+    new EntityStack(ID.i16ID, valueStack) {
       @Override
       public boolean isStringBased() {
         return true;
       }
 
       @Override
-      public DecimalValue createFromString(String string) {
-        return new DecimalValue(Float.parseFloat(string));
+      public I16Value createFromString(String string) {
+        if(string.endsWith("i16"))
+          string = string.substring(0, string.length() - 3);
+        return new I16Value(Short.parseShort(string));
+      }
+    };
+    
+    new EntityStack(ID.i32ID, valueStack) {
+      @Override
+      public boolean isStringBased() {
+        return true;
+      }
+
+      @Override
+      public I32Value createFromString(String string) {
+        if(string.endsWith("i32"))
+          string = string.substring(0, string.length() - 3);
+        return new I32Value(Integer.parseInt(string));
+      }
+    };
+    
+    new EntityStack(ID.i64ID, valueStack) {
+      @Override
+      public boolean isStringBased() {
+        return true;
+      }
+
+      @Override
+      public I64Value createFromString(String string) {
+        if(string.endsWith("i64"))
+          string = string.substring(0, string.length() - 3);
+        return new I64Value(Long.parseLong(string));
+      }
+    };
+    
+    new EntityStack(ID.f32ID, valueStack) {
+      @Override
+      public boolean isStringBased() {
+        return true;
+      }
+
+      @Override
+      public F32Value createFromString(String string) {
+        if(string.endsWith("f32"))
+          string = string.substring(0, string.length() - 3);
+        return new F32Value(Float.parseFloat(string));
+      }
+    };
+    
+    new EntityStack(ID.f64ID, valueStack) {
+      @Override
+      public boolean isStringBased() {
+        return true;
+      }
+
+      @Override
+      public F64Value createFromString(String string) {
+        if(string.endsWith("f64"))
+          string = string.substring(0, string.length() - 3);
+        return new F64Value(Double.parseDouble(string));
       }
     };
     
@@ -189,58 +266,65 @@ public class EntityStack<EntityType> extends ParserBase {
     new NativeFunction("continue", 17);
     new NativeFunction("increment", 18) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
-        if(!type0.isNumber()) error(type0.getName() + " cannot be incremented");
+      public Entity calculateType(Entity param0, Entity param1) {
+        if(!param0.getType().isNumber())
+          error(param0.toString() + " cannot be incremented");
         return null;
       }
     };
     new NativeFunction("decrement", 18) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
-        if(!type0.isNumber()) error(type0.getName() + " cannot be decremented");
+      public Entity calculateType(Entity param0, Entity param1) {
+        if(!param0.getType().isNumber())
+          error(param0.toString() + " cannot be decremented");
         return null;
       }
     };
     new NativeFunction("add", 18) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
-        if(!type0.isNumber()) error(type0.getName() + " cannot be decremented");
+      public Entity calculateType(Entity param0, Entity param1) {
+        if(!param0.getType().isNumber())
+          error(param0.toString() + " cannot be added");
         return null;
       }
     };
     new NativeFunction("subtract", 18) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
-        if(!type0.isNumber()) error(type0.getName() + " cannot be decremented");
+      public Entity calculateType(Entity param0, Entity param1) {
+        if(!param0.getType().isNumber())
+          error(param0.toString() + " cannot be subtracted");
         return null;
       }
     };
     new NativeFunction("multiply", 18) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
-        if(!type0.isNumber()) error(type0.getName() + " cannot be decremented");
+      public Entity calculateType(Entity param0, Entity param1) {
+        if(!param0.getType().isNumber())
+          error(param0.toString() + " cannot be multiplied");
         return null;
       }
     };
     new NativeFunction("divide", 18) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
-        if(!type0.isNumber()) error(type0.getName() + " cannot be decremented");
+      public Entity calculateType(Entity param0, Entity param1) {
+        if(!param0.getType().isNumber())
+          error(param0.toString() + " cannot be divided");
         return null;
       }
     };
     new NativeFunction("dot", 17) {
       @Override
-      public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
-        Entity parentType = parameters.getFirst().setTypes(parentScope);
-        return parameters.getLast().setTypes(parentType.getScope(), true);
+      public void setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
       }
     };
     new NativeFunction("atIndex", 17);
     new NativeFunction("brackets", 17);
     new NativeFunction("negative", 16) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
+      public Entity calculateType(Entity param0, Entity param1) {
+        Entity type0 = param0.getType();
+        if(!type0.isNumber())
+          error(param0.toString() + " cannot be negated");
         return type0;
       }
     };
@@ -252,98 +336,176 @@ public class EntityStack<EntityType> extends ParserBase {
     };
     new NativeFunction("multiplication", 14) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
-        return type0.toClass().getSubtractType(type1.toClass());
+      public Entity calculateType(Entity param0, Entity param1) {
+        return getPriorityType(param0, param1, NUMBER);
+      }
+
+      @Override
+      public String getActionName() {
+        return "multiplied";
       }
     };
     new NativeFunction("division", 14) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
-        return type0.toClass().getSubtractType(type1.toClass());
+      public Entity calculateType(Entity param0, Entity param1) {
+        return getPriorityType(param0, param1, NUMBER);
+      }
+
+      @Override
+      public String getActionName() {
+        return "divided";
       }
     };
     new NativeFunction("mod", 14) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
-        return ClassEntity.intClass;
+      public Entity calculateType(Entity param0, Entity param1) {
+        return getPriorityType(param0, param1, INTEGER);
       }
     };
     new NativeFunction("addition", 13) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
-        return type0.toClass().getAddType(type1.toClass());
+      public Entity calculateType(Entity param0, Entity param1) {
+        return getPriorityType(param0, param1, NUMBER);
+      }
+      
+      @Override
+      public void functionToByteCode(FunctionCall call) {
+        Entity type0 = call.getType();
+        if(type0 == ClassEntity.i64Class) {
+          addCommand(new I64Add());
+        } else if(type0 == ClassEntity.stringClass) {
+          addCommand(new StringAdd());
+        } else {
+          error("Addition of " + type0.toString() + " is not implemented.");
+        }
+      }
+
+      @Override
+      public String getActionName() {
+        return "added";
       }
     };
     new NativeFunction("subtraction", 13) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
-        return type0.toClass().getSubtractType(type1.toClass());
+      public Entity calculateType(Entity param0, Entity param1) {
+        return getPriorityType(param0, param1, NUMBER);
+      }
+
+      @Override
+      public String getActionName() {
+        return "subtracted";
       }
     };
     new NativeFunction("bitAnd", 11) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
-        return ClassEntity.intClass;
+      public Entity calculateType(Entity param0, Entity param1) {
+        return getPriorityType(param0, param1, INTEGER);
       }
     };
     new NativeFunction("bitOr", 9) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
-        return ClassEntity.intClass;
+      public Entity calculateType(Entity param0, Entity param1) {
+        return getPriorityType(param0, param1, INTEGER);
       }
     };
     new NativeFunction("notequal", 7) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
+      public Entity calculateType(Entity param0, Entity param1) {
         return ClassEntity.booleanClass;
       }
     };
     new NativeFunction("equal", 7) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
+      public Entity calculateType(Entity param0, Entity param1) {
         return ClassEntity.booleanClass;
       }
     };
-    new NativeFunction("less", 7) {
+    new NativeFunction("less", 7) {      
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
+      public Entity calculateType(Entity param0, Entity param1) {
+        getPriorityType(param0, param1, NUMBER);
         return ClassEntity.booleanClass;
+      }
+      
+      @Override
+      public void functionToByteCode(FunctionCall call) {
+        Entity type0 = getPriorityType(call.parameters.getFirst()
+            , call.parameters.getLast(), NUMBER);
+        if(type0 == ClassEntity.i64Class) {
+          addCommand(new I64Less());
+        } else {
+          error("Less of " + type0.toString() + " is not implemented.");
+        }
+      }
+
+      @Override
+      public String getActionName() {
+        return "compared";
       }
     };
     new NativeFunction("lessOrEqual", 7) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
+      public Entity calculateType(Entity param0, Entity param1) {
+        getPriorityType(param0, param1, NUMBER);
         return ClassEntity.booleanClass;
+      }
+
+      @Override
+      public String getActionName() {
+        return "compared";
       }
     };
     new NativeFunction("more", 7) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
+      public Entity calculateType(Entity param0, Entity param1) {
+        getPriorityType(param0, param1, NUMBER);
         return ClassEntity.booleanClass;
+      }
+      
+      @Override
+      public void functionToByteCode(FunctionCall call) {
+        Entity type0 = getPriorityType(call.parameters.getFirst()
+            , call.parameters.getLast(), NUMBER);
+        if(type0 == ClassEntity.i64Class) {
+          addCommand(new I64More());
+        } else {
+          error("Addition of " + type0.toString() + " is not implemented.");
+        }
+      }
+
+      @Override
+      public String getActionName() {
+        return "compared";
       }
     };
     new NativeFunction("moreOrEqual", 7) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
+      public Entity calculateType(Entity param0, Entity param1) {
+        getPriorityType(param0, param1, NUMBER);
         return ClassEntity.booleanClass;
+      }
+
+      @Override
+      public String getActionName() {
+        return "compared";
       }
     };
     new NativeFunction("and", 6) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
+      public Entity calculateType(Entity param0, Entity param1) {
         return ClassEntity.booleanClass;
       }
     };
     new NativeFunction("or", 6) {
       @Override
-      public Entity calculateType(Entity type0, Entity type1) {
+      public Entity calculateType(Entity param0, Entity param1) {
         return ClassEntity.booleanClass;
       }
     };
     new NativeFunction("ifOp", 4) {
       @Override
-      public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
-        return parameters.get(1).setTypes(parentScope);
+      public void setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
+        parameters.get(1).setTypes(parentScope);
       }
     };
     new NativeFunction("elseOp", 4);

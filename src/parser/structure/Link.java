@@ -1,12 +1,13 @@
 package parser.structure;
 
 import export.Chunk;
-import java.util.LinkedList;
 import parser.Action;
+import static parser.structure.Entity.addCommand;
+import vm.I64StackPush;
 
 public class Link extends Value {
   public ID name;
-  public Entity entity;
+  public Variable variable;
   public boolean thisFlag, isDefinition = false;
   
   public Link(ID name) {
@@ -17,7 +18,7 @@ public class Link extends Value {
 
   public Link(Variable variable) {
     this.name = variable.name;
-    this.entity = variable;
+    this.variable = variable;
     this.thisFlag = variable.hasChild(thisID);
   }
   
@@ -30,69 +31,67 @@ public class Link extends Value {
   public ID getNameID() {
     return name;
   }
-
+  
   @Override
   public Chunk getForm() {
-    return entity.getForm();
+    return variable.getForm();
   }
 
   @Override
   public Chunk getCallForm() {
-    return entity.getCallForm();
+    return variable.getCallForm();
   }
 
   @Override
   public Entity getChild(ID id) {
-    if(id == valueID) return entity;
-    return entity.getChild(id);
+    if(id == valueID) return variable;
+    return variable.getChild(id);
   }
 
   @Override
   public boolean hasChild(ID id) {
     if(id == thisID) return thisFlag;
     if(id == definitionID) return isDefinition;
-    return entity.hasChild(id);
+    return variable.hasChild(id);
   }
 
   @Override
   public Entity getType() {
-    return entity.getType();
+    return variable.getType();
   }
 
   @Override
-  Entity setTypes(Scope parentScope, boolean isClassField) {
-    if(entity == null) {
-      entity = parentScope.get(name, isClassField);
-      if(entity == null) error(name + " is not found");
+  public void addToScope(Scope scope) {
+    if(variable != null) variable.addToScope(scope);
+  }
+
+  @Override
+  void setFunction(FunctionCall call) {
+    call.functionName = name;
+    call.thisFlag = thisFlag;
+  }
+  
+  @Override
+  public void setTypes(Scope parentScope) {
+    variable = parentScope.getVariable(name).toVariable();
+    if(variable == null) error("Variable " + name + " not found.");
+    variable.setTypes(parentScope);
+  }
+  
+  @Override
+  public void toByteCode() {
+    Entity type = variable.type;
+    int index = variable.index;
+    if(type == ClassEntity.i64Class) {
+      addCommand(new I64StackPush(index));
+    } else {
+      error(type.toString() + " variable link is not implemented.");
     }
-    return entity.setTypes(parentScope);
-  }
-
-  @Override
-  public Entity setTypes(Scope parentScope) {
-    return setTypes(parentScope, thisFlag);
-  }
-
-  @Override
-  public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
-    setTypes(parentScope);
-    return entity.setCallTypes(parameters, parentScope);
-  }
-
-  @Override
-  public Variable createVariable(Scope parentScope) {
-    entity = parentScope.get(name, thisFlag);
-    if(entity != null) return null;
-    Variable variable = new Variable(name);
-    entity = variable;
-    parentScope.entries.put(name, variable);
-    if(!thisFlag) isDefinition = true;
-    return variable;
+    conversion(type, convertTo);
   }
 
   @Override
   public String toString() {
-    if(entity == null) return name.string;
-    return entity.toString();
+    return name.string;
   }
 }
