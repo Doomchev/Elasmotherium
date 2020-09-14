@@ -64,7 +64,7 @@ public class Variable extends FlagEntity {
     if(type.toClass() == null) type.setTypes(parentScope);
     type = type.toClass();
     if(index < 0) setAllocation();
-    value.setTypes(parentScope);
+    if(value != null) value.setTypes(parentScope);
   }
   
   @Override
@@ -116,10 +116,10 @@ public class Variable extends FlagEntity {
 
   public void setAllocation() {
     if(type == i64Class) {
-      currentFunction.i64quantity++;
-      index = currentFunction.i64quantity;
+      currentFunction.i64VarIndex++;
+      index = currentFunction.i64VarIndex;
     } else {
-      error(type.getName() + " allocation is not implemented.");
+      error(type.toString() + " allocation is not implemented.");
     }
   }
 }

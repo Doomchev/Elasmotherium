@@ -1,6 +1,7 @@
 package base;
 
 import parser.structure.ClassEntity;
+import parser.structure.Entity;
 import parser.structure.Function;
 import parser.structure.FunctionCall;
 import parser.structure.ID;
@@ -58,6 +59,7 @@ public class Processor extends Base {
     System.out.println("Main scope:");
     main.code.scope.log("  ");
     
+    main.type = Entity.voidClass;
     main.setTypes(null);
     for(ClassEntity classEntity : ClassEntity.all.values())
       classEntity.setTypes(globalScope);
@@ -66,6 +68,7 @@ public class Processor extends Base {
   private static void addFunction(Function function, ClassEntity returnType
       , ClassEntity... parameters) {
     function.type = returnType;
+    function.isNativeFunction = true;
     for(ClassEntity type : parameters) {
       Variable variable = new Variable(ID.variableID);
       variable.type = type;

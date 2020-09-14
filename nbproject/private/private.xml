@@ -4,24 +4,32 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/Entity.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/Variable.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/I64Value.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/IfFalseGoto.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/NativeFunction.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/StringValue.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64Equate.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64Push.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMRandom.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/F32Value.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMShowMessage.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/test/Test.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/Scope.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/Function.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/Type.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/parser/ParserBase.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/base/Base.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/FunctionCall.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/Block.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/Variable.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64Less.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/ClassEntity.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMBase.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/Code.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/base/Module.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/base/Processor.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/Link.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64Allocate.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/StringSequence.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64StackPush.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMPrint.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/EntityStack.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/FunctionCall.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/base/Base.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMEnd.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/StringToI64.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/base/Main.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/Formula.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/export/Export.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64ToString.java</file>
         </group>
     </open-files>
 </project-private>

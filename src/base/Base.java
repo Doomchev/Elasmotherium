@@ -10,7 +10,7 @@ import parser.structure.Scope;
 public class Base {
   public static int lineNum;
   public static String currentFileName;
-  public static final boolean log = true;
+  public static final boolean log = false;
   public static String workingPath, modulesPath;
   public static final Function main = new Function(ID.get("main"));
   public static final Scope globalScope = new Scope(null);

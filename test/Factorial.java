@@ -10,7 +10,6 @@ public class Factorial extends Base {
     Rules rules = new Rules().load("standard.epc");
     Module module = Module.read("examples/factorial.es", rules);
     Processor.process();
-    VMBase.prepare();
-    //new Export(rules).load(module, JAVA).log();
+    VMBase.prepare(true);
   }
 }

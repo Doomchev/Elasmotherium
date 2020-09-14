@@ -14,34 +14,37 @@ public class VMBase {
   public static int booleanStackPointer = -1, i64StackPointer = -1
       , stringStackPointer = -1, callStackPointer = -1;
   public static VMFunctionCall currentCall = new VMFunctionCall();
-  public static Command currentCommand, startingCommand;
+  public static Command currentCommand;
   public static final HashMap<Function, Command> functions = new HashMap<>();
   public static final LinkedList<Command> gotos = new LinkedList<>();
   public static Command[] commands = new Command[STACK_SIZE];
   public static int commandNumber = -1;
+  public static Function currentFunction;
   
   public static final int BOOLEAN_STACK = 0, INT_STACK = 1, STRING_STACK = 2
       , STACK_QUANTITY = 3;
   
 
-  public static void prepare() {
-    Base.main.toByteCode();
+  public static void prepare(boolean run) {
+    Base.main.functionToByteCode();
     for(int index = 0; index <= commandNumber; index++)
       System.out.println(commands[index].toString());
-    Command command = startingCommand;
-    while(command != null) {
-      System.out.println(command.toString());
-      command = command.execute();
-      
-      String stack = "";
-      for(int index = 0; index <= i64StackPointer; index++)
-        stack += i64Stack[index] + " ";
-      System.out.println("i64: " + stack);
-      
-      stack = "";
-      for(int index = 0; index <= stringStackPointer; index++)
-        stack += stringStack[index] + " ";
-      System.out.println("string: " + stack);
+    if(run) {
+      Command command = Base.main.startingCommand;
+      while(command != null) {
+        System.out.println(command.toString());
+        command = command.execute();
+
+        String stack = "";
+        for(int index = 0; index <= i64StackPointer; index++)
+          stack += i64Stack[index] + " ";
+        System.out.println("i64: " + stack);
+
+        stack = "";
+        for(int index = 0; index <= stringStackPointer; index++)
+          stack += stringStack[index] + " ";
+        System.out.println("string: " + stack);
+      }
     }
   }
 }

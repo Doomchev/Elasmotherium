@@ -1,3 +1,8 @@
+2020.09.14 (version 0.14)
+	+	LLCG: if ternary operator, function calling
+	+ VM: FunctionCall object
+	+ VM: Commands: I64Deallocate, I64StackPush, Call, NewFunctionCall, I64StackMoveReturnValue, Return
+
 2020.09.09 (version 0.13)
 	+ AST: Numeric value types (I8, I16, I32, I64, F32, F64)
 	+ AST: Function call return type and covertTo type
@@ -6,8 +11,8 @@
 	+ LLCG: Type conversion
 	+ LLCG: Variable indexation and allocation quantity counting
 	+ Virtual machine (VM) for low-level code with stacks, command adding function and goto linking support
-	+ VM: Commands (I64Allocate, I64Push, I64Equate, I64StackPush, I64Add, StringPush, I64ToString, StringAdd, VMPrint, VMEnd
-			, VMRandom, VMInput, StringToI64, I64Less, IfFalseGoto, VMShowMessage, VMGoto, I64More)
+	+ VM: Commands: I64Allocate, I64Push, I64Equate, I64StackPush, I64Add, StringPush, I64ToString, StringAdd, VMPrint, VMEnd
+			, VMRandom, VMInput, StringToI64, I64Less, IfFalseGoto, VMShowMessage, VMGoto, I64More
 	* LLCG: Native functions type inference
 	* AST: Converted scope entries hash map to list of entries
 	- Type inference

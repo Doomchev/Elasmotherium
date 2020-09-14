@@ -289,17 +289,23 @@ public abstract class Entity extends ParserBase {
     error("Cannot insert " + getName() + " into object entry");
   }
 
+  // Adds VM bytecode for entity
   public void toByteCode() {
   }
   
   public void functionToByteCode(FunctionCall call) {
   }
   
+  public void functionToByteCode() {
+  }
+  
+  // Adds VM command to the command chain
   public static void addCommand(Command command) {
     VMBase.commandNumber++;
     command.number = VMBase.commandNumber;
     if(VMBase.currentCommand == null) {
-      if(VMBase.startingCommand == null) VMBase.startingCommand = command;
+      if(VMBase.currentFunction.startingCommand == null) 
+        VMBase.currentFunction.startingCommand = command;
     } else {
       VMBase.currentCommand.nextCommand = command;
     }
@@ -311,6 +317,7 @@ public abstract class Entity extends ParserBase {
     VMBase.commands[VMBase.commandNumber] = command;
   }
 
+  // Adds conversion command from one type to another
   public void conversion(Entity from, Entity to) {
     if(from == to || to == null) return;
     if(from == ClassEntity.i64Class) {

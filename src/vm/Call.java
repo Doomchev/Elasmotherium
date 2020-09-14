@@ -1,23 +1,23 @@
 package vm;
 
-import parser.structure.ID;
+import parser.structure.Function;
 
 public class Call extends Command {
-  Command functionCommand;
-  ID name;
+  Function function;
 
-  public Call(Command functionCommand) {
-    this.functionCommand = functionCommand;
+  public Call(Function function) {
+    this.function = function;
   }
   
   @Override
   public Command execute() {
     currentCall.returnPoint = nextCommand;
-    return functionCommand;
+    return function.startingCommand;
   }
   
   @Override
   public String toString() {
-    return super.toString() + " " + name.string;
+    return super.toString() + " " + function.toString() + " ("
+        + function.startingCommand.number + ")";
   }
 }

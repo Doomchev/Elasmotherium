@@ -5,7 +5,11 @@ public class VMReturn extends Command {
   public Command execute() {
     VMFunctionCall call = currentCall;
     callStackPointer--;
-    currentCall = callStack[callStackPointer];
+    if(callStackPointer >= 0) {
+      currentCall = callStack[callStackPointer];
+    } else {
+      currentCall = null;
+    }
     return call.returnPoint;
   }  
 }

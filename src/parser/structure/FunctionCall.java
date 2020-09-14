@@ -3,10 +3,6 @@ package parser.structure;
 import export.Chunk;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.ListIterator;
-import vm.Command;
-import vm.I64Allocate;
-import vm.VMBase;
 
 public class FunctionCall extends Value {
   public Function function;

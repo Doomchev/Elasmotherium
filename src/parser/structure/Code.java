@@ -1,8 +1,6 @@
 package parser.structure;
 
 import java.util.LinkedList;
-import parser.structure.Scope.ScopeEntry;
-import vm.I64Allocate;
 
 public class Code extends Entity {
   public final LinkedList<Entity> lines = new LinkedList<>();

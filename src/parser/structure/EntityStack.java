@@ -5,12 +5,22 @@ import java.util.LinkedList;
 import java.util.Stack;
 import parser.ParserBase;
 import static parser.structure.Entity.addCommand;
+import vm.Command;
 import vm.I64Add;
+import vm.I64Deallocate;
 import vm.I64Equate;
+import vm.I64IsEqual;
 import vm.I64Less;
 import vm.I64More;
+import vm.I64Multiply;
+import vm.I64StackMoveReturnValue;
+import vm.I64Subtract;
+import vm.IfFalseGoto;
 import vm.StringAdd;
+import vm.VMBase;
 import vm.VMEnd;
+import vm.VMGoto;
+import vm.VMReturn;
 
 @SuppressWarnings("ResultOfObjectAllocationIgnored")
 public class EntityStack<EntityType> extends ParserBase {
@@ -69,7 +79,17 @@ public class EntityStack<EntityType> extends ParserBase {
       addCommand(new VMEnd());
     }
   };
-  public static final NativeFunction ret = new NativeFunction("return", 17);
+  public static final NativeFunction ret = new NativeFunction("return", 17) {
+    @Override
+    public void functionToByteCode(FunctionCall call) {
+      int i64quantity = VMBase.currentFunction.i64ParamIndex
+          + VMBase.currentFunction.i64VarIndex + 2;
+      if(VMBase.currentFunction.type == i64Class && i64quantity > 0)
+        addCommand(new I64StackMoveReturnValue());
+      if(i64quantity > 0) addCommand(new I64Deallocate(i64quantity));
+      addCommand(new VMReturn());
+    }
+  };
   public static final NativeFunction equate = new NativeFunction("equate", 18) {
     @Override
     public void functionToByteCode(FunctionCall call) {
@@ -339,6 +359,17 @@ public class EntityStack<EntityType> extends ParserBase {
       public Entity calculateType(Entity param0, Entity param1) {
         return getPriorityType(param0, param1, NUMBER);
       }
+      
+      @Override
+      public void functionToByteCode(FunctionCall call) {
+        Entity type0 = call.getType();
+        if(type0 == ClassEntity.i64Class) {
+          addCommand(new I64Multiply());
+        } else {
+          error("Multiplication of " + type0.toString()
+              + " is not implemented.");
+        }
+      }
 
       @Override
       public String getActionName() {
@@ -365,7 +396,7 @@ public class EntityStack<EntityType> extends ParserBase {
     new NativeFunction("addition", 13) {
       @Override
       public Entity calculateType(Entity param0, Entity param1) {
-        return getPriorityType(param0, param1, NUMBER);
+        return getPriorityType(param0, param1, STRING);
       }
       
       @Override
@@ -389,6 +420,16 @@ public class EntityStack<EntityType> extends ParserBase {
       @Override
       public Entity calculateType(Entity param0, Entity param1) {
         return getPriorityType(param0, param1, NUMBER);
+      }
+      
+      @Override
+      public void functionToByteCode(FunctionCall call) {
+        Entity type0 = call.getType();
+        if(type0 == ClassEntity.i64Class) {
+          addCommand(new I64Subtract());
+        } else {
+          error("Subtraction of " + type0.toString() + " is not implemented.");
+        }
       }
 
       @Override
@@ -418,6 +459,22 @@ public class EntityStack<EntityType> extends ParserBase {
       @Override
       public Entity calculateType(Entity param0, Entity param1) {
         return ClassEntity.booleanClass;
+      }
+      
+      @Override
+      public void functionToByteCode(FunctionCall call) {
+        Entity type0 = getPriorityType(call.parameters.getFirst()
+            , call.parameters.getLast(), ANY);
+        if(type0 == ClassEntity.i64Class) {
+          addCommand(new I64IsEqual());
+        } else {
+          error("IsEqual of " + type0.toString() + " is not implemented.");
+        }
+      }
+
+      @Override
+      public String getActionName() {
+        return "compared";
       }
     };
     new NativeFunction("less", 7) {      
@@ -505,7 +562,30 @@ public class EntityStack<EntityType> extends ParserBase {
     new NativeFunction("ifOp", 4) {
       @Override
       public void setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
-        parameters.get(1).setTypes(parentScope);
+        type = getPriorityType(parameters.get(1), parameters.getLast(), ANY);
+      }
+      
+      @Override
+      public void toByteCode(FunctionCall call) {
+        call.parameters.getFirst().toByteCode();
+        Command ifFalse = new IfFalseGoto();
+        addCommand(ifFalse);
+        Entity param0 = call.parameters.get(1);
+        param0.toByteCode();
+        conversion(param0.getType(), type);
+        Command thenGoto = new VMGoto();
+        addCommand(thenGoto);
+        VMBase.gotos.add(ifFalse);
+        VMBase.currentCommand = null;
+        Entity param1 = call.parameters.getLast();
+        param1.toByteCode();
+        conversion(param1.getType(), type);
+        VMBase.gotos.add(thenGoto);
+      }
+
+      @Override
+      public String getActionName() {
+        return "subtracted";
       }
     };
     new NativeFunction("elseOp", 4);
