@@ -105,8 +105,8 @@ Window {
 }
 
 TileMap extends Drawable {
-	Int xQuantity, yQuantity
-	List<Int> tiles
+	I64 xQuantity, yQuantity
+	List<I64> tiles
 	assert(tiles.size == xQuantity * yQuantity)
 	Drawable[] tileSet
 	($tileSet, $xQuantity, $yQuantity) {

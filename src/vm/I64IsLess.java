@@ -1,11 +1,11 @@
 package vm;
 
-public class I64IsEqual extends Command {
+public class I64IsLess extends Command {
   @Override
   public Command execute() {
     stackPointer--;
-    booleanStack[stackPointer] = i64Stack[stackPointer]
-        == i64Stack[stackPointer + 1];
+    booleanStack[stackPointer]
+        = i64Stack[stackPointer] < i64Stack[stackPointer + 1];
     typeStack[stackPointer] = TYPE_BOOLEAN;
     return nextCommand;
   }

@@ -9,8 +9,9 @@ public class StringPush extends Command {
   
   @Override
   public Command execute() {
-    stringStackPointer++;
-    stringStack[stringStackPointer] = value;
+    stackPointer++;
+    stringStack[stackPointer] = value;
+    typeStack[stackPointer] = TYPE_STRING;
     return nextCommand;
   }
   

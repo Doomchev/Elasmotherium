@@ -9,8 +9,9 @@ public class I64Equate extends Command {
   
   @Override
   public Command execute() {
-    i64Stack[index] = i64Stack[i64StackPointer];
-    i64StackPointer--;
+    i64Stack[index + currentCall.paramPosition] = i64Stack[stackPointer];
+    typeStack[index + currentCall.paramPosition] = TYPE_I64;
+    stackPointer--;
     return nextCommand;
   }
   

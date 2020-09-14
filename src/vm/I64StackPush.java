@@ -9,8 +9,9 @@ public class I64StackPush extends Command {
   
   @Override
   public Command execute() {
-    i64StackPointer++;
-    i64Stack[i64StackPointer] = i64Stack[currentCall.i64ParamPosition + index];
+    stackPointer++;
+    i64Stack[stackPointer] = i64Stack[currentCall.paramPosition + index];
+    typeStack[stackPointer] = TYPE_I64;
     return nextCommand;
   }
   

@@ -3,9 +3,8 @@ package vm;
 public class I64ToString extends Command {
   @Override
   public Command execute() {
-    stringStackPointer++;
-    stringStack[stringStackPointer] = String.valueOf(i64Stack[i64StackPointer]);
-    i64StackPointer--;
+    stringStack[stackPointer] = String.valueOf(i64Stack[stackPointer]);
+    typeStack[stackPointer] = TYPE_STRING;
     return nextCommand;
   }
 }

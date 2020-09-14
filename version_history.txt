@@ -1,3 +1,6 @@
+2020.09.14 (version 0.15)
+	* VM: Converted several type stack pointers to one stack pointer.
+	
 2020.09.14 (version 0.14)
 	+	LLCG: if ternary operator, function calling
 	+ VM: FunctionCall object

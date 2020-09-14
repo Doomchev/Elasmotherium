@@ -7,11 +7,11 @@ import parser.ParserBase;
 import static parser.structure.Entity.addCommand;
 import vm.Command;
 import vm.I64Add;
-import vm.I64Deallocate;
+import vm.Deallocate;
 import vm.I64Equate;
 import vm.I64IsEqual;
-import vm.I64Less;
-import vm.I64More;
+import vm.I64IsLess;
+import vm.I64IsMore;
 import vm.I64Multiply;
 import vm.I64StackMoveReturnValue;
 import vm.I64Subtract;
@@ -82,11 +82,11 @@ public class EntityStack<EntityType> extends ParserBase {
   public static final NativeFunction ret = new NativeFunction("return", 17) {
     @Override
     public void functionToByteCode(FunctionCall call) {
-      int i64quantity = VMBase.currentFunction.i64ParamIndex
-          + VMBase.currentFunction.i64VarIndex + 2;
-      if(VMBase.currentFunction.type == i64Class && i64quantity > 0)
+      int paramQuantity = VMBase.currentFunction.paramIndex
+          + VMBase.currentFunction.varIndex + 2;
+      if(VMBase.currentFunction.type == i64Class && paramQuantity > 0)
         addCommand(new I64StackMoveReturnValue());
-      if(i64quantity > 0) addCommand(new I64Deallocate(i64quantity));
+      if(paramQuantity > 0) addCommand(new Deallocate(paramQuantity));
       addCommand(new VMReturn());
     }
   };
@@ -489,7 +489,7 @@ public class EntityStack<EntityType> extends ParserBase {
         Entity type0 = getPriorityType(call.parameters.getFirst()
             , call.parameters.getLast(), NUMBER);
         if(type0 == ClassEntity.i64Class) {
-          addCommand(new I64Less());
+          addCommand(new I64IsLess());
         } else {
           error("Less of " + type0.toString() + " is not implemented.");
         }
@@ -524,7 +524,7 @@ public class EntityStack<EntityType> extends ParserBase {
         Entity type0 = getPriorityType(call.parameters.getFirst()
             , call.parameters.getLast(), NUMBER);
         if(type0 == ClassEntity.i64Class) {
-          addCommand(new I64More());
+          addCommand(new I64IsMore());
         } else {
           error("Addition of " + type0.toString() + " is not implemented.");
         }

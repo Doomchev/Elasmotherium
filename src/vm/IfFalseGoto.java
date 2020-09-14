@@ -17,8 +17,8 @@ public class IfFalseGoto extends Command {
   
   @Override
   public Command execute() {
-    booleanStackPointer--;
-    if(booleanStack[booleanStackPointer + 1]) return nextCommand;
+    stackPointer--;
+    if(booleanStack[stackPointer + 1]) return nextCommand;
     return command;
   }
   

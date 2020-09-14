@@ -8,11 +8,11 @@ import parser.structure.Function;
 public class VMBase {
   public static final int STACK_SIZE = 2 << 10;
   public static boolean[] booleanStack = new boolean[STACK_SIZE];
+  public static byte[] typeStack = new byte[STACK_SIZE];
   public static long[] i64Stack = new long[STACK_SIZE];
   public static String[] stringStack = new String[STACK_SIZE];
   public static VMFunctionCall[] callStack = new VMFunctionCall[STACK_SIZE];
-  public static int booleanStackPointer = -1, i64StackPointer = -1
-      , stringStackPointer = -1, callStackPointer = -1;
+  public static int stackPointer = -1, callStackPointer = -1;
   public static VMFunctionCall currentCall = new VMFunctionCall();
   public static Command currentCommand;
   public static final HashMap<Function, Command> functions = new HashMap<>();
@@ -21,8 +21,7 @@ public class VMBase {
   public static int commandNumber = -1;
   public static Function currentFunction;
   
-  public static final int BOOLEAN_STACK = 0, INT_STACK = 1, STRING_STACK = 2
-      , STACK_QUANTITY = 3;
+  public static final byte TYPE_BOOLEAN = 0, TYPE_I64 = 1, TYPE_STRING = 2;
   
 
   public static void prepare(boolean run) {
@@ -36,14 +35,19 @@ public class VMBase {
         command = command.execute();
 
         String stack = "";
-        for(int index = 0; index <= i64StackPointer; index++)
-          stack += i64Stack[index] + " ";
-        System.out.println("i64: " + stack);
-
-        stack = "";
-        for(int index = 0; index <= stringStackPointer; index++)
-          stack += stringStack[index] + " ";
-        System.out.println("string: " + stack);
+        for(int index = 0; index <= stackPointer; index++)
+          switch(typeStack[index]) {
+            case TYPE_BOOLEAN:
+              stack += booleanStack[index] ? "true " : "false ";
+              break;
+            case TYPE_I64:
+              stack += i64Stack[index] + " ";
+              break;
+            case TYPE_STRING:
+              stack += stringStack[index] + " ";
+              break;
+          }
+        System.out.println("Stack: " + stack);
       }
     }
   }

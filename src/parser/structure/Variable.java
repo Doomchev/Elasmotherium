@@ -115,11 +115,7 @@ public class Variable extends FlagEntity {
   }
 
   public void setAllocation() {
-    if(type == i64Class) {
-      currentFunction.i64VarIndex++;
-      index = currentFunction.i64VarIndex;
-    } else {
-      error(type.toString() + " allocation is not implemented.");
-    }
+    currentFunction.varIndex++;
+    index = currentFunction.varIndex;
   }
 }

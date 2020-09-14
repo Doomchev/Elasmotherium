@@ -7,8 +7,8 @@ import static parser.structure.Entity.addCommand;
 import parser.structure.Scope.ScopeEntry;
 import vm.Call;
 import vm.Command;
-import vm.I64Allocate;
-import vm.I64CallParam;
+import vm.Allocate;
+import vm.CallParam;
 import vm.NewFunctionCall;
 import vm.VMBase;
 
@@ -19,7 +19,7 @@ public class Function extends FlagEntity {
   public final LinkedList<Variable> parameters = new LinkedList<>();
   public boolean isClassField = false, isNativeFunction = false;
   public Chunk form = null;
-  public int i64VarIndex = -1, i64ParamIndex = -1;
+  public int varIndex = -1, paramIndex = -1;
   public Command startingCommand;
   
   public Function(ID name) {
@@ -82,8 +82,8 @@ public class Function extends FlagEntity {
       variable.type = type.toClass();
       Entity paramType = variable.type;
       if(paramType == i64Class) {
-        i64ParamIndex++;
-        variable.index = i64ParamIndex;
+        paramIndex++;
+        variable.index = paramIndex;
       }
     }
     for(Variable variable : parameters) variable.setTypes(parentScope);
@@ -114,26 +114,20 @@ public class Function extends FlagEntity {
   public void functionToByteCode() {
     VMBase.currentFunction = this;
     VMBase.currentCommand = null;
-    if(i64VarIndex >= 0) addCommand(new I64Allocate(i64VarIndex + 1));
+    if(varIndex >= 0) addCommand(new Allocate(varIndex + 1));
     code.toByteCode();
     for(ScopeEntry entry : code.scope.entries)
       entry.entity.functionToByteCode();
   }
 
   public void toByteCode(FunctionCall call) {
-    if(!isNativeFunction) addCommand(new NewFunctionCall());
-    boolean i64parameter = false;
+    if(!isNativeFunction) {
+      addCommand(new NewFunctionCall());
+      if(!call.parameters.isEmpty()) addCommand(new CallParam());
+    }    
     ListIterator<Variable> iterator = parameters.listIterator();
     for(Entity parameter : call.parameters) {
       Entity type = parameter.getType();
-      if(!isNativeFunction) {
-        if(type == i64Class) {
-          if(!i64parameter) {
-            addCommand(new I64CallParam());
-            i64parameter = true;
-          }
-        }
-      }
       parameter.toByteCode();
       if(!iterator.hasNext()) error("Too many parameters in " + getName());
       conversion(type, iterator.next().type);

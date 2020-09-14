@@ -1,17 +1,15 @@
 package vm;
 
-public class I64Allocate extends Command {
+public class Deallocate extends Command {
   int quantity;
 
-  public I64Allocate(int quantity) {
+  public Deallocate(int quantity) {
     this.quantity = quantity;
   }
   
   @Override
   public Command execute() {
-    if(currentCall.i64ParamPosition < 0)
-      currentCall.i64ParamPosition = i64StackPointer + 1;
-    i64StackPointer += quantity;
+    stackPointer -= quantity;
     return nextCommand;
   }
   
