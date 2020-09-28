@@ -17,6 +17,6 @@ public class StringPush extends Command {
   
   @Override
   public String toString() {
-    return super.toString() + " " + value;
+    return super.toString() + " \"" + value + "\"";
   }
 }

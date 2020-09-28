@@ -1,3 +1,8 @@
+2020.09.28 (version 0.16)
+	+ VM: Object entity, new object command.
+	+ VM: Field setting and retrieving commands.
+	* AST: Equation system.
+
 2020.09.28 (version 0.15.1)
 	* AST: Converted anonymous classes of native functions to standalone classes.
 	* AST: Moved "parser.structure" package to "ast" package.

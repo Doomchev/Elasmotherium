@@ -40,6 +40,7 @@ public class StringSequence extends Value {
     boolean notFirst = false;
     for(Value value : chunks) {
       value.toByteCode();
+      conversion(value.getType(), ClassEntity.stringClass);
       if(notFirst) addCommand(new StringAdd());
       notFirst = true;
     }

@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import vm.Command;
 import vm.IfFalseGoto;
 import vm.VMBase;
-import vm.VMEnd;
 import vm.VMGoto;
 
 public class IfOp extends NativeFunction {
@@ -23,8 +22,8 @@ public class IfOp extends NativeFunction {
   }
   
   @Override
-  public void setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
-    type = getPriorityType(parameters.get(1), parameters.getLast(), ANY);
+  public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
+    return getPriorityType(parameters.get(1), parameters.getLast(), ANY);
   }
 
   @Override

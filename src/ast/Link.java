@@ -4,6 +4,7 @@ import export.Chunk;
 import parser.Action;
 import static ast.Entity.addCommand;
 import vm.I64StackPush;
+import vm.ObjectStackPush;
 
 public class Link extends Value {
   public ID name;
@@ -80,12 +81,14 @@ public class Link extends Value {
   
   @Override
   public void toByteCode() {
-    Entity type = variable.type;
+    ClassEntity type = variable.type.toClass();
     int index = variable.index;
     if(type == ClassEntity.i64Class) {
       addCommand(new I64StackPush(index));
-    } else {
+    } else if(type.isNative) {
       error(type.toString() + " variable link is not implemented.");
+    } else {
+      addCommand(new ObjectStackPush(index));
     }
     conversion(type, convertTo);
   }

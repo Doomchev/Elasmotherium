@@ -5,6 +5,8 @@ import ast.Entity;
 import static ast.Entity.addCommand;
 import ast.FunctionCall;
 import ast.NativeFunction;
+import ast.Scope;
+import java.util.LinkedList;
 import vm.ObjectNew;
 
 public class New extends NativeFunction {
@@ -17,6 +19,11 @@ public class New extends NativeFunction {
 
   @Override
   public Entity getType() {
+    return objectClass;
+  }
+
+  @Override
+  public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
     return objectClass;
   }
 

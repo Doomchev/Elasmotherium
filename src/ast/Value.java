@@ -1,8 +1,5 @@
 package ast;
 
-import static ast.Entity.addCommand;
-import vm.I64ToString;
-
 public abstract class Value extends Entity {
   Entity convertTo;
 

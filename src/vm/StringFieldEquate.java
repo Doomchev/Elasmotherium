@@ -10,7 +10,7 @@ public class StringFieldEquate extends Command {
   
   @Override
   public Command execute() {
-    objStack[stackIndex + currentCall.paramPosition]
+    objStack[stackIndex + currentCall.paramPosition].fields[fieldIndex]
         .stringSet(stringStack[stackPointer]);
     stackPointer--;
     return nextCommand;

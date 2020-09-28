@@ -4,11 +4,11 @@ import ast.nativ.New;
 import export.Chunk;
 import java.util.Arrays;
 import java.util.LinkedList;
-import vm.ObjectNew;
 
 public class FunctionCall extends Value {
   public Function function;
   public ID functionName;
+  public Entity type;
   public boolean thisFlag;
   public final LinkedList<Entity> parameters = new LinkedList<>();
 
@@ -71,7 +71,7 @@ public class FunctionCall extends Value {
 
   @Override
   public Entity getType() {
-    return function.getType();
+    return type;
   }
 
   @Override
@@ -86,8 +86,9 @@ public class FunctionCall extends Value {
   }
 
   @Override
-  public void setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
+  public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
     setTypes(parentScope);
+    return null;
   }
 
   @Override
@@ -103,7 +104,7 @@ public class FunctionCall extends Value {
       }
     }
     function.setParameterTypes(parameters, parentScope);
-    function.setCallTypes(parameters, parentScope);
+    type = function.setCallTypes(parameters, parentScope);
   }
 
   @Override

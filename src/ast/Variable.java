@@ -46,6 +46,11 @@ public class Variable extends FlagEntity {
   }
 
   @Override
+  public int getIndex() {
+    return index;
+  }
+
+  @Override
   public Variable toVariable() {
     return this;
   }

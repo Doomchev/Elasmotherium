@@ -96,7 +96,8 @@ public class Function extends FlagEntity {
   }
 
   @Override
-  public void setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
+  public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
+    return null;
   }
 
   @Override

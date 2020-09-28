@@ -205,6 +205,10 @@ public abstract class Entity extends ParserBase {
     return null;
   }
 
+  public int getIndex() {
+    return -1;
+  }
+
   public Chunk getCallForm() {
     return null;
   }
@@ -246,8 +250,9 @@ public abstract class Entity extends ParserBase {
   public void setTypes(Scope parentScope) {
   }
 
-  public void setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
+  public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
     setTypes(parentScope);
+    return null;
   }
 
   public void addToScope(Scope scope) {

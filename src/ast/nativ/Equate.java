@@ -19,10 +19,11 @@ public class Equate extends NativeFunction {
   }
   
   @Override
-  public void functionToByteCode(FunctionCall call) {
+  public void toByteCode(FunctionCall call) {
     Entity param0 = call.parameters.getFirst();
     fieldIndex = -1;
     param0.objectToByteCode(call);
+    call.parameters.getLast().toByteCode();
     if(fieldIndex == -1) {
       if(fieldType == ClassEntity.i64Class) {
         addCommand(new I64Equate(objectIndex));

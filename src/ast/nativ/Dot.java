@@ -7,6 +7,8 @@ import ast.NativeFunction;
 import ast.Scope;
 import ast.Variable;
 import java.util.LinkedList;
+import vm.I64FieldPush;
+import vm.StringFieldPush;
 
 public class Dot extends NativeFunction {
   public Dot() {
@@ -14,7 +16,7 @@ public class Dot extends NativeFunction {
   }
   
   @Override
-  public void setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
+  public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
     Entity param0 = parameters.getFirst();
     param0.setTypes(parentScope);
     ClassEntity param0Class = param0.getType().toClass();
@@ -22,6 +24,7 @@ public class Dot extends NativeFunction {
         parameters.getLast().getNameID());
     parameters.set(1, field);
     field.setTypes(parentScope);
+    return field.getType();
   }
 
   @Override
@@ -31,6 +34,17 @@ public class Dot extends NativeFunction {
 
   @Override
   public void toByteCode(FunctionCall call) {
+    call.parameters.getFirst().toByteCode();
+    Entity field = call.parameters.getLast();
+    ClassEntity type = field.getType().toClass();
+    int index = field.getIndex();
+    if(type == ClassEntity.stringClass) {
+      addCommand(new StringFieldPush(index));
+    } else if(type == ClassEntity.i64Class) {
+      addCommand(new I64FieldPush(index));
+    } else {
+      error("Getting " + type.toString() + " field is not implemented.");
+    }
   }
 
   @Override
