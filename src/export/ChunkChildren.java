@@ -1,7 +1,7 @@
 package export;
 
-import parser.structure.Entity;
-import parser.structure.ID;
+import ast.Entity;
+import ast.ID;
 
 public class ChunkChildren extends Chunk {
   private final Chunk delimiter;

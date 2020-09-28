@@ -3,45 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Dropbox/Elasmotherium/test/SixPawns.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMFunctionCall.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/IfFalseGoto.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/NativeFunction.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64Equate.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMRandom.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/StringPush.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/CallParam.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/test/Test.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64IsLess.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64Subtract.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64Add.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/Function.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/Type.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64IsMore.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/NewFunctionCall.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64StackPush.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64Multiply.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMPrint.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/FunctionCall.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/base/Base.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/Command.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/Variable.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/StringAdd.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMReturn.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/Allocate.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64StackMoveReturnValue.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64Push.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMBase.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/Code.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/test/Factorial.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/StringToI64.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/Deallocate.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64IsEqual.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/Call.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/structure/EntityStack.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64ToString.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/test/Guess.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMInput.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/ClassEntity.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Variable.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/NativeFunction.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/FunctionCall.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Link.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/EntityStack.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Entity.java</file>
         </group>
     </open-files>
 </project-private>

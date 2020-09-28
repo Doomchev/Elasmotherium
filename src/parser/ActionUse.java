@@ -1,6 +1,6 @@
 package parser;
 
-import parser.structure.ID;
+import ast.ID;
 
 public class ActionUse extends Action {
   ID flag;

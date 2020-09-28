@@ -1,6 +1,6 @@
 package parser;
 
-import parser.structure.EntityStack;
+import ast.EntityStack;
 
 public class ActionRemove extends Action {
   private final EntityStack stack;

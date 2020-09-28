@@ -1,13 +1,13 @@
 package parser;
 
 import base.Module;
-import parser.structure.Block;
-import parser.structure.Entity;
-import parser.structure.EntityStack;
-import parser.structure.FunctionCall;
-import parser.structure.ID;
-import parser.structure.NativeFunction;
-import parser.structure.Variable;
+import ast.Block;
+import ast.Entity;
+import ast.EntityStack;
+import ast.FunctionCall;
+import ast.ID;
+import ast.NativeFunction;
+import ast.Variable;
 
 public class ActionCreate extends Action {
   private final EntityStack stack;

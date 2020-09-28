@@ -1,9 +1,9 @@
 package parser;
 
-import parser.structure.ID;
+import ast.ID;
 import java.util.LinkedList;
 import static parser.ParserBase.log;
-import parser.structure.EntityStack;
+import ast.EntityStack;
 
 public class ActionSwitchID extends ActionSwitch {
   private static class Entry {

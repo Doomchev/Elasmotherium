@@ -1,9 +1,9 @@
 package parser;
 
-import parser.structure.Entity;
-import parser.structure.EntityStack;
-import parser.structure.FunctionCall;
-import parser.structure.NativeFunction;
+import ast.Entity;
+import ast.EntityStack;
+import ast.FunctionCall;
+import ast.NativeFunction;
 
 public class ActionMoveNewFunction extends Action {
   private final NativeFunction function;

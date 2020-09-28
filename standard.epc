@@ -532,7 +532,7 @@ separator: {
     other: invalid("separator")
   }
   "!": >> {
-    "=": >> MOVE(notequal,formula) variable
+    "=": >> MOVE(notEqual,formula) variable
     other: invalid("separator")
   }
   "<": >> {

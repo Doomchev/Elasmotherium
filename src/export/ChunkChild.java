@@ -1,8 +1,8 @@
 package export;
 
 import static parser.ParserBase.error;
-import parser.structure.Entity;
-import parser.structure.ID;
+import ast.Entity;
+import ast.ID;
 
 public class ChunkChild extends Chunk {
   private final ID id, postfix;

@@ -1,6 +1,6 @@
 package export;
 
-import parser.structure.Entity;
+import ast.Entity;
 
 public class ChunkChildAtIndex extends Chunk {
   private final int index;

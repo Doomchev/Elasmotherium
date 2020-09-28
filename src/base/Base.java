@@ -3,9 +3,9 @@ package base;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JOptionPane;
-import parser.structure.Function;
-import parser.structure.ID;
-import parser.structure.Scope;
+import ast.Function;
+import ast.ID;
+import ast.Scope;
 
 public class Base {
   public static int lineNum;

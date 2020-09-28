@@ -8,7 +8,7 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import parser.Rules;
-import parser.structure.ClassEntity;
+import ast.ClassEntity;
 
 public class Main {
   public static void main(String[] args) throws IOException {

@@ -1,9 +1,10 @@
 package vm;
 
+import ast.ObjectEntity;
 import base.Base;
 import java.util.HashMap;
 import java.util.LinkedList;
-import parser.structure.Function;
+import ast.Function;
 
 public class VMBase {
   public static final int STACK_SIZE = 2 << 10;
@@ -11,6 +12,7 @@ public class VMBase {
   public static byte[] typeStack = new byte[STACK_SIZE];
   public static long[] i64Stack = new long[STACK_SIZE];
   public static String[] stringStack = new String[STACK_SIZE];
+  public static ObjectEntity[] objStack = new ObjectEntity[STACK_SIZE];
   public static VMFunctionCall[] callStack = new VMFunctionCall[STACK_SIZE];
   public static int stackPointer = -1, callStackPointer = -1;
   public static VMFunctionCall currentCall = new VMFunctionCall();
@@ -21,7 +23,8 @@ public class VMBase {
   public static int commandNumber = -1;
   public static Function currentFunction;
   
-  public static final byte TYPE_BOOLEAN = 0, TYPE_I64 = 1, TYPE_STRING = 2;
+  public static final byte TYPE_BOOLEAN = 0, TYPE_I64 = 1, TYPE_STRING = 2
+      , TYPE_OBJECT = 3;
   
 
   public static void prepare(boolean run) {
@@ -45,6 +48,9 @@ public class VMBase {
               break;
             case TYPE_STRING:
               stack += stringStack[index] + " ";
+              break;
+            case TYPE_OBJECT:
+              stack += objStack[index].type.toString() + " ";
               break;
           }
         System.out.println("Stack: " + stack);

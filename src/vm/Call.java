@@ -1,6 +1,6 @@
 package vm;
 
-import parser.structure.Function;
+import ast.Function;
 
 public class Call extends Command {
   Function function;

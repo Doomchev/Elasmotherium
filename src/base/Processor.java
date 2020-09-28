@@ -1,11 +1,11 @@
 package base;
 
-import parser.structure.ClassEntity;
-import parser.structure.Entity;
-import parser.structure.Function;
-import parser.structure.FunctionCall;
-import parser.structure.ID;
-import parser.structure.Variable;
+import ast.ClassEntity;
+import ast.Entity;
+import ast.Function;
+import ast.FunctionCall;
+import ast.ID;
+import ast.Variable;
 import vm.VMInput;
 import vm.VMPrint;
 import vm.VMRandom;

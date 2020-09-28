@@ -2,7 +2,7 @@ package parser;
 
 import base.Base;
 import java.util.LinkedList;
-import parser.structure.ID;
+import ast.ID;
 
 public abstract class Action extends ParserBase {
   public static int savedTextPos, savedLineNum, savedLineStart;

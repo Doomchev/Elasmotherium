@@ -1,7 +1,7 @@
 package export;
 
-import parser.structure.Entity;
-import parser.structure.ID;
+import ast.Entity;
+import ast.ID;
 
 public class ChunkExists extends Chunk {
   ID id;

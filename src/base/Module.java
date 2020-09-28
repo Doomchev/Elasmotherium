@@ -9,9 +9,9 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import parser.Action;
 import parser.Rules;
-import parser.structure.Code;
-import parser.structure.Entity;
-import parser.structure.EntityStack;
+import ast.Code;
+import ast.Entity;
+import ast.EntityStack;
 
 public class Module extends ParserBase {
   public static Module current;

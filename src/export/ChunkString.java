@@ -1,6 +1,6 @@
 package export;
 
-import parser.structure.Entity;
+import ast.Entity;
 
 public class ChunkString extends Chunk {
   private String string;

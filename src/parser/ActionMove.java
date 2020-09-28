@@ -1,7 +1,7 @@
 package parser;
 
-import parser.structure.Entity;
-import parser.structure.EntityStack;
+import ast.Entity;
+import ast.EntityStack;
 
 public class ActionMove extends Action {
   private final EntityStack<Entity> from, to;

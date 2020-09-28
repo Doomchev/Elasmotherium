@@ -1,9 +1,9 @@
 package parser;
 
-import parser.structure.Block;
-import parser.structure.Entity;
-import parser.structure.EntityStack;
-import parser.structure.ID;
+import ast.Block;
+import ast.Entity;
+import ast.EntityStack;
+import ast.ID;
 
 public class ActionSet extends Action {
   private static final ID ret = ID.get("return"), get = ID.get("get")

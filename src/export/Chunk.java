@@ -1,6 +1,6 @@
 package export;
 
-import parser.structure.Entity;
+import ast.Entity;
 
 public abstract class Chunk implements Cloneable {
   public static String tabs = "";

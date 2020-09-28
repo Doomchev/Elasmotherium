@@ -9,10 +9,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import parser.Rules;
-import parser.structure.ClassEntity;
-import parser.structure.Entity;
-import parser.structure.Function;
-import parser.structure.ID;
+import ast.ClassEntity;
+import ast.Entity;
+import ast.Function;
+import ast.ID;
 
 public class Export extends Base {
   public Rules rules;

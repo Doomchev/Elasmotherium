@@ -5,10 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
-import parser.structure.Entity;
-import parser.structure.EntityStack;
-import parser.structure.ID;
-import parser.structure.NativeFunction;
+import ast.Entity;
+import ast.EntityStack;
+import ast.ID;
+import ast.NativeFunction;
 
 public class Rules extends ParserBase {
   public Sub root;
