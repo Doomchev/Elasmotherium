@@ -9,11 +9,11 @@ public class I64FieldEquate extends Command {
   }
   
   @Override
-  public Command execute() {
+  public void execute() {
     objStack[stackIndex + currentCall.paramPosition].fields[fieldIndex]
         .i64Set(i64Stack[stackPointer]);
     stackPointer--;
-    return nextCommand;
+    currentCommand = nextCommand;
   }
   
   @Override

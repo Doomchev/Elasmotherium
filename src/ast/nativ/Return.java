@@ -4,7 +4,7 @@ import static ast.Entity.addCommand;
 import static ast.Entity.i64Class;
 import ast.FunctionCall;
 import ast.NativeFunction;
-import vm.Deallocate;
+import vm.VMDeallocate;
 import vm.I64StackMoveReturnValue;
 import vm.VMBase;
 import vm.VMReturn;
@@ -20,7 +20,7 @@ public class Return extends NativeFunction {
         + VMBase.currentFunction.varIndex + 2;
     if(VMBase.currentFunction.type == i64Class && paramQuantity > 0)
       addCommand(new I64StackMoveReturnValue());
-    if(paramQuantity > 0) addCommand(new Deallocate(paramQuantity));
+    if(paramQuantity > 0) addCommand(new VMDeallocate(paramQuantity));
     addCommand(new VMReturn());
   }
 }

@@ -2,9 +2,9 @@ package vm;
 
 public class VMPrint extends Command {
   @Override
-  public Command execute() {
+  public void execute() {
     System.out.println(stringStack[stackPointer]);
     stackPointer--;
-    return nextCommand;
+    currentCommand = nextCommand;
   }
 }

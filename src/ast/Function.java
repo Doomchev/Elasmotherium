@@ -1,16 +1,21 @@
 package ast;
 
+import static ast.Entity.addCommand;
 import export.Chunk;
 import java.util.LinkedList;
 import java.util.ListIterator;
-import static ast.Entity.addCommand;
+import static ast.Entity.i64Class;
 import ast.Scope.ScopeEntry;
-import vm.Call;
+import vm.VMCall;
 import vm.Command;
-import vm.Allocate;
-import vm.CallParam;
-import vm.NewFunctionCall;
+import vm.I64StackMoveReturnValue;
+import vm.VMAllocate;
+import vm.VMCallParam;
+import vm.VMNewFunctionCall;
 import vm.VMBase;
+import vm.VMDeallocate;
+import vm.VMReturnThis;
+import vm.VMNewThis;
 
 public class Function extends FlagEntity {
   public Code code = new Code();
@@ -67,7 +72,7 @@ public class Function extends FlagEntity {
 
   @Override
   public void addToScope(Scope parentScope) {
-    parentScope.add(this);
+    if(!hasFlag(constructorID)) parentScope.add(this);
     code.addToScope(parentScope);
     currentFunction = this;
     for(Variable variable : parameters) code.scope.add(variable, variable.name);
@@ -75,19 +80,20 @@ public class Function extends FlagEntity {
 
   @Override
   public void setTypes(Scope parentScope) {
+    Function oldFunction = currentFunction;
+    currentFunction = this;
     if(type.toClass() == null) type.setTypes(parentScope);
     type = type.toClass();
     for(Variable variable : parameters) {
       if(variable.type.toClass() == null) variable.type.setTypes(parentScope);
-      variable.type = type.toClass();
+      variable.type = variable.type.toClass();
       Entity paramType = variable.type;
-      if(paramType == i64Class) {
-        paramIndex++;
-        variable.index = paramIndex;
-      }
+      paramIndex++;
+      variable.index = paramIndex;
     }
     for(Variable variable : parameters) variable.setTypes(parentScope);
     code.setTypes(parentScope);
+    currentFunction = oldFunction;
   }
 
   public void setParameterTypes(LinkedList<Entity> parameters
@@ -97,7 +103,7 @@ public class Function extends FlagEntity {
 
   @Override
   public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
-    return null;
+    return type;
   }
 
   @Override
@@ -106,41 +112,52 @@ public class Function extends FlagEntity {
   }
 
   @Override
-  void moveToClass(ClassEntity classEntity) {
+  public void moveToClass(ClassEntity classEntity) {
     isClassField = true;
     classEntity.methods.add(this);
   }
 
   @Override
-  void moveToCode(Code code) {
+  public void moveToCode(Code code) {
     code.lines.add(this);
   }
   
   @Override
   public void functionToByteCode() {
+    boolean isConstructor = hasFlag(ID.constructorID);
     VMBase.currentFunction = this;
     VMBase.currentCommand = null;
-    if(varIndex >= 0) addCommand(new Allocate(varIndex + 1));
+    if(isConstructor) addCommand(new VMNewThis(type.toClass()));
+    if(varIndex >= 0) addCommand(new VMAllocate(varIndex + 1));
     code.toByteCode();
-    for(ScopeEntry entry : code.scope.entries)
-      entry.entity.functionToByteCode();
+    if(code.scope != null)
+      for(ScopeEntry entry : code.scope.entries)
+        entry.entity.functionToByteCode();
+    if(isConstructor) {
+      int paramQuantity = VMBase.currentFunction.paramIndex
+        + VMBase.currentFunction.varIndex + 2;
+      if(paramQuantity > 0) addCommand(new VMDeallocate(paramQuantity));
+      addCommand(new VMReturnThis());
+    }
   }
 
   public void toByteCode(FunctionCall call) {
     if(!isNativeFunction) {
-      addCommand(new NewFunctionCall());
-      if(!call.parameters.isEmpty()) addCommand(new CallParam());
+      addCommand(new VMNewFunctionCall());
+      if(!call.parameters.isEmpty()) addCommand(new VMCallParam());
     }    
     ListIterator<Variable> iterator = parameters.listIterator();
     for(Entity parameter : call.parameters) {
       Entity type = parameter.getType();
       parameter.toByteCode();
-      if(!iterator.hasNext()) error("Too many parameters in " + getName());
-      conversion(type, iterator.next().type);
+      if(!iterator.hasNext()) throw new Error("Too many parameters in "
+          + getName());
+      conversion(type.toClass(), iterator.next().type.toClass());
     }
-    if(iterator.hasNext()) error("Too few parameters in " + getName());
+    if(iterator.hasNext()) throw new Error("Too few parameters in "
+        + getName());
     functionToByteCode(call);
-    if(!isNativeFunction) addCommand(new Call(this));
+    if(!isNativeFunction) addCommand(new VMCall(this));
     conversion(type, call.convertTo);
   }
   

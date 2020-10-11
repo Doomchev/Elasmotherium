@@ -29,7 +29,7 @@ public class Multiplication extends NativeFunction {
     if(type0 == ClassEntity.i64Class) {
       addCommand(new I64Multiply());
     } else {
-      error("Multiplication of " + type0.toString()
+      throw new Error("Multiplication of " + type0.toString()
           + " is not implemented.");
     }
   }

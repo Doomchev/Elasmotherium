@@ -54,7 +54,7 @@ public class Block extends Entity {
   }
 
   @Override
-  void moveToCode(Code code) {
+  public void moveToCode(Code code) {
     code.lines.add(this);
   }
 
@@ -101,7 +101,7 @@ public class Block extends Entity {
         VMBase.gotos.add(ifFalse);
       }
     } else {
-      error(type.string + " is not implemented.");
+      throw new Error(type.string + " is not implemented.");
     }
   }
 

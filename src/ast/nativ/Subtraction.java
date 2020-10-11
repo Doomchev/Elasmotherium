@@ -29,7 +29,7 @@ public class Subtraction extends NativeFunction {
     if(type0 == ClassEntity.i64Class) {
       addCommand(new I64Subtract());
     } else {
-      error("Subtraction of " + type0.toString() + " is not implemented.");
+      throw new Error("Subtraction of " + type0.toString() + " is not implemented.");
     }
   }
 

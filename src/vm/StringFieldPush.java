@@ -8,11 +8,11 @@ public class StringFieldPush extends Command {
   }
   
   @Override
-  public Command execute() {
+  public void execute() {
     stringStack[stackPointer] = objStack[stackPointer].fields[fieldIndex]
         .stringGet();
     typeStack[stackPointer] = TYPE_STRING;
-    return nextCommand;
+    currentCommand = nextCommand;
   }
   
   @Override

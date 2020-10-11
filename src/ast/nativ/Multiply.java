@@ -16,7 +16,7 @@ public class Multiply extends NativeFunction {
   @Override
   public Entity calculateType(Entity param0, Entity param1) {
     if(!param0.getType().isNumber())
-      error(param0.toString() + " cannot be multiplied");
+      throw new Error(param0.toString() + " cannot be multiplied");
     return null;
   }
 }

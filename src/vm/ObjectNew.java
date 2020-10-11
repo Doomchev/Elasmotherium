@@ -13,18 +13,11 @@ public class ObjectNew extends Command {
   }
 
   @Override
-  public Command execute() {
-    ObjectEntity object = new ObjectEntity(classEntity);
-    int index = -1;
-    object.fields = new Entity[classEntity.fields.size()];
-    for(Variable parameter : classEntity.fields) {
-      index++;
-      object.fields[index] = parameter.type.createValue();
-    }
+  public void execute() {
     stackPointer++;
-    objStack[stackPointer] = object;
+    objStack[stackPointer] = newObject(classEntity);
     typeStack[stackPointer] = TYPE_OBJECT;
-    return nextCommand;
+    currentCommand = nextCommand;
   }
   
   @Override

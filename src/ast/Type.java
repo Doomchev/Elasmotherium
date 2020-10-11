@@ -48,22 +48,22 @@ public class Type extends NamedEntity {
   }
 
   @Override
-  void moveToType(Type type) {
+  public void moveToType(Type type) {
     subtypes.add(type);
   }
 
   @Override
-  void moveToClass(ClassEntity classEntity) {
+  public void moveToClass(ClassEntity classEntity) {
     classEntity.parent = this;
   }
 
   @Override
-  void moveToVariable(Variable variable) {
+  public void moveToVariable(Variable variable) {
     variable.type = this;
   }
 
   @Override
-  void moveToFunction(Function function) {
+  public void moveToFunction(Function function) {
     function.type = this;
   }
 

@@ -4,60 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/Dropbox/Elasmotherium/src/ast/Code.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Return.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/ElseOp.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Continue.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Function.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/New.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Entity.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/StringFieldEquate.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Formula.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Addition.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/NotEqual.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/ClassEntity.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/ast/Variable.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/MoreOrEqual.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/EntityStack.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/BitAnd.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Dot.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64FieldEquate.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/IfOp.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/ObjectNew.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Increment.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Multiplication.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Add.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/BitOr.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/End.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Divide.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/NativeFunction.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/And.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Subtract.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Equal.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Decrement.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/LessOrEqual.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Subtraction.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/ObjectEquate.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/test/Addition.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/test/Test.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Negative.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Division.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Brackets.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Mod.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Less.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Equate.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/More.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/base/Base.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Not.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/ObjectFieldEquate.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Or.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/StringAdd.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Multiply.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/AtIndex.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/FunctionCall.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMBase.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/nativ/Break.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Block.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/ast/Link.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Type.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Function.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/base/Processor.java</file>
         </group>
     </open-files>
 </project-private>

@@ -31,7 +31,7 @@ public class More extends NativeFunction {
     if(type0 == ClassEntity.i64Class) {
       addCommand(new I64IsMore());
     } else {
-      error("Addition of " + type0.toString() + " is not implemented.");
+      throw new Error("Addition of " + type0.toString() + " is not implemented.");
     }
   }
 

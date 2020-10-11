@@ -16,7 +16,7 @@ public class Divide extends NativeFunction {
   @Override
   public Entity calculateType(Entity param0, Entity param1) {
     if(!param0.getType().isNumber())
-      error(param0.toString() + " cannot be divided");
+      throw new Error(param0.toString() + " cannot be divided");
     return null;
   }
 }

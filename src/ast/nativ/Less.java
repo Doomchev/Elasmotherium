@@ -31,7 +31,7 @@ public class Less extends NativeFunction {
     if(type0 == ClassEntity.i64Class) {
       addCommand(new I64IsLess());
     } else {
-      error("Less of " + type0.toString() + " is not implemented.");
+      throw new Error("Less of " + type0.toString() + " is not implemented.");
     }
   }
 

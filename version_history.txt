@@ -1,3 +1,9 @@
+2020.10.11 (version 0.17)
+	* VM, AST: Constructors
+	* AST: Rewrote equation byte code generation mechanism.
+	* VM: Changed command execution mechanism.
+	* Replaced error function execution with throwing exceptions.
+
 2020.09.28 (version 0.16)
 	+ VM: Object entity, new object command.
 	+ VM: Field setting and retrieving commands.

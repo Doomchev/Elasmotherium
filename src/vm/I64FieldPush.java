@@ -8,10 +8,10 @@ public class I64FieldPush extends Command {
   }
   
   @Override
-  public Command execute() {
+  public void execute() {
     i64Stack[stackPointer] = objStack[stackPointer].fields[fieldIndex].i64Get();
     typeStack[stackPointer] = TYPE_I64;
-    return nextCommand;
+    currentCommand = nextCommand;
   }
   
   @Override

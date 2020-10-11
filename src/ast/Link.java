@@ -2,9 +2,13 @@ package ast;
 
 import export.Chunk;
 import parser.Action;
-import static ast.Entity.addCommand;
+import vm.I64Equate;
 import vm.I64StackPush;
+import vm.I64ThisEquate;
 import vm.ObjectStackPush;
+import vm.StringEquate;
+import vm.StringStackPush;
+import vm.StringThisEquate;
 
 public class Link extends Value {
   public ID name;
@@ -74,9 +78,14 @@ public class Link extends Value {
   
   @Override
   public void setTypes(Scope parentScope) {
-    variable = parentScope.getVariable(name).toVariable();
-    if(variable == null) error("Variable " + name + " not found.");
-    variable.setTypes(parentScope);
+    if(thisFlag) {
+      variable = parentScope.getClassField(name).toVariable();
+      if(variable == null) throw new Error("Field " + name + " not found.");
+    } else {
+      variable = parentScope.getVariable(name).toVariable();
+      if(variable == null) throw new Error("Variable " + name + " not found.");
+      variable.setTypes(parentScope);      
+    }
   }
   
   @Override
@@ -85,17 +94,42 @@ public class Link extends Value {
     int index = variable.index;
     if(type == ClassEntity.i64Class) {
       addCommand(new I64StackPush(index));
+    } else if(type == ClassEntity.stringClass) {
+      addCommand(new StringStackPush(index));
     } else if(type.isNative) {
-      error(type.toString() + " variable link is not implemented.");
+      throw new Error(type.toString() + " variable link is not implemented.");
     } else {
       addCommand(new ObjectStackPush(index));
     }
     conversion(type, convertTo);
   }
-  
+
   @Override
-  public void objectToByteCode(FunctionCall call) {
-    objectIndex = variable.index;
+  public void equationByteCode() {
+    ClassEntity type = variable.type.toClass();
+    int index = variable.index;
+    if(thisFlag) {
+      if(type == ClassEntity.i64Class) {
+        addCommand(new I64ThisEquate(index));
+      } else if(type == ClassEntity.stringClass) {
+        addCommand(new StringThisEquate(index));
+      } else if(type.isNative) {
+        throw new Error("Equate of " + type.toString()
+            + " field is not implemented.");
+      } else {
+        throw new Error("Equate of object field is not implemented.");
+        //addCommand(new ObjectFieldEquate(objectIndex, fieldIndex));
+      }
+    } else {
+      if(type == ClassEntity.i64Class) {
+        addCommand(new I64Equate(index));
+      } else if(type == ClassEntity.stringClass) {
+        addCommand(new StringEquate(index));
+      } else {
+        throw new Error("Equate of " + type.toString()
+            + " is not implemented.");
+      }
+    }
   }
 
   @Override

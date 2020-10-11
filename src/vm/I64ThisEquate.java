@@ -1,17 +1,16 @@
 package vm;
 
-public class ObjectStackPush extends Command {
+public class I64ThisEquate extends Command {
   int index;
 
-  public ObjectStackPush(int index) {
+  public I64ThisEquate(int index) {
     this.index = index;
   }
   
   @Override
   public void execute() {
-    stackPointer++;
-    objStack[stackPointer] = objStack[currentCall.paramPosition + index];
-    typeStack[stackPointer] = TYPE_OBJECT;
+    currentCall.thisObject.fields[index].i64Set(i64Stack[stackPointer]);
+    stackPointer--;
     currentCommand = nextCommand;
   }
   

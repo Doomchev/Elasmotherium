@@ -9,11 +9,11 @@ public class ObjectFieldEquate extends Command {
   }
   
   @Override
-  public Command execute() {
+  public void execute() {
     //objectStack[stackIndex + currentCall.paramPosition]
     //    .objectSet(objectStack[stackPointer]);
     stackPointer--;
-    return nextCommand;
+    currentCommand = nextCommand;
   }
   
   @Override

@@ -16,10 +16,9 @@ public class IfFalseGoto extends Command {
   }
   
   @Override
-  public Command execute() {
+  public void execute() {
     stackPointer--;
-    if(booleanStack[stackPointer + 1]) return nextCommand;
-    return command;
+    currentCommand = booleanStack[stackPointer + 1] ? nextCommand : command;
   }
   
   @Override

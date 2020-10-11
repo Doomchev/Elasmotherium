@@ -1,16 +1,16 @@
 package vm;
 
-public class Deallocate extends Command {
+public class VMDeallocate extends Command {
   int quantity;
 
-  public Deallocate(int quantity) {
+  public VMDeallocate(int quantity) {
     this.quantity = quantity;
   }
   
   @Override
-  public Command execute() {
+  public void execute() {
     stackPointer -= quantity;
-    return nextCommand;
+    currentCommand = nextCommand;
   }
   
   @Override

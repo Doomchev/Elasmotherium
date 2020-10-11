@@ -18,7 +18,7 @@ public class Negative extends NativeFunction {
   public Entity calculateType(Entity param0, Entity param1) {
     Entity type0 = param0.getType();
     if(!type0.isNumber())
-      error(param0.toString() + " cannot be negated");
+      throw new Error(param0.toString() + " cannot be negated");
     return type0;
   }
 }

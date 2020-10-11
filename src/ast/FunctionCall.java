@@ -95,12 +95,21 @@ public class FunctionCall extends Value {
   public void setTypes(Scope parentScope) {
     if(functionName != null) {
       Entity entity = parentScope.get(functionName, thisFlag);
-      if(entity == null) error(functionName + " is not found");
+      if(entity == null) throw new Error(functionName + " is not found");
       ClassEntity newObjectClass = entity.toClass();
       if(newObjectClass == null) {
         function = entity.toFunction();
       } else {
-        function = new New(newObjectClass);
+        int paramQuantity = parameters.size();
+        Function constructor = null;
+        for(Function method : newObjectClass.methods) {
+          if(!method.hasFlag(constructorID)) continue;
+          if(paramQuantity == method.parameters.size()) {
+            constructor = method;
+            break;
+          }
+        }
+        function = new New(newObjectClass, constructor);
       }
     }
     function.setParameterTypes(parameters, parentScope);
@@ -113,18 +122,13 @@ public class FunctionCall extends Value {
   }
 
   @Override
-  void moveToCode(Code code) {
+  public void moveToCode(Code code) {
     code.lines.add(this);
   }
 
   @Override
   public void toByteCode() {
     function.toByteCode(this);
-  }
-
-  @Override
-  public void objectToByteCode(FunctionCall call) {
-    function.objectToByteCode(this);
   }
 
   @Override

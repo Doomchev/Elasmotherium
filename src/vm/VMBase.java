@@ -1,5 +1,6 @@
 package vm;
 
+import ast.ClassEntity;
 import ast.ObjectEntity;
 import base.Base;
 import java.util.HashMap;
@@ -29,13 +30,17 @@ public class VMBase {
 
   public static void prepare(boolean run) {
     Base.main.functionToByteCode();
+    for(ClassEntity classEntity : ClassEntity.all.values()) {
+      for(Function method : classEntity.methods) 
+        method.functionToByteCode();
+    }
     for(int index = 0; index <= commandNumber; index++)
       System.out.println(commands[index].toString());
     if(run) {
-      Command command = Base.main.startingCommand;
-      while(command != null) {
-        System.out.println(command.toString());
-        command = command.execute();
+      currentCommand = Base.main.startingCommand;
+      while(currentCommand != null) {
+        System.out.println(currentCommand.toString());
+        currentCommand.execute();
 
         String stack = "";
         for(int index = 0; index <= stackPointer; index++)
@@ -47,7 +52,7 @@ public class VMBase {
               stack += i64Stack[index] + " ";
               break;
             case TYPE_STRING:
-              stack += stringStack[index] + " ";
+              stack += "\"" + stringStack[index] + "\" ";
               break;
             case TYPE_OBJECT:
               stack += objStack[index].type.toString() + " ";

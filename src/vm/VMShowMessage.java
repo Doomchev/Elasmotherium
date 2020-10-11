@@ -4,9 +4,9 @@ import javax.swing.JOptionPane;
 
 public class VMShowMessage extends Command {
   @Override
-  public Command execute() {
+  public void execute() {
     JOptionPane.showMessageDialog(null, stringStack[stackPointer]);
     stackPointer--;
-    return nextCommand;
+    currentCommand = nextCommand;
   }
 }

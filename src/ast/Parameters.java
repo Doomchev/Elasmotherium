@@ -16,12 +16,12 @@ public class Parameters extends Value {
   }
 
   @Override
-  void moveToFormula(Formula formula) {
+  public void moveToFormula(Formula formula) {
     formula.chunks.add(this);
   }
 
   @Override
-  void moveToFunctionCall(FunctionCall call) {
+  public void moveToFunctionCall(FunctionCall call) {
     call.parameters.addAll(parameters);
   }
   

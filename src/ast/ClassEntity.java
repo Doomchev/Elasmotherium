@@ -88,18 +88,19 @@ public class ClassEntity extends FlagEntity {
   @Override
   public void addToScope(Scope parentScope) {
     scope = new Scope(parentScope);
-    for(Function method : methods) {
-      if(!method.hasFlag(constructorID)) {
-        scope.add(method);
-        method.addToScope(scope);
-      }
-    }
+    for(Function method : methods)
+      method.addToScope(scope);
     int index = -1;
     for(Variable variableBase : fields) {
       scope.add(variableBase);
       index++;
       variableBase.index = index;
     }
+  }
+
+  @Override
+  public void setTypes(Scope parentScope) {
+    for(Function method : methods) method.setTypes(parentScope);    
   }
   
   @Override

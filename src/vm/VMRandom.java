@@ -6,8 +6,8 @@ public class VMRandom extends Command {
   public static Random random = new Random();
   
   @Override
-  public Command execute() {
+  public void execute() {
     i64Stack[stackPointer] = random.nextInt((int) i64Stack[stackPointer]);
-    return nextCommand;
+    currentCommand = nextCommand;
   }
 }

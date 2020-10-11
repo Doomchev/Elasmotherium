@@ -95,8 +95,7 @@ public class EntityStack<EntityType> extends ParserBase {
     EntityStack<Value> valueStack = new EntityStack<Value>(ID.valueID) {
       @Override
       public Value create() {
-        error("Value is abstract and cannot be created");
-        return null;
+        throw new Error("Value is abstract and cannot be created");
       }
     };
     
@@ -278,7 +277,8 @@ public class EntityStack<EntityType> extends ParserBase {
   
   public static EntityStack get(ID name) {
     EntityStack stack = all.get(name);
-    if(stack == null) error("Invalid entity name \"" + name.string + "\"");
+    if(stack == null) throw new Error("Invalid entity name \"" + name.string
+        + "\"");
     return stack;
   }
 
@@ -298,7 +298,8 @@ public class EntityStack<EntityType> extends ParserBase {
   }
 
   public EntityType pop() {
-    if(stack.isEmpty()) error("Trying to pop entity from empty " + name.string + " stack");
+    if(stack.isEmpty()) throw new Error("Trying to pop entity from empty "
+        + name.string + " stack");
     return stack.pop();
   }
 
@@ -307,13 +308,11 @@ public class EntityStack<EntityType> extends ParserBase {
   }  
   
   public EntityType create() {
-    error("Cannot create " + name);
-    return null;
+    throw new Error("Cannot create " + name);
   }
   
   public EntityType createFromString(String string) {
-    error("Cannot create " + name);
-    return null;
+    throw new Error("Cannot create " + name);
   }
 
   public boolean isStringBased() {
@@ -321,7 +320,8 @@ public class EntityStack<EntityType> extends ParserBase {
   }
 
   public EntityType peek() {
-    if(stack.isEmpty()) error("Trying to peek entity from empty " + name.string + " stack");
+    if(stack.isEmpty()) throw new Error("Trying to peek entity from empty "
+        + name.string + " stack");
     return stack.peek();
   }
 

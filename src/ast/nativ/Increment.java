@@ -17,7 +17,7 @@ public class Increment extends NativeFunction {
   @Override
   public Entity calculateType(Entity param0, Entity param1) {
     if(!param0.getType().isNumber())
-      error(param0.toString() + " cannot be incremented");
+      throw new Error(param0.toString() + " cannot be incremented");
     return null;
   }
 }

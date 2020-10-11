@@ -8,11 +8,11 @@ public class StringPush extends Command {
   }
   
   @Override
-  public Command execute() {
+  public void execute() {
     stackPointer++;
     stringStack[stackPointer] = value;
     typeStack[stackPointer] = TYPE_STRING;
-    return nextCommand;
+    currentCommand = nextCommand;
   }
   
   @Override

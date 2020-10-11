@@ -2,17 +2,17 @@ package vm;
 
 import ast.Function;
 
-public class Call extends Command {
+public class VMCall extends Command {
   Function function;
 
-  public Call(Function function) {
+  public VMCall(Function function) {
     this.function = function;
   }
   
   @Override
-  public Command execute() {
+  public void execute() {
     currentCall.returnPoint = nextCommand;
-    return function.startingCommand;
+    currentCommand = function.startingCommand;
   }
   
   @Override

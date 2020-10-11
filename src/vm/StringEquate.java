@@ -1,15 +1,15 @@
 package vm;
 
-public class I64Equate extends Command {
+public class StringEquate extends Command {
   int index;
 
-  public I64Equate(int index) {
+  public StringEquate(int index) {
     this.index = index;
   }
   
   @Override
   public void execute() {
-    i64Stack[index + currentCall.paramPosition] = i64Stack[stackPointer];
+    stringStack[index + currentCall.paramPosition] = stringStack[stackPointer];
     typeStack[index + currentCall.paramPosition] = TYPE_I64;
     stackPointer--;
     currentCommand = nextCommand;

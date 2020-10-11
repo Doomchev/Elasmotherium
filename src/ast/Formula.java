@@ -19,37 +19,37 @@ public class Formula extends Entity {
   }
 
   @Override
-  void moveToCode(Code code) {
+  public void moveToCode(Code code) {
     code.lines.add(toValue());
   }
   
   @Override
-  void moveToStringSequence(StringSequence sequence) {
+  public void moveToStringSequence(StringSequence sequence) {
     sequence.chunks.add(toValue());
   }
 
   @Override
-  void moveToFunctionCall(FunctionCall call) {
+  public void moveToFunctionCall(FunctionCall call) {
     call.parameters.add(toValue());
   }
 
   @Override
-  void moveToFormula(Formula formula) {
+  public void moveToFormula(Formula formula) {
     formula.chunks.addAll(chunks);
   }
 
   @Override
-  void moveToParameters(Parameters parameters) {
+  public void moveToParameters(Parameters parameters) {
     parameters.parameters.add(toValue());
   }
 
   @Override
-  void moveToVariable(Variable variable) {
+  public void moveToVariable(Variable variable) {
     variable.value = toValue();
   }
 
   @Override
-  void moveToFunction(Function function) {
+  public void moveToFunction(Function function) {
     function.formula = toValue();
   }
   
@@ -84,13 +84,13 @@ public class Formula extends Entity {
       popOp();
     }
     
-    if(valueStack.size() != 1) error("Syntax error");
+    if(valueStack.size() != 1) throw new Error("Syntax error");
     return valueStack.pop();
   }
 
   private void popOp() {
     FunctionCall op = opStack.pop();
-    if(valueStack.size() < 2) error("Syntax error");
+    if(valueStack.size() < 2) throw new Error("Syntax error");
     if(op.function == null) {
       valueStack.pop().moveToFunctionCall(op);
       valueStack.pop().setFunction(op);

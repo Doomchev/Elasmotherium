@@ -12,8 +12,6 @@ import vm.VMBase;
 public abstract class Entity extends ParserBase {
   public static HashMap<String, ID> allIDs = new HashMap<>();
   public static Function currentFunction;
-  public static int objectIndex = -1, fieldIndex = -1;
-  public static ClassEntity fieldType;
   public static final ID idID = ID.get("id"), blockID = ID.get("block")
       , classID = ID.get("class"), codeID = ID.get("code")
       , valueID = ID.get("value"), formulaID = ID.get("formula")
@@ -147,8 +145,7 @@ public abstract class Entity extends ParserBase {
   }
   
   public ID getNameID() {
-    error(getName() + " has no name");
-    return null;
+    throw new Error(getName() + " has no name");
   }
   
   public abstract ID getID();
@@ -175,8 +172,7 @@ public abstract class Entity extends ParserBase {
   }
   
   public LinkedList<? extends Entity> getChildren() {
-    error(getName() + " has no children");
-    return null;
+    throw new Error(getName() + " has no children");
   }
 
   public Entity getChild(ID id) {
@@ -192,8 +188,7 @@ public abstract class Entity extends ParserBase {
   }
 
   public Entity getChild(int index) {
-    error(getName() + " is not a function call");
-    return null;
+    throw new Error(getName() + " is not a function call");
   }
   
   public Entity getType() {
@@ -201,8 +196,7 @@ public abstract class Entity extends ParserBase {
   }
 
   Entity getFieldType(ID fieldName) {
-    error("Cannot get field types for " + getName());
-    return null;
+    throw new Error("Cannot get field types for " + getName());
   }
 
   public int getIndex() {
@@ -243,10 +237,6 @@ public abstract class Entity extends ParserBase {
   public void setConvertTo(Entity type) {
   }
 
-  public void setTypes(Scope parentScope, boolean thisFlag) {
-    setTypes(parentScope);
-  }
-
   public void setTypes(Scope parentScope) {
   }
 
@@ -259,55 +249,55 @@ public abstract class Entity extends ParserBase {
   }
   
   public void move(Entity entity) {
-    error("Cannot insert anything into " + getName());
+    throw new Error("Cannot insert anything into " + getName());
   }
 
-  void moveToCode(Code code) {
-    error("Cannot insert " + getName() + " into code");
+  public void moveToCode(Code code) {
+    throw new Error("Cannot insert " + getName() + " into code");
   }
 
-  void moveToBlock(Block block) {
-    error("Cannot insert " + getName() + " into block");
+  public void moveToBlock(Block block) {
+    throw new Error("Cannot insert " + getName() + " into block");
   }
 
-  void moveToFormula(Formula formula) {
-    error("Cannot insert " + getName() + " into formula");
+  public void moveToFormula(Formula formula) {
+    throw new Error("Cannot insert " + getName() + " into formula");
   }
 
-  void moveToFunctionCall(FunctionCall call) {
-    error("Cannot insert " + getName() + " into function call");
+  public void moveToFunctionCall(FunctionCall call) {
+    throw new Error("Cannot insert " + getName() + " into function call");
   }
 
-  void moveToClass(ClassEntity classEntity) {
-    error("Cannot insert " + getName() + " into class");
+  public void moveToClass(ClassEntity classEntity) {
+    throw new Error("Cannot insert " + getName() + " into class");
   }
 
-  void moveToFunction(Function function) {
-    error("Cannot insert " + getName() + " into function");
+  public void moveToFunction(Function function) {
+    throw new Error("Cannot insert " + getName() + " into function");
   }
 
-  void moveToVariable(Variable variable) {
-    error("Cannot insert " + getName() + " into variable");
+  public void moveToVariable(Variable variable) {
+    throw new Error("Cannot insert " + getName() + " into variable");
   }
 
-  void moveToType(Type type) {
-    error("Cannot insert " + getName() + " into type");
+  public void moveToType(Type type) {
+    throw new Error("Cannot insert " + getName() + " into type");
   }
 
-  void moveToParameters(Parameters parameters) {
-    error("Cannot insert " + getName() + " into parameters");
+  public void moveToParameters(Parameters parameters) {
+    throw new Error("Cannot insert " + getName() + " into parameters");
   }
 
-  void moveToStringSequence(StringSequence aThis) {
-    error("Cannot insert " + getName() + " into string sequence");
+  public void moveToStringSequence(StringSequence aThis) {
+    throw new Error("Cannot insert " + getName() + " into string sequence");
   }
 
-  void moveToMap(MapEntity aThis) {
-    error("Cannot insert " + getName() + " into map");
+  public void moveToMap(MapEntity aThis) {
+    throw new Error("Cannot insert " + getName() + " into map");
   }
 
-  void moveToObjectEntry(ObjectEntry entry) {
-    error("Cannot insert " + getName() + " into object entry");
+  public void moveToObjectEntry(ObjectEntry entry) {
+    throw new Error("Cannot insert " + getName() + " into object entry");
   }
   
   public long i64Get() {
@@ -332,11 +322,9 @@ public abstract class Entity extends ParserBase {
   
   public void functionToByteCode() {
   }
-  
-  public void variableToByteCode() {
-  }
-  
-  public void objectToByteCode(FunctionCall call) {
+
+  public void equationByteCode() {
+    throw new Error(toString() + " cannot be equated.");
   }
   
   public static void addCommand(Command command) {
@@ -370,8 +358,8 @@ public abstract class Entity extends ParserBase {
         return;        
       }
     }
-    error("Conversion from " + from.toString() + " to " + to.toString()
-        + " is not implemented.");
+    throw new Error("Conversion from " + from.toString() + " to "
+        + to.toString() + " is not implemented.");
   }
   
   public void logScope(String indent) {

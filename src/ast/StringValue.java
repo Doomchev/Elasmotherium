@@ -20,7 +20,7 @@ public class StringValue extends Value {
   }
 
   @Override
-  void moveToStringSequence(StringSequence sequence) {
+  public void moveToStringSequence(StringSequence sequence) {
     if(!value.isEmpty()) sequence.chunks.add(this);
   }
   

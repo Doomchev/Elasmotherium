@@ -2,9 +2,11 @@ package base;
 
 import ast.ClassEntity;
 import ast.Entity;
+import ast.EntityStack;
 import ast.Function;
 import ast.FunctionCall;
 import ast.ID;
+import ast.Link;
 import ast.Variable;
 import vm.VMInput;
 import vm.VMPrint;
@@ -18,6 +20,30 @@ public class Processor extends Base {
   
   @SuppressWarnings("null")
   public static void process() {
+    // Converting this parameters in constructor to code lines
+    for(ClassEntity classEntity : ClassEntity.all.values()) {
+      for(Function method : classEntity.methods) {
+        if(!method.hasFlag(constructorID)) continue;
+        method.name = classEntity.name;
+        for(int n = 0; n < method.parameters.size(); n++) {
+          Variable parameter = method.parameters.get(n);
+          if(!parameter.hasFlag(ID.thisID)) continue;
+          Variable variable = new Variable(parameter.name);
+          Variable field = classEntity.getVariable(parameter.name);
+          if(field == null) error("field " + parameter.name + " of "
+              + classEntity.name.string + " in consructor is not found");
+          variable.type = field.getType();
+          Link varLink = new Link(variable);
+          Link fieldLink = new Link(field);
+          fieldLink.thisFlag = true;
+          method.parameters.set(n, variable);
+          method.code.lines.addFirst(new FunctionCall(EntityStack.equate
+              , fieldLink, varLink));
+        }
+        method.type = classEntity;
+      }
+    }
+    
     for(ClassEntity classEntity : ClassEntity.all.values())
       globalScope.add(classEntity);
     

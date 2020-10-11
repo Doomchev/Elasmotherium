@@ -3,6 +3,7 @@ package ast.nativ;
 import ast.ClassEntity;
 import ast.Entity;
 import ast.FunctionCall;
+import ast.ID;
 import ast.NativeFunction;
 import ast.Scope;
 import ast.Variable;
@@ -20,8 +21,10 @@ public class Dot extends NativeFunction {
     Entity param0 = parameters.getFirst();
     param0.setTypes(parentScope);
     ClassEntity param0Class = param0.getType().toClass();
-    Variable field = param0Class.getVariable(
-        parameters.getLast().getNameID());
+    ID name = parameters.getLast().getNameID();
+    Variable field = param0Class.getVariable(name);
+    if(field == null) throw new Error("Field " + name + " is not found in "
+        + param0.toString());
     parameters.set(1, field);
     field.setTypes(parentScope);
     return field.getType();
@@ -36,22 +39,15 @@ public class Dot extends NativeFunction {
   public void toByteCode(FunctionCall call) {
     call.parameters.getFirst().toByteCode();
     Entity field = call.parameters.getLast();
-    ClassEntity type = field.getType().toClass();
+    ClassEntity fieldType = field.getType().toClass();
     int index = field.getIndex();
-    if(type == ClassEntity.stringClass) {
+    if(fieldType == ClassEntity.stringClass) {
       addCommand(new StringFieldPush(index));
-    } else if(type == ClassEntity.i64Class) {
+    } else if(fieldType == ClassEntity.i64Class) {
       addCommand(new I64FieldPush(index));
     } else {
-      error("Getting " + type.toString() + " field is not implemented.");
+      throw new Error("Getting " + fieldType.toString()
+          + " field is not implemented.");
     }
-  }
-
-  @Override
-  public void objectToByteCode(FunctionCall call) {
-    call.parameters.getFirst().objectToByteCode(null);
-    Variable variable = call.parameters.getLast().toVariable();
-    fieldIndex = variable.index;
-    fieldType = variable.type.toClass();
   }
 }

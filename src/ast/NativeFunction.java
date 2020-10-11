@@ -48,9 +48,9 @@ public class NativeFunction extends Function {
     Entity type1 = param1.getType();
     int priority0 = type0.getClassPriority();
     int priority1 = type1.getClassPriority();
-    if(priority0 >= limit) error(param0.toString() + " cannot be "
+    if(priority0 >= limit) throw new Error(param0.toString() + " cannot be "
         + getActionName());
-    if(priority1 >= limit) error(param1.toString() + " cannot be "
+    if(priority1 >= limit) throw new Error(param1.toString() + " cannot be "
         + getActionName());
     if(priority0 > priority1) {
       param1.setConvertTo(type0);
@@ -64,9 +64,9 @@ public class NativeFunction extends Function {
 
   public void check(Entity param0, Entity param1, int limit) {
     if(param0.getType().getClassPriority() >= limit)
-      error(param0.toString() + " cannot be "+ getActionName());
+      throw new Error(param0.toString() + " cannot be "+ getActionName());
     if(param1.getType().getClassPriority() >= limit)
-      error(param1.toString() + " cannot be "+ getActionName());
+      throw new Error(param1.toString() + " cannot be "+ getActionName());
   }
 
   public String getActionName() {
@@ -81,7 +81,7 @@ public class NativeFunction extends Function {
   
   @Override
   public void functionToByteCode(FunctionCall call) {
-    error(toString() + " is not implemented.");
+    throw new Error(toString() + " is not implemented.");
   }
 
   @Override

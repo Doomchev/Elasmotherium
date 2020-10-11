@@ -64,7 +64,10 @@ public class Variable extends FlagEntity {
   public void setTypes(Scope parentScope) {
     if(type.toClass() == null) type.setTypes(parentScope);
     type = type.toClass();
-    if(index < 0) setAllocation();
+    if(index < 0) {
+      currentFunction.varIndex++;
+      index = currentFunction.varIndex;
+    }
     if(value != null) value.setTypes(parentScope);
   }
   
@@ -79,23 +82,23 @@ public class Variable extends FlagEntity {
   }
 
   @Override
-  void moveToClass(ClassEntity classEntity) {
+  public void moveToClass(ClassEntity classEntity) {
     isClassField = true;
     classEntity.fields.add(this);
   }
 
   @Override
-  void moveToFunction(Function function) {
+  public void moveToFunction(Function function) {
     function.parameters.add(this);
   }
 
   @Override
-  void moveToFormula(Formula formula) {
+  public void moveToFormula(Formula formula) {
     formula.chunks.add(new Link(this));
   }
 
   @Override
-  void moveToCode(Code code) {
+  public void moveToCode(Code code) {
     code.lines.add(this);
   }
 
@@ -107,7 +110,7 @@ public class Variable extends FlagEntity {
     if(objectClass == ClassEntity.i64Class) {
       addCommand(new I64Equate(index));
     } else if(objectClass.isNative) {
-      error(type.getName() + " variable initialization is not implemented.");
+      throw new Error(type.getName() + " variable initialization is not implemented.");
     } else {
       addCommand(new ObjectEquate(index));
     }
@@ -116,10 +119,5 @@ public class Variable extends FlagEntity {
   @Override
   public String toString() {
     return name.string;
-  }
-
-  public void setAllocation() {
-    currentFunction.varIndex++;
-    index = currentFunction.varIndex;
   }
 }

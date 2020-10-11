@@ -16,8 +16,8 @@ public class VMGoto extends Command {
   }
   
   @Override
-  public Command execute() {
-    return command;
+  public void execute() {
+    currentCommand = command;
   }
   
   @Override

@@ -34,12 +34,12 @@ public class Code extends Entity {
   }
 
   @Override
-  void moveToFunction(Function function) {
+  public void moveToFunction(Function function) {
     function.code = this;
   }
 
   @Override
-  void moveToVariable(Variable variable) {
+  public void moveToVariable(Variable variable) {
     variable.code = this;
   }
 

@@ -1,18 +1,18 @@
 package vm;
 
-public class Allocate extends Command {
+public class VMAllocate extends Command {
   int quantity;
 
-  public Allocate(int quantity) {
+  public VMAllocate(int quantity) {
     this.quantity = quantity;
   }
   
   @Override
-  public Command execute() {
+  public void execute() {
     if(currentCall.paramPosition < 0)
       currentCall.paramPosition = stackPointer + 1;
     stackPointer += quantity;
-    return nextCommand;
+    currentCommand = nextCommand;
   }
   
   @Override
