@@ -1,3 +1,8 @@
+2020.10.17 (version 0.17.1)
+	* AST: Removed scopes, replaced them with cascading variables lists.
+	* AST: Added function list to code object.
+	* AST: Removed flags list and FlagEntity class.
+
 2020.10.11 (version 0.17)
 	* VM, AST: Constructors
 	* AST: Rewrote equation byte code generation mechanism.

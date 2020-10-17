@@ -30,11 +30,13 @@ public class NativeFunction extends Function {
   public ID getID() {
     return name;
   }
-  
+
   @Override
-  public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
-    if(parameters.isEmpty()) return null;
-    return calculateType(parameters.getFirst(), parameters.getLast());
+  public void resolveLinks(FunctionCall call, Variables variables) {
+    LinkedList<Entity> params = call.parameters;
+    if(params.isEmpty()) return;
+    for(Entity param : params) param.resolveLinks(variables);
+    call.type = calculateType(params.getFirst(), params.getLast());
   }
   
   public Entity calculateType(Entity param0, Entity param1) {

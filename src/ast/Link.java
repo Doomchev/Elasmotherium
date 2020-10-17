@@ -1,5 +1,6 @@
 package ast;
 
+import ast.nativ.New;
 import export.Chunk;
 import parser.Action;
 import vm.I64Equate;
@@ -13,6 +14,7 @@ import vm.StringThisEquate;
 public class Link extends Value {
   public ID name;
   public Variable variable;
+  public Function function;
   public boolean thisFlag, isDefinition = false;
   
   public Link(ID name) {
@@ -66,27 +68,66 @@ public class Link extends Value {
   }
 
   @Override
-  public void addToScope(Scope scope) {
-    if(variable != null) variable.addToScope(scope);
+  public Variable toVariable() {
+    return variable;
   }
 
   @Override
-  void setFunction(FunctionCall call) {
-    call.functionName = name;
-    call.thisFlag = thisFlag;
+  public Function toFunction() {
+    return function;
   }
   
   @Override
-  public void setTypes(Scope parentScope) {
+  public void setFlag(ID flag) {
+    if(flag == ID.thisID) thisFlag = true;
+  }
+  
+  
+  
+  @Override
+  public void resolveLinks(Variables variables) {
     if(thisFlag) {
-      variable = parentScope.getClassField(name).toVariable();
-      if(variable == null) throw new Error("Field " + name + " not found.");
+      variable = currentClass.getVariable(name);
     } else {
-      variable = parentScope.getVariable(name).toVariable();
-      if(variable == null) throw new Error("Variable " + name + " not found.");
-      variable.setTypes(parentScope);      
+      variable = variables.get(name);
     }
   }
+
+  @Override
+  public void resolveLinks(FunctionCall call, Variables variables) {
+    try {
+      if(thisFlag) {
+        function = currentClass.getMethod(name);
+      } else {
+        function = variables.getFunction(name);
+      }
+    } catch(Error error) {
+      ClassEntity classEntity = ClassEntity.all.get(name);
+      for(Function method : classEntity.methods) {
+        if(!method.isConstructor) continue;
+        if(method.parameters.size() == call.parameters.size()) {
+          function = new New(classEntity, method);
+          function.resolveLinks(call, variables);
+          return;
+        }
+      }
+      throw new Error("Cannot find function or class \"" + name + "\"");
+    }
+    function.resolveLinks(call, variables);
+  }
+
+  @Override
+  public void resolveEquationLinks(Variables variables) {
+    try {
+      variable = variables.get(name);
+    } catch(Error error) {
+      variable = new Variable(name);
+      currentFunction.varIndex++;
+      variable.index = currentFunction.varIndex;
+    }
+  }
+  
+  
   
   @Override
   public void toByteCode() {
@@ -102,6 +143,11 @@ public class Link extends Value {
       addCommand(new ObjectStackPush(index));
     }
     conversion(type, convertTo);
+  }
+  
+  @Override
+  public void toByteCode(FunctionCall call) {
+    function.toByteCode(call);
   }
 
   @Override

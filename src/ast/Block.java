@@ -59,23 +59,8 @@ public class Block extends Entity {
   }
 
   @Override
-  public void addToScope(Scope scope) {
-    for(Entry entry : entries) entry.value.addToScope(scope);
-  }
-  
-  @Override
-  public void logScope(String indent) {
-    System.out.println(indent + type.string + ":");
-    indent += "  ";
-    for(Entry entry : entries) {
-      System.out.println(indent + entry.key.string + ":");
-      entry.value.logScope(indent);
-    }
-  }
-
-  @Override
-  public void setTypes(Scope parentScope) {
-    for(Entry entry : entries) entry.value.setTypes(parentScope);
+  public void resolveLinks(Variables variables) {
+    for(Entry entry : entries) entry.value.resolveLinks(variables);
   }
 
   @Override

@@ -5,9 +5,8 @@ import ast.Entity;
 import ast.FunctionCall;
 import ast.ID;
 import ast.NativeFunction;
-import ast.Scope;
 import ast.Variable;
-import java.util.LinkedList;
+import ast.Variables;
 import vm.I64FieldPush;
 import vm.StringFieldPush;
 
@@ -15,26 +14,20 @@ public class Dot extends NativeFunction {
   public Dot() {
     super("dot");
   }
-  
+
   @Override
-  public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
-    Entity param0 = parameters.getFirst();
-    param0.setTypes(parentScope);
+  public void resolveLinks(FunctionCall call, Variables variables) {
+    Entity param0 = call.parameters.getFirst();
+    param0.resolveLinks(variables);
     ClassEntity param0Class = param0.getType().toClass();
-    ID name = parameters.getLast().getNameID();
+    ID name = call.parameters.getLast().getNameID();
     Variable field = param0Class.getVariable(name);
     if(field == null) throw new Error("Field " + name + " is not found in "
         + param0.toString());
-    parameters.set(1, field);
-    field.setTypes(parentScope);
-    return field.getType();
+    call.parameters.set(1, field);
+    call.type = field.getType().toClass();
   }
-
-  @Override
-  public void setParameterTypes(LinkedList<Entity> parameters
-      , Scope parentScope) {
-  }
-
+  
   @Override
   public void toByteCode(FunctionCall call) {
     call.parameters.getFirst().toByteCode();

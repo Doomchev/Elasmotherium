@@ -20,11 +20,11 @@ public class StringSequence extends Value {
   public LinkedList<? extends Entity> getChildren() {
     return chunks;
   }
-  
+
   @Override
-  public void setTypes(Scope parentScope) {
+  public void resolveLinks(Variables variables) {
     for(Value value : chunks) {
-      value.setTypes(parentScope);
+      value.resolveLinks(variables);
       if(value.getType() != ClassEntity.stringClass)
         value.convertTo = ClassEntity.stringClass;
     }

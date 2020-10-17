@@ -1,7 +1,6 @@
 package base;
 
 import ast.ClassEntity;
-import ast.Entity;
 import ast.EntityStack;
 import ast.Function;
 import ast.FunctionCall;
@@ -23,11 +22,11 @@ public class Processor extends Base {
     // Converting this parameters in constructor to code lines
     for(ClassEntity classEntity : ClassEntity.all.values()) {
       for(Function method : classEntity.methods) {
-        if(!method.hasFlag(constructorID)) continue;
+        if(!method.isConstructor) continue;
         method.name = classEntity.name;
         for(int n = 0; n < method.parameters.size(); n++) {
           Variable parameter = method.parameters.get(n);
-          if(!parameter.hasFlag(ID.thisID)) continue;
+          if(!parameter.isThis) continue;
           Variable variable = new Variable(parameter.name);
           Variable field = classEntity.getVariable(parameter.name);
           if(field == null) error("field " + parameter.name + " of "
@@ -43,13 +42,6 @@ public class Processor extends Base {
         method.type = classEntity;
       }
     }
-    
-    for(ClassEntity classEntity : ClassEntity.all.values())
-      globalScope.add(classEntity);
-    
-    main.addToScope(globalScope);
-    for(ClassEntity classEntity : ClassEntity.all.values())
-      classEntity.addToScope(globalScope);
     
     addFunction(new Function(ID.get("print")) {
       @Override
@@ -79,16 +71,10 @@ public class Processor extends Base {
       }      
     }, ClassEntity.voidClass, ClassEntity.stringClass);
     
-    System.out.println();
-    System.out.println("Global scope:");
-    globalScope.log("  ");
-    System.out.println("Main scope:");
-    main.code.scope.log("  ");
-    
-    main.type = Entity.voidClass;
-    main.setTypes(null);
     for(ClassEntity classEntity : ClassEntity.all.values())
-      classEntity.setTypes(globalScope);
+      classEntity.resolveLinks(null);
+        
+    main.resolveLinks(null);
   }
 
   private static void addFunction(Function function, ClassEntity returnType
@@ -100,7 +86,7 @@ public class Processor extends Base {
       variable.type = type;
       function.parameters.add(variable);
     }
-    globalScope.add(function, function.name);
+    main.code.functions.add(function);
   }
   
   public static void error(String message) {

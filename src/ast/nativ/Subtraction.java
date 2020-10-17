@@ -5,7 +5,6 @@ import ast.Entity;
 import static ast.Entity.addCommand;
 import ast.FunctionCall;
 import ast.NativeFunction;
-import static parser.ParserBase.error;
 import vm.I64Subtract;
 
 public class Subtraction extends NativeFunction {

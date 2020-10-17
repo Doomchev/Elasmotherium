@@ -11,7 +11,7 @@ public class StringStackPush extends Command {
   public void execute() {
     stackPointer++;
     stringStack[stackPointer] = stringStack[currentCall.paramPosition + index];
-    typeStack[stackPointer] = TYPE_I64;
+    typeStack[stackPointer] = TYPE_STRING;
     currentCommand = nextCommand;
   }
   

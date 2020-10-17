@@ -2,7 +2,6 @@ package ast.nativ;
 
 import ast.Entity;
 import ast.NativeFunction;
-import static parser.ParserBase.error;
 
 public class Increment extends NativeFunction {
   public Increment() {

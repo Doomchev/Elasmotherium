@@ -3,19 +3,17 @@ package ast;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class ClassEntity extends FlagEntity {
+public class ClassEntity extends NamedEntity {
   public static HashMap<ID, ClassEntity> all = new HashMap<>();
   
   public Type parent;
   public LinkedList<Variable> fields = new LinkedList<>();
   public LinkedList<Variable> parameters = new LinkedList<>();
   public LinkedList<Function> methods = new LinkedList<>();
-  public Scope scope;
-  public boolean isNative, processed = false;
+  public boolean isNative;
 
   public ClassEntity(ID name) {
     this.name = name;
-    this.isNative = flags.contains(ID.nativeID);
     all.put(name, this);
   }
   
@@ -40,8 +38,14 @@ public class ClassEntity extends FlagEntity {
   }
 
   public Variable getVariable(ID id) {
-    for(Variable child : fields)
-      if(child.name == id) return child;
+    for(Variable field : fields)
+      if(field.name == id) return field;
+    return null;
+  }
+
+  public Function getMethod(ID name) {
+    for(Function function : methods)
+      if(function.name == name) return function;
     return null;
   }
 
@@ -55,56 +59,31 @@ public class ClassEntity extends FlagEntity {
   public ClassEntity getType() {
     return ClassEntity.classClass;
   }
-
+  
   @Override
-  public Entity getFieldType(ID fieldName) {
-    for(Scope.ScopeEntry entry : scope.entries)
-      if(entry.id == fieldName && !entry.entity.isClassField()) {
-        entry.entity.setTypes(scope);
-        return entry.entity.getType();
-      }
-    return null;
+  public void setFlag(ID flag) {
+    if(flag == ID.nativeID) isNative = true;
   }
-
-  public Entity getFieldType(ID fieldName, Type type) {
-    return getFieldType(fieldName);
-  }
-
-  @Override
-  public Scope getScope() {
-    return scope;
-  }
-
+  
   @Override
   public ClassEntity toClass() {
     return this;
   }
 
   @Override
-  public void move(Entity entity) {
-    entity.moveToClass(this);
-  }
-
-  @Override
-  public void addToScope(Scope parentScope) {
-    scope = new Scope(parentScope);
-    for(Function method : methods)
-      method.addToScope(scope);
+  public void resolveLinks(Variables variables) {
+    currentClass = this;
+    for(Function method : methods) method.resolveLinks(variables);
     int index = -1;
-    for(Variable variableBase : fields) {
-      scope.add(variableBase);
+    for(Variable field : fields) {
       index++;
-      variableBase.index = index;
+      field.index = index;
+      field.type = field.type.toClass();
     }
   }
 
   @Override
-  public void setTypes(Scope parentScope) {
-    for(Function method : methods) method.setTypes(parentScope);    
-  }
-  
-  @Override
-  public void logScope(String indent) {
-    scope.log(indent);
+  public void move(Entity entity) {
+    entity.moveToClass(this);
   }
 }

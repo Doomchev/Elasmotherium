@@ -159,11 +159,11 @@ public class Export extends Base {
           int bracketPos = name.indexOf("(");
           if(bracketPos >= 0) {
             if(!name.endsWith(")")) error(") expected");
-            Entity entity = main.code.scope.getVariable(ID.get(name.substring(0
+            /*Entity entity = main.code.scope.getVariable(ID.get(name.substring(0
                 , bracketPos)));
             Function function = entity == null ? null : entity.toFunction();
             if(function == null) error(name + " is not found");
-            function.form = chunk;
+            function.form = chunk;*/
           } else {
             forms.put(ID.get(name), chunk);
           }

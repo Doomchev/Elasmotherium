@@ -4,11 +4,12 @@ import static ast.Entity.addCommand;
 import vm.I64Equate;
 import vm.ObjectEquate;
 
-public class Variable extends FlagEntity {
+public class Variable extends NamedEntity {
   public Entity type, value = null;
   public Code code = null;
   public Link definition;
-  public boolean isClassField = false;
+  public boolean isThis = false;
+  public ClassEntity parentClass = null;
   public int index = -1;
   
   public Variable(Link link) {
@@ -21,12 +22,7 @@ public class Variable extends FlagEntity {
     this.name = id;
     addFlags();
   }
-
-  @Override
-  public boolean isClassField() {
-    return isClassField;
-  }
-
+  
   @Override
   public ID getID() {
     return variableID;
@@ -56,25 +52,26 @@ public class Variable extends FlagEntity {
   }
 
   @Override
-  public void addToScope(Scope scope) {
-    scope.add(this, name);
-  }
-
-  @Override
-  public void setTypes(Scope parentScope) {
-    if(type.toClass() == null) type.setTypes(parentScope);
-    type = type.toClass();
-    if(index < 0) {
-      currentFunction.varIndex++;
-      index = currentFunction.varIndex;
-    }
-    if(value != null) value.setTypes(parentScope);
+  public void setFlag(ID flag) {
+    if(flag == thisID) isThis = true;
   }
   
   @Override
   public void setIndex(int index) {
     this.index = index;
   }
+  
+
+  @Override
+  public void resolveLinks(Variables variables) {
+    type = type.toClass();
+    if(value != null) value.resolveLinks(variables);
+    currentFunction.varIndex++;
+    //System.out.println(currentFunction.name + " - " + name);
+    index = currentFunction.varIndex;
+    variables.list.addFirst(this);
+  }
+  
   
   @Override
   public void move(Entity entity) {
@@ -83,7 +80,7 @@ public class Variable extends FlagEntity {
 
   @Override
   public void moveToClass(ClassEntity classEntity) {
-    isClassField = true;
+    parentClass = classEntity;
     classEntity.fields.add(this);
   }
 
@@ -110,7 +107,8 @@ public class Variable extends FlagEntity {
     if(objectClass == ClassEntity.i64Class) {
       addCommand(new I64Equate(index));
     } else if(objectClass.isNative) {
-      throw new Error(type.getName() + " variable initialization is not implemented.");
+      throw new Error(type.getName()
+          + " variable initialization is not implemented.");
     } else {
       addCommand(new ObjectEquate(index));
     }

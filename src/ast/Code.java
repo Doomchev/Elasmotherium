@@ -4,8 +4,9 @@ import java.util.LinkedList;
 
 public class Code extends Entity {
   public final LinkedList<Entity> lines = new LinkedList<>();
-  public Scope scope;
-
+  public final LinkedList<Function> functions = new LinkedList<>();
+  public Code parent;
+  
   public Code() {
   }
 
@@ -24,11 +25,6 @@ public class Code extends Entity {
   }
 
   @Override
-  public void setTypes(Scope parentScope) {
-    for(Entity entity : lines) entity.setTypes(scope);
-  }
-
-  @Override
   public void move(Entity entity) {
     entity.moveToCode(this);
   }
@@ -44,20 +40,14 @@ public class Code extends Entity {
   }
 
   @Override
-  public void toByteCode() {
-    for(Entity entity : lines) entity.toByteCode();
+  public void resolveLinks(Variables variables) {
+    variables = new Variables(variables, this);
+    for(Entity entity : lines) entity.resolveLinks(variables);
   }
 
   @Override
-  public void addToScope(Scope parentScope) {
-    if(parentScope != null) scope = new Scope(parentScope);
-    for(Entity entity : lines) entity.addToScope(scope);
-  }
-  
-  @Override
-  public void logScope(String indent) {
-    scope.log(indent);
-    for(Entity entity : lines) entity.logScope(indent);
+  public void toByteCode() {
+    for(Entity entity : lines) entity.toByteCode();
   }
 
   @Override

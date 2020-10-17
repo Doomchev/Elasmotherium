@@ -12,7 +12,6 @@ public class VMNewThis extends Command {
   @Override
   public void execute() {
     currentCall.thisObject = newObject(classEntity);
-    stackPointer--;
     currentCommand = nextCommand;
   }  
 }

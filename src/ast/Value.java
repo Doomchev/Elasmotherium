@@ -3,10 +3,6 @@ package ast;
 public abstract class Value extends Entity {
   Entity convertTo;
 
-  void setFunction(FunctionCall op) {
-    throw new Error("Cannot set function.");
-  }
-
   @Override
   public void setConvertTo(Entity type) {
     convertTo = type;

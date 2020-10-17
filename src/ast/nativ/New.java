@@ -6,7 +6,7 @@ import static ast.Entity.addCommand;
 import ast.Function;
 import ast.FunctionCall;
 import ast.NativeFunction;
-import ast.Scope;
+import ast.Variables;
 import java.util.LinkedList;
 import vm.ObjectNew;
 
@@ -26,8 +26,8 @@ public class New extends NativeFunction {
   }
 
   @Override
-  public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
-    return objectClass;
+  public void resolveLinks(FunctionCall call, Variables variables) {
+    call.type = objectClass;
   }
 
   @Override

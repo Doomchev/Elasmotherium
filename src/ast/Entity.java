@@ -3,6 +3,7 @@ package ast;
 import export.Chunk;
 import java.util.HashMap;
 import java.util.LinkedList;
+import parser.Action;
 import parser.ParserBase;
 import vm.Command;
 import vm.I64ToString;
@@ -12,6 +13,7 @@ import vm.VMBase;
 public abstract class Entity extends ParserBase {
   public static HashMap<String, ID> allIDs = new HashMap<>();
   public static Function currentFunction;
+  public static ClassEntity currentClass;
   public static final ID idID = ID.get("id"), blockID = ID.get("block")
       , classID = ID.get("class"), codeID = ID.get("code")
       , valueID = ID.get("value"), formulaID = ID.get("formula")
@@ -167,24 +169,27 @@ public abstract class Entity extends ParserBase {
   }
 
   public ClassEntity toClass() {
-    //error(getName() + " has no class");
-    return null;
+    throw new Error(toString() + " cannot be converted to class.");
   }
   
   public LinkedList<? extends Entity> getChildren() {
-    throw new Error(getName() + " has no children");
+    throw new Error(toString() + " has no children");
   }
 
   public Entity getChild(ID id) {
     return null;
   }
   
-  public boolean hasFlag(ID id) {
-    return false;
+  public void setFlag(ID flag) {
+  }
+  
+  public final void addFlags() {
+    for(ID flag : Action.currentFlags) setFlag(flag);
+    Action.currentFlags.clear();
   }
 
-  public boolean hasChild(ID id) {
-    return getChild(id) != null;
+  public boolean hasChild(ID flag) {
+    return getChild(flag) != null;
   }
 
   public Entity getChild(int index) {
@@ -207,19 +212,11 @@ public abstract class Entity extends ParserBase {
     return null;
   }
 
-  public Scope getScope() {
-    return null;
-  }
-
   public FunctionCall toCall() {
     return null;
   }
 
   public Function toFunction() {
-    return null;
-  }
-
-  public FunctionCall toFunctionCall() {
     return null;
   }
   
@@ -235,18 +232,10 @@ public abstract class Entity extends ParserBase {
   }
 
   public void setConvertTo(Entity type) {
+    throw new Error("Cannot set convert to of " + getName());
   }
-
-  public void setTypes(Scope parentScope) {
-  }
-
-  public Entity setCallTypes(LinkedList<Entity> parameters, Scope parentScope) {
-    setTypes(parentScope);
-    return null;
-  }
-
-  public void addToScope(Scope scope) {
-  }
+  
+  
   
   public void move(Entity entity) {
     throw new Error("Cannot insert anything into " + getName());
@@ -300,31 +289,58 @@ public abstract class Entity extends ParserBase {
     throw new Error("Cannot insert " + getName() + " into object entry");
   }
   
+  
+  
   public long i64Get() {
-    return 0;
+    throw new Error("Cannot get i64 from " + getName());
   }
   
   public void i64Set(long value) {
+    throw new Error("Cannot set i64 of " + getName());
   }
   
   public String stringGet() {
-    return "";
+    throw new Error("Cannot get String from " + getName());
   }
   
   public void stringSet(String value) {
+    throw new Error("Cannot set String of " + getName());
+  }
+  
+  
+  
+  public void resolveLinks(Variables variables) {
   }
 
+  public void resolveLinks(FunctionCall call, Variables variables) {
+    throw new Error("Cannot resolve function links for " + getName());
+  }
+
+  public void resolveEquationLinks(Variables variables) {
+    throw new Error("Cannot resolve equation links for " + getName());
+  }
+  
+  
+
   public void toByteCode() {
+    throw new Error("Cannot convert " + getName() + " to bytecode.");
+  }
+  
+  public void toByteCode(FunctionCall call) {
+    throw new Error("Cannot convert " + getName() + " to bytecode with call.");
   }
   
   public void functionToByteCode(FunctionCall call) {
+    throw new Error("Cannot convert " + getName()
+        + " to function bytecode with call.");
   }
   
   public void functionToByteCode() {
+    throw new Error("Cannot convert " + getName() + " to function bytecode.");
   }
 
   public void equationByteCode() {
-    throw new Error(toString() + " cannot be equated.");
+    throw new Error("Cannot convert " + getName() + " to equation bytecode.");
   }
   
   public static void addCommand(Command command) {
@@ -360,9 +376,6 @@ public abstract class Entity extends ParserBase {
     }
     throw new Error("Conversion from " + from.toString() + " to "
         + to.toString() + " is not implemented.");
-  }
-  
-  public void logScope(String indent) {
   }
 
   @Override

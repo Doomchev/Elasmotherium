@@ -5,7 +5,7 @@ import java.util.LinkedList;
 public class Type extends NamedEntity {
   public final LinkedList<Type> subtypes = new LinkedList<>();
   
-  public ClassEntity typeClass;
+  public ClassEntity typeClass = null;
   
   public Type(ID name) {
     this.name = name;
@@ -26,20 +26,10 @@ public class Type extends NamedEntity {
   }
 
   @Override
-  Entity getFieldType(ID fieldName) {
-    typeClass.getFieldType(fieldName, this);
-    return null;
-  }
-
-  @Override
   public ClassEntity toClass() {
+    if(typeClass == null) typeClass = ClassEntity.all.get(name);
+    if(typeClass == null) throw new Error("Cannot find class " + name);
     return typeClass;
-  }
-
-  @Override
-  public void setTypes(Scope parentScope) {
-    typeClass = parentScope.getVariable(name).toClass();
-    for(Type subtype : subtypes) subtype.setTypes(parentScope);
   }
 
   @Override
