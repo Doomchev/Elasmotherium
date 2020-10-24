@@ -10,7 +10,7 @@ public class ObjectEquate extends Command {
   @Override
   public void execute() {
     int stackIndex = index + currentCall.paramPosition;
-    objStack[stackIndex] = objStack[stackPointer];
+    objectStack[stackIndex] = objectStack[stackPointer];
     typeStack[stackIndex] = TYPE_OBJECT;
     stackPointer--;
     currentCommand = nextCommand;

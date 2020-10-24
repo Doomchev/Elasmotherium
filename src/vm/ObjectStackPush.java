@@ -10,7 +10,7 @@ public class ObjectStackPush extends Command {
   @Override
   public void execute() {
     stackPointer++;
-    objStack[stackPointer] = objStack[currentCall.paramPosition + index];
+    objectStack[stackPointer] = objectStack[currentCall.paramPosition + index];
     typeStack[stackPointer] = TYPE_OBJECT;
     currentCommand = nextCommand;
   }

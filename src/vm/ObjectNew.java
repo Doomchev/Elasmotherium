@@ -15,7 +15,7 @@ public class ObjectNew extends Command {
   @Override
   public void execute() {
     stackPointer++;
-    objStack[stackPointer] = newObject(classEntity);
+    objectStack[stackPointer] = newObject(classEntity);
     typeStack[stackPointer] = TYPE_OBJECT;
     currentCommand = nextCommand;
   }

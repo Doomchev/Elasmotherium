@@ -7,7 +7,7 @@ import vm.VMBase;
 public class Test extends Base {
   public static void main(String[] args) {
     Rules rules = new Rules().load("standard.epc");
-    Module module = Module.read("examples/class.es", rules);
+    Module module = Module.read("examples/class2.es", rules);
     Processor.process();
     VMBase.prepare(true);
   }

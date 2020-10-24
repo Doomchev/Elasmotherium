@@ -77,6 +77,15 @@ public class FunctionCall extends Value {
   }
 
   @Override
+  public void resolveLinks(FunctionCall call, Variables variables) {
+    Entity param0 = parameters.getFirst();
+    Entity param1 = parameters.getLast();
+    param0.resolveEquationLinks(variables);
+    param1.resolveLinks(param0.getType().toClass(), variables);
+    call.type = param1.getType().toClass();
+  }
+
+  @Override
   public void move(Entity entity) {
     entity.moveToFunctionCall(this);
   }
@@ -89,6 +98,12 @@ public class FunctionCall extends Value {
   @Override
   public void toByteCode() {
     function.toByteCode(this);
+  }
+  
+  @Override
+  public void toByteCode(FunctionCall call) {
+    parameters.getFirst().toByteCode();
+    parameters.getLast().toByteCode(call);
   }
 
   @Override

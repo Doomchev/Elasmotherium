@@ -30,6 +30,11 @@ public class I64Value extends Value {
   }
 
   @Override
+  public void increment() {
+    this.value++;
+  }
+
+  @Override
   public void toByteCode() {
     addCommand(new I64Push(value));
   }

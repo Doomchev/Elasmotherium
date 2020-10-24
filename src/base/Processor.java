@@ -1,6 +1,7 @@
 package base;
 
 import ast.ClassEntity;
+import ast.Entity;
 import ast.EntityStack;
 import ast.Function;
 import ast.FunctionCall;
@@ -75,6 +76,11 @@ public class Processor extends Base {
       classEntity.resolveLinks(null);
         
     main.resolveLinks(null);
+    main.type = Entity.voidClass;
+    
+    main.print("");
+    for(ClassEntity classEntity : ClassEntity.all.values())
+      classEntity.print("");
   }
 
   private static void addFunction(Function function, ClassEntity returnType

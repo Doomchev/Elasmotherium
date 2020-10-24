@@ -1,6 +1,7 @@
 package ast.nativ;
 
 import ast.Entity;
+import ast.FunctionCall;
 import ast.NativeFunction;
 
 public class Increment extends NativeFunction {
@@ -18,5 +19,10 @@ public class Increment extends NativeFunction {
     if(!param0.getType().isNumber())
       throw new Error(param0.toString() + " cannot be incremented");
     return null;
+  }
+  
+  @Override
+  public void toByteCode(FunctionCall call) {
+    call.parameters.getFirst().incrementToByteCode();
   }
 }

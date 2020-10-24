@@ -32,7 +32,7 @@ public abstract class Entity extends ParserBase {
       , fieldID = ID.get("field"), moduleID = ID.get("module")
       , lineID = ID.get("line");
   
-  public static ClassEntity voidClass = new ClassEntity(ID.get("Void"), false);
+  public static ClassEntity voidClass = new ClassEntity(ID.get("Void"), true);
   public static ClassEntity classClass = new ClassEntity(ID.get("Class"), true);
   public static ClassEntity unknownClass = new ClassEntity(ID.get("unknown")
       , false);
@@ -306,16 +306,27 @@ public abstract class Entity extends ParserBase {
   public void stringSet(String value) {
     throw new Error("Cannot set String of " + getName());
   }
+
+  public void increment() {
+    throw new Error("Cannot increment " + getName());
+  }
   
   
   
   public void resolveLinks(Variables variables) {
   }
 
+  // Проставляет ссылки для функции, использованной в вызове функции
   public void resolveLinks(FunctionCall call, Variables variables) {
     throw new Error("Cannot resolve function links for " + getName());
   }
 
+  // Проставляет ссылки для метода класса
+  public void resolveLinks(ClassEntity classEntity, Variables variables) {
+    throw new Error("Cannot resolve method link for " + getName());
+  }
+
+  // Проставляет ссылки для первой части приравнивания
   public void resolveEquationLinks(Variables variables) {
     throw new Error("Cannot resolve equation links for " + getName());
   }
@@ -326,23 +337,31 @@ public abstract class Entity extends ParserBase {
     throw new Error("Cannot convert " + getName() + " to bytecode.");
   }
   
+  // Метод функции, выдающий байт-код её вызова
   public void toByteCode(FunctionCall call) {
     throw new Error("Cannot convert " + getName() + " to bytecode with call.");
   }
   
+  // Вспомогательный метод нативной функции, выдающий байт-код её вызова
   public void functionToByteCode(FunctionCall call) {
     throw new Error("Cannot convert " + getName()
         + " to function bytecode with call.");
   }
   
-  public void functionToByteCode() {
+  // Метод функции, выдающий байт-код её тела 
+  public void functionToByteCode(boolean isMain) {
     throw new Error("Cannot convert " + getName() + " to function bytecode.");
   }
 
-  public void equationByteCode() {
+  // Выдаёт байт-код приравнивания, выполняется для первой части приравнивания
+  public void equationToByteCode() {
     throw new Error("Cannot convert " + getName() + " to equation bytecode.");
   }
   
+  public void incrementToByteCode() {
+    throw new Error("Cannot convert " + getName() + " to increment bytecode.");
+  }
+
   public static void addCommand(Command command) {
     VMBase.commandNumber++;
     command.number = VMBase.commandNumber;
@@ -381,5 +400,8 @@ public abstract class Entity extends ParserBase {
   @Override
   public String toString() {
     return "";
+  }
+  
+  public void print(String indent) {
   }
 }

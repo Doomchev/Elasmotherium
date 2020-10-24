@@ -108,7 +108,8 @@ public class Formula extends Entity {
     }
   }
   
-  private void log() {
+  @Override
+  public void print(String indent) {
     System.out.print("\n    ");
     for(int i = 0; i < opStack.size(); i++) System.out.print(opStack.get(i).toString() + ", "); 
     System.out.print("\n    ");

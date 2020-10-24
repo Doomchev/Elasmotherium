@@ -10,6 +10,7 @@ public class Variable extends NamedEntity {
   public Link definition;
   public boolean isThis = false;
   public ClassEntity parentClass = null;
+  public Function parentFunction;
   public int index = -1;
   
   public Variable(Link link) {
@@ -116,6 +117,14 @@ public class Variable extends NamedEntity {
 
   @Override
   public String toString() {
-    return name.string;
+    return (parentClass == null ? "" : parentClass.name.string + ".")
+        + (parentFunction == null ? "" : parentFunction.name.string + ".")
+        + name.string;
+  }
+  
+  @Override
+  public void print(String indent) {
+    System.out.println(indent + type.toString() + " " + toString()
+        + (value == null ? "" : value.toString()));
   }
 }

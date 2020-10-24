@@ -11,8 +11,10 @@ import vm.VMCallParam;
 import vm.VMNewFunctionCall;
 import vm.VMBase;
 import vm.VMDeallocate;
+import vm.VMNewMethodCall;
 import vm.VMReturnThis;
 import vm.VMNewThis;
+import vm.VMReturn;
 
 public class Function extends NamedEntity {
   public Code code = new Code();
@@ -95,6 +97,7 @@ public class Function extends NamedEntity {
       variables.code.functions.add(this);
     variables = new Variables(variables, null);
     for(Variable variable : parameters) {
+      variable.parentFunction = this;
       variable.type = variable.type.toClass();
       paramIndex++;
       variable.index = paramIndex;
@@ -118,8 +121,8 @@ public class Function extends NamedEntity {
   }
   
   @Override
-  public void functionToByteCode() {
-    for(Function function : code.functions) function.functionToByteCode();
+  public void functionToByteCode(boolean isMain) {
+    for(Function function : code.functions) function.functionToByteCode(false);
     VMBase.currentFunction = this;
     VMBase.currentCommand = null;
     if(isConstructor) addCommand(new VMNewThis(type.toClass()));
@@ -130,22 +133,25 @@ public class Function extends NamedEntity {
         + VMBase.currentFunction.varIndex + 2;
       if(paramQuantity > 0) addCommand(new VMDeallocate(paramQuantity));
       addCommand(new VMReturnThis());
+    } else if(!isMain) {
+      addCommand(new VMReturn());
     }
   }
 
   @Override
   public void toByteCode(FunctionCall call) {
     if(!isNativeFunction) {
-      addCommand(new VMNewFunctionCall());
+      addCommand(parentClass == null ? new VMNewFunctionCall()
+          : new VMNewMethodCall());
       if(!call.parameters.isEmpty()) addCommand(new VMCallParam());
     }    
     ListIterator<Variable> iterator = parameters.listIterator();
     for(Entity parameter : call.parameters) {
-      Entity type = parameter.getType();
+      Entity paramType = parameter.getType();
       parameter.toByteCode();
       if(!iterator.hasNext()) throw new Error("Too many parameters in "
           + getName());
-      conversion(type.toClass(), iterator.next().type.toClass());
+      conversion(paramType.toClass(), iterator.next().type.toClass());
     }
     if(iterator.hasNext()) throw new Error("Too few parameters in "
         + getName());
@@ -156,6 +162,23 @@ public class Function extends NamedEntity {
 
   @Override
   public void functionToByteCode(FunctionCall call) {
+  }
+
+  @Override
+  public String toString() {
+    String str = "";
+    for(Variable parameter : parameters) {
+      if(!str.isEmpty()) str += ", ";
+      str += parameter.toString();
+    }
+    return (isConstructor ? "Constructor" : (parentClass == null ? ""
+        : parentClass.name.string + ".") + name.string) + "(" +  str + ")";
+  }
+  
+  @Override
+  public void print(String indent) {
+    System.out.println(indent + type.toString() + " " + toString());
+    code.print(" " + indent);
   }
 }
  

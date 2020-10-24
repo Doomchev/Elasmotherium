@@ -4,8 +4,10 @@ import ast.nativ.New;
 import export.Chunk;
 import parser.Action;
 import vm.I64Equate;
+import vm.I64Increment;
 import vm.I64StackPush;
 import vm.I64ThisEquate;
+import vm.I64ThisIncrement;
 import vm.ObjectStackPush;
 import vm.StringEquate;
 import vm.StringStackPush;
@@ -64,7 +66,7 @@ public class Link extends Value {
 
   @Override
   public Entity getType() {
-    return variable.getType();
+    return variable == null ? function.getType() : variable.getType();
   }
 
   @Override
@@ -117,6 +119,11 @@ public class Link extends Value {
   }
 
   @Override
+  public void resolveLinks(ClassEntity classEntity, Variables variables) {
+    function = classEntity.getMethod(name);
+  }
+  
+  @Override
   public void resolveEquationLinks(Variables variables) {
     try {
       variable = variables.get(name);
@@ -151,7 +158,7 @@ public class Link extends Value {
   }
 
   @Override
-  public void equationByteCode() {
+  public void equationToByteCode() {
     ClassEntity type = variable.type.toClass();
     int index = variable.index;
     if(thisFlag) {
@@ -164,7 +171,6 @@ public class Link extends Value {
             + " field is not implemented.");
       } else {
         throw new Error("Equate of object field is not implemented.");
-        //addCommand(new ObjectFieldEquate(objectIndex, fieldIndex));
       }
     } else {
       if(type == ClassEntity.i64Class) {
@@ -178,6 +184,27 @@ public class Link extends Value {
     }
   }
 
+  @Override
+  public void incrementToByteCode() {
+    ClassEntity type = variable.type.toClass();
+    int index = variable.index;
+    if(thisFlag) {
+      if(type == ClassEntity.i64Class) {
+        addCommand(new I64ThisIncrement(index));
+      } else if(type.isNative) {
+        throw new Error("Increment of " + type.toString()
+            + " field is not implemented.");
+      } else {
+        throw new Error("Cannot increment object field.");
+      }
+    } else {
+      if(type == ClassEntity.i64Class) {
+        addCommand(new I64Increment(index));
+      } else {
+        throw new Error("Cannot increment object field.");
+      }
+    }
+  }
   @Override
   public String toString() {
     return name.string;

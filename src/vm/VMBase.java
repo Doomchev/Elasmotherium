@@ -13,10 +13,10 @@ public class VMBase {
   public static byte[] typeStack = new byte[STACK_SIZE];
   public static long[] i64Stack = new long[STACK_SIZE];
   public static String[] stringStack = new String[STACK_SIZE];
-  public static ObjectEntity[] objStack = new ObjectEntity[STACK_SIZE];
+  public static ObjectEntity[] objectStack = new ObjectEntity[STACK_SIZE];
   public static VMFunctionCall[] callStack = new VMFunctionCall[STACK_SIZE];
   public static int stackPointer = -1, callStackPointer = -1;
-  public static VMFunctionCall currentCall = new VMFunctionCall();
+  public static VMFunctionCall currentCall = new VMFunctionCall(null);
   public static Command currentCommand;
   public static final HashMap<Function, Command> functions = new HashMap<>();
   public static final LinkedList<Command> gotos = new LinkedList<>();
@@ -29,10 +29,10 @@ public class VMBase {
   
 
   public static void prepare(boolean run) {
-    Base.main.functionToByteCode();
+    Base.main.functionToByteCode(true);
     for(ClassEntity classEntity : ClassEntity.all.values()) {
       for(Function method : classEntity.methods) 
-        method.functionToByteCode();
+        method.functionToByteCode(false);
     }
     for(int index = 0; index <= commandNumber; index++)
       System.out.println(commands[index].toString());
@@ -55,7 +55,7 @@ public class VMBase {
               stack += "\"" + stringStack[index] + "\" ";
               break;
             case TYPE_OBJECT:
-              stack += objStack[index].type.toString() + " ";
+              stack += objectStack[index].type.toString() + " ";
               break;
           }
         System.out.println("Stack: " + stack);

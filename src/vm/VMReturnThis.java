@@ -6,7 +6,7 @@ public class VMReturnThis extends Command {
     VMFunctionCall call = currentCall;
     
     stackPointer++;
-    objStack[stackPointer] = call.thisObject;
+    objectStack[stackPointer] = call.thisObject;
     typeStack[stackPointer] = TYPE_OBJECT;
     
     currentCall = callStack[callStackPointer];

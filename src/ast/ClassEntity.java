@@ -46,7 +46,7 @@ public class ClassEntity extends NamedEntity {
   public Function getMethod(ID name) {
     for(Function function : methods)
       if(function.name == name) return function;
-    return null;
+    throw new Error("Method \"" + name + "\" is not found.");
   }
 
   @Override
@@ -73,17 +73,24 @@ public class ClassEntity extends NamedEntity {
   @Override
   public void resolveLinks(Variables variables) {
     currentClass = this;
-    for(Function method : methods) method.resolveLinks(variables);
     int index = -1;
     for(Variable field : fields) {
       index++;
       field.index = index;
       field.type = field.type.toClass();
     }
+    for(Function method : methods) method.resolveLinks(variables);
   }
 
   @Override
   public void move(Entity entity) {
     entity.moveToClass(this);
+  }
+  
+  @Override
+  public void print(String indent) {
+    System.out.println(indent + "class " + name);
+    for(Variable field : fields) field.print(indent + " ");
+    for(Function method : methods) method.print(indent + " ");
   }
 }

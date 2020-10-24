@@ -54,4 +54,9 @@ public class Code extends Entity {
   public String toString() {
     return listToString(lines);
   }
+
+  @Override
+  public void print(String indent) {
+    for(Function function : functions) function.print(indent + " ");
+  }
 }
