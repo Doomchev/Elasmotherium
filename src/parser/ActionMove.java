@@ -14,14 +14,13 @@ public class ActionMove extends Action {
   }
   
   @Override
-  public Action execute() {
+  public void execute() throws base.ElException {
     currentAction = this;
     Entity entity = copy ? from.peek() : from.pop();
     if(log) log("MOVING " + from.name.string + " to " + to.name.string + "("
         + to.peek().toString() + ")");
     to.peek().move(entity);
-    currentAction = null;
-    return nextAction;
+    currentAction = nextAction;
   }
 
   @Override

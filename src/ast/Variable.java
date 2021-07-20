@@ -1,9 +1,5 @@
 package ast;
 
-import static ast.Entity.addCommand;
-import vm.I64Equate;
-import vm.ObjectEquate;
-
 public class Variable extends NamedEntity {
   public Entity type, value = null;
   public Code code = null;
@@ -11,17 +7,19 @@ public class Variable extends NamedEntity {
   public boolean isThis = false;
   public ClassEntity parentClass = null;
   public Function parentFunction;
-  public int index = -1;
   
   public Variable(Link link) {
     this.name = link.name;
     this.definition = link;
-    addFlags();
   }
 
   public Variable(ID id) {
     this.name = id;
-    addFlags();
+  }
+
+  public Variable(ID id, boolean isThis) {
+    this.name = id;
+    this.isThis = isThis;
   }
   
   @Override
@@ -30,52 +28,13 @@ public class Variable extends NamedEntity {
   }
 
   @Override
-  public Entity getChild(ID id) {
-    if(id == typeID) return type;
-    if(id == valueID) return value;
-    if(id == codeID) return code;
-    return super.getChild(id);
-  }
-
-  @Override
-  public Entity getType() {
-    return type;
-  }
-
-  @Override
-  public int getIndex() {
-    return index;
-  }
-
-  @Override
   public Variable toVariable() {
     return this;
   }
-
-  @Override
-  public void setFlag(ID flag) {
-    if(flag == thisID) isThis = true;
-  }
-  
-  @Override
-  public void setIndex(int index) {
-    this.index = index;
-  }
-  
-
-  @Override
-  public void resolveLinks(Variables variables) {
-    type = type.toClass();
-    if(value != null) value.resolveLinks(variables);
-    currentFunction.varIndex++;
-    //System.out.println(currentFunction.name + " - " + name);
-    index = currentFunction.varIndex;
-    variables.list.addFirst(this);
-  }
   
   
   @Override
-  public void move(Entity entity) {
+  public void move(Entity entity) throws base.ElException {
     entity.moveToVariable(this);
   }
 
@@ -101,30 +60,13 @@ public class Variable extends NamedEntity {
   }
 
   @Override
-  public void toByteCode() {
-    value.toByteCode();
-    conversion(value.getType(), type);
-    ClassEntity objectClass = type.toClass();
-    if(objectClass == ClassEntity.i64Class) {
-      addCommand(new I64Equate(index));
-    } else if(objectClass.isNative) {
-      throw new Error(type.getName()
-          + " variable initialization is not implemented.");
-    } else {
-      addCommand(new ObjectEquate(index));
-    }
-  }
-
-  @Override
   public String toString() {
-    return (parentClass == null ? "" : parentClass.name.string + ".")
-        + (parentFunction == null ? "" : parentFunction.name.string + ".")
-        + name.string;
+    return name.string;
   }
   
   @Override
-  public void print(String indent) {
-    System.out.println(indent + type.toString() + " " + toString()
-        + (value == null ? "" : value.toString()));
+  public void print(String indent, String prefix) {
+    println(indent + prefix + type + " " + toString()
+        + (value == null ? "" : " = " + value) + ";");
   }
 }

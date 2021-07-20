@@ -10,9 +10,9 @@ public class ActionUse extends Action {
   }
   
   @Override
-  public Action execute() {
+  public void execute() {
     currentFlags.add(flag);
     if(log) log("USE flag " + flag.string);
-    return nextAction;
+    currentAction = nextAction;
   }
 }

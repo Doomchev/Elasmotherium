@@ -1,0 +1,12 @@
+Text! - output text
+
+
+My number is random number from 0 to 99.
+Let's start. Tell me what number did I guess.
+If number is more than my number then I'll say "Your number is more than mine!" and will go to start.
+If number is less than my number then I'll say "Your number is less than mine!" and will go to start.
+I'll say "You're right!"
+
+I'll ask you "Enter number".
+I'll say "Factorial of number is Fatorial for number.".
+Factorial for number is 1 if number less or equal to 1 or factorial for number -1 else.

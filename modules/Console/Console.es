@@ -1,1 +1,0 @@
-native print(String message)

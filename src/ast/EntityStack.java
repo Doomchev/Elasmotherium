@@ -1,79 +1,114 @@
 package ast;
 
+import base.ElException;
+import base.SimpleMap;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Stack;
+import parser.Action;
 import parser.ParserBase;
-import static ast.Entity.addCommand;
-import ast.nativ.*;
-import vm.*;
 
-@SuppressWarnings("ResultOfObjectAllocationIgnored")
 public class EntityStack<EntityType> extends ParserBase {
   public static final HashMap<ID, EntityStack> all = new HashMap<>();
-  public static final EntityStack<ID> id = new EntityStack<ID>(ID.idID) {
-    @Override
-    public boolean isStringBased() {
-      return true;
-    }
-
-    @Override
-    public ID createFromString(String string) {
-      return ID.get(string);
-    }
-  };
-  public static final EntityStack<Block> block = new EntityStack<>(ID.blockID);
-  public static final EntityStack<FunctionCall> call
-      = new EntityStack<FunctionCall>(ID.callID) {
-    @Override
-    public FunctionCall create() {
-      return new FunctionCall(null);
-    }
-  };
-  public static final EntityStack<Link> link
-      = new EntityStack<Link>(ID.linkID) {
-    @Override
-    public Link create() {
-      return new Link(id.pop());
-    }
-  };
-  public static final EntityStack<Function> function
-      = new EntityStack<Function>(ID.functionID) {
-    @Override
-    public Function create() {
-      return new Function(id.pop());
-    }
-  };
-  public static final EntityStack<Code> code
-      = new EntityStack<Code>(ID.codeID) {
-    @Override
-    public Code create() {
-      return new Code();
-    }
-  };
-  public static final EntityStack<ClassEntity> classStack
-      = new EntityStack<ClassEntity>(ID.classID) {
-    @Override
-    public ClassEntity create() {
-      return new ClassEntity(id.pop());
-    }
-  };
-  
-  public static final NativeFunction end = new End();
-  public static final NativeFunction ret = new Return();
-  public static final NativeFunction equate = new Equate();
+  public static final EntityStack<ID> id;
+  public static final EntityStack<Block> block;
+  public static final EntityStack<Code> code;
+  public static final EntityStack<ConstantValue> constant;
+  public static final EntityStack<FunctionCall> call;
+  public static final EntityStack<ClassEntity> classStack;
 
   static {
-    new EntityStack<Variable>(ID.variableID) {
+    id = new EntityStack<ID>(ID.get("id")) {
       @Override
-      public Variable create() {
+      public boolean isStringBased() {
+        return true;
+      }
+
+      @Override
+      public ID create(String string, ID type) {
+        return ID.get(string);
+      }
+    };
+
+    final EntityStack<Value> valueStack = new EntityStack<Value>(ID.valueID) {
+      @Override
+      public Value create() throws ElException {
+        throw new ElException("Value is abstract and cannot be created");
+      }
+    };
+
+    block = new EntityStack<>(ID.blockID);
+    
+    constant = new EntityStack(ID.constID, valueStack) {
+      @Override
+      public boolean isStringBased() {
+        return true;
+      }
+
+      @Override
+      public StringValue create(String string, ID type) {
+        return new ConstantValue(type, string);
+      }
+    };
+    
+    call = new EntityStack<FunctionCall>(ID.callID) {
+      @Override
+      public FunctionCall create() {
+        return new FunctionCall(null);
+      }
+    };
+    
+    new EntityStack<Link>(ID.linkID) {
+      @Override
+      public Link create() throws ElException {
+        return new Link(id.pop());
+      }
+    };
+    
+    EntityStack<Function> function = new EntityStack<Function>(ID.functionID) {
+      @Override
+      public Function create() throws ElException {
+        return new Function(id.pop());
+      }
+    };
+    
+    new EntityStack<Function>(ID.get("constructor"), function) {
+      @Override
+      public Function create() throws ElException {
+        return new Function();
+      }      
+    };
+    
+    code = new EntityStack<Code>(ID.codeID) {
+      @Override
+      public Code create() {
+        return new Code();
+      }
+    };
+    
+    classStack = new EntityStack<ClassEntity>(ID.classID) {
+      @Override
+      public ClassEntity create() throws ElException {
+        return new ClassEntity(id.pop());
+      }
+    };
+  
+    EntityStack var = new EntityStack<Variable>(ID.variableID) {
+      @Override
+      public Variable create() throws ElException {
         return new Variable(id.pop());
       }
     };
     
+    new EntityStack<Variable>(ID.get("thisvar"), var) {
+      @Override
+      public Variable create() throws ElException {
+        return new Variable(id.pop(), true);
+      }      
+    };
+    
     new EntityStack<Type>(ID.typeID) {
       @Override
-      public Type create() {
+      public Type create() throws ElException {
         return new Type(id.pop());
       }
     };
@@ -92,97 +127,6 @@ public class EntityStack<EntityType> extends ParserBase {
       }
     };
     
-    EntityStack<Value> valueStack = new EntityStack<Value>(ID.valueID) {
-      @Override
-      public Value create() {
-        throw new Error("Value is abstract and cannot be created");
-      }
-    };
-    
-    new EntityStack(ID.i8ID, valueStack) {
-      @Override
-      public boolean isStringBased() {
-        return true;
-      }
-
-      @Override
-      public I8Value createFromString(String string) {
-        if(string.endsWith("i8"))
-          string = string.substring(0, string.length() - 2);
-        return new I8Value(Byte.parseByte(string));
-      }
-    };
-    
-    new EntityStack(ID.i16ID, valueStack) {
-      @Override
-      public boolean isStringBased() {
-        return true;
-      }
-
-      @Override
-      public I16Value createFromString(String string) {
-        if(string.endsWith("i16"))
-          string = string.substring(0, string.length() - 3);
-        return new I16Value(Short.parseShort(string));
-      }
-    };
-    
-    new EntityStack(ID.i32ID, valueStack) {
-      @Override
-      public boolean isStringBased() {
-        return true;
-      }
-
-      @Override
-      public I32Value createFromString(String string) {
-        if(string.endsWith("i32"))
-          string = string.substring(0, string.length() - 3);
-        return new I32Value(Integer.parseInt(string));
-      }
-    };
-    
-    new EntityStack(ID.i64ID, valueStack) {
-      @Override
-      public boolean isStringBased() {
-        return true;
-      }
-
-      @Override
-      public I64Value createFromString(String string) {
-        if(string.endsWith("i64"))
-          string = string.substring(0, string.length() - 3);
-        return new I64Value(Long.parseLong(string));
-      }
-    };
-    
-    new EntityStack(ID.f32ID, valueStack) {
-      @Override
-      public boolean isStringBased() {
-        return true;
-      }
-
-      @Override
-      public F32Value createFromString(String string) {
-        if(string.endsWith("f32"))
-          string = string.substring(0, string.length() - 3);
-        return new F32Value(Float.parseFloat(string));
-      }
-    };
-    
-    new EntityStack(ID.f64ID, valueStack) {
-      @Override
-      public boolean isStringBased() {
-        return true;
-      }
-
-      @Override
-      public F64Value createFromString(String string) {
-        if(string.endsWith("f64"))
-          string = string.substring(0, string.length() - 3);
-        return new F64Value(Double.parseDouble(string));
-      }
-    };
-    
     new EntityStack(ID.stringID, valueStack) {
       @Override
       public boolean isStringBased() {
@@ -190,15 +134,8 @@ public class EntityStack<EntityType> extends ParserBase {
       }
 
       @Override
-      public StringValue createFromString(String string) {
+      public StringValue create(String string, ID type) {
         return new StringValue(string);
-      }
-    };
-    
-    new EntityStack(ID.objectID, valueStack) {
-      @Override
-      public Object create() {
-        return new Object();
       }
     };
     
@@ -211,7 +148,7 @@ public class EntityStack<EntityType> extends ParserBase {
     
     new EntityStack(ID.entryID, valueStack) {
       @Override
-      public ObjectEntry create() {
+      public ObjectEntry create() throws ElException {
         return new ObjectEntry(id.pop());
       }
     };
@@ -229,56 +166,16 @@ public class EntityStack<EntityType> extends ParserBase {
         return new MapEntity();
       }
     };
-    
-    new EntityStack(ID.mapEntryID, valueStack) {
-      @Override
-      public MapEntry create() {
-        return new MapEntry();
-      }
-    };
-    
-    // native functions
-    
-    new Break();
-    new Continue();
-    new Increment();
-    new Decrement();
-    new Add();
-    new Subtract();
-    new Multiply();
-    new Divide();
-    new Dot();
-    new AtIndex();
-    new Brackets();
-    new Negative();
-    new Not();
-    new Multiplication();
-    new Division();
-    new Mod();
-    new Addition();
-    new Subtraction();
-    new BitAnd();
-    new BitOr();
-    new NotEqual();
-    new Equal();
-    new Less();
-    new LessOrEqual();
-    new More();
-    new MoreOrEqual();
-    new And();
-    new Or();
-    new IfOp();
-    new ElseOp();
   }
   
-  public static EntityStack get(String name) {
+  public static EntityStack get(String name) throws ElException {
     return get(ID.get(name));
   }
   
-  public static EntityStack get(ID name) {
+  public static EntityStack get(ID name) throws ElException {
     EntityStack stack = all.get(name);
-    if(stack == null) throw new Error("Invalid entity name \"" + name.string
-        + "\"");
+    if(stack == null) throw new ElException("Invalid entity name \""
+        + name.string + "\"");
     return stack;
   }
 
@@ -297,31 +194,31 @@ public class EntityStack<EntityType> extends ParserBase {
     all.put(name, this);
   }
 
-  public EntityType pop() {
-    if(stack.isEmpty()) throw new Error("Trying to pop entity from empty "
-        + name.string + " stack");
+  public EntityType pop() throws ElException {
+    if(stack.isEmpty()) throw new ElException(Action.currentAction
+        , "Trying to pop entity from empty " + name.string + " stack");
     return stack.pop();
   }
 
   public void push(EntityType entity) {
     stack.push(entity);
-  }  
-  
-  public EntityType create() {
-    throw new Error("Cannot create " + name);
   }
   
-  public EntityType createFromString(String string) {
-    throw new Error("Cannot create " + name);
+  public EntityType create() throws ElException {
+    throw new ElException(name);
+  }
+  
+  public EntityType create(String string, ID type) throws ElException {
+    throw new ElException(name);
   }
 
   public boolean isStringBased() {
     return false;
   }
 
-  public EntityType peek() {
-    if(stack.isEmpty()) throw new Error("Trying to peek entity from empty "
-        + name.string + " stack");
+  public EntityType peek() throws ElException {
+    if(stack.isEmpty()) throw new ElException(Action.currentAction
+        , "Trying to peek entity from empty " + name.string + " stack");
     return stack.peek();
   }
 

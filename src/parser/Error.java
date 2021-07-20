@@ -1,5 +1,7 @@
 package parser;
 
+import base.ElException;
+
 public class Error extends Action {
   private final String errorText;
 
@@ -7,16 +9,16 @@ public class Error extends Action {
     this.errorText = text;
   }
   
-  public Error derive(String param) {
+  public Error derive(String param) throws ElException {
     return new Error(errorText.replace("\\0", param));
   }
 
   @Override
-  public Action execute() {
+  public void execute() throws ElException {
     Sub errorActionSub = getErrorActionSub();
-    if(errorActionSub == null) actionError(errorText);
-    if(log) log("ERROR - RETURNING TO " + errorActionSub.name + "\n"
-        + errorActionSub.name);
-    return errorActionSub.action;
+    if(errorActionSub == null) throw new ElException(this, errorText);
+    if(log) log("ERROR - RETURNING TO " + errorActionSub.name);
+    subIndent = subIndent.substring(2);
+    currentAction = errorActionSub.action;
   }
 }

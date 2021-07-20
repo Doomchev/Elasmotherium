@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ParserBase extends Base {
   public static StringBuffer text;
-  public static String prefix, path;
+  public static String prefix, path, subIndent = "";
   public static int tokenStart, textPos, textLength, lineStart;
   public static char currentChar;
   public static final Stack<ActionSub> returnStack = new Stack<>();
@@ -53,19 +53,14 @@ public class ParserBase extends Base {
     }
   }
   
-  public static void error(String message) {
-    if(Action.currentAction != null) {
-      Action.currentAction.actionError(message);
-    } else {
-      error("Parsing code error", currentFileName + " (" + lineNum + ")\n"
-        + message);
-    }
+  public static String listToString(List<? extends Object> list) {
+    return listToString(list, ", ");
   }
   
-  public static String listToString(List<? extends Object> list) {
+  public static String listToString(List<? extends Object> list, String delimiter) {
     String str = "";
     for(Object object : list) {
-      if(!str.isEmpty()) str += ", ";
+      if(!str.isEmpty()) str += delimiter;
       str += object.toString();
     }
     return str;

@@ -1,7 +1,6 @@
 package base;
 
 import static base.Base.workingPath;
-import export.Export;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,15 +30,6 @@ public class Main {
       String pack = "package examples." +  chooser.getSelectedFile()
           .getParentFile().getName() + ";\n\n";
       Module module = Module.read(fileName, rules);
-      Processor.process();
-      Export export = new Export(rules).load(module, Base.JAVA);
-      for(ClassEntity classEntity : ClassEntity.all.values()) {
-        if(classEntity.isNative) continue;
-        FileWriter writer = new FileWriter(path + classEntity.name + ".go");
-        writer.write(pack);
-        writer.write(export.exportEntity(classEntity));
-        writer.close();
-      }
     }
   }
 }

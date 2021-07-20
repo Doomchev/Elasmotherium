@@ -1,12 +1,12 @@
-I64 number = random(100)
+Int number = random(100);
 do {
-	I64 guess = input("What number did I guess?")
+	Int guess = askInteger("What number did I guess?");
 	if(guess < number) {
-		showMessage("Your number is too small!")
+		tell("Your number is too small!");
 	} else if(guess > number) {
-		showMessage("Your number is too big!")
+		tell("Your number is too big!");
 	} else {
-		showMessage("You are right!")
-		end
+		tell("You are right!");
+		exit();
 	}
 }

@@ -14,7 +14,7 @@ public class ObjectEntry extends Entity {
   }
   
   @Override
-  public void move(Entity entity) {
+  public void move(Entity entity) throws base.ElException {
     entity.moveToObjectEntry(this);
   }
 }

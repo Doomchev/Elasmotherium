@@ -1,1 +1,0 @@
-random(Int): (new java.util.Random()).nextInt(\0)

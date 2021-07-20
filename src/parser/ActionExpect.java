@@ -1,5 +1,7 @@
 package parser;
 
+import base.ElException;
+
 public class ActionExpect extends Action {
   private final char symbol;
 
@@ -8,7 +10,7 @@ public class ActionExpect extends Action {
   }
 
   @Override
-  public Action execute() {
+  public void execute() throws ElException {
     if(log) log("EXPECT " + symbol);
     while(true) {
       char c = text.charAt(textPos);
@@ -20,8 +22,11 @@ public class ActionExpect extends Action {
         case '\n':
           break;
         default:
-          if(c == symbol) return nextAction;
-          actionError(symbol + " expected");
+          if(c == symbol) {
+            currentAction = nextAction;
+            return;
+          }
+          throw new ElException(this, symbol + " expected");
       }
     }
   }

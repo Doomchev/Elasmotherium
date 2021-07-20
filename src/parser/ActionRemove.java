@@ -10,12 +10,11 @@ public class ActionRemove extends Action {
   }
 
   @Override
-  public Action execute() {
+  public void execute() {
     if(log) log("REMOVE(" + stack.name.string + ")");
     currentAction = this;
     stack.stack.pop();
-    currentAction = null;
-    return nextAction;
+    currentAction = nextAction;
   }
 
   @Override

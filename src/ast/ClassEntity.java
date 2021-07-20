@@ -1,12 +1,13 @@
 package ast;
 
+import base.ElException;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 public class ClassEntity extends NamedEntity {
   public static HashMap<ID, ClassEntity> all = new HashMap<>();
   
-  public Type parent;
+  public Entity parent;
   public LinkedList<Variable> fields = new LinkedList<>();
   public LinkedList<Variable> parameters = new LinkedList<>();
   public LinkedList<Function> methods = new LinkedList<>();
@@ -24,45 +25,10 @@ public class ClassEntity extends NamedEntity {
   }
   
   
+  
   @Override
   public ID getID() {
     return classID;
-  }
-  
-  @Override
-  public LinkedList<? extends Entity> getChildren() {
-    LinkedList<Entity> list = new LinkedList<>();
-    list.addAll(fields);
-    list.addAll(methods);
-    return list;
-  }
-
-  public Variable getVariable(ID id) {
-    for(Variable field : fields)
-      if(field.name == id) return field;
-    return null;
-  }
-
-  public Function getMethod(ID name) {
-    for(Function function : methods)
-      if(function.name == name) return function;
-    throw new Error("Method \"" + name + "\" is not found.");
-  }
-
-  @Override
-  public Entity getChild(ID id) {
-    if(id == parentID) return parent;
-    return null;
-  }
-
-  @Override
-  public ClassEntity getType() {
-    return ClassEntity.classClass;
-  }
-  
-  @Override
-  public void setFlag(ID flag) {
-    if(flag == ID.nativeID) isNative = true;
   }
   
   @Override
@@ -71,26 +37,27 @@ public class ClassEntity extends NamedEntity {
   }
 
   @Override
-  public void resolveLinks(Variables variables) {
-    currentClass = this;
-    int index = -1;
-    for(Variable field : fields) {
-      index++;
-      field.index = index;
-      field.type = field.type.toClass();
-    }
-    for(Function method : methods) method.resolveLinks(variables);
+  public void move(Entity entity) throws ElException {
+    entity.moveToClass(this);
   }
 
   @Override
-  public void move(Entity entity) {
-    entity.moveToClass(this);
+  public void moveToCode(Code code) {
+    code.classes.add(this);
+  }
+
+  @Override
+  public void moveToFunctionCall(FunctionCall call) throws ElException {
+    name = ID.get(call.function.toString() + "1");
+    call.function = this;
   }
   
   @Override
-  public void print(String indent) {
-    System.out.println(indent + "class " + name);
-    for(Variable field : fields) field.print(indent + " ");
-    for(Function method : methods) method.print(indent + " ");
+  public void print(String indent, String prefix) {
+    println(indent + prefix + "class " + name + "{");
+    String newIndent = indent + "  ";
+    for(Variable field: fields) field.print(newIndent, "");
+    for(Function method: methods) method.print(newIndent, "");
+    println(indent + "}");
   }
 }

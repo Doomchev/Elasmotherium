@@ -1,13 +1,13 @@
 package vm;
 
-import ast.ClassEntity;
 import ast.ObjectEntity;
 import base.Base;
 import java.util.HashMap;
 import java.util.LinkedList;
 import ast.Function;
+import base.ElException;
 
-public class VMBase {
+public class VMBase extends Base{
   public static final int STACK_SIZE = 2 << 10;
   public static boolean[] booleanStack = new boolean[STACK_SIZE];
   public static byte[] typeStack = new byte[STACK_SIZE];
@@ -29,18 +29,17 @@ public class VMBase {
   
 
   public static void prepare(boolean run) {
-    Base.main.functionToByteCode(true);
-    for(ClassEntity classEntity : ClassEntity.all.values()) {
-      for(Function method : classEntity.methods) 
-        method.functionToByteCode(false);
-    }
     for(int index = 0; index <= commandNumber; index++)
       System.out.println(commands[index].toString());
     if(run) {
-      currentCommand = Base.main.startingCommand;
+      //currentCommand = Base.main.startingCommand;
       while(currentCommand != null) {
         System.out.println(currentCommand.toString());
-        currentCommand.execute();
+        try {
+          currentCommand.execute();
+        } catch (ElException ex) {
+          error("Bytecode execution error", ex.message);
+        }
 
         String stack = "";
         for(int index = 0; index <= stackPointer; index++)

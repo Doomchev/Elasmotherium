@@ -1,4 +1,5 @@
-I64 a = 2
-I64 b = 3
-I64 c = a + b
-print("a + b = \(c)")
+Int a = 2;
+Int b = 3;
+Int c = a + b;
+print("a + b = \(c)");
+List<String> list = [];

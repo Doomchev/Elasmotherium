@@ -1,10 +1,9 @@
 package ast;
 
-import java.util.HashMap;
-import java.util.LinkedList;
+import base.SimpleMap;
 
 public class MapEntity extends Entity {
-  public final LinkedList<MapEntry> entries = new LinkedList<>();
+  public final SimpleMap<Value, Value> entries = new SimpleMap<>();
   
   @Override
   public ID getID() {
@@ -12,12 +11,7 @@ public class MapEntity extends Entity {
   }
   
   @Override
-  public void move(Entity entity) {
+  public void move(Entity entity) throws base.ElException {
     entity.moveToMap(this);
-  }
-  
-  @Override
-  public LinkedList<? extends Entity> getChildren() {
-    return entries;
   }
 }

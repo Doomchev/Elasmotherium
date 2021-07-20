@@ -1,5 +1,7 @@
 package vm;
 
+import base.ElException;
+
 public class I64FieldEquate extends Command {
   int stackIndex, fieldIndex;
 
@@ -9,7 +11,7 @@ public class I64FieldEquate extends Command {
   }
   
   @Override
-  public void execute() {
+  public void execute() throws ElException {
     objectStack[stackIndex + currentCall.paramPosition].fields[fieldIndex]
         .i64Set(i64Stack[stackPointer]);
     stackPointer--;

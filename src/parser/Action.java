@@ -1,8 +1,8 @@
 package parser;
 
-import base.Base;
 import java.util.LinkedList;
 import ast.ID;
+import base.ElException;
 
 public abstract class Action extends ParserBase {
   public static int savedTextPos, savedLineNum, savedLineStart;
@@ -11,7 +11,11 @@ public abstract class Action extends ParserBase {
   
   public int parserLine;
   public Action nextAction;
-  public abstract Action execute();
+  public abstract void execute() throws ElException;
+
+  public Action() {
+    parserLine = lineNum;
+  }
 
   public Sub getErrorActionSub() {
     while(!returnStack.isEmpty()) {
@@ -21,14 +25,8 @@ public abstract class Action extends ParserBase {
     return null;
   }
   
-  public void actionError(String message) {
-    Base.error("Parsing error", currentFileName + " (" + lineNum + ":"
-        + (textPos - lineStart) + ")\nparser code (" + parserLine + ")\n"
-        + message);
-  }
-  
   public void log(String message) {
-    System.out.println(" " + parserLine + ": " + message);
+    System.out.println(subIndent + parserLine + ": " + message);
   }
 
   @Override

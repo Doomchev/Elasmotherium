@@ -1,4 +1,0 @@
-import java.util.LinkedList
-List -> LinkedList
-List.first -> getFirst()
-List.last -> getLast()

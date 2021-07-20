@@ -1,13 +1,13 @@
 package ast;
 
+import base.ElException;
+
 public abstract class Value extends Entity {
-  Entity convertTo;
-
   @Override
-  public void setConvertTo(Entity type) {
-    convertTo = type;
+  public ID getID() {
+    return valueID;
   }
-
+  
   @Override
   public void moveToStringSequence(StringSequence sequence) {
     sequence.chunks.add(this);
@@ -26,6 +26,11 @@ public abstract class Value extends Entity {
   @Override
   public void moveToParameters(Parameters parameters) {
     parameters.parameters.add(this);
+  }
+
+  @Override
+  public void moveToList(ListEntity list) throws ElException {
+    list.values.add(this);
   }
 
   @Override

@@ -1,5 +1,6 @@
 package ast;
 
+import base.ElException;
 import java.util.LinkedList;
 
 public class Type extends NamedEntity {
@@ -19,27 +20,22 @@ public class Type extends NamedEntity {
   public ID getID() {
     return typeID;
   }
-  
-  @Override
-  public LinkedList<? extends Entity> getChildren() {
-    return subtypes;
-  }
 
   @Override
-  public ClassEntity toClass() {
+  public ClassEntity toClass() throws ElException {
     if(typeClass == null) typeClass = ClassEntity.all.get(name);
-    if(typeClass == null) throw new Error("Cannot find class " + name);
+    if(typeClass == null) throw new ElException("Cannot find class " + name);
     return typeClass;
   }
 
   @Override
-  public void move(Entity entity) {
+  public void move(Entity entity) throws ElException {
     entity.moveToType(this);
   }
 
   @Override
   public void moveToType(Type type) {
-    subtypes.add(type);
+    type.subtypes.add(this);
   }
 
   @Override
@@ -58,8 +54,13 @@ public class Type extends NamedEntity {
   }
 
   @Override
+  void moveToLink(Link link) throws ElException {
+    link.subtypes.add(this);
+  }
+
+  @Override
   public String toString() {
-    if(typeClass == null) return name.string;
-    return typeClass.name.string;
+    return name.string
+        + (subtypes.isEmpty() ? "" : "<" + listToString(subtypes) + ">");
   }
 }

@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import parser.Action;
 import parser.Rules;
 import ast.Code;
-import ast.Entity;
 import ast.EntityStack;
 
 public class Module extends ParserBase {
@@ -18,7 +17,7 @@ public class Module extends ParserBase {
   
   public String fileName;
   public final LinkedList<Module> modules = new LinkedList<>();
-  public Code mainCode = new Code();
+  public Code code;
 
   public Module(String fileName) {
     this.fileName = fileName;
@@ -34,13 +33,18 @@ public class Module extends ParserBase {
     
     include(fileName);
     
-    Action action = rules.root.action;
-    while(action != null) action = action.execute();
+    Action.currentAction = rules.root.action;
+    try {
+      while(Action.currentAction != null)
+        Action.currentAction.execute();
     
-    for(Module module : modules) module.read(rules);
+      for(Module module : modules) module.read(rules);
     
-    for(Entity entity : EntityStack.code.pop().lines)
-      main.code.lines.add(entity);
+      code = EntityStack.code.pop();
+    } catch (base.ElException ex) {
+      error("Parsing error", currentFileName + " (" + lineNum + ":"
+        + (textPos - lineStart) + ")\n" + ex.message);
+    }
     
     return this;
   }  
@@ -62,5 +66,9 @@ public class Module extends ParserBase {
     } catch (IOException ex) {
       error("I/O error", "Cannot read " + fileName + ".");
     }
+  }
+
+  public void print() {
+    code.print("", fileName + " ");
   }
 }

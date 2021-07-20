@@ -13,6 +13,7 @@ public class ID extends Entity {
   }
   
   public static ID get(String string) {
+    string = string.trim();
     ID id = allIDs.get(string);
     if(id == null) {
       id = new ID(string);

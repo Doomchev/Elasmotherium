@@ -8,8 +8,8 @@ public class ActionGoToAction extends Action {
   }
   
   @Override
-  public Action execute() {
-    return action;
+  public void execute() {
+    currentAction = action;
   }
 
   @Override

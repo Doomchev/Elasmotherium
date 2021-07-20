@@ -1,12 +1,12 @@
 package ast;
 
-import export.Chunk;
 import java.util.Arrays;
 import java.util.LinkedList;
 
 public class FunctionCall extends Value {
   public Entity function, type;
   public boolean thisFlag;
+  public byte priority = 0;
   public final LinkedList<Entity> parameters = new LinkedList<>();
 
   public FunctionCall(Function function) {
@@ -19,29 +19,13 @@ public class FunctionCall extends Value {
   }
   
   @Override
-  public boolean isEmptyFunction() {
-    return function == null || (function.isEmptyFunction()
-        && parameters.isEmpty());
-  }
-  
-  @Override
   public ID getID() {
     return callID;
   }
-
-  @Override
-  public ID getFormId() {
-    return function.isNativeFunction() ? function.getFormId() : callID;
-  }
-
-  @Override
-  public Chunk getCallForm() {
-    return function.getForm();
-  }
   
   @Override
-  public int getPriority() {
-    return function == null ? 17 : function.getPriority();
+  public byte getPriority() {
+    return priority;
   }
 
   @Override
@@ -50,60 +34,13 @@ public class FunctionCall extends Value {
   }
 
   @Override
-  public Entity getChild(ID id) {
-    if(id == functionID) return function;
-    return null;
-  }
-  
-  @Override
-  public LinkedList<? extends Entity> getChildren() {
-    return parameters;
-  }
-
-  @Override
-  public Entity getChild(int index) {
-    if(parameters.size() <= index) return null;
-    return parameters.get(index);
-  }
-
-  @Override
-  public Entity getType() {
-    return type;
-  }
-
-  @Override
-  public void resolveLinks(Variables variables) {
-    function.resolveLinks(this, variables);
-  }
-
-  @Override
-  public void resolveLinks(FunctionCall call, Variables variables) {
-    Entity param0 = parameters.getFirst();
-    Entity param1 = parameters.getLast();
-    param0.resolveEquationLinks(variables);
-    param1.resolveLinks(param0.getType().toClass(), variables);
-    call.type = param1.getType().toClass();
-  }
-
-  @Override
-  public void move(Entity entity) {
+  public void move(Entity entity) throws base.ElException {
     entity.moveToFunctionCall(this);
   }
 
   @Override
   public void moveToCode(Code code) {
     code.lines.add(this);
-  }
-
-  @Override
-  public void toByteCode() {
-    function.toByteCode(this);
-  }
-  
-  @Override
-  public void toByteCode(FunctionCall call) {
-    parameters.getFirst().toByteCode();
-    parameters.getLast().toByteCode(call);
   }
 
   @Override

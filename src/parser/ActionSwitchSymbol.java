@@ -1,12 +1,14 @@
 package parser;
 
+import base.ElException;
+
 public class ActionSwitchSymbol extends ActionSwitch {
   public Action[] action = new Action[130];
 
   @Override
-  public void setStringAction(String token, Action action) {
-    if(token.length() != 1) actionError("Invalid token");
-    this.action[token.charAt(0)] = action;
+  public void setStringAction(String token, Action action) throws ElException {
+    for(int i = 0; i < token.length(); i++)
+      this.action[token.charAt(i)] = action;
   }
 
   @Override
@@ -20,7 +22,7 @@ public class ActionSwitchSymbol extends ActionSwitch {
   }
 
   @Override
-  public Action execute() {
+  public void execute() throws ElException {
     if(textPos >= textLength) {
       currentChar = 129;
       if(log) log("SWITCH TO END");
@@ -29,6 +31,8 @@ public class ActionSwitchSymbol extends ActionSwitch {
       if(log) log("SWITCH TO " + currentChar);
       currentChar = currentChar < 128 ? currentChar : 128;
     }
-    return action[currentChar];
+    currentAction = action[currentChar];
+    if(currentAction == null) throw new ElException("No command for "
+        + currentChar);
   }
 }

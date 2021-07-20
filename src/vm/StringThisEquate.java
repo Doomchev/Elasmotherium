@@ -1,5 +1,7 @@
 package vm;
 
+import base.ElException;
+
 public class StringThisEquate extends Command {
   int index;
 
@@ -8,7 +10,7 @@ public class StringThisEquate extends Command {
   }
   
   @Override
-  public void execute() {
+  public void execute() throws ElException {
     currentCall.thisObject.fields[index].stringSet(stringStack[stackPointer]);
     stackPointer--;
     currentCommand = nextCommand;

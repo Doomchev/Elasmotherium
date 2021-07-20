@@ -2,9 +2,9 @@ package parser;
 
 class ActionForward extends Action {
   @Override
-  public Action execute() {
+  public void execute() {
     if(log) log(">>");
     incrementTextPos();
-    return nextAction;
+    currentAction = nextAction;
   }
 }

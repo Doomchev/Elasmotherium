@@ -1,5 +1,7 @@
 package vm;
 
+import base.ElException;
+
 public class StringFieldPush extends Command {
   int fieldIndex;
 
@@ -8,7 +10,7 @@ public class StringFieldPush extends Command {
   }
   
   @Override
-  public void execute() {
+  public void execute() throws ElException {
     stringStack[stackPointer] = objectStack[stackPointer].fields[fieldIndex]
         .stringGet();
     typeStack[stackPointer] = TYPE_STRING;

@@ -7,21 +7,25 @@ import java.io.IOException;
 import java.util.HashMap;
 import ast.Entity;
 import ast.EntityStack;
+import ast.Function;
 import ast.ID;
-import ast.NativeFunction;
+import base.ElException;
+import java.util.LinkedList;
 
 public class Rules extends ParserBase {
   public Sub root;
   
   public final HashMap<String, SymbolMask> masks = new HashMap<>();
-  public SymbolMask getMask(String name) {
+  public SymbolMask getMask(String name) throws ElException {
     SymbolMask mask = masks.get(name);
-    if(mask == null) error("Cannot find symbol mask \"" + name + "\"");
+    if(mask == null) throw new ElException("Cannot find symbol mask \""
+        + name + "\"");
     return mask;
   }
   
   public final HashMap<String, Sub> subs = new HashMap<>();
   public final HashMap<String, Error> errors = new HashMap<>();
+  public final LinkedList<String> defSym = new LinkedList<>();
   
   public Sub getSub(String name) {
     Sub sub = subs.get(name);
@@ -33,7 +37,6 @@ public class Rules extends ParserBase {
   }
   
   private BufferedReader reader;
-  @SuppressWarnings("ResultOfObjectAllocationIgnored")
   public Rules load(String fileName) {
     currentFileName = fileName;
     masks.clear();
@@ -61,7 +64,7 @@ public class Rules extends ParserBase {
               mask.set(symbol.charAt(0), symbol.charAt(2));
             } else if(symbol.length() >= 2) {
               SymbolMask mask2 = masks.get(symbol);
-              if(mask2 == null) error("Mask \"" + symbol
+              if(mask2 == null) throw new ElException("Mask \"" + symbol
                   + "\" is not found");
               mask.or(mask2);
             }
@@ -70,11 +73,14 @@ public class Rules extends ParserBase {
         } else if(line.startsWith("ERROR ")) {
           String[] parts = line.substring(6).split(":");
           errors.put(parts[0].trim(), new Error(parts[1].trim()));
+        } else if(line.startsWith("DEFAULT ")) {
+          defSym.add(line.substring(8));
         } else {
-          if(colonPos < 0 && equalPos < 0) error(": or = expected");
+          if(colonPos < 0 && equalPos < 0)
+            throw new ElException(": or = expected");
           String name = line.substring(0, colonPos).trim();
           Sub sub = getSub(name);
-          if(sub.action != null) error("Sub \"" + name
+          if(sub.action != null) throw new ElException("Sub \"" + name
               + "\" is already defined");
           sub.action = actionChain(line.substring(colonPos + 1), null, sub);
         }
@@ -83,21 +89,49 @@ public class Rules extends ParserBase {
       error("I/O error", fileName + " not found.");
     } catch (IOException ex) {
       error("I/O error", fileName + "Cannot read " + fileName + ".");
+    } catch (ElException ex) {
+      error("Error in ruleset", currentFileName + " (" + lineNum + ":"
+          + (textPos - lineStart) + ")\n" + ex.message);
     }
     
     root = subs.get("root");
     return this;
   }
-
+  
+  public static LinkedList<String> listSplit(String commands, char delimiter) {
+    LinkedList<String> commandList = new LinkedList<>();
+    int start = -1, brackets = 0;
+    boolean quotes = false;
+    for(int i = 0; i < commands.length(); i++) {
+      char c = commands.charAt(i);
+      if(brackets == 0 && start < 0 && c != delimiter) start = i;
+      if(c == '"') quotes = !quotes;
+      if(quotes) continue;
+      if(c == '(') {
+        brackets++;
+      } else if(c == ')') {
+        brackets--;
+      } else if(c == delimiter) {
+        if(brackets > 0 || start < 0) continue;
+        commandList.add(commands.substring(start, i).trim());
+        start = -1;
+      }
+    }
+    if(start >= 0) commandList.add(commands.substring(start).trim());
+    //System.out.println(commands + " = " + listToString(commandList));
+    return commandList;
+  }
+  
   private Action actionChain(String commands, Action lastAction, Sub currentSub)
-      throws IOException {
+      throws IOException, ElException {
+    //System.out.println(commands);
     Action firstAction = null, currentAction = null;
     boolean exit = false;
-    for(String command : commands.trim().split(" ")) {
+    for(String command : listSplit(commands, ' ')) {
       Action action;
       int bracketPos = command.indexOf('(');
       String name = bracketPos < 0 ? command : command.substring(0, bracketPos);
-      String params = bracketPos < 0 ? "" :command.substring(bracketPos + 1
+      String params = bracketPos < 0 ? "" : command.substring(bracketPos + 1
           , command.length() - 1);
 
       //System.out.println(name);
@@ -120,8 +154,8 @@ public class Rules extends ParserBase {
           action = new ActionAdd(stringParam(params));
           break;
         case "EXPECT":
-          if(params.length() != 3) error("EXPECT command requires one symbol"
-              + " as parameter");
+          if(params.length() != 3) throw new ElException(
+              "EXPECT command requires one symbol" + " as parameter");
           action = new ActionExpect(params.charAt(1));
           break;
         case "CLEAR":
@@ -139,43 +173,61 @@ public class Rules extends ParserBase {
             if(id == ID.moduleID) {
               action = new ActionCreate(null, id, null);
             } else {
-              NativeFunction function = NativeFunction.all.get(id);
-              EntityStack stack = function == null ? EntityStack.get(id)
-                  : EntityStack.call;
-              if(stack == EntityStack.block) {
-                if(param.length != 2) error("CREATE block command requires 2"
-                    + " parameters");
+              EntityStack stack = EntityStack.all.get(id);
+              Function function = Function.all.get(id);
+              if(stack == null) {
+                if(function == null) {
+                  function = new Function(id);
+                  function.priority = 0;
+                  Function.all.put(id, function);
+                }
+                stack = EntityStack.call;
+              }
+              if(stack == EntityStack.block || stack == EntityStack.constant) {
+                if(param.length != 2) throw new ElException("CREATE "
+                    + stack.name.string + " command requires 2 parameters");
                 action = new ActionCreate(stack, ID.get(param[1]), null);
               } else {
-                if(param.length != 1) error("CREATE command requires single"
-                    + " parameter");
+                if(param.length != 1) throw new ElException(
+                    "CREATE command requires single parameter");
                 action = new ActionCreate(stack, null, function);
               }
             }
           }
           break;
+        case "DUP":
+          action = new ActionDup(EntityStack.all.get(ID.get(params.trim())));
+          break;
         case "COPY":
           copy = true;
         case "MOVE":
           param = params.split(",");
-          NativeFunction function = NativeFunction.all.get(ID.get(param[0]));
-          if(function != null) {
-            action = new ActionMoveNewFunction(function, EntityStack.get(param[1]));
+          EntityStack<Entity> stack0 = EntityStack.all.get(ID.get(param[0]));
+          if(stack0 == null) {
+            ID id0 = ID.get(param[0]);
+            Function function = Function.all.get(id0);
+            if(function == null) {
+              function = new Function(id0);
+              function.priority = 0;
+              Function.all.put(id0, function);
+            }
+            action = new ActionMoveNewFunction(function, EntityStack.get(
+                param[1]));
           } else {
-            EntityStack<Entity> stack0 = EntityStack.get(param[0]);
             if(param.length == 1) {
               action = new ActionMove(stack0, stack0, copy);
             } else {
-              if(param.length != 2) error("MOVE command requires 2 parameters");
+              if(param.length != 2) throw new ElException(
+                  "MOVE command requires 2 parameters");
               action = new ActionMove(stack0, EntityStack.get(param[1]), copy);
             }
           }
           break;
         case "SET":
           param = params.split(",");
-          if(param.length != 3) error("SET command requires 3 parameters");
-          action = new ActionSet(EntityStack.get(param[0]), ID.get(param[1])
-              , EntityStack.get(param[2]));
+          if(param.length != 2) throw new ElException(
+              "SET command requires 2 parameters");
+          action = new ActionSet(ID.get(param[0]), EntityStack.get(param[1]));
           break;
         case "USE":
           action = new ActionUse(ID.get(params));
@@ -190,30 +242,16 @@ public class Rules extends ParserBase {
           
           String line;
           Action back = new ActionGoToAction(switchAction);
+          for(String string: defSym)
+            parseLine(string, switchAction, back, currentSub, true);
           while(true) {
             if((line = reader.readLine()) == null)
-              error("Unexpected end of file");
+              throw new ElException("Unexpected end of file");
             lineNum++;
             line = line.trim();
             if(line.isEmpty() || line.startsWith("//")) continue;
             if(line.equals("}")) break;
-            int colonPos = line.indexOf(':');
-            if(colonPos < 0) error(": expected");
-            String token = line.substring(0, colonPos).trim();
-            Action actionChain = actionChain(line.substring(colonPos + 1), back
-                , currentSub);
-            if(token.startsWith("\"")) {
-              switchAction.setStringAction(stringParam(token), actionChain);
-            } else if(token.equals("other")) {
-              switchAction.setOtherAction(actionChain);
-            } else if(name.equals("{")) {
-              SymbolMask symbolMask = getMask(token);
-              if(symbolMask == null) error("Mask \"" + token + "\" is not found");
-              switchAction.setMaskAction(symbolMask, actionChain);
-              //break;
-            } else {
-              error("Invalid token");
-            }
+            parseLine(line, switchAction, back, currentSub, name.equals("{"));
           }
           action = switchAction;
           exit = true;
@@ -234,7 +272,7 @@ public class Rules extends ParserBase {
             action = error;
           }
       }
-      action.parserLine = lineNum;
+      //action.parserLine = lineNum;
       if(currentAction == null) {
         firstAction = action;
       } else {
@@ -243,27 +281,49 @@ public class Rules extends ParserBase {
       currentAction = action;
       if(exit) break;
     }
-    
     if(lastAction != null) currentAction.nextAction = lastAction;
     return firstAction;
+  }
+  
+  private void parseLine(String line, ActionSwitch switchAction, Action back
+      , Sub currentSub, boolean isSymbolSwitch) throws ElException, IOException {
+    LinkedList<String> parts = listSplit(line, ':');
+    if(parts.size() < 2) throw new ElException(": expected");
+    Action actionChain = actionChain(parts.getLast(), back, currentSub);
+    for(String token: listSplit(parts.getFirst(), ',')) {
+      if(token.startsWith("\"")) {
+        switchAction.setStringAction(stringParam(token), actionChain);
+      } else if(token.equals("other")) {
+        switchAction.setOtherAction(actionChain);
+      } else if(isSymbolSwitch) {
+        SymbolMask symbolMask = getMask(token);
+        if(symbolMask == null) throw new ElException("Mask \"" + token
+            + "\" is not found");
+        switchAction.setMaskAction(symbolMask, actionChain);
+        //break;
+      } else {
+        throw new ElException("Invalid token");
+      }
+    }
   }
 
   private String strucString;
   private int pos;
   
-  private int readNum() {
+  private int readNum() throws ElException {
     int start = pos;
     while(true) {
       char c = strucString.charAt(pos);
       if(c < '0' || c > '9') break;
       pos++;
     }
-    if(start == pos) error("Integer number expected");
+    if(start == pos) throw new ElException("Integer number expected");
     return Integer.parseInt(strucString.substring(start, pos));
   }
 
-  private String stringParam(String str) {
-    if(!str.endsWith("\"") || str.length() < 2) error("Invalid token");
+  private String stringParam(String str) throws ElException {
+    if(!str.endsWith("\"") || str.length() < 2) throw new ElException(
+        "Invalid token");
     return str.substring(1, str.length() - 1);
   }
 }

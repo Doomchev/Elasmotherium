@@ -1,64 +1,59 @@
-board = Texture("board.png")
-tileMap = TileMap(7, 1, Texture("pawns.png").cut(3))
+import Texture;
+import Tilemap;
+import Window;
 
-empty = 0
-white = 1
-black = 2
+Int empty = 0;
+Int white = 1;
+Int black = 2;
 
-rules() {
-	showMessage("Вам нужно поменять черные и белые пешки местами.\nЧерные пешки ходят влево, белые - вправо.\n"
-			+ "Пешка может пойти на одну клетку вперед\nили перепрыгнуть через следующую пешку\nна свободное поле."
-			, "Правила игры")
-}
+Texture board = Texture("board.png");
+TileMap tileMap = TileMap(7, 1, Texture("pawns.png").cut(3));
 
 init() {
-	for(n = 0 ..< tileMap.cellXQuantity) tileMap[n] = n <= 2 ? white : (n >= 4 ? black : empty)
+	for(Int n = 0 ..< tileMap.cellXQuantity) tileMap[n] = n <= 2 ? white : (n >= 4 ? black : empty);
+	tell("Вам нужно поменять черные и белые пешки местами.\nЧерные пешки ходят влево, белые - вправо.\n"
+			+ "Пешка может пойти на одну клетку вперед\nили перепрыгнуть через следующую пешку\nна свободное поле."
+			, "Правила игры");
 }
 
-init()
-rules()
+init();
 
-Window("Six pawns", tileMap) {
+class Window2 extends Window {
 	render() {
-		tileMapX = (wnd.width - tileMap.cellWidth * 7) / 2
-		tileMapY = (wnd.height - tileMap.cellHeight) / 2 - 31
-		boardX = (wnd.width - board.width) / 2
-		boardY = (wnd.height - board.height) / 2 + 31
-		
-		board.draw(boardX, boardY)
-		$tileMap.draw(tileMapX, tileMapY)
+		board.draw((width - board.width) / 2, (height - board.height) / 2 + 31);
+		tileMap.draw((width - tileMap.cellWidth * 7) / 2, (height - tileMap.cellHeight) / 2 - 31);
 	}
 
 	onClick(Int x, Int y) {
-		tileNum = limit(tileMap.getTileX(x - tileMapX), 0, tileMap.cellXQuantity - 1)
-		tile = tileMap.getTile(tileNum, 0)
+		Int tileNum = limit(tileMap.tileX(x - tileMapX), 0, tileMap.cellXQuantity - 1);
+		Field tile = tileMap[tileNum, 0];
 		if(tile == white && tileNum < tileMap.cellXQuantity - 1) {
-			nextTile = tileMap.getTile(tileNum + 1, 0)
+			Field nextTile = tileMap[tileNum + 1, 0];
 			if(nextTile == empty) {
-				tileMap.setTile(tileNum, 0, empty)
-				tileMap.setTile(tileNum + 1, 0, tile)
-			} else if(tileNum < $cellXQuantity - 2 && tileMap.getTile(tileNum + 2, 0) == empty) {
-				tileMap.setTile(tileNum, 0, empty)
-				tileMap.setTile(tileNum + 2, 0, tile)
+				tileMap[tileNum, 0] = empty;
+				tileMap[tileNum + 1, 0] = white;
+			} else if(tileNum < tileMap.cellXQuantity - 2 && tileMap[tileNum + 2, 0] == empty) {
+				tileMap[tileNum, 0] = empty;
+				tileMap[tileNum + 2, 0] = white;
 			}
 		} else if(tile == black && tileNum > 0) {
-			prevTile = tileMap.getTile(tileNum - 1, 0)
+			Field prevTile = tileMap[tileNum - 1, 0];
 			if(prevTile == empty) {
-				tileMap.setTile(tileNum, 0, empty)
-				tileMap.setTile(tileNum - 1, 0, tile)
-			} else if(tileNum > 1 && tileMap.getTile(tileNum - 2, 0) == empty) {
-				tileMap.setTile(tileNum, 0, empty)
-				tileMap.setTile(tileNum - 2, 0, tile)
+				tileMap[tileNum, 0] = empty;
+				tileMap[tileNum - 1, 0] = black;
+			} else if(tileNum > 1 && tileMap[tileNum - 2, 0] == empty) {
+				tileMap[tileNum, 0] = empty;
+				tileMap[tileNum - 2, 0] = black;
 			}
 		}
 		
-		if(tileMap.getTile(0, 0) == white) return
-		for(n = 1 ..< $cellXQuantity) {
-			if(tileMap.getTile(n - 1, 0) == (tileMap.getTile(n, 0) == white ? black : white)) return
-		}
+		if(tileMap[0, 0] == white) return;
+		for(Int n = 1 ..< tileMap.cellXQuantity)
+			if(tileMap[n - 1, 0] == (tileMap[n, 0] == white ? black : white)) return;
 		
-		showMessage("Вы выиграли!")
-		init()
-		rules()
+		tell("Вы выиграли!");
+		init();
 	}
 }
+
+Window2("Six pawns", tileMap);

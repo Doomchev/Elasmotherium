@@ -1,9 +1,0 @@
-$Int: int
-$Int8: byte
-$Int16: short
-$Int32: int
-$Int64: long
-$Float: float
-$Float32: float
-$Float64: double
-end(): System.exit(0)

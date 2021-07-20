@@ -1,5 +1,7 @@
 package vm;
 
+import base.ElException;
+
 public class I64ThisEquate extends Command {
   int index;
 
@@ -8,7 +10,7 @@ public class I64ThisEquate extends Command {
   }
   
   @Override
-  public void execute() {
+  public void execute() throws ElException {
     currentCall.thisObject.fields[index].i64Set(i64Stack[stackPointer]);
     stackPointer--;
     currentCommand = nextCommand;

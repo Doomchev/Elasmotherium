@@ -1,4 +1,0 @@
-Color(Int, Int, Int, Int): Color.create(\0, \1, \2, \3)
-Color(Int, Int, Int): Color.create(\0, \1, \2)
-Color(Int, Int): Color.create(\0, \1)
-Color(Int): Color.create(\0)

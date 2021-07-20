@@ -1,5 +1,7 @@
 package parser;
 
+import base.ElException;
+
 public class ActionGoToSub extends Action {
   private final Sub sub;
   
@@ -8,10 +10,11 @@ public class ActionGoToSub extends Action {
   }
   
   @Override
-  public Action execute() {
-    if(log) log(toString() + "\n" + sub.name);
-    if(sub.action == null) actionError("Sub " + sub.name + " is not defined.");
-    return sub.action;
+  public void execute() throws ElException {
+    if(log) log(toString());
+    if(sub.action == null) throw new ElException(this, "Sub " + sub.name
+        + " is not defined.");
+    currentAction = sub.action;
   }
 
   @Override

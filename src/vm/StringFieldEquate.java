@@ -1,5 +1,7 @@
 package vm;
 
+import base.ElException;
+
 public class StringFieldEquate extends Command {
   int stackIndex, fieldIndex;
 
@@ -9,7 +11,7 @@ public class StringFieldEquate extends Command {
   }
   
   @Override
-  public void execute() {
+  public void execute() throws ElException {
     objectStack[stackIndex + currentCall.paramPosition].fields[fieldIndex]
         .stringSet(stringStack[stackPointer]);
     stackPointer--;

@@ -1,10 +1,12 @@
 package ast;
 
+import base.ElException;
 import java.util.LinkedList;
 
 public class Code extends Entity {
   public final LinkedList<Entity> lines = new LinkedList<>();
   public final LinkedList<Function> functions = new LinkedList<>();
+  public final LinkedList<ClassEntity> classes = new LinkedList<>();
   public Code parent;
   
   public Code() {
@@ -18,14 +20,9 @@ public class Code extends Entity {
   public ID getID() {
     return codeID;
   }
-  
-  @Override
-  public LinkedList<? extends Entity> getChildren() {
-    return lines;
-  }
 
   @Override
-  public void move(Entity entity) {
+  public void move(Entity entity) throws ElException {
     entity.moveToCode(this);
   }
 
@@ -40,23 +37,17 @@ public class Code extends Entity {
   }
 
   @Override
-  public void resolveLinks(Variables variables) {
-    variables = new Variables(variables, this);
-    for(Entity entity : lines) entity.resolveLinks(variables);
-  }
-
-  @Override
-  public void toByteCode() {
-    for(Entity entity : lines) entity.toByteCode();
-  }
-
-  @Override
   public String toString() {
     return listToString(lines);
   }
 
   @Override
-  public void print(String indent) {
-    for(Function function : functions) function.print(indent + " ");
+  public void print(String indent, String prefix) {
+    println(indent + prefix + "{");
+    String indent2 = indent + " ";
+    for(ClassEntity classEntity : classes) classEntity.print(indent2, "");
+    for(Function function : functions) function.print(indent2, "");
+    for(Entity line : lines) line.print(indent2, "");
+    println(indent + "}");
   }
 }

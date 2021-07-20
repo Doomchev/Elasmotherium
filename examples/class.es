@@ -1,8 +1,14 @@
-Player {
-	($firstName, $lastName, $age) {}
-	String firstName, lastName
-	I64 age
+class Player {
+	String firstName, lastName;
+	Int age;
+	
+	this(this.firstName, this.lastName, this.age);
+  
+  incrementAge() age++;
+	
+	String description() -> "\(firstName) \(lastName) is \(age) years old";
 }
 
-Player player = Player("John", "Smith", 36)
-print("\(player.firstName) \(player.lastName) is \(player.age) years old")
+Player player = Player("John", "Smith", 36);
+player.incrementAge();
+println(player.description);

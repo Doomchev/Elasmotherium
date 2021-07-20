@@ -1,0 +1,730 @@
+// symbols
+
+quotes = " "
+digit = 0-9
+letter = a-z A-Z
+idSymbol = digit letter
+fileSymbol = digit letter .
+spacing = tab space
+nothing = tab space newline
+op = + - * =
+
+
+
+// errors
+
+ERROR expected: \0 expected
+ERROR syntaxError: Syntax error
+ERROR invalid: Invalid \0
+ERROR error: \0
+
+
+
+// default symbol switch
+
+DEFAULT nothing: >>
+DEFAULT "/": >> slashComment
+
+
+
+// base
+
+root: CREATE(code) сodeLines()
+
+сodeLines: {
+  eof: RETURN
+  "}": RETURN
+  other: codeLine()
+}
+
+code: CREATE(code) {
+  "{": >> сodeLines() EXPECT("}") RETURN
+  other: codeLine
+}
+
+
+
+// comments
+
+slashComment: {
+  "/": >> {
+    eof: RETURN
+    newline: >> RETURN
+    "/", nothing, other: >>
+  }
+  "*": >> multiLineComment
+  other: expected("* or /")
+}
+
+multiLineComment: {
+  "*": >> {
+    "/": >> RETURN
+    other: multiLineComment
+  }
+	"/", nothing, other: >>
+  eof: expected("*/")
+}
+
+
+
+// code line
+
+codeLine: {
+  letter: id() SWITCHID {
+		"import": id() CREATE(module) codeLineEnd
+		"class": class() MOVE(class, code) RETURN
+		"for": for
+		"do": CREATE(block, do) code() SET(code, code) MOVE(block, code) RETURN
+		"if": EXPECT("(") CREATE(block, if) formula() SET(condition, formula) EXPECT(")") code() SET(code, code) {
+			letter: SAVEPOS id() SWITCHID {
+				"else": code() SET(else, code) MOVE(block, code) RETURN
+				other: MOVE(block, code) LOADPOS RETURN
+			}
+			other: MOVE(block, code) RETURN
+		}
+		"break": CREATE(break) MOVE(call, code) codeLineEnd
+		"return": CREATE(return) {
+			";": >> MOVE(call, code) RETURN
+			other: >> formula() MOVE(formula, call) MOVE(call, code) codeLineEnd
+		}
+		other: {
+			// Type var
+			// Type function
+			letter: CREATE(type) def
+			// Type<Type> var
+			// Type<Type> function
+			"<": >> type() def
+			// function(
+			"(": >> {
+				")": >> {
+					// function() codeLine;
+					// function() {code}
+					// function() -> value;
+					"{-", letter: CREATE(function) functionCode
+					// call();
+					// call().field
+					// call().method(
+					// call()[index]
+					other: CREATE(formula) CREATE(link) MOVE(link, formula) CREATE(parameters) callParameterEnd
+				}
+				//function(Type
+				//call(value
+				letter: id() {
+					//function(Type name
+					letter: CREATE(type) CREATE(function) id() CREATE(variable) MOVE(type, variable) functionParamDefault
+					//function(Type< name
+					//function(var
+					other: CREATE(link) CREATE(formula) CREATE(link) MOVE(link, formula) CREATE(parameters) CREATE(formula) MOVE(link, formula) separator() MOVE(formula, parameters) {
+						",": >> callParameter
+						")": >> callParameterEnd
+						other: expected(", or )")
+					}
+				}
+				other: CREATE(formula) CREATE(link) MOVE(link, formula) functionCall
+			}
+			// var operator;
+			// object.
+			// object[
+			other: CREATE(link) CREATE(formula) MOVE(link, formula) var
+		}
+  }
+  "[": >> CREATE(formula) list() MOVE(list, formula) {
+    "[": >> index
+    ".": >> dot
+    other: expected("[ or .")
+  }
+  ";": >> RETURN
+  other: syntaxError
+}
+
+codeLineEnd: EXPECT(";") RETURN
+
+// Type[<Type...>] var
+// Type[<Type...>] function
+def: id() {
+  // Type function(
+  "(": >> CREATE(function) MOVE(type, function) functionParameter
+  // Type var = value;
+  // Type var;
+  ",;=": varDefault
+  other: syntaxError
+}
+
+varDefault: CREATE(variable) {
+  // Type var = value
+  "=": >> formula() MOVE(formula, variable) varEnd
+  other: varEnd
+}
+
+varEnd: {
+  // Type var,
+  ",": >> DUP(type) MOVE(type, variable) MOVE(variable, code) id() varDefault
+  // Type var;
+  ";": >> MOVE(type, variable) MOVE(variable, code) RETURN
+  other: syntaxError
+}
+
+// Type function(Type
+functionParameter: {
+  // Type function(Type var
+  letter: id() {
+    // function(this.var
+    ".": >> SWITCHID {
+      "this": id() CREATE(thisvar) functionParamDefault
+      other: syntaxError
+    }
+    // function(Type var
+    letter: CREATE(type) id() CREATE(variable) MOVE(type, variable) functionParamDefault
+    // function(Type<Type> var
+    "<": >> type() id() CREATE(variable) MOVE(type, variable) functionParamDefault
+    // function(var = formula
+    "=": expected("Type")
+    // function(var,
+    // function(var)
+    ",)": expected("Type for parameter")
+    other: expected("Identifier or subtype")
+  }
+  // Type function()
+  ")": >> functionCode
+  other: expected("Identifier or )")
+}
+
+functionParamDefault: {
+  // Type[<Type>] var = default
+  "=": >> formula(call) MOVE(formula, variable) functionParamEnd
+  // Type[<Type>] var
+  other: functionParamEnd
+}
+
+functionParamEnd: MOVE(variable, function) {
+  // function(params, 
+  ",": >> functionParameter
+  // function(params)
+  ")": >> functionCode
+  other: expected(", or )")
+}
+
+functionCode: {
+  // [Type ]function([params]) -> expression;
+  "-": >> EXPECT(">") formula() CREATE(return) MOVE(formula, call) CREATE(code) MOVE(call, code) MOVE(code, function) functionEnd
+  // [Type ]function([params]) codeLine;
+  ";": functionEnd
+  other: code() MOVE(code, function) functionEnd
+}
+
+functionEnd: MOVE(function, code) RETURN
+
+
+
+// id
+
+id: {
+  letter: CLEAR >> {
+    idSymbol: >>
+    "/", nothing, other: CREATE(id) RETURN
+  }
+  other: expected("Identifier")
+}
+
+
+
+// for loop
+
+for: EXPECT("(") CREATE(block, for) {
+  ";": >> forCondition
+  "[": >> forIndex
+	letter: variable() {
+    // for(Type variable = formula
+    "=": >> formula() {
+      // for(Type variable = formula; condition; iterator)
+      ";": >> forCondition
+      // for(Type variable = from ..
+      ".": >> SET(variable, variable) SET(from, formula) {
+        // for(Type variable = from ..< to
+        "<": >> formula() SET(until, formula) forEnd
+        // for(Type variable = from .. to
+        other: formula() SET(to, formula) forEnd
+      }
+      other: syntaxError
+    }
+    // for(Type variable: collection)
+    ":": >> forCollection
+    // for([index]: collection)
+    "[": >> forIndex
+    other: error("Error in for syntax")
+  }
+	other: syntaxError
+}
+
+forCondition: SET(variable, variable) SET(init, formula) {
+  ";": >> forIterator
+  other: formula() SET(condition, formula) EXPECT(";") forIterator
+}
+
+forIterator: CREATE(code) statement() SET(iterator, code) forEnd
+
+forIndex: SET(item, variable) id() CREATE(type) id() CREATE(variable) MOVE(type, variable) SET(index, variable) EXPECT("]") EXPECT(":") forCollection
+
+forCollection: SET(item, variable) formula() SET(collection, formula) forEnd
+
+forEnd: EXPECT(")") code() SET(code, code) MOVE(block, code) RETURN
+
+
+
+// variable
+
+variable: id() {
+	// Type0<Type1>
+	"<": >> type()
+  // Type name =
+  letter: CREATE(type) varName
+  // name =
+  other: CREATE(variable) RETURN
+}
+
+varName: id() CREATE(variable) MOVE(type, variable) RETURN
+
+
+
+// subtype
+
+type: CREATE(type) subtype
+
+subtype: id() CREATE(type) {
+  "<": >> subtype()
+  ",": >> MOVE(type) subtype
+  ">": >> MOVE(type) RETURN
+  other: error("Error in type syntax")
+}
+
+
+
+// var
+
+var: {
+  "/": >> {
+    "/": slashComment() var
+    "*": slashComment() var
+    other: slashOperator
+  }
+  ".": >> dot
+  "(": >> functionCall
+  "[": >> index
+  op: operator
+  other: syntaxError
+}
+
+
+
+// dot
+
+dot: MOVE(dot, formula) {
+  letter: id() CREATE(link) MOVE(link, formula) var
+  other: expected("Identifier")
+}
+
+
+
+// index
+
+index: MOVE(at, formula) CREATE(parameters) indexValue
+
+indexValue: formula() MOVE(formula, parameters) {
+  ",": >> indexValue
+  "]": >> afterIndex
+  other: syntaxError
+}
+
+afterIndex: MOVE(parameters, formula) {
+  "/": >> {
+    "/": slashComment() afterIndex
+    "*": slashComment() afterIndex
+    other: slashOperator
+  }
+  "[": >> index
+  ".": >> dot
+  "(": >> functionCall
+  op: operator
+  other: syntaxError
+}
+
+
+
+// .method(
+// .object[indexes](
+
+functionCall: CREATE(parameters) {
+  ")": >> callParameterEnd
+  other: callParameter
+}
+
+callParameter: formula() MOVE(formula, parameters) {
+  ",": >> callParameter
+  ")": >> callParameterEnd
+  other: expected(", or )")
+}
+
+callParameterEnd: CREATE(call) {
+  "{": >> CREATE(id) CREATE(class) classBody() MOVE(class, call) afterCallParameterEnd
+  other: afterCallParameterEnd
+}
+
+afterCallParameterEnd: MOVE(call, formula) MOVE(parameters, formula) afterCallParameter
+
+afterCallParameter: {
+  "/": >> {
+    "/": slashComment() afterCallParameterEnd
+    "*": slashComment() afterCallParameterEnd
+    other: slashOperator
+  }
+  ".": >> dot
+  "(": >> functionCall
+  "[": >> index
+  op: operator
+  ";": MOVE(formula, code) RETURN
+  other: syntaxError
+}
+
+
+
+// operator
+
+operator: {
+  "=": >> CREATE(equate) setOperator
+  "+": >> {
+    "=": >> CREATE(add) setOperator
+    "+": >> CREATE(increment) MOVE(formula, call) MOVE(call, code) EXPECT(";") RETURN
+    other: invalid("operator")
+  }
+  "-": >> {
+    "=": >> CREATE(subtract) setOperator
+    "-": >> CREATE(decrement) MOVE(formula, call) MOVE(formula, code) EXPECT(";") RETURN
+    other: invalid("operator")
+  }
+  "*": >> EXPECT("=") CREATE(multiply) setOperator
+  other: RETURN
+}
+
+slashOperator: {
+  "=": CREATE(divide) setOperator
+  other: expected("/ or =")
+}
+
+setOperator: MOVE(formula, call) formula() MOVE(formula, call) MOVE(call, code) EXPECT(";") RETURN
+
+
+
+// formula
+
+formula: CREATE(formula) value
+value: {
+  ")]},": RETURN
+  digit: number() MOVE(value, formula) separator
+  letter: id() formulaId
+  "-": >> CREATE(negative) formula() MOVE(formula, call) MOVE(call, formula) separator
+  "!": >> formula() CREATE(not) MOVE(formula, call) MOVE(call, formula) separator
+  "(": >> formula() EXPECT(")") CREATE(brackets) MOVE(formula, call) MOVE(call, formula) separator
+  "[": >> list() MOVE(list, formula) separator
+  "{": >> map() MOVE(map, formula) separator
+  quotes: >> CLEAR string
+  other: expected("Value")
+}
+
+formulaId: {
+	// var <
+	// Type<
+	"<": >> {
+		// var0 < var1
+		// Type0<Type1
+		letter: id() {
+			// Type0<Type1<Type2
+			// Type0<Type1, Type2
+			// Type0<Type1>
+			"<,>": CREATE(type) CREATE(link) linkParameterSubtype
+			// var0 < var1 ...
+			other: CREATE(link) CREATE(link) MOVE(link, formula) MOVE(less, formula) MOVE(link, formula) separator
+		} 
+		// var < value
+		other: CREATE(link) MOVE(link, formula) separatorLess
+	}
+	"/", other: CREATE(link) MOVE(link, formula) separator
+}
+
+linkParameterSubtype: {
+  "<": >> subtype() MOVE(type) linkParameterEnd
+  other: linkParameterEnd
+}
+
+linkParameterEnd: MOVE(type, link) {
+  //Type0<Type1>
+  ">": >> MOVE(link, formula) EXPECT("(") parameters
+  ",": >> id() CREATE(type) linkParameter
+  other: SyntaxError
+}
+
+
+
+// separator
+
+separator: {
+  ".": >> {
+		".": RETURN
+		other: MOVE(dot, formula) value
+	}
+  "(": >> parameters
+  "[": >> valueIndex
+  "+": >> MOVE(addition, formula) value
+  "-": >> MOVE(subtraction, formula) value
+  "*": >> MOVE(multiplication, formula) value
+  "/": >> {
+    "/": slashComment() separator
+    "*": slashComment() separator
+    other: MOVE(division, formula) value
+  }
+  "=": >> {
+    "=": >> MOVE(equal, formula) value
+    other: invalid("separator")
+  }
+  "!": >> {
+    "=": >> MOVE(notEqual, formula) value
+    other: invalid("separator")
+  }
+  "<": >> separatorLess
+  ">": >> {
+    "=": >> MOVE(moreOrEqual, formula) value
+    other: MOVE(more, formula) value
+  }
+  "&": >> {
+    "&": >> MOVE(and, formula) value
+    other: MOVE(bitAnd, formula) value
+  }
+  "|": >> {
+    "|": >> MOVE(or, formula) value
+    other: MOVE(bitOr, formula) value
+  }
+  "?": >> MOVE(ifOp, formula) value
+  ":": >> MOVE(elseOp, formula) value
+	"%": >> MOVE(mod, formula) value
+  other: RETURN
+}
+
+valueIndex: MOVE(at, formula) CREATE(parameters) valueIndexValue
+
+valueIndexValue: formula() MOVE(formula, parameters) {
+  ",": >> valueIndexValue
+  "]": >> MOVE(parameters, formula) separator
+  other: syntaxError
+}
+
+separatorLess: {
+	"=": >> MOVE(lessOrEqual, formula) value
+	other: MOVE(less, formula) value
+}
+
+
+
+// parameters
+
+parameters: CREATE(parameters) {
+  ")": >> parameterEnd
+  other: parameter
+}
+
+parameter: formula() MOVE(formula, parameters) {
+  ",": >> parameter
+  ")": >> parameterEnd
+  other: expected(", or )")
+}
+
+parameterEnd: CREATE(call) MOVE(call, formula) MOVE(parameters, formula) separator
+
+
+
+// number
+
+number: CLEAR >> {
+  digit: >>
+  ".": {
+    digit: >>
+    "/", nothing, other: CREATE(const, float) RETURN
+  }
+  "/", nothing, other: CREATE(const, int) RETURN
+}
+
+
+
+// string
+
+string: {
+  "\": SKIP {
+    "(": CREATE(stringSequence) stringBrackets
+    other: ADD("\") >> string
+  }
+  quotes: CREATE(string) >> MOVE(string, formula) separator
+  "/", nothing, other: >>
+}
+
+stringBrackets: CREATE(string) >> MOVE(string, stringSequence) stringValue
+
+stringValue: formula() EXPECT(")") MOVE(formula, stringSequence) CLEAR stringSequence
+
+stringSequence: {
+  "\": SKIP {
+    "(": stringBrackets
+    other: ADD("\") >> stringSequence
+  }
+  quotes: CREATE(string) >> MOVE(string, stringSequence) MOVE(stringSequence, formula) separator
+  other: >>
+}
+
+
+
+// list
+
+list: CREATE(list) {
+	"]": >> RETURN
+	other: listItem
+}
+
+listItem: formula() MOVE(formula, list) {
+  ",": >> listItem
+  "]": >> RETURN
+  other: expected(", or ]")
+}
+
+
+
+//map
+
+map: CREATE(map) mapEntry
+mapEntry: {
+  letter: id() CREATE(entry) EXPECT(":") formula() MOVE(formula, entry) MOVE(entry, map)
+	",": >>
+  "}": >> MOVE(map, formula) separator
+  other: expected("Identifier or }")
+}
+
+
+
+// class definition
+
+class: id() CREATE(class) {
+  "<": >> classParameter
+  other: classExtends
+}
+
+classParameter: id() CREATE(type) MOVE(type, class) {
+  ",": >> classParameter
+  ">": >> classExtends
+  other: syntaxError
+}
+
+classExtends: {
+  letter: id() SWITCHID {
+    "extends": id() CREATE(link) MOVE(link, class) classBracket
+    other: syntaxError
+  }
+  other: classBracket
+}
+
+classBracket: {
+  "{": >> classBody
+  ";": >> RETURN
+  other: syntaxError
+}
+
+classBody: {
+  // Type var
+  // Type function
+  // method(
+  letter: id() SWITCHID {
+    // this(
+    "this": EXPECT("(") CREATE(constructor) methodParameter
+    other: {
+      letter: CREATE(type) id() {
+        // Type var,
+        // Type var;
+        // Type var = value
+        ",;=": classFieldValue
+        // Type method(
+        "(": >> CREATE(function) MOVE(type, function) methodParameter
+        other: syntaxError
+      }
+      // Type0<Type1> var
+			// Type0<Type1> method
+      "<": >> type() id() {
+				"(": >> CREATE(function) methodParameter
+				other: classFieldValue
+			}
+      // method(
+      "(": >> CREATE(function) methodParameter
+      other: syntaxError
+    }
+  }
+  "}": >> RETURN
+  other: syntaxError
+}
+
+classFieldValue: CREATE(variable) {
+  // Type field = value
+  "=": >> formula() MOVE(formula, variable) classFieldEnd
+  other: classFieldEnd
+}
+
+classFieldEnd: {
+  // Type field,
+  ",": >> DUP(type) MOVE(type, variable) id() classFieldValue
+  // Type field;
+  ";": >> classBody
+  other: syntaxError
+}
+
+methodParameter: {
+  // method(Type var
+  // method(this.var
+  letter: id() {
+    // method(this.var
+    ".": >> SWITCHID {
+      "this": id() CREATE(thisvar) methodParamDefault
+      other: syntaxError
+    }
+    // method(Type var
+    letter: CREATE(type) id() CREATE(variable) MOVE(type, variable) methodParamDefault
+    // method(Type<Type> var
+    "<": >> type() id() CREATE(variable) MOVE(type, variable) methodParamDefault
+    // method(var = formula
+    "=": expected("Type")
+    // method(var,
+    // method(var)
+    ",)": expected("Type for parameter")
+    other: expected("Identifier or subtype")
+  }
+  // Type method()
+  ")": >> methodCode
+  other: expected("Identifier or )")
+}
+
+methodParamDefault: {
+  // Type[<Type>] var = default
+  "=": >> formula() MOVE(formula, variable) methodParamEnd
+  // Type[<Type>] var
+  other: methodParamEnd
+}
+
+methodParamEnd: MOVE(variable, function) {
+  // method(params, 
+  ",": >> methodParameter
+  // method(params)
+  ")": >> methodCode
+  other: expected(", or )")
+}
+
+methodCode: {
+  // [Type ]method([params]) -> expression;
+  "-": >> EXPECT(">") formula() CREATE(return) MOVE(formula, call) CREATE(code) MOVE(call, code) MOVE(code, function) EXPECT(";") methodEnd
+  // [Type ]method([params]) codeLine;
+  ";": >> methodEnd
+  other: code() MOVE(code, function) methodEnd
+}
+
+methodEnd: MOVE(function, class) classBody

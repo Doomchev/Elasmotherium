@@ -11,7 +11,7 @@ public class Parameters extends Value {
   }
   
   @Override
-  public void move(Entity entity) {
+  public void move(Entity entity) throws base.ElException {
     entity.moveToParameters(this);
   }
 
@@ -23,11 +23,7 @@ public class Parameters extends Value {
   @Override
   public void moveToFunctionCall(FunctionCall call) {
     call.parameters.addAll(parameters);
-  }
-  
-  @Override
-  public LinkedList<? extends Entity> getChildren() {
-    return parameters;
+    call.priority = VALUE;
   }
 
   @Override

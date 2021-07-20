@@ -4,12 +4,13 @@ import ast.ClassEntity;
 import ast.Entity;
 import ast.ObjectEntity;
 import ast.Variable;
+import base.ElException;
 
 public abstract class Command extends VMBase {
   public Command nextCommand;
   public int number;
   
-  public abstract void execute();
+  public abstract void execute() throws ElException;
   
   public void setGoto(Command command) {
   }

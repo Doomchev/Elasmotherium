@@ -10,11 +10,14 @@ public class ActionSub extends Action {
   }
 
   @Override
-  public Action execute() {
-    if(log) log("SUB " + sub.name + (errorSub == null ? "" : " ON ERROR " 
-        + errorSub.name) + "\n" + sub.name);
+  public void execute() {
+    if(log) {
+      log("SUB " + sub.name
+        + (errorSub == null ? "" : " ON ERROR " + errorSub.name));
+      subIndent += "| ";
+    }
     returnStack.push(this);
-    return sub.action;
+    currentAction = sub.action;
   }
 
   @Override
