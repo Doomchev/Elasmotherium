@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Stack;
 
 public class Formula extends Entity {
-  public final static ID elseOpID = ID.get("elseOp");
+  public final static Function elseOp = Function.all.get(ID.get("elseOp"));
   
   public final LinkedList<Value> chunks = new LinkedList<>();
 
@@ -58,7 +58,6 @@ public class Formula extends Entity {
   
   private final Stack<Value> valueStack = new Stack<>();
   private final Stack<FunctionCall> opStack = new Stack<>();
-  private ID ifOp, elseOp;
   
   @Override
   public Value toValue() throws ElException {
@@ -66,13 +65,15 @@ public class Formula extends Entity {
     if(chunks.size() == 1) return chunks.getFirst();
     for(Value entity : chunks) {
       int priority = entity.getPriority();
-      if(priority == entity.VALUE) {
+      if(priority == Value.VALUE) {
         valueStack.push(entity);
         if(log) System.out.println(subIndent + "PUSH " + entity.toString()
             + " TO VALUE STACK");
       } else {
         while(!opStack.empty()) {
           if(opStack.lastElement().getPriority() >= priority) {
+            System.out.println(subIndent + opStack.lastElement().getPriority()
+              + ">=" + priority);
             popOp();
           } else {
             break;
@@ -99,24 +100,29 @@ public class Formula extends Entity {
       valueStack.pop().moveToFunctionCall(op);
       op.function = valueStack.pop();
       valueStack.push(op);
-      if(log) System.out.println(subIndent + "PUSH VALUES TO FUNCTION " + op.toString());
-    } else if (op.function.getID() == elseOpID) {
+      if(log) System.out.println(subIndent + "PUSH VALUES TO FUNCTION "
+          + op.toString());
+    } else if (op.function == elseOp) {
       Value value = valueStack.pop();
       valueStack.peek().toCall().parameters.add(value);
-      if(log) System.out.println(subIndent + "PUSH ELSEOP TO FUNCTION " + valueStack.peek().toString());
+      if(log) System.out.println(subIndent + "PUSH ELSEOP TO FUNCTION "
+          + valueStack.peek().toString());
     } else {
       op.parameters.addFirst(valueStack.pop());
       op.parameters.addFirst(valueStack.pop());
       valueStack.push(op);
-      if(log) System.out.println(subIndent + "PUSH VALUES TO OPERATOR " + op.toString());
+      if(log) System.out.println(subIndent + "PUSH VALUES TO OPERATOR "
+          + op.toString());
     }
   }
   
   public void print(String indent) {
     System.out.print("\n    ");
-    for(int i = 0; i < opStack.size(); i++) System.out.print(opStack.get(i).toString() + ", "); 
+    for(int i = 0; i < opStack.size(); i++)
+      System.out.print(opStack.get(i).toString() + ", "); 
     System.out.print("\n    ");
-    for(int i = 0; i < valueStack.size(); i++) System.out.print(valueStack.get(i).toString() + ", "); 
+    for(int i = 0; i < valueStack.size(); i++)
+      System.out.print(valueStack.get(i).toString() + ", "); 
     System.out.println();
   }
 

@@ -70,64 +70,7 @@ multiLineComment: {
 /// code line
 
 codeLine: {
-  letter: id() SWITCHID {
-		"import": id() CREATE(module) codeLineEnd
-		"class": class() MOVE(class, code) RETURN
-		"for": for
-		"do": CREATE(block, do) code() SET(code, code) MOVE(block, code) RETURN
-		"if": EXPECT("(") CREATE(block, if) formula() SET(condition, formula) EXPECT(")") code() SET(code, code) {
-			letter: SAVEPOS id() SWITCHID {
-				"else": code() SET(else, code) MOVE(block, code) RETURN
-				other: MOVE(block, code) LOADPOS RETURN
-			}
-			other: MOVE(block, code) RETURN
-		}
-		"break": CREATE(break) MOVE(call, code) codeLineEnd
-		"return": CREATE(return) {
-			";": >> MOVE(call, code) RETURN
-			other: >> formula() MOVE(formula, call) MOVE(call, code) codeLineEnd
-		}
-		other: {
-			// Type var
-			// Type function
-			letter: CREATE(type) def
-			// Type<Type> var
-			// Type<Type> function
-			"<": >> type() def
-			// function(
-			"(": >> {
-				")": >> {
-					// function() codeLine;
-					// function() {code}
-					// function() -> value;
-					"{-", letter: CREATE(function) functionCode
-					// call();
-					// call().field
-					// call().method(
-					// call()[index]
-					other: CREATE(formula) CREATE(link) MOVE(link, formula) CREATE(parameters) callParameterEnd
-				}
-				//function(Type
-				//call(value
-				letter: id() {
-					//function(Type name
-					letter: CREATE(type) CREATE(function) id() CREATE(variable) MOVE(type, variable) functionParamDefault
-					//function(Type< name
-					//function(var
-					other: CREATE(link) CREATE(formula) CREATE(link) MOVE(link, formula) CREATE(parameters) CREATE(formula) MOVE(link, formula) separator() MOVE(formula, parameters) {
-						",": >> callParameter
-						")": >> callParameterEnd
-						other: expected(", or )")
-					}
-				}
-				other: CREATE(formula) CREATE(link) MOVE(link, formula) functionCall
-			}
-			// var operator;
-			// object.
-			// object[
-			other: CREATE(link) CREATE(formula) MOVE(link, formula) var
-		}
-  }
+  letter: id() codeLineStartToken
   "[": >> CREATE(formula) list() MOVE(list, formula) {
     "[": >> index
     ".": >> dot
@@ -135,6 +78,63 @@ codeLine: {
   }
   ";": >> RETURN
   other: syntaxError
+}
+
+codeLineStartToken: SWITCHID {
+	"import": id() CREATE(module) codeLineEnd
+	"do": CREATE(block, do) code() SET(code, code) MOVE(block, code) RETURN
+	"if": EXPECT("(") CREATE(block, if) formula() SET(condition, formula) EXPECT(")") code() SET(code, code) {
+		letter: SAVEPOS id() SWITCHID {
+			"else": code() SET(else, code) MOVE(block, code) RETURN
+			other: MOVE(block, code) LOADPOS RETURN
+		}
+		other: MOVE(block, code) RETURN
+	}
+	"break": CREATE(break) MOVE(call, code) codeLineEnd
+	"return": CREATE(return) {
+		";": >> MOVE(call, code) RETURN
+		other: >> formula() MOVE(formula, call) MOVE(call, code) codeLineEnd
+	}
+	other: {
+		// Type var
+		// Type function
+		letter: CREATE(type) def
+		// Type<Type> var
+		// Type<Type> function
+		"<": >> type() def
+		// function(
+		"(": >> {
+			")": >> {
+				// function() codeLine;
+				// function() {code}
+				// function() -> value;
+				"{-", letter: CREATE(function) functionCode
+				// call();
+				// call().field
+				// call().method(
+				// call()[index]
+				other: CREATE(formula) CREATE(link) MOVE(link, formula) CREATE(parameters) callParameterEnd
+			}
+			//function(Type
+			//call(value
+			letter: id() {
+				//function(Type name
+				letter: CREATE(type) CREATE(function) id() CREATE(variable) MOVE(type, variable) functionParamDefault
+				//function(Type< name
+				//function(var
+				other: CREATE(link) CREATE(formula) CREATE(link) MOVE(link, formula) CREATE(parameters) CREATE(formula) MOVE(link, formula) separator() MOVE(formula, parameters) {
+					",": >> callParameter
+					")": >> callParameterEnd
+					other: expected(", or )")
+				}
+			}
+			other: CREATE(formula) CREATE(link) MOVE(link, formula) functionCall
+		}
+		// var operator;
+		// object.
+		// object[
+		other: CREATE(link) CREATE(formula) MOVE(link, formula) var
+	}
 }
 
 codeLineEnd: EXPECT(";") RETURN
@@ -225,49 +225,6 @@ id: {
   }
   other: expected("Identifier")
 }
-
-
-
-/// for loop
-
-for: EXPECT("(") CREATE(block, for) {
-  ";": >> forCondition
-  "[": >> forIndex
-	letter: variable() {
-    // for(Type variable = formula
-    "=": >> formula() {
-      // for(Type variable = formula; condition; iterator)
-      ";": >> forCondition
-      // for(Type variable = from ..
-      ".": >> SET(variable, variable) SET(from, formula) {
-        // for(Type variable = from ..= to
-        "=": >> formula() SET(to, formula) forEnd
-        // for(Type variable = from .. to
-        other: formula() SET(until, formula) forEnd
-      }
-      other: syntaxError
-    }
-    // for(Type variable: collection)
-    ":": >> forCollection
-    // for([index]: collection)
-    "[": >> forIndex
-    other: error("Error in for syntax")
-  }
-	other: syntaxError
-}
-
-forCondition: SET(variable, variable) SET(init, formula) {
-  ";": >> forIterator
-  other: formula() SET(condition, formula) EXPECT(";") forIterator
-}
-
-forIterator: CREATE(code) statement() SET(iterator, code) forEnd
-
-forIndex: SET(item, variable) id() CREATE(type) id() CREATE(variable) MOVE(type, variable) SET(index, variable) EXPECT("]") EXPECT(":") forCollection
-
-forCollection: SET(item, variable) formula() SET(collection, formula) forEnd
-
-forEnd: EXPECT(")") code() SET(code, code) MOVE(block, code) RETURN
 
 
 
@@ -602,128 +559,3 @@ mapEntry: {
   "}": >> MOVE(map, formula) separator
   other: expected("Identifier or }")
 }
-
-
-
-/// class definition
-
-class: id() CREATE(class) {
-  "<": >> classParameter
-  other: classExtends
-}
-
-classParameter: id() CREATE(type) MOVE(type, class) {
-  ",": >> classParameter
-  ">": >> classExtends
-  other: syntaxError
-}
-
-classExtends: {
-  letter: id() SWITCHID {
-    "extends": id() CREATE(link) MOVE(link, class) classBracket
-    other: syntaxError
-  }
-  other: classBracket
-}
-
-classBracket: {
-  "{": >> classBody
-  ";": >> RETURN
-  other: syntaxError
-}
-
-classBody: {
-  // Type var
-  // Type function
-  // method(
-  letter: id() SWITCHID {
-    // this(
-    "this": EXPECT("(") CREATE(constructor) methodParameter
-    other: {
-      letter: CREATE(type) id() {
-        // Type var,
-        // Type var;
-        // Type var = value
-        ",;=": classFieldValue
-        // Type method(
-        "(": >> CREATE(function) MOVE(type, function) methodParameter
-        other: syntaxError
-      }
-      // Type0<Type1> var
-			// Type0<Type1> method
-      "<": >> type() id() {
-				"(": >> CREATE(function) methodParameter
-				other: classFieldValue
-			}
-      // method(
-      "(": >> CREATE(function) methodParameter
-      other: syntaxError
-    }
-  }
-  "}": >> RETURN
-  other: syntaxError
-}
-
-classFieldValue: CREATE(variable) {
-  // Type field = value
-  "=": >> formula() MOVE(formula, variable) classFieldEnd
-  other: classFieldEnd
-}
-
-classFieldEnd: {
-  // Type field,
-  ",": >> DUP(type) MOVE(type, variable) id() classFieldValue
-  // Type field;
-  ";": >> classBody
-  other: syntaxError
-}
-
-methodParameter: {
-  // method(Type var
-  // method(this.var
-  letter: id() {
-    // method(this.var
-    ".": >> SWITCHID {
-      "this": id() CREATE(thisvar) methodParamDefault
-      other: syntaxError
-    }
-    // method(Type var
-    letter: CREATE(type) id() CREATE(variable) MOVE(type, variable) methodParamDefault
-    // method(Type<Type> var
-    "<": >> type() id() CREATE(variable) MOVE(type, variable) methodParamDefault
-    // method(var = formula
-    "=": expected("Type")
-    // method(var,
-    // method(var)
-    ",)": expected("Type for parameter")
-    other: expected("Identifier or subtype")
-  }
-  // Type method()
-  ")": >> methodCode
-  other: expected("Identifier or )")
-}
-
-methodParamDefault: {
-  // Type[<Type>] var = default
-  "=": >> formula() MOVE(formula, variable) methodParamEnd
-  // Type[<Type>] var
-  other: methodParamEnd
-}
-
-methodParamEnd: MOVE(variable, function) {
-  // method(params, 
-  ",": >> methodParameter
-  // method(params)
-  ")": >> methodCode
-  other: expected(", or )")
-}
-
-methodCode: {
-  // [Type ]method([params]) -> expression;
-  "-": >> EXPECT(">") formula() CREATE(return) MOVE(formula, call) CREATE(code) MOVE(call, code) MOVE(code, function) EXPECT(";") methodEnd
-  // [Type ]method([params]) codeLine;
-  ";": >> methodEnd
-  other: code() MOVE(code, function) methodEnd
-}
-
-methodEnd: MOVE(function, class) classBody

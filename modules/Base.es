@@ -25,11 +25,6 @@ class Map<KeyType, ValueType> {
 	at(KeyType key, ValueType value);
 }
 
-class Set<ElementType> {
-	Int size();
-	add(ElementType element);
-}
-
 class Char;
 class String {
 	Int size();

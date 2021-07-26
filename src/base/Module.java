@@ -67,6 +67,10 @@ public class Module extends ParserBase {
       error("I/O error", "Cannot read " + fileName + ".");
     }
   }
+  
+  public void process() throws ElException {
+    code.processWithoutScope();
+  }
 
   public void print() {
     code.print("", fileName + " ");

@@ -22,7 +22,7 @@ public class ActionSet extends Action {
         + value.toString() + ")");
     currentAction = this;
     Entity val = value.pop().toValue();
-    EntityStack.block.peek().entries.add(id, val);
+    EntityStack.block.peek().entries.put(id, val);
     currentAction = nextAction;
   }
 

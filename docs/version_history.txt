@@ -1,20 +1,18 @@
-// plans
-  * PE: Add parameters to all entities
-  * PE: Convert entities' fields to parameters
-  
-
+2021.07.26 (version 0.19.1)
+	+ PE: Hardcoded basic functions priority.
+	* PE: Formula resolving restored.
 
 2021.07.20 (version 0.19)
-  + PE: multiple symbols in symbolswitch token
-  + PE: multiple tokens for symbolswitch
-  + PE: default symbolswitch entries
+  + PE: multiple symbols in symbolswitch token.
+  + PE: multiple tokens for symbolswitch.
+  + PE: default symbolswitch entries.
   * Error handling system.
-  * PE: spaces in error messages
-  * PE: spaces inside brackets
-  * PE: : and + in tokens
-  * PC: done refactoring
-  * Restructurized file / directory system
-  - Export system
+  * PE: spaces in error messages.
+  * PE: spaces inside brackets.
+  * PE: : and + in tokens.
+  * PC: done refactoring.
+  * Restructurized file / directory system.
+  - Export system.
   - Old links resolving system.
   - Old bytecode generation system.
 

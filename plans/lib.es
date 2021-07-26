@@ -4,7 +4,7 @@ Number {
 		return(no)
 	}
 }
-
+	
 List<ValueType> {
 	size -> 0
 	ValueType value

@@ -1,23 +1,18 @@
 package ast;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 
 public class FunctionCall extends Value {
   public Entity function, type;
   public boolean thisFlag;
-  public byte priority = 0;
+  public byte priority;
   public final LinkedList<Entity> parameters = new LinkedList<>();
 
   public FunctionCall(Function function) {
     this.function = function;
+    this.priority = function == null ? 17 : function.priority;
   }
 
-  public FunctionCall(Function function, Entity... params) {
-    this.function = function;
-    parameters.addAll(Arrays.asList(params));
-  }
-  
   @Override
   public ID getID() {
     return callID;

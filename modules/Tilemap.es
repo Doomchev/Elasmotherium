@@ -3,6 +3,7 @@ import Drawable;
 class Tilemap extends Drawable {
   Int cellXQuantity, cellYQuantity, cellWidth, cellHeight;
   Array<Int> tiles;
+	Array<Image> images;
 
   this(this.cellXQuantity, this.cellYQuantity, this.images, Int tileNumber = 0) {
     Int tilesQuantity = images.size;
@@ -15,8 +16,8 @@ class Tilemap extends Drawable {
 	Int height() -> cellHeight * cellYQuantity;
   
   draw(Int x = 0, Int y = 0) {
-    for(Int tileY = 0 ..< cellYQuantity)
-			for(Int tileX = 0 ..< cellXQuantity)
+    for(Int tileY = 0 .. cellYQuantity)
+			for(Int tileX = 0 .. cellXQuantity)
 				images[tiles[tileX + tileY * cellXQuantity]].draw(x + tileX * cellWidth, y + tileY * cellHeight);
   }
   

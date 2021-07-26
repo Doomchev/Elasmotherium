@@ -1,3 +1,3 @@
-class Rectangle extends Structure {
-	Float x, y, width, height;
+class Rectangle<AnyFloat CoordsFloat> extends Structure {
+	CoordFloat x, y, width, height;
 }

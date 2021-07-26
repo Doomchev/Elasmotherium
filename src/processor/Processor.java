@@ -7,6 +7,7 @@ import static base.Base.currentFileName;
 import static base.Base.error;
 import static base.Base.lineNum;
 import base.ElException;
+import base.Module;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,8 +19,8 @@ public class Processor extends ParserBase {
   private final int DECLARATIONS = 0, OPERATORS = 1, BLOCKS = 2, FUNCTIONS = 3;
   private int mode = DECLARATIONS;
   
-  public Processor load(String fileName) {
-    currentFileName = fileName;
+  public static Processor load(String fileName) {
+    /*currentFileName = fileName;
     try {
       reader = new BufferedReader(new FileReader(fileName));
       String line;
@@ -68,11 +69,17 @@ public class Processor extends ParserBase {
       error("I/O error", fileName + " not found.");
     } catch (IOException ex) {
       error("I/O error", fileName + "Cannot read " + fileName + ".");
-    /*} catch (ElException ex) {
-      error("Error in processor code", currentFileName + " (" + lineNum + ")\n"
-      + ex.message);*/
-    }
+    //} catch (ElException ex) {
+    //error("Error in processor code", currentFileName + " (" + lineNum + ")\n"
+    //+ ex.message);
+    }*/
     
-    return this;
+    return new Processor();
+  }
+  
+  public void process(Module module) throws ElException {
+    currentProcessor = this;
+    pushScope();
+    module.process();
   }
 }

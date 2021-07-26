@@ -7,15 +7,23 @@ class Color extends I32 {
 	this(String code) {
 		Int size = code.size;
 		if(size < 6) {
-			red = code[0].fromHex() * 17;
-			green = code[1].fromHex() * 17;
-			blue = code[2].fromHex() * 17;
-			alpha = size >= 4 ? code[3].fromHex() * 17 : 255;
+			red = fromHex(code[0]) * 17;
+			green = fromHex(code[1]) * 17;
+			blue = fromHex(code[2]) * 17;
+			alpha = size >= 4 ? fromHex(code[3]) * 17 : 255;
 		} else {
-			red = code[0..2].fromHex();
-			green = code[2..4].fromHex();
-			blue = code[4..6].fromHex();
-			alpha = size >= 8 ? code[6..8].fromHex() : 255;
+			red = fromHex(code[0..2]);
+			green = fromHex(code[2..4]);
+			blue = fromHex(code[4..6]);
+			alpha = size >= 8 ? fromHex(code[6..8]) : 255;
 		}
+	}
+	
+	U8 fromHex(Char char) -> "0123456789ABCDEF".indexOf(char);
+
+	U8 fromHex(String string) {
+		U8 value = 0;
+		for(Int n = 0 ..< size) value = (value << 4) + fromHex(string[n]);
+		return value;
 	}
 }

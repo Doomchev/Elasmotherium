@@ -19,8 +19,48 @@ public class Function extends NamedEntity {
     this.name = name;
   }
   
+  public Function(ID name, byte priority) {
+    this.name = name;
+    this.priority = priority;
+  }
+  
   public Function() {
     this.isConstructor = true;
+  }
+  
+  private static void create(String name, int priority) {
+    ID id = ID.get(name);
+    all.put(id, new Function(id, (byte) priority));
+  }
+  
+  static {
+    create("increment", 3);
+    create("decrement", 3);
+    create("iDivide", 3);
+    create("mode", 3);
+    create("subtract", 3);
+    create("multiply", 3);
+    create("divide", 3);
+    create("brackets", 18);
+    create("negative", 16);
+    create("not", 16);
+    create("iDivision", 14);
+    create("mod", 14);
+    create("division", 14);
+    create("subtraction", 13);
+    create("multiplication", 14);
+    create("addition", 13);
+    create("less", 8);
+    create("more", 8);
+    create("lessOrEqual", 8);
+    create("moreOrEqual", 8);
+    create("equal", 7);
+    create("notEqual", 7);
+    create("or", 5);
+    create("and", 6);
+    create("ifOp", 4);
+    create("elseOp", 4);
+    create("add", 3);
   }
   
   @Override
@@ -56,7 +96,7 @@ public class Function extends NamedEntity {
 
   @Override
   public String toString() {
-    return isConstructor ? "this" : name.string;
+    return isConstructor ? "this" : name.string;// + "." + priority;
   }
   
   @Override

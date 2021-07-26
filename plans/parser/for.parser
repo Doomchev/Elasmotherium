@@ -1,0 +1,38 @@
+codeLineStartToken("for"): EXPECT("(") CREATE(block, for) {
+  ";": >> forCondition
+  "[": >> forIndex
+	letter: variable() {
+    // for(Type variable = formula
+    "=": >> formula() {
+      // for(Type variable = formula; condition; iterator)
+      ";": >> forCondition
+      // for(Type variable = from ..
+      ".": >> SET(variable, variable) SET(from, formula) {
+        // for(Type variable = from ..= to
+        "=": >> formula() SET(to, formula) forEnd
+        // for(Type variable = from .. to
+        other: formula() SET(until, formula) forEnd
+      }
+      other: syntaxError
+    }
+    // for(Type variable: collection)
+    ":": >> forCollection
+    // for([index]: collection)
+    "[": >> forIndex
+    other: error("Error in for syntax")
+  }
+	other: syntaxError
+}
+
+forCondition: SET(variable, variable) SET(init, formula) {
+  ";": >> forIterator
+  other: formula() SET(condition, formula) EXPECT(";") forIterator
+}
+
+forIterator: CREATE(code) statement() SET(iterator, code) forEnd
+
+forIndex: SET(item, variable) id() CREATE(type) id() CREATE(variable) MOVE(type, variable) SET(index, variable) EXPECT("]") EXPECT(":") forCollection
+
+forCollection: SET(item, variable) formula() SET(collection, formula) forEnd
+
+forEnd: EXPECT(")") code() SET(code, code) MOVE(block, code) RETURN

@@ -35,6 +35,19 @@ public class Code extends Entity {
   public void moveToVariable(Variable variable) {
     variable.code = this;
   }
+  
+  @Override
+  public void process() throws ElException {
+    pushScope();
+    processWithoutScope();
+    popScope();
+  }
+  
+  public void processWithoutScope() throws ElException {
+    for(Entity line: lines) line.process();
+    for(ClassEntity classEntity : classes) classEntity.process();
+    for(Function function : functions) function.process();
+  }
 
   @Override
   public String toString() {

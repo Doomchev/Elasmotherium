@@ -1,45 +1,41 @@
 class Object;
-class Structure;
+
 class Class;
-class I8 extends Structure;
-class U8 extends Structure;
-class I16 extends Structure;
-class U16 extends Structure;
-class I32 extends Structure;
-class U32 extends Structure;
-class I32 extends Structure;
-class U32 extends Structure;
-class F32 extends Structure;
-class F64 extends Structure;
-alias Int, I64;
-alias Float, F64;
+class Number {
+	final Number min, max;
+}
+struc I8 extends Number {I8 min = -128, max = 127;}
+struc U8 extends Number {U8 min = 0, max = 255;}
+struc I16 extends Number {I16 min = -32768, max = 32767;}
+struc U16 extends Number {U16 min = 0, max = 65536;}
+struc I32 extends Number {I32 min = -2147483648, max = 2147483647;}
+struc U32 extends Number {U32 min = 0, max = 4294967295;}
+struc I64 extends Number {I64 min = -9223372036854775808, max = 9223372036854775807;}
+struc U64 extends Number {U64 min = 0, max = 18446744073709551615;}
+struc F32 extends Number {F32 min = -3.4028234e38, max = 3.4028234e38;}
+struc F64 extends Number {F64 min = -1.7976931348623157e308, max = 1.7976931348623157e308;}
+alias Int I64;
+alias Float F64;
+
 enum Bool {no, yes};
 
-class Array<ElementType> extends Value {
-	Int size();
-	ElementType at(Int index);
-	at(Int index, ElementType value);
-}
+classlist AnyInt {I64, U64, I8, U8, I16, U16, I32, U32}
+classlist AnyFloat {F64, F32}
+classlist AnyNumber {AnyInt, AnyFloat}
 
-class List<ElementType> extends Collection {
+class List<ElementType> {
+	ElementType first();
+	ElementType last();
 	addLast(Element element);
 }
 
-class Map<ElementType> extends Collection {
+class Map<ElementType> {
 	addLast(Element element);
 }
 
+class AChar extends U8;
 class Char extends U16;
-class String extends Array<Char> {
-	Int fromHex() {
-		value = 0;
-		for(n = 0 ..< $size) {
-			digit = "0123456789ABCDEF".indexOf(this[n]);
-			value = (value << 4) + (digit < 0 ? 0 : digit);
-		}
-		return value;
-	}
-}
+classlist AnyChar {Char, AChar}
 
 print(String message);
 String ask(String message);

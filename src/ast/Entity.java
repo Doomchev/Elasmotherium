@@ -145,6 +145,12 @@ public abstract class Entity extends ParserBase {
   public void increment() throws ElException {
     throw new ElException("Cannot increment ", this);
   }
+  
+  
+  
+  public void process() throws ElException {
+    throw new ElException("Cannot process ", this);
+  }
 
   @Override
   public String toString() {

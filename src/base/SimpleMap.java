@@ -20,7 +20,13 @@ public class SimpleMap<K, V> {
     }
   }
   
-  public void add(K key, V value) {
-    entries.add(new Entry<>(key, value));
+  public void put(K key, V value) {
+    entries.addFirst(new Entry<>(key, value));
+  }
+  
+  public V get(K key) {
+    for(Entry<K, V> entry: entries)
+      if(entry.key.equals(key)) return entry.value;
+    return null;
   }
 }

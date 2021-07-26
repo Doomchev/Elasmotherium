@@ -1,7 +1,31 @@
-Number: I64, F64
-Concatenable: I64, F64, String
-Any: I64, F64, String, Bool, Class, Object
-Additional: Void
+classlist Number {I64, F64}
+classlist Concatenable {I64, F64, String}
+classlist Any {I64, F64, String, Bool, Class, Object}
+
+var.dot(object, id) {
+	class = resolveValue(value);
+	fieldClass = field(class, id);
+	varType = field;
+}
+
+var.id(id) {
+	object = 
+}
+
+value.id(id) {
+	if(id = "this") 
+}
+
+equate(var, x) {
+	varClass = resolveVar(var);
+	valueClass = resolveValue(x, varClass);
+	switch(varClass) {
+		case I64: 
+			
+	}
+}
+
+equate(
 
 var.id() {
 	
@@ -13,13 +37,6 @@ var.dot(object, field) {
 	return(fieldClass)
 }
 
-equate(var, x) {
-	varClass = var.resolve(var)
-	valueClass = resolve(x, varClass)
-	switch(varClass) {
-		case I64: 
-	}
-}
 
 [increment, decrement]:3(var) {
 	varResolve var, varType
