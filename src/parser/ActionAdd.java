@@ -1,5 +1,8 @@
 package parser;
 
+import base.ElException;
+import static parser.Rules.stringParam;
+
 public class ActionAdd extends Action {
   private final String string;
 
@@ -7,6 +10,11 @@ public class ActionAdd extends Action {
     this.string = string;
   }
 
+  @Override
+  public ActionAdd create(String params) throws ElException {
+    return new ActionAdd(stringParam(params));
+  }
+  
   @Override
   public void execute() {
     if(tokenStart < textPos) prefix += text.substring(tokenStart, textPos);

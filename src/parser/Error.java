@@ -14,6 +14,11 @@ public class Error extends Action {
   }
 
   @Override
+  public ActionClear create(String params) throws ElException {
+    return new ActionClear();
+  }
+  
+  @Override
   public void execute() throws ElException {
     Sub errorActionSub = getErrorActionSub();
     if(errorActionSub == null) throw new ElException(this, errorText);

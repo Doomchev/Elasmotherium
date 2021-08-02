@@ -4,7 +4,7 @@ import base.ElException;
 
 public class ActionSwitchSymbol extends ActionSwitch {
   public Action[] action = new Action[130];
-
+  
   @Override
   public void setStringAction(String token, Action action) throws ElException {
     for(int i = 0; i < token.length(); i++)

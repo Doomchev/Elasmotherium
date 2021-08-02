@@ -2,56 +2,117 @@ classlist Number {I64, F64}
 classlist Concatenable {I64, F64, String}
 classlist Any {I64, F64, String, Bool, Class, Object}
 
-var.dot(object, id) {
-	class = resolveValue(value);
-	fieldClass = field(class, id);
-	varType = field;
+Type variable = v1;
+
+variable = v1;
+leftSide.field = v1;
+leftSide[indexes] = v1;
+
+leftSide = leftSide.field
+leftSide = leftSide.function(params)
+leftSide = leftSide[indexes]
+
+
+
+variable() {
+	addToScope(name);
+	value.resolve(type);
+	command("variable", type, "equate");
 }
 
-var.id(id) {
-	object = 
+
+
+equate() {
+	v0.resolveVar("equate", v1);
 }
 
-value.id(id) {
-	if(id = "this") 
+add() {
+	v0.resolveVar("add", v1);
 }
 
-equate(var, x) {
-	varClass = resolveVar(var);
-	valueClass = resolveValue(x, varClass);
-	switch(varClass) {
-		case I64: 
-			
-	}
+subtract() {
+	v0.resolveVar("subtract", v1);
 }
 
-equate(
+multiply() {
+	v0.resolveVar("multiply", v1);
+}
 
-var.id() {
+divide() {
+	v0.resolveVar("divide", v1);
+}
+
+increment() {
+	v0.resolveVar("increment");
+}
+
+decrement() {
+	v0.resolveVar("decrement");
+}
+
+
+
+id.resolveVar(function, value) {
+	object = getFromScope(name);
+	object.resolveVar(function, value);
+}
+
+variable.resolveVar(function, value) {
+	value.resolve(type);
+	command("variable", type, function);
+}
+
+dot.resolveVar(function, value) {
+	objectType = v0.resolveObject();
+	fieldType = objectType.getField(field);
+	command("field", fieldType, function);
+}
+
+object.resolveVar(function, value) {
+	
+	command("field", fieldType, function);
+}
+
+
+
+id.resolveObject() {
+	command("object", fieldType, function);
+}
+
+
+id.resolveObject() {
+	object = getFromScope(name);
+	return object.resolveObject();
+}
+
+variable.resolveObject() {
+	command("ObjectStackPush");
+	return type;
+}
+
+object.resolveObject() {
 	
 }
 
-var.dot(object, field) {
-	objectClass = var.resolve(object)
-	fieldClass = getField(objectClass, field)
-	return(fieldClass)
+dot.resolveObject() {
+	
 }
 
 
-[increment, decrement]:3(var) {
-	varResolve var, varType
-	func var
+[increment, decrement]:3() {
+	v0Resolve v0, v0Type
+	func v0
 }
 
-[iDivide, mode]:3(var, x) {
+[iDivide, mode]:3(v0, x) {
 	resolve x
-	func var
+	func v0
 }
 
-[subtract, multiply, divide]:3(var, x) {
+[subtract, multiply, divide]:3(v0, x) {
 	resolve x
-	convert x, var
-	func var
+	convert x, v0
+	func v0
 }
 
 brackets:18(x) {
@@ -143,11 +204,11 @@ ifOp(Bool condition, Any ifTrue, Any ifFalse) {
 	return max(ifTrue, ifFalse)
 }
 
-add(Variable.Concatenable var, Concatenable x) {
+add(variable.Concatenable v0, Concatenable x) {
 	priority 3
 	resolve x
-	convert x, var
-	add var
+	convert x, v0
+	add v0
 }
 
 #blocks

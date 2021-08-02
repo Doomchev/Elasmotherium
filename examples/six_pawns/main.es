@@ -48,7 +48,7 @@ class Window2 extends Window {
 		}
 		
 		if(tileMap[0, 0] == white) return;
-		for(Int n = 1 ..< tileMap.cellXQuantity)
+		for(Int n = 1 .. tileMap.cellXQuantity)
 			if(tileMap[n - 1, 0] == (tileMap[n, 0] == white ? black : white)) return;
 		
 		tell("Вы выиграли!");

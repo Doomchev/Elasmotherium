@@ -121,6 +121,33 @@ public class Rules extends ParserBase {
     //System.out.println(commands + " = " + listToString(commandList));
     return commandList;
   }
+
+  public static String stringParam(String str) throws ElException {
+    if(!str.endsWith("\"") || str.length() < 2) throw new ElException(
+        "Invalid token");
+    return str.substring(1, str.length() - 1);
+  }
+  
+  public static final HashMap<String, Action> actions = new HashMap<>();
+  
+  static {
+    actions.put("RETURN", new ActionReturn());
+    actions.put("SKIP", new ActionSkip());
+    actions.put("SAVEPOS", new ActionSavePos());
+    actions.put("LOADPOS", new ActionLoadPos());
+    actions.put("ADD", new ActionAdd(""));
+    actions.put("EXPECT", new ActionExpect(' '));
+    actions.put("CLEAR", new ActionClear());
+    actions.put("CREATE", new ActionCreate(null, null, null));
+    actions.put("DUP", new ActionDup(null));
+    actions.put("COPY", new ActionMove(null, null, true));
+    actions.put("MOVE", new ActionMove(null, null, false));
+    actions.put("SET", new ActionSet(null, null));
+    actions.put("REMOVE", new ActionRemove(null));
+    actions.put(">>", new ActionForward());
+    actions.put("}", new ActionSwitchSymbol());
+    actions.put("SWITCHID", new ActionSwitchID());
+  }
   
   private Action actionChain(String commands, Action lastAction, Sub currentSub)
       throws IOException, ElException {
@@ -135,106 +162,9 @@ public class Rules extends ParserBase {
           , command.length() - 1);
 
       //System.out.println(name);
+      
       ActionSwitch switchAction = null;
-      boolean copy = false;
       switch(name) {
-        case "RETURN":
-          action = new ActionReturn();
-          break;
-        case "SKIP":
-          action = new ActionSkip();
-          break;
-        case "SAVEPOS":
-          action = new ActionSavePos();
-          break;
-        case "LOADPOS":
-          action = new ActionLoadPos();
-          break;
-        case "ADD":
-          action = new ActionAdd(stringParam(params));
-          break;
-        case "EXPECT":
-          if(params.length() != 3) throw new ElException(
-              "EXPECT command requires one symbol" + " as parameter");
-          action = new ActionExpect(params.charAt(1));
-          break;
-        case "CLEAR":
-          action = new ActionClear();
-          break;
-        case ">>":
-          action = new ActionForward();
-          break;
-        case "CREATE":
-          String[] param = params.split(",");
-          ID id = ID.get(param[0]);
-          if(id == ID.classParameterID) {
-            action = new ActionCreate(null, id, null);
-          } else {
-            if(id == ID.moduleID) {
-              action = new ActionCreate(null, id, null);
-            } else {
-              EntityStack stack = EntityStack.all.get(id);
-              Function function = Function.all.get(id);
-              if(stack == null) {
-                if(function == null) {
-                  function = new Function(id);
-                  function.priority = 0;
-                  Function.all.put(id, function);
-                }
-                stack = EntityStack.call;
-              }
-              if(stack == EntityStack.block || stack == EntityStack.constant) {
-                if(param.length != 2) throw new ElException("CREATE "
-                    + stack.name.string + " command requires 2 parameters");
-                action = new ActionCreate(stack, ID.get(param[1]), null);
-              } else {
-                if(param.length != 1) throw new ElException(
-                    "CREATE command requires single parameter");
-                action = new ActionCreate(stack, null, function);
-              }
-            }
-          }
-          break;
-        case "DUP":
-          action = new ActionDup(EntityStack.all.get(ID.get(params.trim())));
-          break;
-        case "COPY":
-          copy = true;
-        case "MOVE":
-          param = params.split(",");
-          EntityStack<Entity> stack0 = EntityStack.all.get(ID.get(param[0]));
-          if(stack0 == null) {
-            ID id0 = ID.get(param[0]);
-            Function function = Function.all.get(id0);
-            if(function == null) {
-              function = new Function(id0);
-              function.priority = 0;
-              Function.all.put(id0, function);
-            }
-            action = new ActionMoveNewFunction(function, EntityStack.get(
-                param[1]));
-          } else {
-            if(param.length == 1) {
-              action = new ActionMove(stack0, stack0, copy);
-            } else {
-              if(param.length != 2) throw new ElException(
-                  "MOVE command requires 2 parameters");
-              action = new ActionMove(stack0, EntityStack.get(param[1]), copy);
-            }
-          }
-          break;
-        case "SET":
-          param = params.split(",");
-          if(param.length != 2) throw new ElException(
-              "SET command requires 2 parameters");
-          action = new ActionSet(ID.get(param[0]), EntityStack.get(param[1]));
-          break;
-        case "USE":
-          action = new ActionUse(ID.get(params));
-          break;
-        case "REMOVE":
-          action = new ActionRemove(EntityStack.get(params));
-          break;
         case "{":
           switchAction = new ActionSwitchSymbol();
         case "SWITCHID":
@@ -257,19 +187,23 @@ public class Rules extends ParserBase {
           exit = true;
           break;
         default:
-          Error error = errors.get(name);
-          if(error == null) {
-            //System.out.println(name);
-            if(bracketPos < 0) {
-              action = new ActionGoToSub(getSub(name));
-            } else {
-              action = new ActionSub(getSub(name), currentSub, params.isEmpty()
-                  ? null : getSub(params));
-            }
+          action = actions.get(name);
+          if(action != null) {
+            action = action.create(params);
           } else {
-            if(!params.isEmpty()) error = error.derive(
-                stringParam(params).replace("_"," "));
-            action = error;
+            Error error = errors.get(name);
+            if(error == null) {
+              //System.out.println(name);
+              if(bracketPos < 0) {
+                action = new ActionGoToSub(getSub(name));
+              } else {
+                action = new ActionSub(getSub(name), currentSub
+                    , params.isEmpty() ? null : getSub(params));
+              }
+            } else {
+              if(!params.isEmpty()) error = error.derive(stringParam(params));
+              action = error;
+            }
           }
       }
       //action.parserLine = lineNum;
@@ -319,11 +253,5 @@ public class Rules extends ParserBase {
     }
     if(start == pos) throw new ElException("Integer number expected");
     return Integer.parseInt(strucString.substring(start, pos));
-  }
-
-  private String stringParam(String str) throws ElException {
-    if(!str.endsWith("\"") || str.length() < 2) throw new ElException(
-        "Invalid token");
-    return str.substring(1, str.length() - 1);
   }
 }

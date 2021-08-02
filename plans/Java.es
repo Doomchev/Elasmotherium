@@ -6,6 +6,7 @@ section boolean {
 section types {
   rename I8, byte;
   rename I16, short;
+  rename U16, char;
   rename I32, int;
   rename I64, long;
   rename F32, float;
@@ -15,6 +16,6 @@ section types {
 }
 
 section length {
-  alias String.size, length;
-  alias Array.size, length;
+  rename String.size, length;
+  rename Array.size, length;
 }

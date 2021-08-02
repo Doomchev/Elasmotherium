@@ -4,6 +4,11 @@ import base.ElException;
 
 class ActionReturn extends Action {
   @Override
+  public ActionReturn create(String params) throws ElException {
+    return new ActionReturn();
+  }
+  
+  @Override
   public void execute() throws ElException {
     if(returnStack.isEmpty()) throw new ElException(this
         , "RETURN without function call");

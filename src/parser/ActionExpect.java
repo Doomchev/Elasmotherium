@@ -10,6 +10,13 @@ public class ActionExpect extends Action {
   }
 
   @Override
+  public ActionExpect create(String params) throws ElException {
+    if(params.length() != 3) throw new ElException(
+        "EXPECT command requires one symbol" + " as parameter");
+    return new ActionExpect(params.charAt(1));
+  }
+  
+  @Override
   public void execute() throws ElException {
     if(log) log("EXPECT " + symbol);
     while(true) {

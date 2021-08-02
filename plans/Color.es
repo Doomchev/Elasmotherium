@@ -3,7 +3,9 @@ class Color extends I32 {
 	U8<8> green;
 	U8<16> blue;
 	U8<24> alpha;
-	this(this.red, this.green = red, this.blue = red, this.alpha = 255);
+	
+	this(this.red = 0, this.green = red, this.blue = red, this.alpha = 255);
+	
 	this(String code) {
 		Int size = code.size;
 		if(size < 6) {
@@ -22,6 +24,7 @@ class Color extends I32 {
 	U8 fromHex(Char char) -> "0123456789ABCDEF".indexOf(char);
 
 	U8 fromHex(String string) {
+		assert(string.length <= 2);
 		U8 value = 0;
 		for(Int n = 0 ..< size) value = (value << 4) + fromHex(string[n]);
 		return value;

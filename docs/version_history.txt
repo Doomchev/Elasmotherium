@@ -1,6 +1,9 @@
+2021.08.02 (version 0.19.2)
+	* PE: Commands creating system.
+	
 2021.07.26 (version 0.19.1)
 	+ PE: Hardcoded basic functions priority.
-	* PE: Formula resolving restored.
+	* PE: Formula resolving is restored.
 
 2021.07.20 (version 0.19)
   + PE: multiple symbols in symbolswitch token.

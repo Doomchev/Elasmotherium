@@ -7,7 +7,6 @@ import ast.EntityStack;
 import ast.Function;
 import ast.FunctionCall;
 import ast.ID;
-import ast.Variable;
 import base.ElException;
 
 public class ActionCreate extends Action {
@@ -19,6 +18,37 @@ public class ActionCreate extends Action {
     this.stack = stack;
     this.type = type;
     this.function = function;
+  }
+  
+  @Override
+  public ActionCreate create(String params) throws ElException {
+    String[] param = params.split(",");
+    ID id = ID.get(param[0]);
+    if(id == ID.classParameterID) {
+      return new ActionCreate(null, id, null);
+    } else if(id == ID.moduleID) {
+      return new ActionCreate(null, id, null);
+    } else {
+      EntityStack stack0 = EntityStack.all.get(id);
+      Function function0 = Function.all.get(id);
+      if(stack0 == null) {
+        if(function0 == null) {
+          function0 = new Function(id);
+          function0.priority = 0;
+          Function.all.put(id, function0);
+        }
+        stack0 = EntityStack.call;
+      }
+      if(stack0 == EntityStack.block || stack0 == EntityStack.constant) {
+        if(param.length != 2) throw new ElException("CREATE "
+            + stack0.name.string + " command requires 2 parameters");
+        return new ActionCreate(stack0, ID.get(param[1]), null);
+      } else {
+        if(param.length != 1) throw new ElException(
+            "CREATE command requires single parameter");
+        return new ActionCreate(stack0, null, function0);
+      }
+    }
   }
   
   @Override

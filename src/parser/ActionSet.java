@@ -3,6 +3,7 @@ package parser;
 import ast.Entity;
 import ast.EntityStack;
 import ast.ID;
+import base.ElException;
 
 public class ActionSet extends Action {
   private static final ID ret = ID.get("return"), get = ID.get("get")
@@ -14,6 +15,14 @@ public class ActionSet extends Action {
   public ActionSet(ID id, EntityStack value) {
     this.id = id;
     this.value = value;
+  }
+  
+  @Override
+  public ActionSet create(String params) throws ElException {
+    String[] param = params.split(",");
+    if(param.length != 2) throw new ElException(
+        "SET command requires 2 parameters");
+    return new ActionSet(ID.get(param[0]), EntityStack.get(param[1]));
   }
   
   @Override

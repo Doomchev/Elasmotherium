@@ -1,6 +1,7 @@
 package parser;
 
 import ast.EntityStack;
+import ast.ID;
 import base.ElException;
 
 public class ActionDup extends Action {
@@ -10,6 +11,11 @@ public class ActionDup extends Action {
     this.stack = stack;
   }
 
+  @Override
+  public ActionDup create(String params) throws ElException {
+    return new ActionDup(EntityStack.all.get(ID.get(params.trim())));
+  }
+  
   @Override
   public void execute() throws ElException {
     if(log) log("DUP " + stack.name);

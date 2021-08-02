@@ -23,8 +23,8 @@ class Tilemap<AnyInt TileInt> extends Drawable {
 				images[tiles[column + row * rowSize]].draw(x + column * cellWidth, y + row * cellHeight);
   }
   
-  TileInt at(Int column, Int row) -> tiles[column + row * rowSize];
-  at(Int column, Int row, TileInt tileNumber) tiles[column + row * rowSize] = tileNumber;
+  TileInt getAtIndex(Int column, Int row) -> tiles[column + row * rowSize];
+  setAtIndex(Int column, Int row, TileInt tileNumber) tiles[column + row * rowSize] = tileNumber;
   
   Int tileX(Int screenX) -> screenX / cellWidth;
   Int tileY(Int screenY) -> screenY / cellHeight;

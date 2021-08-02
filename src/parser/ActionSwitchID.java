@@ -21,6 +21,11 @@ public class ActionSwitchID extends ActionSwitch {
   public Action defaultAction;
 
   @Override
+  public ActionClear create(String params) throws ElException {
+    return new ActionClear();
+  }
+  
+  @Override
   public void setStringAction(String token, Action action) {
     entries.add(new Entry(ID.get(token), action));
   }

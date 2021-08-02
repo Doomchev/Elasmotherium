@@ -11,11 +11,16 @@ public abstract class Action extends ParserBase {
   
   public int parserLine;
   public Action nextAction;
-  public abstract void execute() throws ElException;
 
   public Action() {
     parserLine = lineNum;
   }
+  
+  public Action create(String params) throws ElException {
+    throw new ElException("No creating funciton for " + toString());
+  }
+  
+  public abstract void execute() throws ElException;
 
   public Sub getErrorActionSub() {
     while(!returnStack.isEmpty()) {

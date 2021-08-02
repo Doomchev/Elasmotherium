@@ -4,6 +4,7 @@ import ast.Entity;
 import ast.EntityStack;
 import ast.Function;
 import ast.FunctionCall;
+import base.ElException;
 
 public class ActionMoveNewFunction extends Action {
   private final Function function;
