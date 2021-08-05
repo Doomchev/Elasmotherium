@@ -1,3 +1,6 @@
+2021.08.05 (version 0.20)
+	* PE: Variable, field and parameter indexation system.
+	
 2021.08.02 (version 0.19.2)
 	* PE: Commands creating system.
 	

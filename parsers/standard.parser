@@ -242,8 +242,9 @@ for: EXPECT("(") CREATE(block, for) {
       ".": >> SET(variable, variable) SET(from, formula) {
         // for(Type variable = from ..= to
         "=": >> formula() SET(to, formula) forEnd
-        // for(Type variable = from .. to
-        other: formula() SET(until, formula) forEnd
+        // for(Type variable = from ..< to
+        "<": >> formula() SET(until, formula) forEnd
+				other: syntaxError
       }
       other: syntaxError
     }
@@ -672,9 +673,9 @@ classFieldValue: CREATE(variable) {
 
 classFieldEnd: {
   // Type field,
-  ",": >> DUP(type) MOVE(type, variable) id() classFieldValue
+  ",": >> DUP(type) MOVE(type, variable) MOVE(variable, class) id() classFieldValue
   // Type field;
-  ";": >> classBody
+  ";": >> MOVE(variable, class) classBody
   other: syntaxError
 }
 

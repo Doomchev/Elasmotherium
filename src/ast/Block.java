@@ -20,12 +20,13 @@ public class Block extends Entity {
   }
 
   @Override
-  public void move(Entity entity) throws ElException {
-    entity.moveToBlock(this);
+  public void moveToBlock() throws ElException {
+    removeAllocation();
   }
 
   @Override
   public void moveToCode(Code code) {
+    removeAllocation();
     code.lines.add(this);
   }
 
@@ -35,5 +36,10 @@ public class Block extends Entity {
     indent += "  ";
     for(SimpleMap.Entry<ID, Entity> entry : entries.entries)
       entry.value.print(indent, entry.key + ": ");
+  }
+
+  public void set(ID id, Entity val) throws ElException {
+    val.moveToBlock();
+    entries.put(id, val);
   }
 }

@@ -67,20 +67,21 @@ public class EntityStack<EntityType> extends ParserBase {
     EntityStack<Function> function = new EntityStack<Function>(ID.functionID) {
       @Override
       public Function create() throws ElException {
-        return new Function(id.pop());
+        return Function.create(id.pop());
       }
     };
     
     new EntityStack<Function>(ID.get("constructor"), function) {
       @Override
       public Function create() throws ElException {
-        return new Function();
+        return Function.create(null);
       }      
     };
     
     code = new EntityStack<Code>(ID.codeID) {
       @Override
       public Code create() {
+        allocations.add(currentAllocation);
         return new Code();
       }
     };

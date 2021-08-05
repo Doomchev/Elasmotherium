@@ -28,12 +28,19 @@ public class Code extends Entity {
 
   @Override
   public void moveToFunction(Function function) {
+    removeAllocation();
     function.code = this;
   }
 
   @Override
   public void moveToVariable(Variable variable) {
+    removeAllocation();
     variable.code = this;
+  }
+
+  @Override
+  public void moveToBlock() throws ElException {
+    removeAllocation();
   }
   
   @Override
@@ -57,7 +64,7 @@ public class Code extends Entity {
   @Override
   public void print(String indent, String prefix) {
     println(indent + prefix + "{");
-    String indent2 = indent + " ";
+    String indent2 = indent + "  ";
     for(ClassEntity classEntity : classes) classEntity.print(indent2, "");
     for(Function function : functions) function.print(indent2, "");
     for(Entity line : lines) line.print(indent2, "");

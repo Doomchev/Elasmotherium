@@ -1,6 +1,6 @@
 Int max = askInteger("Enter max value:");
 List<Int> values = [];
-for(Int i = 2 .. max) {
+for(Int i = 2 ..= max) {
 	Int limit = floor(sqrt(i));
 	for(Int j: values) {
 		if(j > limit) {
@@ -10,4 +10,4 @@ for(Int i = 2 .. max) {
 		if(i % j == 0) break;
 	}
 }
-for(Int i: values) print(", " + i);
+for(Int i: values) print(", \(i)");

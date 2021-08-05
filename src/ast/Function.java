@@ -1,10 +1,16 @@
 package ast;
 
+import static ast.EntityStack.id;
+import static base.Base.allocations;
+import static base.Base.currentAllocation;
+import static base.Base.currentFunction;
+import static base.Base.functions;
+import base.ElException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import vm.Command;
 
-public class Function extends NamedEntity {
+public class Function extends NamedEntity  {
   public static final HashMap<ID, Function> all = new HashMap<>();
   
   public Code code = new Code();
@@ -14,18 +20,24 @@ public class Function extends NamedEntity {
   public ClassEntity parentClass = null;
   public byte priority = VALUE;
   public Command startingCommand;
+  public int allocation = 0;
   
   public Function(ID name) {
     this.name = name;
+    if(name == null) this.isConstructor = true;
   }
   
   public Function(ID name, byte priority) {
     this.name = name;
     this.priority = priority;
   }
-  
-  public Function() {
-    this.isConstructor = true;
+
+  public static Function create(ID id) {
+    allocations.add(currentAllocation);
+    currentAllocation = 0;
+    functions.add(currentFunction);
+    currentFunction = new Function(id);
+    return currentFunction;
   }
   
   private static void create(String name, int priority) {
@@ -85,13 +97,20 @@ public class Function extends NamedEntity {
 
   @Override
   public void moveToClass(ClassEntity classEntity) {
+    removeFunctionAllocation();
     parentClass = classEntity;
     classEntity.methods.add(this);
   }
 
   @Override
   public void moveToCode(Code code) {
+    removeFunctionAllocation();
     code.functions.add(this);
+  }
+
+  @Override
+  public void moveToBlock() throws ElException {
+    removeFunctionAllocation();
   }
 
   @Override
@@ -104,11 +123,11 @@ public class Function extends NamedEntity {
     String str = "";
     for(Variable parameter : parameters) {
       if(!str.isEmpty()) str += ", ";
-      str += parameter.toString();
+      str += parameter.type + " " + parameter.name + "(" + parameter.index + ")";
     }
     str = (type == null ? "" : type + " ") +
-        (isConstructor ? "Constructor" : (parentClass == null ? ""
-        : parentClass.name.string + ".") + name.string) + "(" +  str + ")";
+        (isConstructor ? "create" : name.string) + "(" +  str + "):"
+        + allocation;
     code.print(indent, prefix + str);
   }
 }

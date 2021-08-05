@@ -5,7 +5,7 @@ class Tilemap extends Drawable {
   Array<Int> tiles;
 	Array<Image> images;
 
-  this(this.cellXQuantity, this.cellYQuantity, this.images, Int tileNumber = 0) {
+  create(this.cellXQuantity, this.cellYQuantity, this.images, Int tileNumber = 0) {
     Int tilesQuantity = images.size;
     cellWidth = images[0].width;
     cellHeight = images[0].height;
@@ -16,13 +16,13 @@ class Tilemap extends Drawable {
 	Int height() -> cellHeight * cellYQuantity;
   
   draw(Int x = 0, Int y = 0) {
-    for(Int tileY = 0 .. cellYQuantity)
-			for(Int tileX = 0 .. cellXQuantity)
+    for(Int tileY = 0 ..< cellYQuantity)
+			for(Int tileX = 0 ..< cellXQuantity)
 				images[tiles[tileX + tileY * cellXQuantity]].draw(x + tileX * cellWidth, y + tileY * cellHeight);
   }
   
-  Int at(Int cellX, Int cellY) -> tiles[cellX + cellY * cellXQuantity];
-  at(Int cellX, Int cellY, Field tileNumber) tiles[cellX + cellY * cellXQuantity] = tileNumber;
+  Int getAtIndex(Int cellX, Int cellY) -> tiles[cellX + cellY * cellXQuantity];
+  setAtIndex(Int cellX, Int cellY, Field tileNumber) tiles[cellX + cellY * cellXQuantity] = tileNumber;
   
   Int tileX(Int screenX) -> screenX / cellWidth;
   Int tileY(Int screenY) -> screenY / cellHeight;

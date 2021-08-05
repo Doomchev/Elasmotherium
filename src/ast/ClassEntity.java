@@ -12,6 +12,7 @@ public class ClassEntity extends NamedEntity {
   public LinkedList<Variable> parameters = new LinkedList<>();
   public LinkedList<Function> methods = new LinkedList<>();
   public boolean isNative;
+  public int allocation = 0;
 
   public ClassEntity(ID name) {
     this.name = name;

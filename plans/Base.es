@@ -1,9 +1,11 @@
 class Object;
 
 class Class;
+
 class Number {
-	final Number min, max;
+	final ThisType min, max;
 }
+
 struc I8 extends Number {I8 min = -128, max = 127;}
 struc U8 extends Number {U8 min = 0, max = 255;}
 struc I16 extends Number {I16 min = -32768, max = 32767;}
@@ -17,21 +19,11 @@ struc F64 extends Number {F64 min = -1.7976931348623157e308, max = 1.79769313486
 alias Int I64;
 alias Float F64;
 
-enum Bool {no, yes};
+enum Question {no, yes};
 
 classlist AnyInt {I64, U64, I8, U8, I16, U16, I32, U32}
 classlist AnyFloat {F64, F32}
 classlist AnyNumber {AnyInt, AnyFloat}
-
-class List<ElementType> {
-	ElementType first();
-	ElementType last();
-	addLast(Element element);
-}
-
-class Map<ElementType> {
-	addLast(Element element);
-}
 
 class AChar extends U8;
 class Char extends U16;

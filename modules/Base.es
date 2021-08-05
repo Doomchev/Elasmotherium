@@ -4,9 +4,9 @@ class Object;
 class Class;
 class Int;
 class Float;
-class Bool;
-Bool yes;
-Bool no;
+class Question;
+Question yes;
+Question no;
 
 class Array<ElementType> {
 	Int size();

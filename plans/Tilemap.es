@@ -7,19 +7,19 @@ class Tilemap<AnyInt TileInt> extends Drawable {
 	assert(tiles.size == rowSize * columnSize);
 	assert(images.size >= maxTileNum);
 
-  this(this.rowSize, this.columnSize, this.images, TileInt tileNumber = 0) {
+  create(this.rowSize, this.columnSize, this.images, TileInt tileNumber = 0) {
     Int tilesQuantity = images.size;
     cellWidth = images[0].width;
     cellHeight = images[0].height;
-    tiles = Array<TileInt>(rowSize * columnSize, tileNumber);
+    tiles = Array(rowSize * columnSize, tileNumber);
   }
 	
 	Int width -> cellWidth * rowSize;
 	Int height -> cellHeight * columnSize;
   
   draw(Int x = 0, Int y = 0) {
-    for(Int row = 0 .. columnSize)
-			for(Int column = 0 .. rowSize)
+    for(Int row = 0 until columnSize)
+			for(Int column = 0 until rowSize)
 				images[tiles[column + row * rowSize]].draw(x + column * cellWidth, y + row * cellHeight);
   }
   

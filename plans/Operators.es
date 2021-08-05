@@ -1,6 +1,6 @@
 classlist Number {I64, F64}
 classlist Concatenable {I64, F64, String}
-classlist Any {I64, F64, String, Bool, Class, Object}
+classlist Any {I64, F64, String, Question, Class, Object}
 
 Type variable = v1;
 
@@ -127,9 +127,9 @@ negative:16(x) {
 }
 
 not:16(x) {
-	resolve x, Bool
+	resolve x, Question
 	not x
-	return Bool
+	return Question
 }
 
 [iDivision, mod]:14(x, y) {
@@ -169,7 +169,7 @@ addition:13(x, y) {
 	resolve y
 	convert y, max(x, y)
 	func max(x, y)
-	return Bool
+	return Question
 }
 
 [equal, notEqual](Any x, Any y) {
@@ -179,18 +179,18 @@ addition:13(x, y) {
 	resolve y
 	convert y, max(x, y)
 	func max(x, y)
-	return Bool
+	return Question
 }
 
-[or, and](Bool x, Bool y) {
+[or, and](Question x, Question y) {
 	priority [5, 6]
 	resolve x
 	resolve y
 	func
-	return Bool
+	return Question
 }
 
-ifOp(Bool condition, Any ifTrue, Any ifFalse) {
+ifOp(Question condition, Any ifTrue, Any ifFalse) {
 	priority 4
 	resolve condition
 	ifFalseGoto false

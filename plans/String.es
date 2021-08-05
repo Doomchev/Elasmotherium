@@ -1,32 +1,57 @@
 struc String<AnyChar CharType, AnyInt IndexType> extends Array<CharType> {
-  this(AnyNumber number);
-  this(Object object) -> object.toString;
+  create.from(AnyNumber number);
+  create.from(Object object) -> object.toString;
 	
-  This lowerCase() {
-		This = This(size);
-		for(Int i = 0 .. size) newString[i] = this[i].lowerCase;
+  Int compareTo(String string) {
+    if(size != string.size) return size - string.size;
+    for(Int i = 0 until size) {
+			if(this[i] == string[i]) continue;
+			return this[i] - string[i];
+		}
+    return 0;
+  }
+	
+  ThisType lowerCase() {
+		ThisType newString = ThisType(size);
+		for(IndexType i = 0 until size) newString[i] = this[i].lowerCase;
 		return newString;
 	}
 	
-  This upperCase() {
-		This newString = This(size);
-		for(Int i = 0 .. size) newString[i] = this[i].upperCase;
+  ThisType upperCase() {
+		ThisType newString = ThisType(size);
+		for(IndexType i = 0 until size) newString[i] = this[i].upperCase;
 		return newString;
 	}
 	
-	This trim() {
-		IndexType from = 0, to = size - 1;
-		while(from < size && this[from] <= " ") from++;
-		if(from == size) return "";
-		while(this[to] <= " ") to++;
-		return this[from ..= to];
+	ThisType trim() {
+		IndexType start = 0, end = size - 1;
+		while(start < size && this[start] <= " ") start++;
+		if(start == size) return "";
+		while(this[end] <= " ") end++;
+		return this[from start to end];
 	}
 
-	Array<This> split(Char char);
+	Array<ThisType> split(Char char) {
+		List<String> tokens = List();
+		IndexType start = 0;
+		for(IndexType i from 0 until size)
+			if(this[i] == char) {
+				tokens += this[from start until i];
+				start = i + 1;
+			}
+		if(start < size - 1) tokens += this[from start];
+		return tokens;
+	}
 	
-	Bool startsWith(String start) {
+	Question startsWith(String start) {
 		if(start.size > size) return no;
-		for(Int i = 0 .. start.size) if(this[i] != start[i]) return no;
+		for(IndexType i from 0 until start.size) if(this[i] != start[i]) return no;
+		return yes;
+	}
+	
+	Question endsWith(String end) {
+		if(end.size > size) return no;
+		for(IndexType i from size - end.size until size) if(this[i] != start[i]) return no;
 		return yes;
 	}
 }

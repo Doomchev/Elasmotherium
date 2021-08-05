@@ -9,15 +9,16 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import parser.Action;
 import parser.Rules;
-import ast.Code;
+
 import ast.EntityStack;
+import ast.Function;
 
 public class Module extends ParserBase {
   public static Module current;
   
   public String fileName;
   public final LinkedList<Module> modules = new LinkedList<>();
-  public Code code;
+  public Function function = new Function(null);
 
   public Module(String fileName) {
     this.fileName = fileName;
@@ -29,6 +30,7 @@ public class Module extends ParserBase {
   
   public Module read(Rules rules) {
     current = this;
+    currentFunction = function;
     path = Paths.get(fileName).getParent().toString() + "/";
     
     include(fileName);
@@ -40,7 +42,10 @@ public class Module extends ParserBase {
     
       for(Module module : modules) module.read(rules);
     
-      code = EntityStack.code.pop();
+      function.code = EntityStack.code.pop();
+      function.allocation = Math.max(function.allocation, currentAllocation);
+      println(allocations.toString());
+      println(functions.toString());
     } catch (base.ElException ex) {
       error("Parsing error", currentFileName + " (" + lineNum + ":"
         + (textPos - lineStart) + ")\n" + ex.message);
@@ -69,10 +74,11 @@ public class Module extends ParserBase {
   }
   
   public void process() throws ElException {
-    code.processWithoutScope();
+    currentFunction = function;
+    function.code.processWithoutScope();
   }
 
   public void print() {
-    code.print("", fileName + " ");
+    function.code.print("", fileName + ":" + function.allocation + " ");
   }
 }

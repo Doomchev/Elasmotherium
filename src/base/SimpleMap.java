@@ -1,5 +1,6 @@
 package base;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 public class SimpleMap<K, V> {
@@ -21,12 +22,15 @@ public class SimpleMap<K, V> {
   }
   
   public void put(K key, V value) {
-    entries.addFirst(new Entry<>(key, value));
+    entries.add(new Entry<>(key, value));
   }
   
   public V get(K key) {
-    for(Entry<K, V> entry: entries)
+    Iterator<Entry<K, V>> it = entries.descendingIterator();
+    while(it != null) {
+      Entry<K, V> entry = it.next();
       if(entry.key.equals(key)) return entry.value;
+    }
     return null;
   }
 }

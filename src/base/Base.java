@@ -1,6 +1,7 @@
 package base;
 
-import ast.Entity;
+import ast.ClassEntity;
+import ast.Function;
 import java.io.File;
 import java.io.IOException;
 import ast.ID;
@@ -9,11 +10,15 @@ import java.util.LinkedList;
 import processor.Processor;
 
 public class Base {
-  public static int lineNum;
+  public static int lineNum, currentAllocation;
   public static String currentFileName;
   public static final boolean log = true;
   public static String workingPath, modulesPath;
   public static Processor currentProcessor;
+  public static Function currentFunction;
+  public static ClassEntity currentClass;
+  public static final LinkedList<Integer> allocations = new LinkedList<>();
+  public static final LinkedList<Function> functions = new LinkedList<>();
   
   public static final String JAVA = "java";
   public static ID constructorID = ID.get("constructor");
@@ -24,6 +29,21 @@ public class Base {
       modulesPath = new File(".").getCanonicalPath() + "/modules/";
     } catch (IOException ex) {
     }
+  }
+
+  public int removeAllocation() {
+    currentFunction.allocation = Math.max(currentFunction.allocation
+        , currentAllocation);
+    int value = currentAllocation;
+    currentAllocation = allocations.getLast();
+    allocations.removeLast();
+    return value;
+  }
+  
+  public int removeFunctionAllocation() {
+    currentFunction = functions.getLast();
+    functions.removeLast();
+    return removeAllocation();
   }
   
   public static String[] trimmedSplit(String text, char separator) {

@@ -10,7 +10,7 @@ Texture board = Texture("board.png");
 TileMap tileMap = TileMap(7, 1, Texture("pawns.png").cut(3));
 
 init() {
-	for(Int n = 0 .. tileMap.cellXQuantity) tileMap[n] = n <= 2 ? white : (n >= 4 ? black : empty);
+	for(Int n = 0 ..< tileMap.cellXQuantity) tileMap[n] = n <= 2 ? white : (n >= 4 ? black : empty);
 	tell("Вам нужно поменять черные и белые пешки местами.\nЧерные пешки ходят влево, белые - вправо.\n"
 			+ "Пешка может пойти на одну клетку вперед\nили перепрыгнуть через следующую пешку\nна свободное поле."
 			, "Правила игры");
@@ -48,7 +48,7 @@ class Window2 extends Window {
 		}
 		
 		if(tileMap[0, 0] == white) return;
-		for(Int n = 1 .. tileMap.cellXQuantity)
+		for(Int n = 1 ..< tileMap.cellXQuantity)
 			if(tileMap[n - 1, 0] == (tileMap[n, 0] == white ? black : white)) return;
 		
 		tell("Вы выиграли!");

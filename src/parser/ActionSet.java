@@ -31,7 +31,7 @@ public class ActionSet extends Action {
         + value.toString() + ")");
     currentAction = this;
     Entity val = value.pop().toValue();
-    EntityStack.block.peek().entries.put(id, val);
+    EntityStack.block.peek().set(id, val);
     currentAction = nextAction;
   }
 

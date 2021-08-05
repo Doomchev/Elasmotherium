@@ -6,8 +6,6 @@ import parser.ParserBase;
 
 public abstract class Entity extends ParserBase {
   public static HashMap<String, ID> allIDs = new HashMap<>();
-  public static Function currentFunction;
-  public static ClassEntity currentClass;
   public static final ID idID = ID.get("id"), blockID = ID.get("block")
       , classID = ID.get("class"), codeID = ID.get("code")
       , valueID = ID.get("value"), formulaID = ID.get("formula")
@@ -68,8 +66,7 @@ public abstract class Entity extends ParserBase {
     throw new ElException(this, "code");
   }
 
-  public void moveToBlock(Block block) throws ElException {
-    throw new ElException(this, "block");
+  public void moveToBlock() throws ElException {
   }
 
   public void moveToFormula(Formula formula) throws ElException {

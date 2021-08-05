@@ -146,7 +146,6 @@ public class Rules extends ParserBase {
     actions.put("REMOVE", new ActionRemove(null));
     actions.put(">>", new ActionForward());
     actions.put("}", new ActionSwitchSymbol());
-    actions.put("SWITCHID", new ActionSwitchID());
   }
   
   private Action actionChain(String commands, Action lastAction, Sub currentSub)
