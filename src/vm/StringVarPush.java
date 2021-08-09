@@ -1,9 +1,9 @@
 package vm;
 
-public class StringStackPush extends Command {
+public class StringVarPush extends VMCommand {
   int index;
 
-  public StringStackPush(int index) {
+  public StringVarPush(int index) {
     this.index = index;
   }
   

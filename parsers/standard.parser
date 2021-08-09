@@ -85,7 +85,7 @@ codeLine: {
 		"break": CREATE(break) MOVE(call, code) codeLineEnd
 		"return": CREATE(return) {
 			";": >> MOVE(call, code) RETURN
-			other: >> formula() MOVE(formula, call) MOVE(call, code) codeLineEnd
+			other: formula() MOVE(formula, call) MOVE(call, code) codeLineEnd
 		}
 		other: {
 			// Type var
@@ -560,11 +560,11 @@ string: {
     "(": CREATE(stringSequence) stringBrackets
     other: ADD("\") >> string
   }
-  quotes: CREATE(string) >> MOVE(string, formula) separator
+  quotes: CREATE(const, string) >> MOVE(const, formula) separator
   "/", nothing, other: >>
 }
 
-stringBrackets: CREATE(string) >> MOVE(string, stringSequence) stringValue
+stringBrackets: CREATE(const, string) >> MOVE(const, stringSequence) stringValue
 
 stringValue: formula() EXPECT(")") MOVE(formula, stringSequence) CLEAR stringSequence
 
@@ -573,7 +573,7 @@ stringSequence: {
     "(": stringBrackets
     other: ADD("\") >> stringSequence
   }
-  quotes: CREATE(string) >> MOVE(string, stringSequence) MOVE(stringSequence, formula) separator
+  quotes: CREATE(const, string) >> MOVE(const, stringSequence) MOVE(stringSequence, formula) separator
   other: >>
 }
 

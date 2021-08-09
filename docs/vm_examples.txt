@@ -6,9 +6,7 @@ IntEquate a
 Int a = 1;
 Int b = 2;
 Int c = a + b;
-AllocateInt a
-AllocateInt b
-AllocateInt c
+Allocate 3
 IntVarPush a
 IntVarPush b
 IntAdd

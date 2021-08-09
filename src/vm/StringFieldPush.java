@@ -2,7 +2,7 @@ package vm;
 
 import base.ElException;
 
-public class StringFieldPush extends Command {
+public class StringFieldPush extends VMCommand {
   int fieldIndex;
 
   public StringFieldPush(int fieldIndex) {

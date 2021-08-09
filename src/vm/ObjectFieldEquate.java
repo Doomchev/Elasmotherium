@@ -1,6 +1,6 @@
 package vm;
 
-public class ObjectFieldEquate extends Command {
+public class ObjectFieldEquate extends VMCommand {
   int stackIndex, fieldIndex;
 
   public ObjectFieldEquate(int stackIndex, int fieldIndex) {

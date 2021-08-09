@@ -6,15 +6,14 @@ import java.util.LinkedList;
 public class ListEntity extends Value {
   public final LinkedList<Value> values = new LinkedList<>();
   
-  @Override
-  public ID getID() {
-    return listID;
-  }
+  // moving functions
 
   @Override
   public void move(Entity entity) throws ElException {
     entity.moveToList(this);
   }
+  
+  // other
 
   @Override
   public String toString() {

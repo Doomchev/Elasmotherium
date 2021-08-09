@@ -27,7 +27,7 @@ public class SimpleMap<K, V> {
   
   public V get(K key) {
     Iterator<Entry<K, V>> it = entries.descendingIterator();
-    while(it != null) {
+    while(it.hasNext()) {
       Entry<K, V> entry = it.next();
       if(entry.key.equals(key)) return entry.value;
     }

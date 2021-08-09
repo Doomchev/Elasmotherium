@@ -2,7 +2,7 @@ package vm;
 
 import base.ElException;
 
-public class I64ThisIncrement extends Command {
+public class I64ThisIncrement extends VMCommand {
   int index;
 
   public I64ThisIncrement(int index) {

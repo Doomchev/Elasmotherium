@@ -1,8 +1,8 @@
 package base;
 
-import ast.Entity;
 import ast.ID;
 import parser.Action;
+import vm.VMValue;
 
 public class ElException extends Exception {
   public String message;
@@ -11,12 +11,16 @@ public class ElException extends Exception {
     this.message = message;
   }
 
-  public ElException(Entity what, String into) {
+  public ElException(Base what, String into) {
     this("Cannot insert " + what.getName() + " into " + into + ".");
   }
 
-  public ElException(String message, Entity entity) {
-    this(message + entity.getID() + ".");
+  public ElException(String message, Base entity) {
+    this(message + " " + entity.getName() + ".");
+  }
+
+  public ElException(String message, VMValue value) {
+    this(message + " " + value.toString() + ".");
   }
 
   public ElException(ID what) {

@@ -50,5 +50,4 @@ public class ActionSwitchID extends ActionSwitch {
     }
     currentAction = defaultAction;
   }
-
 }

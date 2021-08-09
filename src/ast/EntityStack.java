@@ -17,7 +17,7 @@ public class EntityStack<EntityType> extends ParserBase {
   public static final EntityStack<ClassEntity> classStack;
 
   static {
-    id = new EntityStack<ID>(ID.get("id")) {
+    id = new EntityStack<ID>("id") {
       @Override
       public boolean isStringBased() {
         return true;
@@ -29,139 +29,139 @@ public class EntityStack<EntityType> extends ParserBase {
       }
     };
 
-    final EntityStack<Value> valueStack = new EntityStack<Value>(ID.valueID) {
+    final EntityStack<Value> valueStack = new EntityStack<Value>("value") {
       @Override
       public Value create() throws ElException {
         throw new ElException("Value is abstract and cannot be created");
       }
     };
 
-    block = new EntityStack<>(ID.blockID);
+    block = new EntityStack<>("block");
     
-    constant = new EntityStack(ID.constID, valueStack) {
+    constant = new EntityStack("const", valueStack) {
       @Override
       public boolean isStringBased() {
         return true;
       }
 
       @Override
-      public StringValue create(String string, ID type) {
+      public ConstantValue create(String string, ID type) {
         return new ConstantValue(type, string);
       }
     };
     
-    call = new EntityStack<FunctionCall>(ID.callID) {
+    call = new EntityStack<FunctionCall>("call") {
       @Override
       public FunctionCall create() {
         return new FunctionCall(null);
       }
     };
     
-    new EntityStack<Link>(ID.linkID) {
+    new EntityStack<Link>("link") {
       @Override
       public Link create() throws ElException {
         return new Link(id.pop());
       }
     };
     
-    EntityStack<Function> function = new EntityStack<Function>(ID.functionID) {
+    EntityStack<Function> function = new EntityStack<Function>("function") {
       @Override
       public Function create() throws ElException {
         return Function.create(id.pop());
       }
     };
     
-    new EntityStack<Function>(ID.get("constructor"), function) {
+    new EntityStack<Function>("constructor", function) {
       @Override
       public Function create() throws ElException {
         return Function.create(null);
       }      
     };
     
-    code = new EntityStack<Code>(ID.codeID) {
+    code = new EntityStack<Code>("code") {
       @Override
       public Code create() {
-        allocations.add(currentAllocation);
+        allocate();
         return new Code();
       }
     };
     
-    classStack = new EntityStack<ClassEntity>(ID.classID) {
+    classStack = new EntityStack<ClassEntity>("class") {
       @Override
       public ClassEntity create() throws ElException {
-        return new ClassEntity(id.pop());
+        return ClassEntity.create(id.pop());
       }
     };
   
-    EntityStack var = new EntityStack<Variable>(ID.variableID) {
+    EntityStack var = new EntityStack<Variable>("variable") {
       @Override
       public Variable create() throws ElException {
         return new Variable(id.pop());
       }
     };
     
-    new EntityStack<Variable>(ID.get("thisvar"), var) {
+    new EntityStack<Variable>("thisvar", var) {
       @Override
       public Variable create() throws ElException {
         return new Variable(id.pop(), true);
       }      
     };
     
-    new EntityStack<Type>(ID.typeID) {
+    new EntityStack<Type>("type") {
       @Override
       public Type create() throws ElException {
         return new Type(id.pop());
       }
     };
     
-    new EntityStack<Formula>(ID.formulaID) {
+    new EntityStack<Formula>("formula") {
       @Override
       public Formula create() {
         return new Formula();
       }
     };
     
-    new EntityStack<Parameters>(ID.parametersID) {
+    new EntityStack<Parameters>("parameters") {
       @Override
       public Parameters create() {
         return new Parameters();
       }
     };
     
-    new EntityStack(ID.stringID, valueStack) {
+    new EntityStack("string", valueStack) {
       @Override
       public boolean isStringBased() {
         return true;
       }
 
       @Override
-      public StringValue create(String string, ID type) {
-        return new StringValue(string);
+      public ConstantValue create(String string, ID type) {
+        return new ConstantValue(ConstantValue.stringID, string);
       }
     };
     
-    new EntityStack(ID.stringSequenceID, valueStack) {
+    new EntityStack("stringSequence", valueStack) {
       @Override
       public StringSequence create() {
         return new StringSequence();
       }
     };
     
-    new EntityStack(ID.entryID, valueStack) {
+    new EntityStack("entry", valueStack) {
       @Override
       public ObjectEntry create() throws ElException {
         return new ObjectEntry(id.pop());
       }
     };
     
-    new EntityStack(ID.listID, valueStack) {
+    new EntityStack("list", valueStack) {
       @Override
       public ListEntity create() {
         return new ListEntity();
       }
     };
     
-    new EntityStack(ID.mapID, valueStack) {
+    new EntityStack("map", valueStack) {
       @Override
       public MapEntity create() {
         return new MapEntity();
@@ -183,16 +183,16 @@ public class EntityStack<EntityType> extends ParserBase {
   public final ID name;
   public final Stack<EntityType> stack;
 
-  public EntityStack(ID name) {
-    this.name = name;
+  public EntityStack(String name) {
+    this.name = ID.get(name);
     this.stack = new Stack<>();
-    all.put(name, this);
+    all.put(this.name, this);
   }
 
-  public EntityStack(ID name, EntityStack entityStack) {
-    this.name = name;
+  public EntityStack(String name, EntityStack entityStack) {
+    this.name = ID.get(name);
     this.stack = entityStack.stack;
-    all.put(name, this);
+    all.put(this.name, this);
   }
 
   public EntityType pop() throws ElException {

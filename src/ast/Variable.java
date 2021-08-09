@@ -3,6 +3,8 @@ package ast;
 import base.ElException;
 
 public class Variable extends NamedEntity {
+  public static ID id = ID.get("variable");
+  
   public Entity type, value = null;
   public Code code = null;
   public Link definition;
@@ -20,21 +22,55 @@ public class Variable extends NamedEntity {
     this.name = id;
   }
 
+  public Variable(ClassEntity type) {
+    this.name = id;
+    this.type = type;
+  }
+
   public Variable(ID id, boolean isThis) {
     this.name = id;
     this.isThis = isThis;
   }
   
+  // processor fields
+  
   @Override
-  public ID getID() {
-    return variableID;
+  public Entity getValue() throws ElException {
+    return value;
+  }
+  
+  @Override
+  public ClassEntity getType() throws ElException {
+    return type.getType();
+  }
+  
+  @Override
+  public ID getObject() throws ElException {
+    return id;
+  }
+  
+  @Override
+  public int getIndex() throws ElException {
+    return index;
+  }
+  
+  // processing
+  
+  @Override
+  public void process() throws ElException {
+    if(log) print("", "");
+    addToScope(name, this);
+    currentProcessor.call(this);
   }
 
+  // type conversion
+  
   @Override
   public Variable toVariable() {
     return this;
   }
   
+  // moving functions
   
   @Override
   public void move(Entity entity) throws base.ElException {
@@ -72,6 +108,8 @@ public class Variable extends NamedEntity {
     index = currentAllocation;
     currentAllocation++;
   }
+  
+  // other
 
   @Override
   public String toString() {
@@ -80,7 +118,7 @@ public class Variable extends NamedEntity {
   
   @Override
   public void print(String indent, String prefix) {
-    println(indent + prefix + type + " " + toString() + "(" + index + ")"
+    println(indent + prefix + type + " " + toString() + ":" + index
         + (value == null ? "" : " = " + value) + ";");
   }
 }

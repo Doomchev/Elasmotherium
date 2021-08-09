@@ -8,7 +8,7 @@ public class VMFunctionCall {
   }
   
   VMFunction function;
-  Command returnPoint;
+  VMCommand returnPoint;
   int paramPosition = -1;
   ObjectEntity thisObject;
 }

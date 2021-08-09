@@ -1,6 +1,6 @@
 package vm;
 
-public class StringToI64 extends Command {
+public class StringToI64 extends VMCommand {
   @Override
   public void execute() {
     i64Stack[stackPointer] = Long.parseLong(stringStack[stackPointer]);

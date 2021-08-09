@@ -2,7 +2,7 @@ package vm;
 
 import ast.Function;
 
-public class VMCall extends Command {
+public class VMCall extends VMCommand {
   Function function;
 
   public VMCall(Function function) {
@@ -18,6 +18,6 @@ public class VMCall extends Command {
   @Override
   public String toString() {
     return super.toString() + " " + function.toString() + " ("
-        + function.startingCommand.number + ")";
+        + function.startingCommand.lineNum + ")";
   }
 }

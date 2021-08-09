@@ -1,6 +1,6 @@
-package ast;
+package vm;
 
-public class I64Value extends Value {
+public class I64Value extends VMValue {
   public long value;
 
   public I64Value(long value) {

@@ -1,16 +1,17 @@
 package vm;
 
-public class StringEquate extends Command {
+public class ObjectVarEquate extends VMCommand {
   int index;
 
-  public StringEquate(int index) {
+  public ObjectVarEquate(int index) {
     this.index = index;
   }
   
   @Override
   public void execute() {
-    stringStack[index + currentCall.paramPosition] = stringStack[stackPointer];
-    typeStack[index + currentCall.paramPosition] = TYPE_I64;
+    int stackIndex = index + currentCall.paramPosition;
+    objectStack[stackIndex] = objectStack[stackPointer];
+    typeStack[stackIndex] = TYPE_OBJECT;
     stackPointer--;
     currentCommand = nextCommand;
   }

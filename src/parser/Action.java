@@ -13,7 +13,7 @@ public abstract class Action extends ParserBase {
   public Action nextAction;
 
   public Action() {
-    parserLine = lineNum;
+    parserLine = currentLineNum;
   }
   
   public Action create(String params) throws ElException {
@@ -36,6 +36,6 @@ public abstract class Action extends ParserBase {
 
   @Override
   public String toString() {
-    return this.getClass().getSimpleName();
+    return getName();
   }
 }

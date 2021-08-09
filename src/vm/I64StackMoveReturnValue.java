@@ -1,6 +1,6 @@
 package vm;
 
-public class I64StackMoveReturnValue extends Command {
+public class I64StackMoveReturnValue extends VMCommand {
   @Override
   public void execute() {
     i64Stack[currentCall.paramPosition] = i64Stack[stackPointer];

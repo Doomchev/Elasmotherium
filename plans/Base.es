@@ -30,7 +30,7 @@ class Char extends U16;
 classlist AnyChar {Char, AChar}
 
 print(String message);
-String ask(String message);
-show(String message);
+Int askInteger(String message);
+tell(String message);
 
 exit();

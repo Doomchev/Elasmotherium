@@ -32,7 +32,7 @@ class String {
 }
 
 print(String message);
-println(String message);
+println(String message) print("\(message)\n");
 Int askInteger(String message);
 tell(String message);
 

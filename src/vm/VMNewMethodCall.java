@@ -1,6 +1,6 @@
 package vm;
 
-public class VMNewMethodCall extends Command {
+public class VMNewMethodCall extends VMCommand {
   @Override
   public void execute() {
     callStackPointer++;

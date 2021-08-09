@@ -1,17 +1,17 @@
 package vm;
 
-public class IfFalseGoto extends Command {
-  public Command command;
+public class IfFalseGoto extends VMCommand {
+  public VMCommand command;
 
   public IfFalseGoto() {
   }
   
-  public IfFalseGoto(Command command) {
+  public IfFalseGoto(VMCommand command) {
     this.command = command;
   }
   
   @Override
-  public void setGoto(Command command) {
+  public void setGoto(VMCommand command) {
     this.command = command;
   }
   
@@ -23,6 +23,6 @@ public class IfFalseGoto extends Command {
   
   @Override
   public String toString() {
-    return super.toString() + " " + command.number;
+    return super.toString() + " " + command.lineNum;
   }
 }

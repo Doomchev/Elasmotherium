@@ -1,6 +1,6 @@
 package vm;
 
-public class VMReturnThis extends Command {
+public class VMReturnThis extends VMCommand {
   @Override
   public void execute() {
     VMFunctionCall call = currentCall;

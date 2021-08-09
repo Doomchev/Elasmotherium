@@ -2,7 +2,7 @@ package vm;
 
 import base.ElException;
 
-public class StringThisEquate extends Command {
+public class StringThisEquate extends VMCommand {
   int index;
 
   public StringThisEquate(int index) {

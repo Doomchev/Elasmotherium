@@ -7,28 +7,24 @@ public class Block extends Entity {
   ID type;
   public final SimpleMap<ID, Entity> entries = new SimpleMap<>();
 
-  public final ID doID = ID.get("do"), ifID = ID.get("if")
-      , conditionID = ID.get("condition"), elseID = ID.get("else");
-  
   public Block(ID type) {
     this.type = type;
   }
   
-  @Override
-  public ID getID() {
-    return blockID;
-  }
+  // moving functions
 
   @Override
   public void moveToBlock() throws ElException {
-    removeAllocation();
+    deallocate();
   }
 
   @Override
   public void moveToCode(Code code) {
-    removeAllocation();
+    deallocate();
     code.lines.add(this);
   }
+  
+  // other
 
   @Override
   public void print(String indent, String prefix) {

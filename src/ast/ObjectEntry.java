@@ -3,15 +3,12 @@ package ast;
 public class ObjectEntry extends Entity {
   public ID key;
   public Value value;
-  
-  @Override
-  public ID getID() {
-    return objectID;
-  }
 
   public ObjectEntry(ID key) {
     this.key = key;
   }
+  
+  // moving functions
   
   @Override
   public void move(Entity entity) throws base.ElException {

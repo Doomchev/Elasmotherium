@@ -1,10 +1,18 @@
 package vm;
 
-public class StringPush extends Command {
+import ast.Entity;
+import base.ElException;
+
+public class StringPush extends VMCommand {
   String value;
 
   public StringPush(String value) {
     this.value = value;
+  }
+  
+  @Override
+  public StringPush create(Entity entity) throws ElException {
+    return new StringPush(entity.getStringValue());
   }
   
   @Override

@@ -16,10 +16,22 @@ public class Code extends Entity {
     lines.add(call);
   }
   
+  // processing
+  
   @Override
-  public ID getID() {
-    return codeID;
+  public void process() throws ElException {
+    allocateScope();
+    processWithoutScope();
+    deallocateScope();
   }
+  
+  public void processWithoutScope() throws ElException {
+    for(Entity line: lines) line.process();
+    for(ClassEntity classEntity : classes) classEntity.process();
+    for(Function function : functions) function.process();
+  }
+  
+  // moving functions
 
   @Override
   public void move(Entity entity) throws ElException {
@@ -28,33 +40,22 @@ public class Code extends Entity {
 
   @Override
   public void moveToFunction(Function function) {
-    removeAllocation();
+    deallocate();
     function.code = this;
   }
 
   @Override
   public void moveToVariable(Variable variable) {
-    removeAllocation();
+    deallocate();
     variable.code = this;
   }
 
   @Override
   public void moveToBlock() throws ElException {
-    removeAllocation();
+    deallocate();
   }
   
-  @Override
-  public void process() throws ElException {
-    pushScope();
-    processWithoutScope();
-    popScope();
-  }
-  
-  public void processWithoutScope() throws ElException {
-    for(Entity line: lines) line.process();
-    for(ClassEntity classEntity : classes) classEntity.process();
-    for(Function function : functions) function.process();
-  }
+  // other
 
   @Override
   public String toString() {

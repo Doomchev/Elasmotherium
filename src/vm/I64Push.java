@@ -1,10 +1,18 @@
 package vm;
 
-public class I64Push extends Command {
+import ast.Entity;
+import base.ElException;
+
+public class I64Push extends VMCommand {
   long value;
 
   public I64Push(long value) {
     this.value = value;
+  }
+  
+  @Override
+  public I64Push create(Entity entity) throws ElException {
+    return new I64Push(Integer.parseInt(entity.getStringValue()));
   }
   
   @Override

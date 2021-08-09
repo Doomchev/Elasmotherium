@@ -1,6 +1,6 @@
 package vm;
 
-public class VMReturn extends Command {
+public class VMReturn extends VMCommand {
   @Override
   public void execute() {
     currentCommand = currentCall.returnPoint;

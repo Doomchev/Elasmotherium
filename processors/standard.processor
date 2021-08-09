@@ -1,3 +1,47 @@
 variable {
-	
+  value.resolve(this);
+  switch(this) {
+    case Int:
+      I64Equate;
+  }
+}
+
+link.resolve {
+  getFromScope;
+  switch(this) {
+    case Int:
+      I64StackPush;
+    case String:
+      StringStackPush;
+  }
+  convert;
+}
+
+const.resolve {
+  switch(parent) {
+    case Int:
+      I64Push;
+    case String:
+      StringPush;
+  }
+}
+
+addition.resolve {
+	v0.resolve(parent);
+	v1.resolve(parent);
+  switch(parent) {
+    case Int:
+      I64Add;
+    case String:
+      StringAdd;
+  }
+}
+
+function {
+  resolveAll;
+  print;
+}
+
+stringSequence.resolve {
+  resolveAll;
 }

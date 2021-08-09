@@ -2,7 +2,7 @@ package vm;
 
 import javax.swing.JOptionPane;
 
-public class VMInput extends Command {
+public class VMInput extends VMCommand {
   @Override
   public void execute() {
     stringStack[stackPointer] = JOptionPane.showInputDialog(stringStack[

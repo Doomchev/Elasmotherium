@@ -1,14 +1,6 @@
 package parser;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
-import ast.Entity;
-import ast.EntityStack;
-import ast.Function;
-import ast.ID;
 import base.ElException;
 import java.util.LinkedList;
 
@@ -36,7 +28,7 @@ public class Rules extends ParserBase {
     return sub;
   }
   
-  private BufferedReader reader;
+  private EReader reader;
   public Rules load(String fileName) {
     currentFileName = fileName;
     masks.clear();
@@ -46,13 +38,9 @@ public class Rules extends ParserBase {
     masks.put("eof", new SymbolMask(129));
     subs.clear();
     try {
-      reader = new BufferedReader(new FileReader(fileName));
+      reader = new EReader(fileName);
       String line;
-      lineNum = 0;
       while((line = reader.readLine()) != null) {
-        lineNum++;
-        line = line.trim();
-        if(line.isEmpty() || line.startsWith("//")) continue;
         int equalPos = line.indexOf('=');
         int colonPos = line.indexOf(':');
         if(equalPos >= 0 && (equalPos < colonPos || colonPos < 0)) {
@@ -85,12 +73,8 @@ public class Rules extends ParserBase {
           sub.action = actionChain(line.substring(colonPos + 1), null, sub);
         }
       }
-    } catch (FileNotFoundException ex) {
-      error("I/O error", fileName + " not found.");
-    } catch (IOException ex) {
-      error("I/O error", fileName + "Cannot read " + fileName + ".");
     } catch (ElException ex) {
-      error("Error in ruleset", currentFileName + " (" + lineNum + ":"
+      error("Error in ruleset", currentFileName + " (" + currentLineNum + ":"
           + (textPos - lineStart) + ")\n" + ex.message);
     }
     
@@ -149,7 +133,7 @@ public class Rules extends ParserBase {
   }
   
   private Action actionChain(String commands, Action lastAction, Sub currentSub)
-      throws IOException, ElException {
+      throws ElException {
     //System.out.println(commands);
     Action firstAction = null, currentAction = null;
     boolean exit = false;
@@ -176,9 +160,6 @@ public class Rules extends ParserBase {
           while(true) {
             if((line = reader.readLine()) == null)
               throw new ElException("Unexpected end of file");
-            lineNum++;
-            line = line.trim();
-            if(line.isEmpty() || line.startsWith("//")) continue;
             if(line.equals("}")) break;
             parseLine(line, switchAction, back, currentSub, name.equals("{"));
           }
@@ -219,7 +200,7 @@ public class Rules extends ParserBase {
   }
   
   private void parseLine(String line, ActionSwitch switchAction, Action back
-      , Sub currentSub, boolean isSymbolSwitch) throws ElException, IOException {
+      , Sub currentSub, boolean isSymbolSwitch) throws ElException {
     LinkedList<String> parts = listSplit(line, ':');
     if(parts.size() < 2) throw new ElException(": expected");
     Action actionChain = actionChain(parts.getLast(), back, currentSub);

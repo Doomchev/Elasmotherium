@@ -12,7 +12,7 @@ class ActionSavePos extends Action {
   public void execute() {
     if(log) log("SAVEPOS");
     savedTextPos = textPos;
-    savedLineNum = lineNum;
+    savedLineNum = currentLineNum;
     savedLineStart = lineStart;
     currentAction = nextAction;
   }

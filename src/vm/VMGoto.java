@@ -1,17 +1,17 @@
 package vm;
 
-public class VMGoto extends Command {
-  public Command command;
+public class VMGoto extends VMCommand {
+  public VMCommand command;
 
   public VMGoto() {
   }
   
-  public VMGoto(Command command) {
+  public VMGoto(VMCommand command) {
     this.command = command;
   }
   
   @Override
-  public void setGoto(Command command) {
+  public void setGoto(VMCommand command) {
     this.command = command;
   }
   
@@ -22,6 +22,6 @@ public class VMGoto extends Command {
   
   @Override
   public String toString() {
-    return super.toString() + " " + command.number;
+    return super.toString() + " " + command.lineNum;
   }
 }

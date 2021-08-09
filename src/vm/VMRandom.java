@@ -2,7 +2,7 @@ package vm;
 
 import java.util.Random;
 
-public class VMRandom extends Command {
+public class VMRandom extends VMCommand {
   public static Random random = new Random();
   
   @Override

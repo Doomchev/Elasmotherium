@@ -1,16 +1,12 @@
 package ast;
 
-import static ast.EntityStack.id;
-import static base.Base.allocations;
-import static base.Base.currentAllocation;
-import static base.Base.currentFunction;
-import static base.Base.functions;
 import base.ElException;
 import java.util.HashMap;
 import java.util.LinkedList;
-import vm.Command;
+import vm.VMCommand;
 
 public class Function extends NamedEntity  {
+  public static ID id = ID.get("function");
   public static final HashMap<ID, Function> all = new HashMap<>();
   
   public Code code = new Code();
@@ -19,7 +15,7 @@ public class Function extends NamedEntity  {
   public boolean isConstructor = false;
   public ClassEntity parentClass = null;
   public byte priority = VALUE;
-  public Command startingCommand;
+  public VMCommand startingCommand;
   public int allocation = 0;
   
   public Function(ID name) {
@@ -31,13 +27,15 @@ public class Function extends NamedEntity  {
     this.name = name;
     this.priority = priority;
   }
+  
+  public Function(String name, ClassEntity... paramTypes) {
+    this.name = ID.get(name);
+    for(ClassEntity paramType: paramTypes)
+      parameters.add(new Variable(paramType));
+  }
 
   public static Function create(ID id) {
-    allocations.add(currentAllocation);
-    currentAllocation = 0;
-    functions.add(currentFunction);
-    currentFunction = new Function(id);
-    return currentFunction;
+    return allocateFunction(new Function(id));
   }
   
   private static void create(String name, int priority) {
@@ -74,21 +72,36 @@ public class Function extends NamedEntity  {
     create("elseOp", 4);
     create("add", 3);
   }
-  
-  @Override
-  public ID getID() {
-    return functionID;
-  }
 
   @Override
   public byte getPriority() {
     return priority;
   }
+  
+  public boolean isNative() {
+    return priority != VALUE;
+  }
+  
+  // processor fields
+  
+  @Override
+  public ID getObject() throws ElException {
+    return isNative() ? name : id;
+  }
+  
+  @Override
+  public Entity getParameter(int index) throws ElException {
+    return parameters.get(index);
+  }
+  
+  // type conversion
 
   @Override
   public Function toFunction() {
     return this;
   }
+  
+  // moving functions
 
   @Override
   public void move(Entity entity) throws base.ElException {
@@ -97,21 +110,23 @@ public class Function extends NamedEntity  {
 
   @Override
   public void moveToClass(ClassEntity classEntity) {
-    removeFunctionAllocation();
+    deallocateFunction();
     parentClass = classEntity;
     classEntity.methods.add(this);
   }
 
   @Override
   public void moveToCode(Code code) {
-    removeFunctionAllocation();
+    deallocateFunction();
     code.functions.add(this);
   }
 
   @Override
   public void moveToBlock() throws ElException {
-    removeFunctionAllocation();
+    deallocateFunction();
   }
+  
+  // other
 
   @Override
   public String toString() {
@@ -123,7 +138,7 @@ public class Function extends NamedEntity  {
     String str = "";
     for(Variable parameter : parameters) {
       if(!str.isEmpty()) str += ", ";
-      str += parameter.type + " " + parameter.name + "(" + parameter.index + ")";
+      str += parameter.type + " " + parameter.name + ":" + parameter.index;
     }
     str = (type == null ? "" : type + " ") +
         (isConstructor ? "create" : name.string) + "(" +  str + "):"

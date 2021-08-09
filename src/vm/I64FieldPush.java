@@ -2,7 +2,7 @@ package vm;
 
 import base.ElException;
 
-public class I64FieldPush extends Command {
+public class I64FieldPush extends VMCommand {
   int fieldIndex;
 
   public I64FieldPush(int fieldIndex) {

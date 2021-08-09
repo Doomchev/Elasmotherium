@@ -5,7 +5,7 @@ import ast.Entity;
 import ast.ObjectEntity;
 import ast.Variable;
 
-public class ObjectNew extends Command {
+public class ObjectNew extends VMCommand {
   public ClassEntity classEntity;
 
   public ObjectNew(ClassEntity classEntity) {

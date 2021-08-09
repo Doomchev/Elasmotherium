@@ -1,6 +1,6 @@
 package vm;
 
-public class I64Subtract extends Command {
+public class I64Subtract extends VMCommand {
   @Override
   public void execute() {
     stackPointer--;

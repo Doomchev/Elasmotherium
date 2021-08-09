@@ -5,51 +5,70 @@ import java.util.LinkedList;
 import parser.Action;
 
 public class Link extends Value {
+  public static ID id = ID.get("link");
+  
   public ID name;
-  public Variable variable;
-  public Function function;
+  public Entity entity;
   public boolean thisFlag, isDefinition = false;
   public final LinkedList<Type> subtypes = new LinkedList<>();
 
   public Link(ID name) {
     this.name = name;
-    this.thisFlag = Action.currentFlags.contains(thisID);
     Action.currentFlags.clear();
   }
 
-  public Link(Variable variable) {
-    this.name = variable.name;
-    this.variable = variable;
+  public Link(NamedEntity entity) {
+    this.name = entity.name;
+    this.entity = entity;
+  }
+  
+  // processor fields
+  
+  @Override
+  public ID getID() throws ElException {
+    return name;
   }
   
   @Override
-  public ID getID() {
-    return linkID;
+  public ID getObject() throws ElException {
+    return id;
+  }
+  
+  @Override
+  public ClassEntity getType() throws ElException {
+    return entity.getType();
   }
 
   @Override
+  public void resolveTo(Entity entity) {
+    this.entity = entity;
+  }
+  
+  // type conversion
+
+  @Override
   public Variable toVariable() {
-    return variable;
+    return entity.toVariable();
   }
 
   @Override
   public Function toFunction() {
-    return function;
+    return entity.toFunction();
   }
+  
+  // moving functions
 
   @Override
   public void move(Entity entity) throws ElException {
     entity.moveToLink(this);
   }
-  
-  
 
   @Override
   public void moveToClass(ClassEntity classEntity) throws ElException {
     classEntity.parent = this;
   }
   
-  
+  // other
   
   @Override
   public String toString() {

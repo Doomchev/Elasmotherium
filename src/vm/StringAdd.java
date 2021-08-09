@@ -1,6 +1,6 @@
 package vm;
 
-public class StringAdd extends Command {
+public class StringAdd extends VMCommand {
   @Override
   public void execute() {
     stackPointer--;

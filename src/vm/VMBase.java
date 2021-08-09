@@ -17,22 +17,29 @@ public class VMBase extends Base{
   public static VMFunctionCall[] callStack = new VMFunctionCall[STACK_SIZE];
   public static int stackPointer = -1, callStackPointer = -1;
   public static VMFunctionCall currentCall = new VMFunctionCall(null);
-  public static Command currentCommand;
-  public static final HashMap<Function, Command> functions = new HashMap<>();
-  public static final LinkedList<Command> gotos = new LinkedList<>();
-  public static Command[] commands = new Command[STACK_SIZE];
+  public static VMCommand currentCommand, startingCommand = null;
+  public static final HashMap<Function, VMCommand> functions = new HashMap<>();
+  public static final LinkedList<VMCommand> gotos = new LinkedList<>();
+  public static VMCommand[] commands = new VMCommand[STACK_SIZE];
   public static int commandNumber = -1;
-  public static Function currentFunction;
   
-  public static final byte TYPE_BOOLEAN = 0, TYPE_I64 = 1, TYPE_STRING = 2
-      , TYPE_OBJECT = 3;
+  public static final byte TYPE_I64 = 0, TYPE_STRING = 1
+      , TYPE_BOOLEAN = 2, TYPE_OBJECT = 3;
   
+  public static void append(VMCommand command) {
+    if(startingCommand == null) {
+      startingCommand = command;
+    } else {
+      currentCommand.nextCommand = command;
+    }
+    currentCommand = command;
+  }
 
   public static void prepare(boolean run) {
     for(int index = 0; index <= commandNumber; index++)
       System.out.println(commands[index].toString());
     if(run) {
-      //currentCommand = Base.main.startingCommand;
+      currentCommand = startingCommand;
       while(currentCommand != null) {
         System.out.println(currentCommand.toString());
         try {

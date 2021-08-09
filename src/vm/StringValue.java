@@ -1,20 +1,10 @@
-package ast;
+package vm;
 
-public class StringValue extends Value {
+public class StringValue extends VMValue {
   public String value;
 
   public StringValue(String value) {
     this.value = value;
-  }
-  
-  @Override
-  public ID getID() {
-    return stringID;
-  }
-
-  @Override
-  public void moveToStringSequence(StringSequence sequence) {
-    if(!value.isEmpty()) sequence.chunks.add(this);
   }
   
   @Override

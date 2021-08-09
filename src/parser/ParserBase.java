@@ -2,12 +2,11 @@ package parser;
 
 import base.Base;
 import java.util.Stack;
-import static base.Module.lineNum;
 import java.util.List;
 
 public class ParserBase extends Base {
   public static StringBuffer text;
-  public static String prefix, path, subIndent = "";
+  public static String prefix, path;
   public static int tokenStart, textPos, textLength, lineStart;
   public static char currentChar;
   public static final Stack<ActionSub> returnStack = new Stack<>();
@@ -23,7 +22,7 @@ public class ParserBase extends Base {
       this.textLength = ParserBase.textLength;
       this.textPos = ParserBase.textPos;
       this.tokenStart = ParserBase.tokenStart;
-      this.lineNum = ParserBase.lineNum;
+      this.lineNum = ParserBase.currentLineNum;
       this.lineStart = ParserBase.lineStart;
       this.prefix = ParserBase.prefix;
       this.currentFileName = ParserBase.currentFileName;
@@ -34,7 +33,7 @@ public class ParserBase extends Base {
       ParserBase.textLength = this.textLength;
       ParserBase.textPos = this.textPos;
       ParserBase.tokenStart = this.tokenStart;
-      ParserBase.lineNum = this.lineNum;
+      ParserBase.currentLineNum = this.lineNum;
       ParserBase.lineStart = this.lineStart;
       ParserBase.prefix = this.prefix;
       ParserBase.currentFileName = this.currentFileName;
@@ -43,7 +42,7 @@ public class ParserBase extends Base {
   
   public void incrementTextPos() {
     if(text.charAt(textPos) == '\n') {
-      lineNum++;
+      currentLineNum++;
       lineStart = textPos;
     }
     textPos++;

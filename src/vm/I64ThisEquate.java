@@ -2,7 +2,7 @@ package vm;
 
 import base.ElException;
 
-public class I64ThisEquate extends Command {
+public class I64ThisEquate extends VMCommand {
   int index;
 
   public I64ThisEquate(int index) {

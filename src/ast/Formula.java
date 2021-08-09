@@ -8,11 +8,8 @@ public class Formula extends Entity {
   public final static Function elseOp = Function.all.get(ID.get("elseOp"));
   
   public final LinkedList<Value> chunks = new LinkedList<>();
-
-  @Override
-  public ID getID() {
-    return formulaID;
-  }
+  
+  // moving functions
 
   @Override
   public void move(Entity entity) throws ElException {
@@ -55,6 +52,7 @@ public class Formula extends Entity {
     list.values.add(toValue());
   }
   
+  // other
   
   private final Stack<Value> valueStack = new Stack<>();
   private final Stack<FunctionCall> opStack = new Stack<>();

@@ -1,6 +1,6 @@
 package vm;
 
-public class ObjectStackPush extends Command {
+public class ObjectStackPush extends VMCommand {
   int index;
 
   public ObjectStackPush(int index) {

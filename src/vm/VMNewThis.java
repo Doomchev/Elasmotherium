@@ -2,7 +2,7 @@ package vm;
 
 import ast.ClassEntity;
 
-public class VMNewThis extends Command {
+public class VMNewThis extends VMCommand {
   ClassEntity classEntity;
 
   public VMNewThis(ClassEntity classEntity) {

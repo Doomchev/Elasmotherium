@@ -16,10 +16,14 @@ public class Type extends NamedEntity {
     this.name = ID.get(id);
   }
   
+  // processor fields
+  
   @Override
-  public ID getID() {
-    return typeID;
+  public ClassEntity getType() throws ElException {
+    return getFromScope(name).toClass();
   }
+  
+  // type conversion
 
   @Override
   public ClassEntity toClass() throws ElException {
@@ -27,6 +31,8 @@ public class Type extends NamedEntity {
     if(typeClass == null) throw new ElException("Cannot find class " + name);
     return typeClass;
   }
+  
+  // moving functions
 
   @Override
   public void move(Entity entity) throws ElException {
@@ -54,9 +60,11 @@ public class Type extends NamedEntity {
   }
 
   @Override
-  void moveToLink(Link link) throws ElException {
+  public void moveToLink(Link link) throws ElException {
     link.subtypes.add(this);
   }
+  
+  // other
 
   @Override
   public String toString() {

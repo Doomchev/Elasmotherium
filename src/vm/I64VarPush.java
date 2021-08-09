@@ -1,10 +1,18 @@
 package vm;
 
-public class I64StackPush extends Command {
+import ast.Entity;
+import base.ElException;
+
+public class I64VarPush extends VMCommand {
   int index;
 
-  public I64StackPush(int index) {
+  public I64VarPush(int index) {
     this.index = index;
+  }
+  
+  @Override
+  public I64VarPush create(Entity entity) throws ElException {
+    return new I64VarPush(entity.getIndex());
   }
   
   @Override

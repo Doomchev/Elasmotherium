@@ -2,7 +2,7 @@ package vm;
 
 import base.ElException;
 
-public class StringFieldEquate extends Command {
+public class StringFieldEquate extends VMCommand {
   int stackIndex, fieldIndex;
 
   public StringFieldEquate(int stackIndex, int fieldIndex) {

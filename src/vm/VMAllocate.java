@@ -1,6 +1,6 @@
 package vm;
 
-public class VMAllocate extends Command {
+public class VMAllocate extends VMCommand {
   int quantity;
 
   public VMAllocate(int quantity) {

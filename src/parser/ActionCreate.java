@@ -24,9 +24,7 @@ public class ActionCreate extends Action {
   public ActionCreate create(String params) throws ElException {
     String[] param = params.split(",");
     ID id = ID.get(param[0]);
-    if(id == ID.classParameterID) {
-      return new ActionCreate(null, id, null);
-    } else if(id == ID.moduleID) {
+    if(id == Module.id) {
       return new ActionCreate(null, id, null);
     } else {
       EntityStack stack0 = EntityStack.all.get(id);
@@ -54,7 +52,7 @@ public class ActionCreate extends Action {
   @Override
   public void execute() throws ElException {
     currentAction = this;
-    if(type == Entity.moduleID) {
+    if(type == Module.id) {
       String name = EntityStack.id.pop().string;
       Module.current.modules.add(new Module(modulesPath + "/" + name + ".es"));
     } else if(stack.isStringBased()) {
@@ -67,7 +65,7 @@ public class ActionCreate extends Action {
     } else if(type != null) {
       if(log) log("CREATE BLOCK " + type.string);
       stack.push(new Block(type));
-      allocations.add(currentAllocation);
+      allocate();
     } else if(function != null) {
       if(log) log("CREATE FUNCTION CALL(" + function.getName() + ")");
       stack.push(new FunctionCall(function));

@@ -1,23 +1,21 @@
 package ast;
 
-public class ID extends Entity {
+import java.util.HashMap;
+
+public class ID {
+  public static HashMap<String, ID> all = new HashMap<>();  
   public String string;
 
   private ID(String string) {
     this.string = string;
   }
-
-  @Override
-  public ID getID() {
-    return idID;
-  }
   
   public static ID get(String string) {
     string = string.trim();
-    ID id = allIDs.get(string);
+    ID id = all.get(string);
     if(id == null) {
       id = new ID(string);
-      allIDs.put(string, id);
+      all.put(string, id);
     }
     return id;
   }

@@ -1,3 +1,12 @@
+2021.08.10 (version 0.21)
+	+ P: Scope stack system.
+  + AST: Sections of Entity and subclasses separated by comments.
+  + P: AppendCommand, Call, GetFromScope, ResolveAll, Switch, Convert processor commands.
+  + P: CallParameter, Parent, This, VariableValue processor parameters.
+  * New file reading system.
+  * PE: Values and their methods are disjointed from Entity and moved to VM package.
+  - AST: ID constants.
+
 2021.08.05 (version 0.20)
 	* PE: Variable, field and parameter indexation system.
 	
@@ -160,13 +169,9 @@ To do:
   + ranges
   + $[] syntax
   + string slices
-  + -> for functions without return value
 
 Possible improvements:
   + SPE: function unpacking
   + PE: change ActionGoTo actions to straight links
   + PE: faster subs with no return value
   + PE: faster inline subs
-  + PE: intelligent action chain parsing (allowing spaces in commands)
-  + PE: scope pool
-  + PE: subroutines with preserved scope
