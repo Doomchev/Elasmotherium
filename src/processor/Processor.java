@@ -1,7 +1,7 @@
 package processor;
 
+import ast.ClassEntity;
 import ast.Entity;
-import ast.Function;
 import ast.FunctionCall;
 import ast.ID;
 import base.ElException;
@@ -31,20 +31,27 @@ public class Processor extends ProBase {
     addCommand(new I64VarEquate(0));
     
     addCommand(new I64Add());
+    addCommand(new I64Subtract());
+    addCommand(new I64Multiply());
+    
     addCommand(new StringAdd());
     
     addCommand(new I64IsEqual());
+    
     addCommand(new I64IsLess());
+    addCommand(new I64IsLessOrEqual());
     addCommand(new I64IsMore());
+    
+    addCommand(new I64Return(0));
     
     addCommand(new GoTo());
     addCommand(new IfFalseGoTo());
     
     proCommands.put("getFromScope", new GetFromScope());
     proCommands.put("resolveAll", new ResolveAll());
-    proCommands.put("convert", new Convert());
     proCommands.put("stop", new Stop());
     proCommands.put("process", new Process(null));
+    proCommands.put("return", new ProReturn(null));
   }
   
   static class ProcessorObject extends SimpleMap<ID, LinkedList<ProCommand>> {}
@@ -83,8 +90,8 @@ public class Processor extends ProBase {
         line = expectEnd(line, "{");
         String[] part = line.substring(0, line.length() - 1).split("\\.");
         ProcessorObject function = getObject(part[0]);
-        LinkedList<ProCommand> method = getMethod(function
-            , part.length > 1 ? ID.get(part[1]) : defaultID);
+        ID methodID = part.length > 1 ? ID.get(part[1]) : defaultID;
+        LinkedList<ProCommand> method = getMethod(function, methodID);
         if(!readCode(method).equals("}"))
           throw new ElException("Case outside switch.");
       }
@@ -172,11 +179,13 @@ public class Processor extends ProBase {
     current = oldCurrent;
   }
   
-  public void call(Entity object, ID method, Entity parent) throws ElException {
-    Entity oldParent = Processor.parent;
-    Processor.parent = parent;
+  public void call(Entity object, ID method, ClassEntity targetClass)
+      throws ElException {
+    ClassEntity oldTargetClass = Processor.targetClass;
+    Processor.targetClass = targetClass;
     call(object, method);
-    Processor.parent = oldParent;
+    if(targetClass != null) convert(targetClass);
+    Processor.targetClass = oldTargetClass;
   }
   
   public void call(Entity object) throws ElException {

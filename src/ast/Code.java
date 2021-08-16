@@ -2,6 +2,8 @@ package ast;
 
 import base.ElException;
 import java.util.LinkedList;
+import vm.VMBase;
+import vm.VMCommand;
 
 public class Code extends Entity {
   public final LinkedList<Entity> lines = new LinkedList<>();
@@ -21,14 +23,19 @@ public class Code extends Entity {
   @Override
   public void process() throws ElException {
     allocateScope();
-    processWithoutScope();
+    processWithoutScope(null);
     deallocateScope();
   }
   
-  public void processWithoutScope() throws ElException {
+  public void processWithoutScope(VMCommand endingCommand) throws ElException {
+    for(ClassEntity classEntity: classes) addToScope(classEntity);
+    for(Function function: functions) addToScope(function);
+    
     for(Entity line: lines) line.process();
-    for(ClassEntity classEntity : classes) classEntity.process();
-    for(Function function : functions) function.process();
+    if(endingCommand != null) append(endingCommand);
+    
+    for(ClassEntity classEntity: classes) classEntity.process();
+    for(Function function: functions) function.process();
   }
   
   // moving functions

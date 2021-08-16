@@ -2,6 +2,8 @@ package ast;
 
 import base.ElException;
 import java.util.LinkedList;
+import processor.ProBase;
+import vm.NewFunctionCall;
 import vm.VMBase;
 import vm.VMCommand;
 
@@ -81,16 +83,21 @@ public class FunctionCall extends Value {
     if(!function.isNative()) {
       int i = 0;
       for(Entity parameter: parameters) {
-        currentProcessor.call(parameter, resolve, function.getParameter(i));
+        currentProcessor.call(parameter, resolve
+            , function.getParameter(i).getType());
         i++;
       }
     }
     VMCommand command = function.command;
-    if(command == null) {
+    if(command != null) {
+      append(command.create(null));
+      setReturnType(function.returnType);
+    } else if(function == Function.ret) {
       currentProcessor.call(this);
     } else {
-      VMBase.append(command.create(null));
-      if(log) println(command.toString());
+      append(new NewFunctionCall(function));
+      setReturnType(function.returnType);
+      //ProBase.convert(function.returnType.getType());
     }
   }
 

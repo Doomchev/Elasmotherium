@@ -10,7 +10,7 @@ public class ProParent extends ProParameter {
   
   @Override
   public Entity getValue() throws ElException {
-    return ProBase.parent;
+    return ProBase.targetClass;
   }
 
   @Override

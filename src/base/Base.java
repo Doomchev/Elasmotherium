@@ -12,7 +12,11 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.LinkedList;
+import processor.ProBase;
 import processor.Processor;
+import vm.I64ToString;
+import vm.VMBase;
+import vm.VMCommand;
 
 public abstract class Base {
   public static int currentLineNum = 0;
@@ -210,7 +214,64 @@ public abstract class Base {
     }
   }
   
+  // converters
+  
+  private static final SimpleMap<ClassEntity, SimpleMap<ClassEntity
+      , VMCommand>> converters = new SimpleMap<>();
+  static ClassEntity returnType = null;
+  
+  static {
+    add(ClassEntity.Int, ClassEntity.String, new I64ToString());
+  }
+  
+  private static void add(ClassEntity from, ClassEntity to, VMCommand command) {
+    SimpleMap<ClassEntity, VMCommand> map = converters.get(from);
+    if(map == null) {
+      map = new SimpleMap<>();
+      converters.put(from, map);
+    }
+    map.put(to, command);
+  }
+
+  public void setReturnType(Entity type) throws ElException {
+    if(type == null) return;
+    if(returnType != null) 
+      throw new ElException("Return type already specified.");
+    returnType = type.getType();
+    if(log) System.out.println(subIndent + "Set return type to "
+        + returnType);
+  }
+
+  public static void convert(ClassEntity to) throws ElException {
+    if(returnType == null) {
+      throw new ElException("Missing return.");
+    }
+    convert(returnType, to);
+    returnType = null;
+  }
+
+  public static void convert(ClassEntity from, ClassEntity to) throws ElException {
+    if(log) System.out.println(subIndent + "Converting " + returnType + " to "
+        + to + ".");
+    if(from == to) {
+      return;
+    }
+    SimpleMap<ClassEntity, VMCommand> map = converters.get(from);
+    if(map == null) {
+      throw new ElException("Converters from " + from + " are not found.");
+    }
+    VMCommand command = map.get(to);
+    if(command == null) {
+      throw new ElException("Converters from " + from + " to " + to + " are not found.");
+    }
+    append(command.create(null));
+  }
+  
   // other
+
+  public static void append(VMCommand command) {
+    VMBase.append(command);
+  }
   
   public static void error(String title, String message) {
     /*JOptionPane.showMessageDialog(null, message, title

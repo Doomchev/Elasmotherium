@@ -1,5 +1,6 @@
 package processor;
 
+import ast.ClassEntity;
 import ast.Entity;
 import ast.ID;
 import base.ElException;
@@ -20,15 +21,13 @@ public class ProCall extends ProCommand {
   @Override
   void execute() throws ElException {
     Entity newCurrent = object.getValue();
+    ClassEntity type
+        = parameter == null ? null : parameter.getValue().getType();
     if(log) {
-      log(newCurrent.toString() + "." + method + "("
-          + (parameter == null ? "" : parameter.getValue()) + ")");
+      log(newCurrent.toString() + "." + method + "(" + type + ")");
       subIndent += "| ";
     }
-    Entity oldParent = parent;
-    if(parameter != null) parent = parameter.getValue();
-    currentProcessor.call(newCurrent, method);
-    parent = oldParent;
+    currentProcessor.call(newCurrent, method, type);
     if(log) subIndent = subIndent.substring(2);
   }
 }

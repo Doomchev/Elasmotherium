@@ -15,7 +15,7 @@ public class VMBase extends Base{
   public static ObjectEntity[] objectStack = new ObjectEntity[STACK_SIZE];
   public static VMFunctionCall[] callStack = new VMFunctionCall[STACK_SIZE];
   public static int stackPointer = -1, callStackPointer = -1;
-  public static VMFunctionCall currentCall = new VMFunctionCall(null);
+  public static VMFunctionCall currentCall = new VMFunctionCall(null, 0);
   public static VMCommand[] commands = new VMCommand[STACK_SIZE];
   public static int currentCommand = -1;
   public static JFrame frame;
@@ -26,6 +26,7 @@ public class VMBase extends Base{
   public static void append(VMCommand command) {
     currentCommand++;
     commands[currentCommand] = command;
+    if(log) println(subIndent + command.toString());
   }
 
   public static void prepare() {

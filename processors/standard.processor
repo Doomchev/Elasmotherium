@@ -6,6 +6,14 @@ variable {
   }
 }
 
+return {
+  v0.resolve(function);
+  switch(function) {
+    case Int:
+      I64Return;
+  }
+}
+
 if {
   condition.resolve(Bool);
   IfFalseGoTo(#else);
@@ -25,6 +33,7 @@ do {
 link.resolve {
   getFromScope;
   this.resolve(parent);
+  return(this);
 }
 
 variable.resolve {
@@ -34,7 +43,7 @@ variable.resolve {
     case String:
       StringVarPush;
   }
-  convert;
+  return(this);
 }
 
 const.resolve {
@@ -44,6 +53,7 @@ const.resolve {
     case String:
       StringPush;
   }
+  return(parent);
 }
 
 addition.resolve {
@@ -55,22 +65,47 @@ addition.resolve {
     case String:
       StringAdd;
   }
+  return(parent);
+}
+
+subtraction.resolve {
+	v0.resolve(Int);
+	v1.resolve(Int);
+  I64Subtract;
+  return(Int);
+}
+
+multiplication.resolve {
+	v0.resolve(Int);
+	v1.resolve(Int);
+  I64Multiply;
+  return(Int);
 }
 
 equal.resolve {
   v0.resolve();
   v1.resolve();
   I64IsEqual;
+  return(Bool);
 }
 
 less.resolve {
   v0.resolve(Int);
   v1.resolve(Int);
   I64IsLess;
+  return(Bool);
+}
+
+lessOrEqual.resolve {
+  v0.resolve(Int);
+  v1.resolve(Int);
+  I64IsLessOrEqual;
+  return(Bool);
 }
 
 more.resolve {
   v0.resolve(Int);
   v1.resolve(Int);
   I64IsMore;
+  return(Bool);
 }

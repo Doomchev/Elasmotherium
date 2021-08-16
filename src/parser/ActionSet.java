@@ -6,9 +6,6 @@ import ast.ID;
 import base.ElException;
 
 public class ActionSet extends Action {
-  private static final ID ret = ID.get("return"), get = ID.get("get")
-      , def = ID.get("default");
-  
   private final EntityStack<? extends Entity> value;
   private final ID id;
 

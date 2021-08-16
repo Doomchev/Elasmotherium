@@ -30,11 +30,8 @@ public class ActionCreate extends Action {
       EntityStack stack0 = EntityStack.all.get(id);
       Function function0 = Function.all.get(id);
       if(stack0 == null) {
-        if(function0 == null) {
-          function0 = new Function(id);
-          function0.priority = 0;
-          Function.all.put(id, function0);
-        }
+        if(function0 == null) throw new ElException("Function " + id
+            + " not found.");
         stack0 = EntityStack.call;
       }
       if(stack0 == EntityStack.block || stack0 == EntityStack.constant) {

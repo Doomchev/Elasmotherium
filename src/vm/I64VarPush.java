@@ -1,6 +1,5 @@
 package vm;
 
-import ast.Entity;
 import base.ElException;
 import processor.ProParameter;
 

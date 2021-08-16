@@ -9,8 +9,6 @@ public class Allocate extends VMCommand {
   
   @Override
   public void execute() {
-    if(currentCall.paramPosition < 0)
-      currentCall.paramPosition = stackPointer + 1;
     stackPointer += quantity;
     currentCommand++;
   }

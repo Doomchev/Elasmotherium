@@ -1,16 +1,10 @@
 package processor;
 
+import ast.ClassEntity;
 import ast.Entity;
 import base.Base;
-import static base.Base.subIndent;
-import vm.VMBase;
-import vm.VMCommand;
 
 public class ProBase extends Base {
-  static Entity parent, current;
-  
-  public void append(VMCommand command) {
-    VMBase.append(command);
-    System.out.println(subIndent + command.toString());
-  }
+  static Entity current;
+  public static ClassEntity targetClass;
 }

@@ -17,6 +17,8 @@ public abstract class ProParameter extends ProBase {
         return ProParent.instance;
       case "value":
         return ProVariableValue.instance;
+      case "function":
+        return ProCurrentFunction.instance;
       default:
         if(name.startsWith("v")) {
           return new ProCallParameter(name.substring(1));

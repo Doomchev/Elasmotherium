@@ -5,7 +5,7 @@ public class NewMethodCall extends VMCommand {
   public void execute() {
     callStackPointer++;
     callStack[callStackPointer] = currentCall;
-    currentCall = new VMFunctionCall(objectStack[stackPointer]);
+    //currentCall = new VMFunctionCall(objectStack[stackPointer]);
     stackPointer--;
     currentCommand++;
   }

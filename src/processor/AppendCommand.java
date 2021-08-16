@@ -1,7 +1,6 @@
 package processor;
 
 import base.ElException;
-import vm.VMBase;
 import vm.VMCommand;
 
 public class AppendCommand extends ProCommand {
@@ -18,7 +17,6 @@ public class AppendCommand extends ProCommand {
   @Override
   void execute() throws ElException {
     VMCommand newCommand = command.create(parameter);
-    if(log) log(newCommand.toString());
-    VMBase.append(newCommand);
+    append(newCommand);
   } 
 }

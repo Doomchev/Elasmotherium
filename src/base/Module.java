@@ -97,15 +97,14 @@ public class Module extends ParserBase {
     addToScope(ClassEntity.Bool);
     addToScope(ClassEntity.String);
     
-    newFunc(new Print(), "print", ClassEntity.String);
+    newFunc(new Print(), "println", ClassEntity.String);
     newFunc(new AskInt(), ClassEntity.Int, "askInt", ClassEntity.String);
     newFunc(new RandomInt(), ClassEntity.Int, "randomInt", ClassEntity.Int);
     newFunc(new Tell(), "tell", ClassEntity.String);
     newFunc(new Exit(), "exit");
     
-    VMBase.append(new Allocate(function.allocation));
-    function.code.processWithoutScope();
-    VMBase.append(new Exit());
+    append(new Allocate(function.allocation));
+    function.code.processWithoutScope(new Exit());
   }
 
   public void print() {

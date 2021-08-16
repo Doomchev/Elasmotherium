@@ -4,7 +4,7 @@ import static ast.FunctionCall.resolve;
 import static base.Base.currentProcessor;
 import base.ElException;
 import java.util.LinkedList;
-import processor.Convert;
+import processor.ProBase;
 import vm.StringAdd;
 import vm.VMBase;
 import vm.VMCommand;
@@ -30,12 +30,12 @@ public class StringSequence extends Value {
       currentProcessor.call(value, resolve, ClassEntity.String);
       if(isNotFirst) {
         VMCommand command = new StringAdd();
-        VMBase.append(command);
-        System.out.println(subIndent + command.toString());
+        append(command);
       } else {
         isNotFirst = true;
       }
     }
+    setReturnType(ClassEntity.String);
   }
   
   // moving functions
