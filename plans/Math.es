@@ -1,4 +1,4 @@
-Num limit<AnyNumber Num>(Num value, Num from, Num to) -> value < from ? from : (value > to ? to : value);
+Num bound<AnyNumber Num>(Num value, Num from, Num to) -> value < from ? from : (value > to ? to : value);
 Num min<AnyNumber Num>(Num value0, Num value1) -> value0 < value1 ? value0 : value1;
 Num max<AnyNumber Num>(Num value0, Num value1) -> value0 > value1 ? value0 : value1;
 Num abs<AnyNumber Num>(Num value) -> value < 0 ? -value : value;

@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 public class ClassEntity extends NamedEntity {
   public static HashMap<ID, ClassEntity> all = new HashMap<>();
-  public static ClassEntity Int, Object, String;
+  public static ClassEntity Int, String, Bool;
   
   public Entity parent;
   public LinkedList<Variable> fields = new LinkedList<>();
@@ -18,7 +18,7 @@ public class ClassEntity extends NamedEntity {
   static {
     Int = create("Int", true);
     String = create("String", true);
-    Object = create("Object", true);
+    Bool = create("Bool", true);
   }
   
   public static ClassEntity create(ID name) {
@@ -68,8 +68,7 @@ public class ClassEntity extends NamedEntity {
 
   @Override
   public void moveToFunctionCall(FunctionCall call) throws ElException {
-    name = ID.get(call.function.toString() + "1");
-    call.function = this;
+    throw new ElException("Anonymous classes are not implemented.");
   }
   
   // other

@@ -1,16 +1,15 @@
 package vm;
 
 import ast.ClassEntity;
-import ast.Entity;
 import ast.ObjectEntity;
 import ast.Variable;
 import base.ElException;
+import processor.ProParameter;
 
 public abstract class VMCommand extends VMBase {
-  public VMCommand nextCommand;
   public int lineNum;
   
-  public VMCommand create(Entity entity) throws ElException {
+  public VMCommand create(ProParameter parameter) throws ElException {
     try {
       return getClass().newInstance();
     } catch(InstantiationException | IllegalAccessException ex) {
@@ -20,7 +19,7 @@ public abstract class VMCommand extends VMBase {
   
   public abstract void execute() throws ElException;
   
-  public void setGoto(VMCommand command) {
+  public void setGoto(int command) {
   }
 
   public ObjectEntity newObject(ClassEntity classEntity) {

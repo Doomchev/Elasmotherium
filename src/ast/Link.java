@@ -72,7 +72,7 @@ public class Link extends Value {
   
   @Override
   public String toString() {
-    return name.string
+    return "#" + name.string
         + (subtypes.isEmpty() ? "" : "<" + listToString(subtypes) + ">");
   }
 }

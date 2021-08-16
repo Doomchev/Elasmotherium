@@ -107,7 +107,7 @@ public abstract class Base {
     throw new ElException("Identifier " + name + " is not found.");
   }
 
-  // string commands
+  // string functios
   
   public static String[] trimmedSplit(String text, char separator) {
     int start = 0;
@@ -137,7 +137,7 @@ public abstract class Base {
     return list.toArray(new String[list.size()]);
   }
   
-  public static String betweenBrackets(String text, char opening
+  public static String between(String text, char opening
       , char closing) {
     int start = -1;
     for(int i = 0; i < text.length(); i++) {
@@ -146,6 +146,14 @@ public abstract class Base {
           start + 1, i);
     }
     return "";
+  }
+  
+  public static String betweenBrackets(String text) {
+    return between(text, '(', ')');
+  } 
+  
+  public static String stringUntil(String string, char c) {
+    return string.substring(0, string.indexOf(c));
   }
   
   public static String startingId(String text) {
@@ -161,6 +169,12 @@ public abstract class Base {
   public static String expectEnd(String string, String end) throws ElException {
     if(!string.endsWith(end)) throw new ElException(end + " expected.");
     return string.substring(0, string.length() - end.length());
+  }
+  
+  public static String createString(char ch, int quantity) {
+    char[] chars = new char[quantity];
+    for(int i = 0; i < quantity; i++) chars[i] = ch;
+    return new String(chars);
   }
   
   //reader
@@ -207,5 +221,12 @@ public abstract class Base {
   
   public static void println(String string) {
     System.out.println(string);
+  }
+  
+  public static void printChapter(String string) {
+    System.out.println(createString('=', 80));
+    System.out.println(createString('=', 39 - string.length() / 2) + " "
+         + string + " " + createString('=', 39 - (string.length() + 1) / 2));
+    System.out.println(createString('=', 80));
   }
 }

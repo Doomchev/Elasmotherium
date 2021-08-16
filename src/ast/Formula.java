@@ -96,7 +96,7 @@ public class Formula extends Entity {
     if(valueStack.size() < 2) throw new ElException("Syntax error");
     if(op.function == null) {
       valueStack.pop().moveToFunctionCall(op);
-      op.function = valueStack.pop();
+      op.functionID = valueStack.pop().getID();
       valueStack.push(op);
       if(log) System.out.println(subIndent + "PUSH VALUES TO FUNCTION "
           + op.toString());

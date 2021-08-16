@@ -1,26 +1,26 @@
 package vm;
 
-import ast.Entity;
 import base.ElException;
+import processor.ProParameter;
 
 public class StringPush extends VMCommand {
-  String value;
+  String value = "";
 
   public StringPush(String value) {
     this.value = value;
   }
   
   @Override
-  public StringPush create(Entity entity) throws ElException {
-    return new StringPush(entity.getStringValue());
+  public StringPush create(ProParameter parameter) throws ElException {
+    return new StringPush(parameter.getValue().getStringValue());
   }
   
   @Override
   public void execute() {
     stackPointer++;
     stringStack[stackPointer] = value;
-    typeStack[stackPointer] = TYPE_STRING;
-    currentCommand = nextCommand;
+    if(log) typeStack[stackPointer] = ValueType.STRING;
+    currentCommand++;
   }
   
   @Override

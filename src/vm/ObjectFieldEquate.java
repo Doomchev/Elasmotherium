@@ -13,7 +13,7 @@ public class ObjectFieldEquate extends VMCommand {
     //objectStack[stackIndex + currentCall.paramPosition]
     //    .objectSet(objectStack[stackPointer]);
     stackPointer--;
-    currentCommand = nextCommand;
+    currentCommand++;
   }
   
   @Override

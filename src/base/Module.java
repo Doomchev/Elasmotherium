@@ -1,5 +1,6 @@
 package base;
 
+import vm.AskInt;
 import ast.ClassEntity;
 import java.io.File;
 import parser.ParserBase;
@@ -10,12 +11,10 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import parser.Action;
 import parser.Rules;
-
 import ast.EntityStack;
 import ast.Function;
 import ast.ID;
-import vm.VMAllocate;
-import vm.VMBase;
+import vm.*;
 
 public class Module extends ParserBase {
   public static ID id = ID.get("module");
@@ -40,6 +39,8 @@ public class Module extends ParserBase {
     path = Paths.get(fileName).getParent().toString() + "/";
     
     include(fileName);
+    
+    if(log) printChapter("Parsing " + fileName);
     
     Action.currentAction = rules.root.action;
     try {
@@ -79,16 +80,36 @@ public class Module extends ParserBase {
     }
   }
   
+  public void newFunc(VMCommand command, ClassEntity returnType, String name
+      , ClassEntity... paramTypes) {
+    addToScope(new Function(command, returnType, name, paramTypes));
+  }
+  
+  public void newFunc(VMCommand command, String name
+      , ClassEntity... paramTypes) {
+    addToScope(new Function(command, name, paramTypes));
+  }
+  
   public void process() throws ElException {
     currentFunction = function;
+    
     addToScope(ClassEntity.Int);
+    addToScope(ClassEntity.Bool);
     addToScope(ClassEntity.String);
-    addToScope(new Function("print", ClassEntity.String));
-    VMBase.append(new VMAllocate(function.allocation));
+    
+    newFunc(new Print(), "print", ClassEntity.String);
+    newFunc(new AskInt(), ClassEntity.Int, "askInt", ClassEntity.String);
+    newFunc(new RandomInt(), ClassEntity.Int, "randomInt", ClassEntity.Int);
+    newFunc(new Tell(), "tell", ClassEntity.String);
+    newFunc(new Exit(), "exit");
+    
+    VMBase.append(new Allocate(function.allocation));
     function.code.processWithoutScope();
+    VMBase.append(new Exit());
   }
 
   public void print() {
+    if(log) printChapter("Abstract syntax tree");
     function.code.print("", fileName + ":" + function.allocation + " ");
   }
 }

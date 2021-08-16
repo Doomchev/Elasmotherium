@@ -13,7 +13,7 @@ public class I64ThisEquate extends VMCommand {
   public void execute() throws ElException {
     currentCall.thisObject.fields[index].i64Set(i64Stack[stackPointer]);
     stackPointer--;
-    currentCommand = nextCommand;
+    currentCommand++;
   }
   
   @Override

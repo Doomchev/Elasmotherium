@@ -6,7 +6,7 @@ public class I64IsMore extends VMCommand {
     stackPointer--;
     booleanStack[stackPointer] =
         i64Stack[stackPointer] > i64Stack[stackPointer + 1];
-    typeStack[stackPointer] = TYPE_BOOLEAN;
-    currentCommand = nextCommand;
+    if(log) typeStack[stackPointer] = ValueType.BOOLEAN;
+    currentCommand++;
   }
 }

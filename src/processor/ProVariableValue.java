@@ -9,7 +9,7 @@ public class ProVariableValue extends ProParameter {
   private ProVariableValue() {}
   
   @Override
-  Entity getValue() throws ElException {
+  public Entity getValue() throws ElException {
     return current.getValue();
   }
 

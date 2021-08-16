@@ -10,7 +10,7 @@ public abstract class ProCommand extends ProBase {
     lineNum = currentLineNum;
   }
 
-  ProCommand create() throws ElException {
+  ProCommand create(String param) throws ElException {
     try {
       return getClass().newInstance();
     } catch(InstantiationException | IllegalAccessException ex) {

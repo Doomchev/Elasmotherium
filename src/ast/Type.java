@@ -56,7 +56,7 @@ public class Type extends NamedEntity {
 
   @Override
   public void moveToFunction(Function function) {
-    function.type = this;
+    function.returnType = this;
   }
 
   @Override

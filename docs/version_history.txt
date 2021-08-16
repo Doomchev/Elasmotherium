@@ -1,3 +1,12 @@
+2021.08.16 (version 0.22)
+  + P: Class and ID as function call parameters.
+  + P: Labels system.
+  + P: Stop and Process processor command.
+  + Debug log sections highlighing.
+  * AST: Function call now has separate function and functionID fields.
+  * VM: Allocated stack values are now undefined.
+  * VM: Changed command link system to indexed system.
+
 2021.08.10 (version 0.21)
 	+ P: Scope stack system.
   + AST: Sections of Entity and subclasses separated by comments.

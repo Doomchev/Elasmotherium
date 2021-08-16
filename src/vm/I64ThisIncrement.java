@@ -12,7 +12,7 @@ public class I64ThisIncrement extends VMCommand {
   @Override
   public void execute() throws ElException {
     currentCall.thisObject.fields[index].increment();
-    currentCommand = nextCommand;
+    currentCommand++;
   }
   
   @Override

@@ -5,6 +5,6 @@ public class I64Add extends VMCommand {
   public void execute() {
     stackPointer--;
     i64Stack[stackPointer] += i64Stack[stackPointer + 1];
-    currentCommand = nextCommand;
+    currentCommand++;
   }
 }

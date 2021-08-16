@@ -3,6 +3,7 @@ package ast;
 import base.ElException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import vm.VMBase;
 import vm.VMCommand;
 
 public class Function extends NamedEntity  {
@@ -10,13 +11,13 @@ public class Function extends NamedEntity  {
   public static final HashMap<ID, Function> all = new HashMap<>();
   
   public Code code = new Code();
-  public Entity type = null;
+  public Entity returnType = null;
   public final LinkedList<Variable> parameters = new LinkedList<>();
   public boolean isConstructor = false;
   public ClassEntity parentClass = null;
   public byte priority = VALUE;
-  public VMCommand startingCommand;
-  public int allocation = 0;
+  public int startingCommand, allocation = 0;
+  public VMCommand command = null;
   
   public Function(ID name) {
     this.name = name;
@@ -28,10 +29,17 @@ public class Function extends NamedEntity  {
     this.priority = priority;
   }
   
-  public Function(String name, ClassEntity... paramTypes) {
+  public Function(VMCommand command, String name, ClassEntity... paramTypes) {
+    this.command = command;
     this.name = ID.get(name);
     for(ClassEntity paramType: paramTypes)
       parameters.add(new Variable(paramType));
+  }
+  
+  public Function(VMCommand command, ClassEntity returnType, String name
+      , ClassEntity... paramTypes) {
+    this(command, name, paramTypes);
+    this.returnType = returnType;
   }
 
   public static Function create(ID id) {
@@ -90,8 +98,22 @@ public class Function extends NamedEntity  {
   }
   
   @Override
+  public ClassEntity getType() throws ElException {
+    return returnType.toClass();
+  }
+  
+  @Override
   public Entity getParameter(int index) throws ElException {
     return parameters.get(index);
+  }
+  
+  // processing
+  
+  @Override
+  public void resolveAll() throws ElException {
+    if(command == null)
+      throw new ElException("Custom functions are not yet implemented.");
+    VMBase.append(command.create(null));
   }
   
   // type conversion
@@ -140,7 +162,7 @@ public class Function extends NamedEntity  {
       if(!str.isEmpty()) str += ", ";
       str += parameter.type + " " + parameter.name + ":" + parameter.index;
     }
-    str = (type == null ? "" : type + " ") +
+    str = (returnType == null ? "" : returnType + " ") +
         (isConstructor ? "create" : name.string) + "(" +  str + "):"
         + allocation;
     code.print(indent, prefix + str);

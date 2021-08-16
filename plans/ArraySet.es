@@ -11,7 +11,7 @@ class ArraySet<ElementType; AnyInt IndexType> {
 	}
 	
 	IndexType indexOf(ElementType element) {
-		for(IndexType i = 0 until size) if(_items[i] == element) return i;
+		for(IndexType i from 0 until size) if(_items[i] == element) return i;
 		return notFound;
 	}
 	

@@ -11,9 +11,9 @@ public class ObjectVarEquate extends VMCommand {
   public void execute() {
     int stackIndex = index + currentCall.paramPosition;
     objectStack[stackIndex] = objectStack[stackPointer];
-    typeStack[stackIndex] = TYPE_OBJECT;
+    if(log) typeStack[stackIndex] = ValueType.OBJECT;
     stackPointer--;
-    currentCommand = nextCommand;
+    currentCommand++;
   }
   
   @Override

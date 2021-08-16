@@ -14,6 +14,7 @@ public class Test extends Base {
     Module module = Module.read(file, rules);
     module.print();
     new Processor().load("processors/standard.processor").process(module);
-    VMBase.prepare(true);
+    VMBase.prepare();
+    VMBase.exec();
   }
 }

@@ -4,7 +4,7 @@ struc String<AnyChar CharType, AnyInt IndexType> extends Array<CharType> {
 	
   Int compareTo(String string) {
     if(size != string.size) return size - string.size;
-    for(Int i = 0 until size) {
+    for(Int i from 0 until size) {
 			if(this[i] == string[i]) continue;
 			return this[i] - string[i];
 		}
@@ -13,13 +13,13 @@ struc String<AnyChar CharType, AnyInt IndexType> extends Array<CharType> {
 	
   ThisType lowerCase() {
 		ThisType newString = ThisType(size);
-		for(IndexType i = 0 until size) newString[i] = this[i].lowerCase;
+		for(IndexType i from 0 until size) newString[i] = this[i].lowerCase;
 		return newString;
 	}
 	
   ThisType upperCase() {
 		ThisType newString = ThisType(size);
-		for(IndexType i = 0 until size) newString[i] = this[i].upperCase;
+		for(IndexType i from 0 until size) newString[i] = this[i].upperCase;
 		return newString;
 	}
 	
@@ -27,7 +27,7 @@ struc String<AnyChar CharType, AnyInt IndexType> extends Array<CharType> {
 		IndexType start = 0, end = size - 1;
 		while(start < size && this[start] <= " ") start++;
 		if(start == size) return "";
-		while(this[end] <= " ") end++;
+		while(this[end] <= " ") end--;
 		return this[from start to end];
 	}
 

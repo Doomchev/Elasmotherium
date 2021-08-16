@@ -13,7 +13,7 @@ public class StringThisEquate extends VMCommand {
   public void execute() throws ElException {
     currentCall.thisObject.fields[index].stringSet(stringStack[stackPointer]);
     stackPointer--;
-    currentCommand = nextCommand;
+    currentCommand++;
   }
   
   @Override

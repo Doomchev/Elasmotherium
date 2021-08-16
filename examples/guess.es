@@ -1,6 +1,6 @@
-Int number = random(100);
+Int number = randomInt(100);
 do {
-	Int guess = askInteger("What number did I guess?");
+	Int guess = askInt("What number did I guess?");
 	if(guess < number) {
 		tell("Your number is too small!");
 	} else if(guess > number) {

@@ -10,9 +10,9 @@ public class StringVarEquate extends VMCommand {
   @Override
   public void execute() {
     stringStack[index + currentCall.paramPosition] = stringStack[stackPointer];
-    typeStack[index + currentCall.paramPosition] = TYPE_I64;
+    if(log) typeStack[index + currentCall.paramPosition] = ValueType.I64;
     stackPointer--;
-    currentCommand = nextCommand;
+    currentCommand++;
   }
   
   @Override

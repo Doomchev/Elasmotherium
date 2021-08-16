@@ -10,7 +10,7 @@ public class I64Increment extends VMCommand {
   @Override
   public void execute() {
     i64Stack[index + currentCall.paramPosition]++;
-    currentCommand = nextCommand;
+    currentCommand++;
   }
   
   @Override

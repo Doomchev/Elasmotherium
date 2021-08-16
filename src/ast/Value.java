@@ -3,6 +3,7 @@ package ast;
 import base.ElException;
 
 public abstract class Value extends Entity {
+  
   @Override
   public void moveToStringSequence(StringSequence sequence) {
     sequence.chunks.add(this);

@@ -1,9 +1,10 @@
-include Math;
+/*include Math;
 
 class Object;
 class Class;
-class Int;
-class Float;
+
+
+/*class Float;
 class Question;
 Question yes;
 Question no;
@@ -32,8 +33,17 @@ class String {
 }
 
 print(String message);
-println(String message) print("\(message)\n");
+println(String message) print("\(message)\n");*/
+
+class Int;
+class String;
+
+Int screenWidth();
+Int screenHeight();
+
+println(String message);
 Int askInteger(String message);
 tell(String message);
+Int randomInt(Int value);
 
 exit() {}

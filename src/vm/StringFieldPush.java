@@ -13,8 +13,8 @@ public class StringFieldPush extends VMCommand {
   public void execute() throws ElException {
     stringStack[stackPointer] = objectStack[stackPointer].fields[fieldIndex]
         .stringGet();
-    typeStack[stackPointer] = TYPE_STRING;
-    currentCommand = nextCommand;
+    if(log) typeStack[stackPointer] = ValueType.STRING;
+    currentCommand++;
   }
   
   @Override

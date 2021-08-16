@@ -1,4 +1,4 @@
-class CornerRectangle<AnyFloat SystemFloat> extends Point {
+class CornerRectangle<AnyFloat SystemFloat> extends Point<SystemFloat> {
 	SystemFloat width, height;
 	
 	SystemFloat halfWidth -> 0.5 * width;

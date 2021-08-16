@@ -1,7 +1,6 @@
 package ast;
 
 import base.ElException;
-import java.util.HashMap;
 import parser.ParserBase;
 import vm.VMValue;
 
@@ -41,6 +40,10 @@ public abstract class Entity extends ParserBase {
   public int getIndex() throws ElException {
     throw new ElException("Cannot get index of", this);
   }
+
+  public Entity getBlockParameter(ID name) throws ElException {
+    throw new ElException(getName() + " is not a block.");
+  }
   
   // processing
   
@@ -57,7 +60,7 @@ public abstract class Entity extends ParserBase {
   }
 
   public void resolveTo(Entity entity) throws ElException {
-    throw new ElException("Cannot resolve ", this);
+    throw new ElException("Cannot resolve", this);
   }
   
   // type conversion

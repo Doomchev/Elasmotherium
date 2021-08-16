@@ -11,6 +11,26 @@ public class Block extends Entity {
     this.type = type;
   }
   
+  // processor fields
+  
+  @Override
+  public Entity getBlockParameter(ID name) throws ElException {
+    return entries.get(name);
+  }
+  
+  @Override
+  public ID getObject() throws ElException {
+    return type;
+  }
+  
+  // processing
+    
+  @Override
+  public void process() throws ElException {
+    if(log) println(type.string);
+    currentProcessor.call(this);
+  }
+  
   // moving functions
 
   @Override

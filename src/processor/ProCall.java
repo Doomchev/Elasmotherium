@@ -14,21 +14,21 @@ public class ProCall extends ProCommand {
     super();
     this.object = ProParameter.get(object);
     this.method = ID.get(method);
-    this.parameter = ProParameter.get(parameter);
+    this.parameter = parameter.isEmpty() ? null : ProParameter.get(parameter);
   }
   
   @Override
   void execute() throws ElException {
+    Entity newCurrent = object.getValue();
     if(log) {
-      log(object.getValue().toString() + "." + method + "(" + parameter + ")");
+      log(newCurrent.toString() + "." + method + "("
+          + (parameter == null ? "" : parameter.getValue()) + ")");
       subIndent += "| ";
     }
-    Entity oldParent = parent, oldCurrent = current;
-    parent = parameter.getValue();
-    current = object.getValue();
-    currentProcessor.call(current, method);
+    Entity oldParent = parent;
+    if(parameter != null) parent = parameter.getValue();
+    currentProcessor.call(newCurrent, method);
     parent = oldParent;
-    current = oldCurrent;
     if(log) subIndent = subIndent.substring(2);
   }
 }

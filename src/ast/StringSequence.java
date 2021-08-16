@@ -4,7 +4,7 @@ import static ast.FunctionCall.resolve;
 import static base.Base.currentProcessor;
 import base.ElException;
 import java.util.LinkedList;
-import processor.ProConvert;
+import processor.Convert;
 import vm.StringAdd;
 import vm.VMBase;
 import vm.VMCommand;

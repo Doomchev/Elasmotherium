@@ -15,7 +15,7 @@ public class I64FieldEquate extends VMCommand {
     objectStack[stackIndex + currentCall.paramPosition].fields[fieldIndex]
         .i64Set(i64Stack[stackPointer]);
     stackPointer--;
-    currentCommand = nextCommand;
+    currentCommand++;
   }
   
   @Override

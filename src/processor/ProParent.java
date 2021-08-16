@@ -9,8 +9,8 @@ public class ProParent extends ProParameter {
   private ProParent() {}
   
   @Override
-  Entity getValue() throws ElException {
-    return parent;
+  public Entity getValue() throws ElException {
+    return ProBase.parent;
   }
 
   @Override

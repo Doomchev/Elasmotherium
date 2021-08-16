@@ -2,6 +2,7 @@ package vm;
 
 import ast.Entity;
 import base.ElException;
+import processor.ProParameter;
 
 public class I64VarPush extends VMCommand {
   int index;
@@ -11,16 +12,16 @@ public class I64VarPush extends VMCommand {
   }
   
   @Override
-  public I64VarPush create(Entity entity) throws ElException {
-    return new I64VarPush(entity.getIndex());
+  public I64VarPush create(ProParameter parameter) throws ElException {
+    return new I64VarPush(parameter.getValue().getIndex());
   }
   
   @Override
   public void execute() {
     stackPointer++;
     i64Stack[stackPointer] = i64Stack[currentCall.paramPosition + index];
-    typeStack[stackPointer] = TYPE_I64;
-    currentCommand = nextCommand;
+    if(log) typeStack[stackPointer] = ValueType.I64;
+    currentCommand++;
   }
   
   @Override

@@ -16,8 +16,8 @@ public class ProCallParameter extends ProParameter {
   }
 
   @Override
-  Entity getValue() throws ElException {
-    return current.getParameter(index);
+  public Entity getValue() throws ElException {
+    return ProBase.current.getParameter(index);
   }
 
   @Override

@@ -2,17 +2,37 @@ variable {
   value.resolve(this);
   switch(this) {
     case Int:
-      I64Equate;
+      I64VarEquate;
   }
+}
+
+if {
+  condition.resolve(Bool);
+  IfFalseGoTo(#else);
+  process(code);
+  GoTo(#end);
+  #else:
+  process(else);
+  #end:
+}
+
+do {
+  #start:
+  process(code);
+  GoTo(#start);
 }
 
 link.resolve {
   getFromScope;
+  this.resolve(parent);
+}
+
+variable.resolve {
   switch(this) {
     case Int:
-      I64StackPush;
+      I64VarPush;
     case String:
-      StringStackPush;
+      StringVarPush;
   }
   convert;
 }
@@ -37,11 +57,20 @@ addition.resolve {
   }
 }
 
-function {
-  resolveAll;
-  print;
+equal.resolve {
+  v0.resolve();
+  v1.resolve();
+  I64IsEqual;
 }
 
-stringSequence.resolve {
-  resolveAll;
+less.resolve {
+  v0.resolve(Int);
+  v1.resolve(Int);
+  I64IsLess;
+}
+
+more.resolve {
+  v0.resolve(Int);
+  v1.resolve(Int);
+  I64IsMore;
 }

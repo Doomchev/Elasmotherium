@@ -11,13 +11,13 @@ public class VMCall extends VMCommand {
   
   @Override
   public void execute() {
-    currentCall.returnPoint = nextCommand;
+    currentCall.returnPoint = currentCommand + 1;
     currentCommand = function.startingCommand;
   }
   
   @Override
   public String toString() {
     return super.toString() + " " + function.toString() + " ("
-        + function.startingCommand.lineNum + ")";
+        + function.startingCommand + ")";
   }
 }

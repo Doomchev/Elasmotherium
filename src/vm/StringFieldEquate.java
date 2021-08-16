@@ -15,7 +15,7 @@ public class StringFieldEquate extends VMCommand {
     objectStack[stackIndex + currentCall.paramPosition].fields[fieldIndex]
         .stringSet(stringStack[stackPointer]);
     stackPointer--;
-    currentCommand = nextCommand;
+    currentCommand++;
   }
   
   @Override

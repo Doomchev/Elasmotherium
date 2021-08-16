@@ -1,4 +1,4 @@
-class Rectangle<AnyFloat SystemFloat> extends Point {
+class Rectangle<AnyFloat SystemFloat> extends Point<SystemFloat> {
 	SystemFloat halfWidth, halfHeight;
 	
 	SystemFloat width -> 2 * halfWidth;

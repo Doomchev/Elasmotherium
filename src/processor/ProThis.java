@@ -9,7 +9,7 @@ public class ProThis extends ProParameter {
   private ProThis() {}
   
   @Override
-  Entity getValue() throws ElException {
+  public Entity getValue() throws ElException {
     return current;
   }
 

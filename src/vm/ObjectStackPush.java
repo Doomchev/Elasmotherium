@@ -11,8 +11,8 @@ public class ObjectStackPush extends VMCommand {
   public void execute() {
     stackPointer++;
     objectStack[stackPointer] = objectStack[currentCall.paramPosition + index];
-    typeStack[stackPointer] = TYPE_OBJECT;
-    currentCommand = nextCommand;
+    if(log) typeStack[stackPointer] = ValueType.OBJECT;
+    currentCommand++;
   }
   
   @Override

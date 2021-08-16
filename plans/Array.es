@@ -3,10 +3,12 @@ class Array<ElementType; AnyNumber IndexType> {
 
 	create(IndexType size) assert(0 <= size <= IndexType.max);
 	
-	create(IndexType size, ElementType fill) {
+	create(IndexType size, ElementType initialValue) {
 		create(size);
-		for(IndexType i = 0 until size) this[i] = fill;
+		fill(initialValue);
 	}
+  
+  fill(ElementType value) for(IndexType i from 0 until size) this[i] = value;
 	
 	IndexType size();
 	
@@ -17,18 +19,18 @@ class Array<ElementType; AnyNumber IndexType> {
 	ThisType part(Int from, Int quantity) {
 		assert(quantity >= 0 && 0 <= from <= size - quantity);
 		ThisType array = ThisType(quantity);
-		for(Int i = 0 until quantity) array[i] = this[i + from];
+		for(Int i from 0 until quantity) array[i] = this[i + from];
 		return array;
 	}
 	
 	copy(Int from, Int quantity, ThisType destination, Int destinationFrom) {
 		assert(0 <= from < size - quantity && 0 <= destinationFrom < destination.size - quantity);
-		for(Int i = 0 until quantity) destination[i + destinationFrom] this[i + from];
+		for(Int i from 0 until quantity) destination[i + destinationFrom] this[i + from];
 	}
 	
   Question equals(Array array) {
     if(size != array.size) return no;
-    for(Int i = 0 until size) if(this[i] != array[i]) return no;
+    for(Int i from 0 until size) if(this[i] != array[i]) return no;
     return yes;
   }
 	
@@ -59,12 +61,12 @@ class Array<ElementType; AnyNumber IndexType> {
 	}
 	
 	IndexType indexOf(ElementType element) {
-		for(IndexType i = 0 until size) if(this[i] == element) return i;
+		for(IndexType i from 0 until size) if(this[i] == element) return i;
 		return IndexType.min < 0 ? -1 : IndexType.max;
 	}
 	
 	Question contains(ElementType element) {
-		for(IndexType i = 0 until size) if(this[i] == element) return yes;
+		for(IndexType i from 0 until size) if(this[i] == element) return yes;
 		return no;
 	}
 	
@@ -88,10 +90,15 @@ section MultiDim {
 		
 		create(Array<Int, dimensionsQuantity> dimensions) {
 			Int _size = 1;
-			for(Int i = 0 until dimensionsQuantity) _size *= dimensions[i];
+			for(Int i from 0 until dimensionsQuantity) _size *= dimensions[i];
 			create(_size);
 			_dimensions = dimensions;
 		}
+    
+		create(Array<Int, dimensionsQuantity> dimensions, ElementType initialValue) {
+      create(dimensions);
+      fill(initialValue);
+    }
 		
 		Int size.at(IndexType index) {
 			assert(0 <= index < dimensionsQuantity);
@@ -100,9 +107,9 @@ section MultiDim {
 		
 		Int _index(Array<IndexType> index) {
 			assert(index.size == dimensionsQuantity);
-			for(Int i = 0 until dimensionsQuantity) assert(0 <= index[i] < _dimensions[i]);
+			for(Int i from 0 until dimensionsQuantity) assert(0 <= index[i] < _dimensions[i]);
 			Int j = 0;
-			for(Int i = 0 until dimensionsQuantity) j = j * _dimensions[i] + index[i];
+			for(Int i from 0 until dimensionsQuantity) j = j * _dimensions[i] + index[i];
 			return j;
 		}
 		
@@ -116,7 +123,7 @@ section FixedSizeMultiDim {
 	class Array<Int dimensionsQuantity, ElementType, Array<Int, dimensionsQuantity> fixedDimensions; AnyNumber IndexType> extends Array<ElementType, size; IndexType> {
 		Int size() {
 			Int _size = 1;
-			for(Int i = 0 until dimensionsQuantity) _size *= fixedDimensions[i];
+			for(Int i from 0 until dimensionsQuantity) _size *= fixedDimensions[i];
 			return _size;
 		}
 		
@@ -127,9 +134,9 @@ section FixedSizeMultiDim {
 		
 		Int _index(Array<IndexType> index) {
 			assert(index.size == dimensionsQuantity);
-			for(Int i = 0 until dimensionsQuantity) assert(0 <= index[i] < fixedDimensions[i]);
+			for(Int i from 0 until dimensionsQuantity) assert(0 <= index[i] < fixedDimensions[i]);
 			Int j = 0;
-			for(Int i = 0 until dimensionsQuantity) j = j * fixedDimensions[i] + index[i];
+			for(Int i from 0 until dimensionsQuantity) j = j * fixedDimensions[i] + index[i];
 			return j;
 		}
 		
