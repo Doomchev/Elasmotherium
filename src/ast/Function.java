@@ -3,15 +3,15 @@ package ast;
 import base.ElException;
 import java.util.HashMap;
 import java.util.LinkedList;
-import vm.Allocate;
 import vm.Return;
 import vm.VMBase;
 import vm.VMCommand;
 
 public class Function extends NamedEntity  {
   public static ID id = ID.get("function");
+  
   public static final HashMap<ID, Function> all = new HashMap<>();
-  public static Function ret;
+  public static Function ret, equate;
   
   public Code code = new Code();
   public Entity returnType = null;
@@ -21,6 +21,8 @@ public class Function extends NamedEntity  {
   public byte priority = VALUE;
   public int startingCommand, allocation = 0;
   public VMCommand command = null;
+  
+  // constructors
   
   public Function(ID name) {
     this.name = name;
@@ -56,6 +58,8 @@ public class Function extends NamedEntity  {
     return function;
   }
   
+  // native functions
+  
   static {
     create("brackets", 18);
     create("negative", 16);
@@ -76,9 +80,10 @@ public class Function extends NamedEntity  {
     create("and", 6);
     create("ifOp", 4);
     create("elseOp", 4);
+    
     create("increment", 3);
     create("decrement", 3);
-    create("equate", 3);
+    equate = create("equate", 3);
     create("add", 3);
     create("subtract", 3);
     create("multiply", 3);
@@ -90,6 +95,8 @@ public class Function extends NamedEntity  {
     create("continue", 0);
     ret = create("return", 0);
   }
+  
+  // parameters
 
   @Override
   public byte getPriority() {
@@ -98,6 +105,10 @@ public class Function extends NamedEntity  {
   
   public boolean isNative() {
     return priority != VALUE;
+  }
+
+  public boolean isMethod() {
+    return parentClass != null;
   }
   
   // processor fields
@@ -109,7 +120,7 @@ public class Function extends NamedEntity  {
   
   @Override
   public ClassEntity getType() throws ElException {
-    return returnType.toClass();
+    return isConstructor ? parentClass : returnType.toClass();
   }
   
   @Override
@@ -125,10 +136,8 @@ public class Function extends NamedEntity  {
     Function oldFunction = currentFunction;
     currentFunction = this;
     allocateScope();
-    if(allocation > 0) append(new Allocate(allocation));
     for(Variable param: parameters) addToScope(param);
-    VMCommand endingCommand
-        = returnType == null ? new Return(allocation) : null;
+    VMCommand endingCommand = returnType == null ? new Return() : null;
     code.processWithoutScope(endingCommand);
     deallocateScope();
     currentFunction = oldFunction;
@@ -156,10 +165,14 @@ public class Function extends NamedEntity  {
   }
 
   @Override
-  public void moveToClass(ClassEntity classEntity) {
+  public void moveToClass(ClassEntity classEntity) throws ElException {
     deallocateFunction();
     parentClass = classEntity;
-    classEntity.methods.add(this);
+    if(isConstructor) {
+      classEntity.constructors.add(this);
+    } else {
+      classEntity.methods.add(this);
+    }
   }
 
   @Override

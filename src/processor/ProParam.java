@@ -3,18 +3,18 @@ package processor;
 import ast.Entity;
 import base.ElException;
 
-public class ProParent extends ProParameter {
-  static ProParent instance = new ProParent();
+public class ProParam extends ProParameter {
+  static ProParam instance = new ProParam();
   
-  private ProParent() {}
+  private ProParam() {}
   
   @Override
   public Entity getValue() throws ElException {
-    return ProBase.targetClass;
+    return ProBase.param;
   }
 
   @Override
   public String toString() {
-    return "parent";
+    return "param";
   }
 }

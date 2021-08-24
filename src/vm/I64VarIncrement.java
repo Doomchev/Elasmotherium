@@ -1,9 +1,9 @@
 package vm;
 
-public class I64Increment extends VMCommand {
+public class I64VarIncrement extends VMCommand {
   int index;
 
-  public I64Increment(int index) {
+  public I64VarIncrement(int index) {
     this.index = index;
   }
   

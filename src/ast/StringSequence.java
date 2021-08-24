@@ -4,9 +4,7 @@ import static ast.FunctionCall.resolve;
 import static base.Base.currentProcessor;
 import base.ElException;
 import java.util.LinkedList;
-import processor.ProBase;
 import vm.StringAdd;
-import vm.VMBase;
 import vm.VMCommand;
 
 public class StringSequence extends Value {
@@ -35,7 +33,6 @@ public class StringSequence extends Value {
         isNotFirst = true;
       }
     }
-    setReturnType(ClassEntity.String);
   }
   
   // moving functions

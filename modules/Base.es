@@ -1,8 +1,4 @@
-/*include Math;
-
-class Object;
-class Class;
-
+include Math;
 
 /*class Float;
 class Question;
@@ -34,9 +30,6 @@ class String {
 
 print(String message);
 println(String message) print("\(message)\n");*/
-
-class Int;
-class String;
 
 Int screenWidth();
 Int screenHeight();

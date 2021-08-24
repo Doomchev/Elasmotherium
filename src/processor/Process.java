@@ -4,9 +4,11 @@ import ast.ID;
 import base.ElException;
 
 public class Process extends ProCommand {
+  public static final Process instance = new Process(null);
+  
   ID name;
 
-  public Process(ID name) {
+  private Process(ID name) {
     this.name = name;
   }
   

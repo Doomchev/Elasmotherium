@@ -1,9 +1,7 @@
 package vm;
 
 import ast.ClassEntity;
-import ast.Entity;
-import ast.ObjectEntity;
-import ast.Variable;
+import base.ElException;
 
 public class ObjectNew extends VMCommand {
   public ClassEntity classEntity;
@@ -13,7 +11,7 @@ public class ObjectNew extends VMCommand {
   }
 
   @Override
-  public void execute() {
+  public void execute() throws ElException {
     stackPointer++;
     objectStack[stackPointer] = newObject(classEntity);
     if(log) typeStack[stackPointer] = ValueType.OBJECT;

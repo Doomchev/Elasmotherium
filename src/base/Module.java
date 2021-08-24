@@ -2,18 +2,14 @@ package base;
 
 import vm.AskInt;
 import ast.ClassEntity;
-import java.io.File;
+import ast.Entity;
 import parser.ParserBase;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.LinkedList;
-import parser.Action;
 import parser.Rules;
-import ast.EntityStack;
 import ast.Function;
+import ast.FunctionCall;
 import ast.ID;
+import ast.Variable;
 import vm.*;
 
 public class Module extends ParserBase {
@@ -30,54 +26,9 @@ public class Module extends ParserBase {
   }
   
   public static Module read(String fileName, Rules rules) {
-    return new Module(fileName).read(rules);
-  }
-  
-  public Module read(Rules rules) {
-    current = this;
-    currentFunction = function;
-    path = Paths.get(fileName).getParent().toString() + "/";
-    
-    include(fileName);
-    
-    if(log) printChapter("Parsing " + fileName);
-    
-    Action.currentAction = rules.root.action;
-    try {
-      while(Action.currentAction != null)
-        Action.currentAction.execute();
-    
-      for(Module module : modules) module.read(rules);
-    
-      function.code = EntityStack.code.pop();
-      function.allocation = Math.max(function.allocation, currentAllocation);
-      //println(allocations.toString());
-      //println(functions.toString());
-    } catch (base.ElException ex) {
-      error("Parsing error", currentFileName + " (" + lineNum + ":"
-        + (textPos - lineStart) + ")\n" + ex.message);
-    }
-    
-    return this;
-  }  
-  
-  public static void include(String fileName) {
-    textPos = 0;
-    tokenStart = 0;
-    lineNum = 1;
-    lineStart = -1;
-    prefix = "";
-    currentFileName = new File(fileName).getName();
-    
-    try {
-      text = new StringBuffer(new String(Files.readAllBytes(Paths.get(fileName))
-          , "UTF-8"));
-      textLength = text.length();
-    } catch (FileNotFoundException ex) {
-      error("I/O error", fileName + " not found.");
-    } catch (IOException ex) {
-      error("I/O error", "Cannot read " + fileName + ".");
-    }
+    Module module = new Module(fileName);
+    rules.read(module);
+    return module;
   }
   
   public void newFunc(VMCommand command, ClassEntity returnType, String name
@@ -91,6 +42,27 @@ public class Module extends ParserBase {
   }
   
   public void process() throws ElException {
+    for(ClassEntity classEntity: function.code.classes) {
+      for(Function constructor: classEntity.constructors) {
+        LinkedList<Entity> lines = constructor.code.lines;
+        for(Variable param: constructor.parameters) {
+          if(!param.isField()) continue;
+          Variable field = classEntity.getField(param.name);
+          if(field == null) throw new ElException("Field " + param.name
+              + " is not found in ", classEntity);
+          FunctionCall equate = new FunctionCall(Function.equate);
+          equate.parameters.add(field);
+          equate.parameters.add(param);
+          lines.addFirst(equate);
+          param.parentClass = null;
+          param.type = field.type;
+          param.value = null;
+        }
+      }
+    }
+    
+    print();
+    
     currentFunction = function;
     
     addToScope(ClassEntity.Int);
@@ -103,7 +75,9 @@ public class Module extends ParserBase {
     newFunc(new Tell(), "tell", ClassEntity.String);
     newFunc(new Exit(), "exit");
     
-    append(new Allocate(function.allocation));
+    if(log) printChapter("Processing");
+    
+    VMBase.appendLog(new Allocate(function.allocation));
     function.code.processWithoutScope(new Exit());
   }
 

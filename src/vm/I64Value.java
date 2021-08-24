@@ -6,6 +6,11 @@ public class I64Value extends VMValue {
   public I64Value(long value) {
     this.value = value;
   }
+
+  @Override
+  public VMValue create() {
+    return new I64Value(0);
+  }
   
   @Override
   public long i64Get() {

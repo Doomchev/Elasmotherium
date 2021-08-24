@@ -2,7 +2,6 @@ package ast;
 
 import base.ElException;
 import java.util.LinkedList;
-import vm.VMBase;
 import vm.VMCommand;
 
 public class Code extends Entity {
@@ -47,14 +46,8 @@ public class Code extends Entity {
 
   @Override
   public void moveToFunction(Function function) {
-    deallocate();
     function.code = this;
-  }
-
-  @Override
-  public void moveToVariable(Variable variable) {
     deallocate();
-    variable.code = this;
   }
 
   @Override

@@ -3,18 +3,18 @@ package processor;
 import ast.Entity;
 import base.ElException;
 
-public class ProThis extends ProParameter {
-  public static ProThis instance = new ProThis();
+public class ProObject extends ProParameter {
+  static ProObject instance = new ProObject();
   
-  private ProThis() {}
+  private ProObject() {}
   
   @Override
   public Entity getValue() throws ElException {
-    return current;
+    return object;
   }
 
   @Override
   public String toString() {
-    return "this";
+    return "object";
   }
 }

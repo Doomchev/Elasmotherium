@@ -2,6 +2,7 @@ package ast;
 
 import base.ElException;
 import java.util.LinkedList;
+import vm.VMValue;
 
 public class Type extends NamedEntity {
   public final LinkedList<Type> subtypes = new LinkedList<>();
@@ -62,6 +63,11 @@ public class Type extends NamedEntity {
   @Override
   public void moveToLink(Link link) throws ElException {
     link.subtypes.add(this);
+  }
+
+  @Override
+  public VMValue createValue() throws ElException {
+    return getType().createValue();
   }
   
   // other

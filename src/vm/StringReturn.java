@@ -2,18 +2,19 @@ package vm;
 
 import base.ElException;
 import processor.ProParameter;
+import static vm.VMBase.stackPointer;
 
-public class I64Return extends Return {
+public class StringReturn extends Return {
   @Override
   public VMCommand create(ProParameter parameter) throws ElException {
-    return new I64Return();
+    return new StringReturn();
   }
   
   @Override
   public void execute() {
     int pos = stackPointer;
     returnFromCall(1);
-    i64Stack[stackPointer] = i64Stack[pos];
-    if(log) typeStack[stackPointer] = ValueType.I64;
+    stringStack[stackPointer] = stringStack[pos];
+    if(log) typeStack[stackPointer] = ValueType.STRING;
   }
 }

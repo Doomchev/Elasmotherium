@@ -7,26 +7,32 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 
 public class VMBase extends Base{
-  public static final int STACK_SIZE = 2 << 10;
-  public static boolean[] booleanStack = new boolean[STACK_SIZE];
-  public static ValueType[] typeStack = new ValueType[STACK_SIZE];
-  public static long[] i64Stack = new long[STACK_SIZE];
-  public static String[] stringStack = new String[STACK_SIZE];
-  public static ObjectEntity[] objectStack = new ObjectEntity[STACK_SIZE];
-  public static VMFunctionCall[] callStack = new VMFunctionCall[STACK_SIZE];
-  public static int stackPointer = -1, callStackPointer = -1;
-  public static VMFunctionCall currentCall = new VMFunctionCall(null, 0);
-  public static VMCommand[] commands = new VMCommand[STACK_SIZE];
+  private static final int STACK_SIZE = 16, COMMANDS_SIZE = 256;
+  
+  static boolean[] booleanStack = new boolean[STACK_SIZE];
+  static ValueType[] typeStack = new ValueType[STACK_SIZE];
+  static long[] i64Stack = new long[STACK_SIZE];
+  static String[] stringStack = new String[STACK_SIZE];
+  static ObjectEntity[] objectStack = new ObjectEntity[STACK_SIZE];
+  static VMFunctionCall[] callStack = new VMFunctionCall[STACK_SIZE];
+  static int stackPointer = -1, callStackPointer = -1;
+  static VMFunctionCall currentCall = new VMFunctionCall(null, 0, 0);
+  static VMCommand[] commands = new VMCommand[COMMANDS_SIZE];
+  static JFrame frame;
+  static boolean usesWindow = false, usesConsole = false;
+  
   public static int currentCommand = -1;
-  public static JFrame frame;
-  public static boolean usesWindow = false, usesConsole = false;
   
   public enum ValueType {UNDEFINED, BOOLEAN, I64, STRING, OBJECT};
   
   public static void append(VMCommand command) {
     currentCommand++;
     commands[currentCommand] = command;
-    if(log) println(subIndent + command.toString());
+  }
+  
+  public static void appendLog(VMCommand command) {
+    if(log) 
+    append(command);
   }
 
   public static void prepare() {

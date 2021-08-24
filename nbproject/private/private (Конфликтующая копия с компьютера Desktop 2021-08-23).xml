@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/ClassEntity.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/FunctionCall.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/processor/TypeCommand.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Function.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Entity.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/base/Module.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/processor/ProCall.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64VarEquate.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Link.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/processor/Processor.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/ObjectVarEquate.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/base/Base.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64FieldIncrement.java</file>
+        </group>
+    </open-files>
+</project-private>

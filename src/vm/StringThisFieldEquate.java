@@ -1,21 +1,23 @@
 package vm;
 
 import base.ElException;
+import static vm.VMBase.objectStack;
 
-public class StringFieldEquate extends VMFieldCommand {
-  public StringFieldEquate(int fieldIndex) {
+public class StringThisFieldEquate extends VMFieldCommand {
+  public StringThisFieldEquate(int fieldIndex) {
     super(fieldIndex);
   }
 
   @Override
   public VMCommand create(int index) throws ElException {
-    return new StringFieldEquate(index);
+    return new StringThisFieldEquate(index);
   }
   
   @Override
   public void execute() throws ElException {
-    objectStack[stackPointer]
+    objectStack[currentCall.paramPosition - 1]
         .fields[fieldIndex].stringSet(stringStack[stackPointer]);
+    stackPointer--;
     currentCommand++;
   }
 }

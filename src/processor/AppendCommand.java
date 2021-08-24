@@ -16,7 +16,6 @@ public class AppendCommand extends ProCommand {
 
   @Override
   void execute() throws ElException {
-    VMCommand newCommand = command.create(parameter);
-    append(newCommand);
+    append(command.create(parameter));
   } 
 }

@@ -2,7 +2,7 @@ class Player {
 	String firstName, lastName;
 	Int age;
 	
-	create(this.firstName, this.lastName, this.age);
+	this(this.firstName, this.lastName, this.age);
   
   incrementAge() age++;
 	
@@ -11,4 +11,4 @@ class Player {
 
 Player player = Player("John", "Smith", 36);
 player.incrementAge();
-println(player.description);
+println(player.description());

@@ -1,9 +1,17 @@
 package processor;
 
+import vm.StringThisFieldEquate;
+import vm.I64ThisFieldEquate;
+import vm.I64ThisFieldIncrement;
+import vm.StringThisFieldPush;
+import vm.I64ThisFieldPush;
 import ast.ClassEntity;
 import ast.Entity;
+import ast.Function;
 import ast.FunctionCall;
 import ast.ID;
+import ast.Link;
+import ast.Variable;
 import base.ElException;
 import base.Module;
 import base.SimpleMap;
@@ -27,12 +35,30 @@ public class Processor extends ProBase {
     
     addCommand(new I64VarPush(0));
     addCommand(new StringVarPush(0));
+    addCommand(new ObjectVarPush(0));
     
     addCommand(new I64VarEquate(0));
+    addCommand(new StringVarEquate(0));
+    addCommand(new ObjectVarEquate(0));
+    
+    addCommand(new I64FieldPush(0));
+    addCommand(new StringFieldPush(0));
+    
+    addCommand(new I64ThisFieldPush(0));
+    addCommand(new StringThisFieldPush(0));
+    
+    addCommand(new I64FieldEquate(0));
+    addCommand(new StringFieldEquate(0));
+    
+    addCommand(new I64ThisFieldEquate(0));
+    addCommand(new StringThisFieldEquate(0));
     
     addCommand(new I64Add());
     addCommand(new I64Subtract());
     addCommand(new I64Multiply());
+    
+    addCommand(new I64FieldIncrement(0));
+    addCommand(new I64ThisFieldIncrement(0));
     
     addCommand(new StringAdd());
     
@@ -42,16 +68,18 @@ public class Processor extends ProBase {
     addCommand(new I64IsLessOrEqual());
     addCommand(new I64IsMore());
     
-    addCommand(new I64Return(0));
+    addCommand(new I64Return());
+    addCommand(new StringReturn());
     
     addCommand(new GoTo());
     addCommand(new IfFalseGoTo());
     
-    proCommands.put("getFromScope", new GetFromScope());
-    proCommands.put("resolveAll", new ResolveAll());
-    proCommands.put("stop", new Stop());
-    proCommands.put("process", new Process(null));
-    proCommands.put("return", new ProReturn(null));
+    proCommands.put("getField", GetField.instance);
+    proCommands.put("setObject", SetObject.instance);
+    proCommands.put("call", Call.instance);
+    proCommands.put("convert", Convert.instance);
+    proCommands.put("stop", Stop.instance);
+    proCommands.put("process", Process.instance);
   }
   
   static class ProcessorObject extends SimpleMap<ID, LinkedList<ProCommand>> {}
@@ -92,39 +120,35 @@ public class Processor extends ProBase {
         ProcessorObject function = getObject(part[0]);
         ID methodID = part.length > 1 ? ID.get(part[1]) : defaultID;
         LinkedList<ProCommand> method = getMethod(function, methodID);
-        if(!readCode(method).equals("}"))
-          throw new ElException("Case outside switch.");
+        readCode(method);
       }
     } catch (ElException ex) {
-      error("Error in processor code", currentFileName + " (" + currentLineNum + ")\n"
+      error("Error in processor code"
+          , currentFileName + " (" + currentLineNum + ")\n"
       + ex.message);
     }
     return this;
   }
   
-  String readCode(LinkedList<ProCommand> method) throws ElException {
+  void readCode(LinkedList<ProCommand> method) throws ElException {
     String line;
     while(true) {
       if((line = reader.readLine()) == null)
         throw new ElException("Unexpected end of file");
-      if(line.equals("}")) return line;
-      if(line.startsWith("#")) {
+      if(line.equals("}")) return;
+      if(line.startsWith("[")) {
+        String[] part = trimmedSplit(line, '[', ']', ';');
+        method.add(new TypeCommand(part[1], part[2]));
+      } else if(line.startsWith("#")) {
         method.add(new SetLabel(ID.get(expectEnd(line, ":"))));
-      } else if(line.startsWith("case")) {
-        return line;
-      } else if(line.startsWith("switch")) {
-        readSwitch(method, line);
       } else {
         line = expectEnd(line, ";");
+        String[] part = trimmedSplit(line, '.', '(');
+        String param = line.contains("(") ? betweenBrackets(line) : "";
         if(line.contains(".")) {
-          String[] part = trimmedSplit(line, '.', '(', ')');
-          method.add(new ProCall(part[0], part[1], part[2]));
+          method.add(new ProCall(part[0], part[1], param));
         } else {
-          String param = "";
-          if(line.contains("(")) {
-            param = betweenBrackets(line);
-            line = stringUntil(line, '(');
-          }
+          line = stringUntil(line, '(');
           ProCommand proCommand = proCommands.get(line);
           if(proCommand != null) {
             method.add(proCommand.create(param));
@@ -139,53 +163,40 @@ public class Processor extends ProBase {
     }
   }
   
-  void readSwitch(LinkedList<ProCommand> method, String line)
-      throws ElException {
-    Switch sw = new Switch(between(line, '(', ')'));
-    method.add(sw);
-    if((line = reader.readLine()) == null)
-      throw new ElException("Unexpected end of file");
-    while(true) {
-      if(line.equals("}")) break;
-      if(!line.startsWith("case"))
-        throw new ElException("Syntax error in switch.");
-      line = readCode(sw.addCase(expectEnd(line, ":").substring(4)));
-    }
-  }  
-  
   public void call(Entity object, ID method) throws ElException {
     Entity oldCurrent = current;
     LinkedList<ProLabel> oldLabels = ProLabel.all;
     ProLabel.all = new LinkedList<>();
-    while(true) {
-      current = object;
-      ID objectId = object.getObject();
-      ProcessorObject function = methods.get(objectId);
-      if(function == null) {
-        if(method == FunctionCall.resolve) {
-          object.resolveAll();
-          break;
-        }
-        throw new ElException("No code for " + objectId);
-      }
-      LinkedList<ProCommand> code = function.get(method);
-      if(code == null)
+    current = object;
+    ID objectId = object.getObject();
+    if(objectId == Link.id) {
+      current = getFromScope(object.getID());
+      if(current == null)
+        throw new ElException(object.getID() + " is not found.");
+      objectId = current.getObject();
+    }
+    ProcessorObject function = methods.get(objectId);
+    LinkedList<ProCommand> code
+        = function == null ? null : function.get(method);
+    if(code == null) {
+      if(method == FunctionCall.resolve)
+        object.resolveAll();
+      else
         throw new ElException("No code for " + objectId + "." + method);
+    } else {
       executeCode(code);
-      break;
     }
     ProLabel.apply();
     ProLabel.all = oldLabels;
     current = oldCurrent;
   }
   
-  public void call(Entity object, ID method, ClassEntity targetClass)
+  public void call(Entity object, ID method, Entity param)
       throws ElException {
-    ClassEntity oldTargetClass = Processor.targetClass;
-    Processor.targetClass = targetClass;
+    Entity oldParam = Processor.param;
+    Processor.param = param;
     call(object, method);
-    if(targetClass != null) convert(targetClass);
-    Processor.targetClass = oldTargetClass;
+    Processor.param = oldParam;
   }
   
   public void call(Entity object) throws ElException {
@@ -198,9 +209,8 @@ public class Processor extends ProBase {
       command.execute();
     }
   }
-  
+
   public void process(Module module) {
-    if(log) printChapter("Processing");
     try {
       currentProcessor = this;
       module.process();

@@ -1,10 +1,19 @@
 package vm;
 
-public class ObjectStackPush extends VMCommand {
+import base.ElException;
+import processor.ProBase;
+import processor.ProParameter;
+
+public class ObjectVarPush extends VMCommand {
   int index;
 
-  public ObjectStackPush(int index) {
+  public ObjectVarPush(int index) {
     this.index = index;
+  }
+  
+  @Override
+  public ObjectVarPush create(ProParameter parameter) throws ElException {
+    return new ObjectVarPush(ProBase.getIndex());
   }
   
   @Override

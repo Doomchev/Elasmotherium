@@ -3,27 +3,23 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Code.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/GoTo.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/processor/ProCommand.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMValue.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/ClassEntity.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMFunctionCall.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMCommand.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/ObjectNew.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/ast/FunctionCall.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/processor/BlockCode.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Function.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMBase.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/ast/Entity.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/IfFalseGoTo.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/test/Test.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/base/Module.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/processor/ProCall.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/processor/ProBlockParameter.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/processor/SetLabel.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Block.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/ConstantValue.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/processor/AppendCommand.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/processor/Switch.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/StringReturn.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/CallFunction.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/StringValue.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64Value.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/processor/Processor.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/processor/ProLabel.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/processor/ProClass.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/ObjectVarEquate.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/I64Return.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Type.java</file>
         </group>
     </open-files>
 </project-private>

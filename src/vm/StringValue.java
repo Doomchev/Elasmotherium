@@ -6,6 +6,11 @@ public class StringValue extends VMValue {
   public StringValue(String value) {
     this.value = value;
   }
+
+  @Override
+  public VMValue create() {
+    return new StringValue(null);
+  }
   
   @Override
   public String stringGet() {

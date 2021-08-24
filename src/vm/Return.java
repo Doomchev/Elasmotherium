@@ -1,27 +1,23 @@
 package vm;
 
-import ast.ID;
-import static base.Base.currentAllocation;
 import base.ElException;
 import processor.ProParameter;
 
 public class Return extends VMCommand {
-  int deallocate;
-
-  public Return(int deallocate) {
-    this.deallocate = deallocate;
-  }
-
   @Override
-  public Return create(ProParameter parameter) throws ElException {
-    return new Return(currentAllocation);
+  public VMCommand create(ProParameter parameter) throws ElException {
+    return new Return();
   }
   
   @Override
   public void execute() {
-    stackPointer = stackPointer - deallocate;
+    returnFromCall(0);
+  }
+
+  protected void returnFromCall(int value) {
+    stackPointer = stackPointer - currentCall.deallocation;
     currentCommand = currentCall.returnPoint;
     currentCall = callStack[callStackPointer];
     callStackPointer--;
-  }  
+  }
 }

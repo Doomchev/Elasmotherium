@@ -22,11 +22,11 @@ public abstract class VMCommand extends VMBase {
   public void setGoto(int command) {
   }
 
-  public ObjectEntity newObject(ClassEntity classEntity) {
+  public ObjectEntity newObject(ClassEntity classEntity) throws ElException {
     ObjectEntity object = new ObjectEntity(classEntity);
     int index = -1;
     object.fields = new VMValue[classEntity.fields.size()];
-    for(Variable parameter : classEntity.fields) {
+    for(Variable parameter: classEntity.fields) {
       index++;
       object.fields[index] = parameter.type.createValue();
     }

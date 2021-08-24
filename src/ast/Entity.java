@@ -2,6 +2,7 @@ package ast;
 
 import base.ElException;
 import parser.ParserBase;
+import vm.VMCommand;
 import vm.VMValue;
 
 public abstract class Entity extends ParserBase {
@@ -42,14 +43,10 @@ public abstract class Entity extends ParserBase {
   }
 
   public Entity getBlockParameter(ID name) throws ElException {
-    throw new ElException(getName() + " is not a block.");
+    throw new ElException(name + " for " + this + " is not found.");
   }
   
   // processing
-  
-  public VMValue createValue() {
-    return null;
-  }
     
   public void process() throws ElException {
     throw new ElException("Cannot process", this);
@@ -57,10 +54,6 @@ public abstract class Entity extends ParserBase {
   
   public void resolveAll() throws ElException {
     throw new ElException(getName() + " is not a function call.");
-  }
-
-  public void resolveTo(Entity entity) throws ElException {
-    throw new ElException("Cannot resolve", this);
   }
   
   // type conversion
@@ -147,6 +140,14 @@ public abstract class Entity extends ParserBase {
   }
   
   // other
+  
+  public VMValue createValue() throws ElException {
+    throw new ElException("Cannot create value for ", this);
+  }
+
+  public static void append(VMCommand command) {
+    appendLog(command);
+  }
 
   @Override
   public String toString() {

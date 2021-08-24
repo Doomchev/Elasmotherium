@@ -1,1 +1,0 @@
-native Int random(Int maxValue)

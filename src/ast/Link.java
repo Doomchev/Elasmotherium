@@ -38,11 +38,6 @@ public class Link extends Value {
   public ClassEntity getType() throws ElException {
     return entity.getType();
   }
-
-  @Override
-  public void resolveTo(Entity entity) {
-    this.entity = entity;
-  }
   
   // type conversion
 

@@ -2,7 +2,9 @@ package vm;
 
 import base.ElException;
 
-public class VMValue {
+public abstract class VMValue {
+  public abstract VMValue create();
+  
   public long i64Get() throws ElException {
     throw new ElException("Cannot get i64 from ", this);
   }

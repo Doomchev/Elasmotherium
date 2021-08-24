@@ -12,7 +12,6 @@ public class Test extends Base {
   static void test(String file) {
     Rules rules = new Rules().load("parsers/standard.parser");
     Module module = Module.read(file, rules);
-    module.print();
     new Processor().load("processors/standard.processor").process(module);
     VMBase.prepare();
     VMBase.exec();

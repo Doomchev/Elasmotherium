@@ -1,6 +1,19 @@
+2021.08.24 (version 0.24)
+  + P: Constructor this value processing.
+  + P: Convert, getField commands.
+  + P: TypeFunction - processor command to add vm command depending on type.
+  + P: Object parameter and setObject command.
+  + VM: ThisFieldEquate, ThisFieldIncrement, ThisFieldPush
+  * P: Parent parameter is renamed to param.
+  * VM: Parent class for field commands.
+  - P: Automatic conversion system.
+  - P: Return type for processor functions.
+  - P: GetFromScope, ResolveAll, Switch commands;
+  - VM: NewMethodCall, NewThis, ReturnThis
+
 2021.08.16 (version 0.23)
-  + P: Function call parameter changed to ClassEntity and renamed to targetClass.
   + P: Return type for processor functions, new type conversion system.
+  * P: Function call parameter changed to ClassEntity and renamed to targetClass.
   * VM: Fixed function call system.
   - P: Convert command.
 

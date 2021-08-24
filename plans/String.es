@@ -1,6 +1,7 @@
 struc String<AnyChar CharType, AnyInt IndexType> extends Array<CharType> {
   create.from(AnyNumber number);
   create.from(Object object) -> object.toString;
+  create.from(CharType char, IndexType quantity);
 	
   Int compareTo(String string) {
     if(size != string.size) return size - string.size;

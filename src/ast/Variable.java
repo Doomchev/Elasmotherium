@@ -4,19 +4,14 @@ import base.ElException;
 
 public class Variable extends NamedEntity {
   public static ID id = ID.get("variable");
+  public static ID fieldID = ID.get("field");
+  public static ID thisID = ID.get("this");
   
   public Entity type, value = null;
   public Code code = null;
-  public Link definition;
-  public boolean isThis = false;
   public ClassEntity parentClass = null;
   public Function parentFunction;
   public int index;
-  
-  public Variable(Link link) {
-    this.name = link.name;
-    this.definition = link;
-  }
 
   public Variable(ID id) {
     this.name = id;
@@ -27,9 +22,13 @@ public class Variable extends NamedEntity {
     this.type = type;
   }
 
-  public Variable(ID id, boolean isThis) {
+  public Variable(ID id, ClassEntity classEntity) {
     this.name = id;
-    this.isThis = isThis;
+    this.parentClass = classEntity;
+  }
+  
+  public boolean isField() {
+    return parentClass != null;
   }
   
   // processor fields
@@ -46,7 +45,7 @@ public class Variable extends NamedEntity {
   
   @Override
   public ID getObject() throws ElException {
-    return id;
+    return isField() ? fieldID : id;
   }
   
   @Override
@@ -87,7 +86,8 @@ public class Variable extends NamedEntity {
 
   @Override
   public void moveToFunction(Function function) {
-    index = function.parameters.size();
+    index = function.allocation;
+    function.allocation++;
     function.parameters.add(this);
   }
 
@@ -113,7 +113,7 @@ public class Variable extends NamedEntity {
 
   @Override
   public String toString() {
-    return name.string;
+    return (isField() ? "this." : "") + name.string;
   }
   
   @Override

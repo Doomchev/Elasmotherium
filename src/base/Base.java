@@ -12,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.LinkedList;
-import processor.ProBase;
 import processor.Processor;
 import vm.I64ToString;
 import vm.VMBase;
@@ -122,7 +121,7 @@ public abstract class Base {
         start = i + 1;
       }
     }
-    list.add(text.substring(start));
+    list.add(text.substring(start).trim());
     return list.toArray(new String[list.size()]);
   }
   
@@ -157,7 +156,8 @@ public abstract class Base {
   } 
   
   public static String stringUntil(String string, char c) {
-    return string.substring(0, string.indexOf(c));
+    int index = string.indexOf(c);
+    return index < 0 ? string : string.substring(0, index);
   }
   
   public static String startingId(String text) {
@@ -181,7 +181,7 @@ public abstract class Base {
     return new String(chars);
   }
   
-  //reader
+  // reader
   
   public static class EReader {
     private BufferedReader reader;
@@ -218,7 +218,6 @@ public abstract class Base {
   
   private static final SimpleMap<ClassEntity, SimpleMap<ClassEntity
       , VMCommand>> converters = new SimpleMap<>();
-  static ClassEntity returnType = null;
   
   static {
     add(ClassEntity.Int, ClassEntity.String, new I64ToString());
@@ -233,25 +232,9 @@ public abstract class Base {
     map.put(to, command);
   }
 
-  public void setReturnType(Entity type) throws ElException {
-    if(type == null) return;
-    if(returnType != null) 
-      throw new ElException("Return type already specified.");
-    returnType = type.getType();
-    if(log) System.out.println(subIndent + "Set return type to "
-        + returnType);
-  }
-
-  public static void convert(ClassEntity to) throws ElException {
-    if(returnType == null) {
-      throw new ElException("Missing return.");
-    }
-    convert(returnType, to);
-    returnType = null;
-  }
-
-  public static void convert(ClassEntity from, ClassEntity to) throws ElException {
-    if(log) System.out.println(subIndent + "Converting " + returnType + " to "
+  public static void convert(ClassEntity from, ClassEntity to)
+      throws ElException {
+    if(log) System.out.println(subIndent + "converting " + from + " to "
         + to + ".");
     if(from == to) {
       return;
@@ -262,14 +245,16 @@ public abstract class Base {
     }
     VMCommand command = map.get(to);
     if(command == null) {
-      throw new ElException("Converters from " + from + " to " + to + " are not found.");
+      throw new ElException("Converters from " + from + " to " + to
+          + " are not found.");
     }
-    append(command.create(null));
+    appendLog(command.create(null));
   }
   
   // other
 
-  public static void append(VMCommand command) {
+  public static void appendLog(VMCommand command) {
+    if(log) println(subIndent + command.toString());
     VMBase.append(command);
   }
   

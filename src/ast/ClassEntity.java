@@ -3,22 +3,26 @@ package ast;
 import base.ElException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import vm.I64Value;
+import vm.StringValue;
+import vm.VMValue;
 
 public class ClassEntity extends NamedEntity {
   public static HashMap<ID, ClassEntity> all = new HashMap<>();
-  public static ClassEntity Int, String, Bool;
+  public static ClassEntity Int, String, Bool, Object;
   
   public Entity parent;
-  public LinkedList<Variable> fields = new LinkedList<>();
-  public LinkedList<Variable> parameters = new LinkedList<>();
-  public LinkedList<Function> methods = new LinkedList<>();
-  public boolean isNative;
+  public final LinkedList<Variable> fields = new LinkedList<>();
+  public final LinkedList<Function> methods = new LinkedList<>();
+  public final LinkedList<Function> constructors = new LinkedList<>();
   public int allocation = 0;
+  public VMValue value;
   
   static {
-    Int = create("Int", true);
-    String = create("String", true);
-    Bool = create("Bool", true);
+    Int = create("Int", new I64Value(0));
+    String = create("String", new StringValue(""));
+    Bool = create("Bool", new I64Value(0));
+    Object = create("Object", new I64Value(0));
   }
   
   public static ClassEntity create(ID name) {
@@ -28,16 +32,28 @@ public class ClassEntity extends NamedEntity {
     return classEntity;
   }
   
-  public static ClassEntity create(ID name, boolean add) {
+  public static ClassEntity create(String name, VMValue value) {
     ClassEntity classEntity = new ClassEntity();
-    classEntity.name = name;
-    classEntity.isNative = true;
-    if(add) all.put(name, classEntity);
+    classEntity.name = ID.get(name);
+    classEntity.value = value;
+    all.put(classEntity.name, classEntity);
     return classEntity;
   }
   
-  public static ClassEntity create(String name, boolean add) {
-    return create(ID.get(name), add);
+  // properties
+  
+  public Variable getField(ID id) {
+    for(Variable field: fields) if(field.name == id) return field;
+    return null;
+  }
+  
+  public Function getMethod(ID id) {
+    for(Function method: methods) if(method.name == id) return method;
+    return null;
+  }
+  
+  public boolean isNative() {
+    return value != null;
   }
   
   // processor fields
@@ -46,12 +62,30 @@ public class ClassEntity extends NamedEntity {
   public ClassEntity getType() throws ElException {
     return this;
   }
+   
+  // processing
+  
+  @Override
+  public void process() throws ElException {
+    ClassEntity oldClass = currentClass;
+    currentClass = this;
+    allocateScope();
+    for(Variable field: fields) addToScope(field);
+    for(Function constructor: constructors) constructor.process();
+    for(Function method: methods) method.process();
+    deallocateScope();
+    currentClass = oldClass;
+  }
   
   // type conversion
   
   @Override
   public ClassEntity toClass() {
     return this;
+  }
+  
+  public ClassEntity toNativeClass() {
+    return isNative() ? this : Object;
   }
   
   // moving funcitons
@@ -72,12 +106,18 @@ public class ClassEntity extends NamedEntity {
   }
   
   // other
+
+  @Override
+  public VMValue createValue() throws ElException {
+    return value.create();
+  }
   
   @Override
   public void print(String indent, String prefix) {
     println(indent + prefix + "class " + name + "{");
     String newIndent = indent + "  ";
     for(Variable field: fields) field.print(newIndent, "");
+    for(Function method: constructors) method.print(newIndent, "");
     for(Function method: methods) method.print(newIndent, "");
     println(indent + "}");
   }

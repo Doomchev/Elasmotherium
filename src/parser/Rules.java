@@ -1,8 +1,19 @@
 package parser;
 
+import ast.EntityStack;
+import static base.Base.currentFunction;
 import java.util.HashMap;
 import base.ElException;
+import base.Module;
+import static base.Module.current;
+import static base.Module.lineNum;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
+import static parser.ParserBase.path;
 
 public class Rules extends ParserBase {
   public Sub root;
@@ -220,18 +231,54 @@ public class Rules extends ParserBase {
       }
     }
   }
-
-  private String strucString;
-  private int pos;
   
-  private int readNum() throws ElException {
-    int start = pos;
-    while(true) {
-      char c = strucString.charAt(pos);
-      if(c < '0' || c > '9') break;
-      pos++;
+  // reading module
+  
+  public void read(Module module) {
+    String fileName = module.fileName;
+    current = module;
+    currentFunction = module.function;
+    
+    path = Paths.get(fileName).getParent().toString() + "/";
+    
+    include(fileName);
+    
+    if(log) printChapter("Parsing " + fileName);
+    
+    Action.currentAction = root.action;
+    try {
+      while(Action.currentAction != null)
+        Action.currentAction.execute();
+    
+      for(Module module2: module.modules) read(module2);
+    
+      currentFunction.code = EntityStack.code.pop();
+      currentFunction.allocation
+          = Math.max(currentFunction.allocation, currentAllocation);
+      //println(allocations.toString());
+      //println(functions.toString());
+    } catch (base.ElException ex) {
+      error("Parsing error", currentFileName + " (" + lineNum + ":"
+        + (textPos - lineStart) + ")\n" + ex.message);
     }
-    if(start == pos) throw new ElException("Integer number expected");
-    return Integer.parseInt(strucString.substring(start, pos));
+  }  
+  
+  public static void include(String fileName) {
+    textPos = 0;
+    tokenStart = 0;
+    lineNum = 1;
+    lineStart = -1;
+    prefix = "";
+    currentFileName = new File(fileName).getName();
+    
+    try {
+      text = new StringBuffer(new String(Files.readAllBytes(Paths.get(fileName))
+          , "UTF-8"));
+      textLength = text.length();
+    } catch (FileNotFoundException ex) {
+      error("I/O error", fileName + " not found.");
+    } catch (IOException ex) {
+      error("I/O error", "Cannot read " + fileName + ".");
+    }
   }
 }

@@ -1,18 +1,180 @@
 variable {
   value.resolve(this);
-  switch(this) {
-    case Int:
-      I64VarEquate;
-  }
+  [this]VarEquate;
 }
 
 return {
   v0.resolve(function);
-  switch(function) {
-    case Int:
-      I64Return;
-  }
+  [function]Return;
 }
+
+dot {
+  // object = v0.getObject;
+  v0.getObject;
+  // this = getField(object, v1);
+  getField;
+  // call(this);
+  call;
+}
+
+function {
+  call;
+}
+
+// get object
+
+variable.getObject {
+  [this]VarPush;
+  // object = this;
+  setObject;
+}
+
+field.getObject {
+  [this]ThisFieldPush;
+  // object = this;
+  setObject;
+}
+
+function.getObject {
+  // call(this);
+  call;
+  // object = this;
+  setObject;
+}
+
+dot.getObject {
+  // object = v0.getObject;
+  v0.getObject;
+  // this = getField(object, v1);
+  getField;
+  this.getObject;
+}
+
+// equate
+
+equate {
+  v0.equate(v1);
+}
+
+variable.equate {
+  param.resolve(this);
+  [this]VarEquate;
+}
+
+field.equate {
+  param.resolve(this);
+  [this]ThisFieldEquate;
+}
+
+dot.equate {
+  // object = v0.getObject;
+  v0.getObject;
+  // this = getField(this, v1);
+  getField;
+  param.resolve(this);
+  [this]FieldEquate;
+}
+
+// increment
+
+increment {
+  v0.increment;
+}
+
+variable.increment {
+  [this]VarIncrement;
+}
+
+field.increment {
+  [this]FieldIncrement;
+}
+
+dot.increment {
+  // object = v0.getObject;
+  v0.getObject;
+  // this = getField(this, v1);
+  getField;
+  [this]FieldIncrement;
+}
+
+// resolution
+
+variable.resolve {
+  [this]VarPush;
+  convert(this, param);
+}
+
+dot.resolve {
+  // object = v0.getObject;
+  v0.getObject;
+  // this = getField(object, v1);
+  getField;
+  this.resolve(param);
+}
+
+field.resolve {
+  [this]ThisFieldPush;
+  convert(this, param);
+}
+
+function.resolve {
+  call;
+  convert(this, param);
+}
+
+const.resolve {
+  [param]Push;
+}
+
+addition.resolve {
+	v0.resolve(param);
+	v1.resolve(param);
+  [param]Add;
+}
+
+subtraction.resolve {
+	v0.resolve(Int);
+	v1.resolve(Int);
+  [Int]Subtract;
+  convert(Int, param);
+}
+
+multiplication.resolve {
+	v0.resolve(Int);
+	v1.resolve(Int);
+  [Int]Multiply;
+  convert(Int, param);
+}
+
+equal.resolve {
+  v0.resolve(Int);
+  v1.resolve(Int);
+  [Int]IsEqual;
+  convert(Bool, param);
+}
+
+less.resolve {
+  v0.resolve(Int);
+  v1.resolve(Int);
+  [Int]IsLess;
+  convert(Bool, param);
+}
+
+lessOrEqual.resolve {
+  v0.resolve(Int);
+  v1.resolve(Int);
+  [Int]IsLessOrEqual;
+  convert(Bool, param);
+}
+
+more.resolve {
+  v0.resolve(Int);
+  v1.resolve(Int);
+  [Int]IsMore;
+  convert(Bool, param);
+}
+
+// blocks
 
 if {
   condition.resolve(Bool);
@@ -28,84 +190,4 @@ do {
   #start:
   process(code);
   GoTo(#start);
-}
-
-link.resolve {
-  getFromScope;
-  this.resolve(parent);
-  return(this);
-}
-
-variable.resolve {
-  switch(this) {
-    case Int:
-      I64VarPush;
-    case String:
-      StringVarPush;
-  }
-  return(this);
-}
-
-const.resolve {
-  switch(parent) {
-    case Int:
-      I64Push;
-    case String:
-      StringPush;
-  }
-  return(parent);
-}
-
-addition.resolve {
-	v0.resolve(parent);
-	v1.resolve(parent);
-  switch(parent) {
-    case Int:
-      I64Add;
-    case String:
-      StringAdd;
-  }
-  return(parent);
-}
-
-subtraction.resolve {
-	v0.resolve(Int);
-	v1.resolve(Int);
-  I64Subtract;
-  return(Int);
-}
-
-multiplication.resolve {
-	v0.resolve(Int);
-	v1.resolve(Int);
-  I64Multiply;
-  return(Int);
-}
-
-equal.resolve {
-  v0.resolve();
-  v1.resolve();
-  I64IsEqual;
-  return(Bool);
-}
-
-less.resolve {
-  v0.resolve(Int);
-  v1.resolve(Int);
-  I64IsLess;
-  return(Bool);
-}
-
-lessOrEqual.resolve {
-  v0.resolve(Int);
-  v1.resolve(Int);
-  I64IsLessOrEqual;
-  return(Bool);
-}
-
-more.resolve {
-  v0.resolve(Int);
-  v1.resolve(Int);
-  I64IsMore;
-  return(Bool);
 }

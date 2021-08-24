@@ -647,17 +647,17 @@ classBody: {
         // Type var = value
         ",;=": classFieldValue
         // Type method(
-        "(": >> CREATE(function) MOVE(type, function) methodParameter
+        "(": >> CREATE(method) MOVE(type, function) methodParameter
         other: syntaxError
       }
       // Type0<Type1> var
 			// Type0<Type1> method
       "<": >> type() id() {
-				"(": >> CREATE(function) methodParameter
+				"(": >> CREATE(method) methodParameter
 				other: classFieldValue
 			}
       // method(
-      "(": >> CREATE(function) methodParameter
+      "(": >> CREATE(method) methodParameter
       other: syntaxError
     }
   }
@@ -675,7 +675,7 @@ classFieldEnd: {
   // Type field,
   ",": >> DUP(type) MOVE(type, variable) MOVE(variable, class) id() classFieldValue
   // Type field;
-  ";": >> MOVE(variable, class) classBody
+  ";": >> MOVE(type, variable) MOVE(variable, class) classBody
   other: syntaxError
 }
 

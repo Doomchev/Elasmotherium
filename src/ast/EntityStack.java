@@ -71,11 +71,18 @@ public class EntityStack<EntityType> extends ParserBase {
       }
     };
     
+    new EntityStack<Function>("method", function) {
+      @Override
+      public Function create() throws ElException {
+        return Function.create(id.pop());
+      }
+    };
+    
     new EntityStack<Function>("constructor", function) {
       @Override
       public Function create() throws ElException {
         return Function.create(null);
-      }      
+      }
     };
     
     code = new EntityStack<Code>("code") {
@@ -103,7 +110,7 @@ public class EntityStack<EntityType> extends ParserBase {
     new EntityStack<Variable>("thisvar", var) {
       @Override
       public Variable create() throws ElException {
-        return new Variable(id.pop(), true);
+        return new Variable(id.pop(), classStack.peek());
       }      
     };
     

@@ -2,9 +2,8 @@ package ast;
 
 import base.ElException;
 import java.util.LinkedList;
-import processor.ProBase;
-import vm.NewFunctionCall;
-import vm.VMBase;
+import vm.CallFunction;
+import vm.ObjectNew;
 import vm.VMCommand;
 
 public class FunctionCall extends Value {
@@ -55,11 +54,13 @@ public class FunctionCall extends Value {
   
   public void resolveID() throws ElException {
     if(function == null) {
-      function = Function.all.get(functionID);
+      Entity entity = getFromScope(functionID);
+      function = entity.toFunction();
       if(function == null) {
-        function = getFromScope(functionID).toFunction();
-        if(function == null)
-          throw new ElException("Function not found", function);
+        ClassEntity classEntity = entity.toClass();
+        if(classEntity == null)
+          throw new ElException("Function " + functionID + " is not found.");
+        function = classEntity.constructors.getFirst();
       }
     }
   }
@@ -69,17 +70,17 @@ public class FunctionCall extends Value {
   @Override
   public void process() throws ElException {
     resolveID();
-    resolveAll();
-  }
-
-  @Override
-  public void resolveTo(Entity entity) throws ElException {
-    function = entity.toFunction();
+    if(log) println(toString());
+    currentProcessor.call(this);
   }
   
   @Override
   public void resolveAll() throws ElException {
-    if(log) println(toString());
+    if(log) println("Resolve function call " + toString());
+    
+    if(function.isConstructor)
+      append(new ObjectNew(function.parentClass));
+    
     if(!function.isNative()) {
       int i = 0;
       for(Entity parameter: parameters) {
@@ -88,16 +89,20 @@ public class FunctionCall extends Value {
         i++;
       }
     }
+    
+    if(function == Function.ret) {
+      currentProcessor.call(this);
+      return;
+    } else if(function.isConstructor) {
+      append(new CallFunction(function));
+      return;
+    }
+    
     VMCommand command = function.command;
     if(command != null) {
       append(command.create(null));
-      setReturnType(function.returnType);
-    } else if(function == Function.ret) {
-      currentProcessor.call(this);
     } else {
-      append(new NewFunctionCall(function));
-      setReturnType(function.returnType);
-      //ProBase.convert(function.returnType.getType());
+      append(new CallFunction(function));
     }
   }
 

@@ -1,15 +1,30 @@
 package parser;
 
+import ast.EntityStack;
 import base.Base;
+import static base.Base.currentAllocation;
+import static base.Base.currentFileName;
+import static base.Base.currentFunction;
+import static base.Base.error;
+import static base.Base.log;
+import static base.Base.printChapter;
+import base.Module;
+import static base.Module.current;
+import static base.Module.lineNum;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Stack;
 import java.util.List;
 
 public class ParserBase extends Base {
-  public static StringBuffer text;
-  public static String prefix, path;
-  public static int tokenStart, textPos, textLength, lineStart;
-  public static char currentChar;
-  public static final Stack<ActionSub> returnStack = new Stack<>();
+  static StringBuffer text;
+  static String prefix, path;
+  static int tokenStart, textPos, textLength, lineStart;
+  static char currentChar;
+  static final Stack<ActionSub> returnStack = new Stack<>();
   
   public static Stack<Include> includes = new Stack<>();
   public static class Include {
