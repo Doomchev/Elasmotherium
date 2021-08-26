@@ -1,4 +1,4 @@
-class Tilemap {
+class TileMap {
   Int cellXQuantity, cellYQuantity, cellWidth, cellHeight;
   Array<Int> tiles;
 	Array<Image> images;

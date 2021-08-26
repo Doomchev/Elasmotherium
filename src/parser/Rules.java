@@ -1,5 +1,6 @@
 package parser;
 
+import ast.Code;
 import ast.EntityStack;
 import static base.Base.currentFunction;
 import java.util.HashMap;
@@ -235,33 +236,36 @@ public class Rules extends ParserBase {
   // reading module
   
   public void read(Module module) {
-    String fileName = module.fileName;
     current = module;
     currentFunction = module.function;
-    
+    Code code = currentFunction.code;
+    readCode(modulesPath + "Base.es", code);
+    for(Module imported: module.modules) readCode(imported.fileName, code);
+    readCode(module.fileName, code);
+    currentFunction.allocation
+          = Math.max(currentFunction.allocation, currentAllocation);
+  }  
+  
+  private void readCode(String fileName, Code code) {
     path = Paths.get(fileName).getParent().toString() + "/";
     
     include(fileName);
     
     if(log) printChapter("Parsing " + fileName);
     
+    EntityStack.code.push(code);
+    
     Action.currentAction = root.action;
     try {
       while(Action.currentAction != null)
         Action.currentAction.execute();
     
-      for(Module module2: module.modules) read(module2);
-    
-      currentFunction.code = EntityStack.code.pop();
-      currentFunction.allocation
-          = Math.max(currentFunction.allocation, currentAllocation);
-      //println(allocations.toString());
-      //println(functions.toString());
+      EntityStack.code.stack.clear();
     } catch (base.ElException ex) {
       error("Parsing error", currentFileName + " (" + lineNum + ":"
         + (textPos - lineStart) + ")\n" + ex.message);
     }
-  }  
+  }
   
   public static void include(String fileName) {
     textPos = 0;

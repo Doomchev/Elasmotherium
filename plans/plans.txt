@@ -1,2 +1,0 @@
-  * PE: Add parameters to all entities
-  * PE: Convert entities' fields to parameters

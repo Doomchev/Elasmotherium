@@ -2,7 +2,6 @@ package parser;
 
 import base.Module;
 import ast.Block;
-import ast.Entity;
 import ast.EntityStack;
 import ast.Function;
 import ast.FunctionCall;

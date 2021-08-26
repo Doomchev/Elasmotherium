@@ -2,7 +2,7 @@ class AngleSpeed<AnyFloat SystemFloat> extends Point<AnyFloat> {
 	SystemFloat angle, speed;
 	
 	moveForward() {
-		SystemFloat delta = speed * frameTime;
+		delta = speed * frameTime;
 		centerX += cos(angle) * delta;
 		centerY += sin(angle) * delta;
 	}

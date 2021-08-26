@@ -11,14 +11,14 @@ class ArraySet<ElementType; AnyInt IndexType> {
 	}
 	
 	IndexType indexOf(ElementType element) {
-		for(IndexType i from 0 until size) if(_items[i] == element) return i;
+		for(i from 0 until size) if(_items[i] == element) return i;
 		return notFound;
 	}
 	
 	Question getAtIndex(ElementType element) -> indexOf(element) == notFound ? no : yes;
 	
 	remove(ElementType element) {
-		IndexType i = 0;
+		i = 0;
 		while(i < size) {
 			if(_items[size] == element) {
 				size--;

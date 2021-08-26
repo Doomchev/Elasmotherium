@@ -1,3 +1,9 @@
+2021.08.25 (version 0.24.1)
+  + Attaching vm commands to existing functions instead of creating new.
+  + Base.es import by default.
+  + ShowCommands parameter for VM code execution.
+  * Fixed module import system.
+
 2021.08.24 (version 0.24)
   + P: Constructor this value processing.
   + P: Convert, getField commands.

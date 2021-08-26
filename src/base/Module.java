@@ -16,7 +16,7 @@ public class Module extends ParserBase {
   public static ID id = ID.get("module");
   public static Module current;
   public static int lineNum;
-  
+
   public String fileName;
   public final LinkedList<Module> modules = new LinkedList<>();
   public Function function = new Function(null);
@@ -31,14 +31,14 @@ public class Module extends ParserBase {
     return module;
   }
   
-  public void newFunc(VMCommand command, ClassEntity returnType, String name
-      , ClassEntity... paramTypes) {
-    addToScope(new Function(command, returnType, name, paramTypes));
-  }
-  
-  public void newFunc(VMCommand command, String name
-      , ClassEntity... paramTypes) {
-    addToScope(new Function(command, name, paramTypes));
+  public void newFunc(VMCommand command) throws ElException {
+    ID id2 = ID.get(decapitalize(command.getClass().getSimpleName()));
+    for(Function innerFunction: function.code.functions)
+      if(innerFunction.name == id2) {
+        innerFunction.command = command;
+        return;
+      }
+    throw new ElException("Function " + id2 + " not found.");
   }
   
   public void process() throws ElException {
@@ -69,11 +69,11 @@ public class Module extends ParserBase {
     addToScope(ClassEntity.Bool);
     addToScope(ClassEntity.String);
     
-    newFunc(new Print(), "println", ClassEntity.String);
-    newFunc(new AskInt(), ClassEntity.Int, "askInt", ClassEntity.String);
-    newFunc(new RandomInt(), ClassEntity.Int, "randomInt", ClassEntity.Int);
-    newFunc(new Tell(), "tell", ClassEntity.String);
-    newFunc(new Exit(), "exit");
+    newFunc(new Println());
+    newFunc(new AskInt());
+    newFunc(new RandomInt());
+    newFunc(new Tell());
+    newFunc(new Exit());
     
     if(log) printChapter("Processing");
     

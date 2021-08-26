@@ -8,12 +8,16 @@ public class Test extends Base {
   public static void main(String[] args) {
     test("examples/class2.es");
   }
-
+  
   static void test(String file) {
-    Rules rules = new Rules().load("parsers/standard.parser");
-    Module module = Module.read(file, rules);
+    test(file, true);
+  }
+
+  static void test(String file, boolean showCommands) {
+    Module module = Module.read(file
+        , new Rules().load("parsers/standard.parser"));
     new Processor().load("processors/standard.processor").process(module);
     VMBase.prepare();
-    VMBase.exec();
+    VMBase.execute(showCommands);
   }
 }

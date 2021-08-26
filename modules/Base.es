@@ -1,5 +1,3 @@
-include Math;
-
 /*class Float;
 class Question;
 Question yes;
@@ -29,13 +27,13 @@ class String {
 }
 
 print(String message);
-println(String message) print("\(message)\n");*/
+println(String message) print("\(message)\n");
 
 Int screenWidth();
-Int screenHeight();
+Int screenHeight();*/
 
 println(String message);
-Int askInteger(String message);
+Int askInt(String message);
 tell(String message);
 Int randomInt(Int value);
 

@@ -1,4 +1,4 @@
-class LinkedSet<ElementType; Question unique = yes> extends Set<ElementType> {
+class LinkedSet<ElementType; Question noRepeats = yes> extends Set<ElementType> {
 	final LinkedList<ElementType> _elements = LinkedList();
 	
 	Int size -> _elements.size;
@@ -8,15 +8,15 @@ class LinkedSet<ElementType; Question unique = yes> extends Set<ElementType> {
 	Question contains(ElementType element) -> _elements.contains(element);
 	
 	add(ElementType element) {
-		if(unique) remove(element);
+		if(noRepeats) remove(element);
 		_elements.addFirst(element);
 	}
 	
 	remove(ElementType element) {
-		forEach(ElementType e in _elements)
+		forEach(each e in _elements)
 			if(e == element) {
 				removeItem;
-				if(unique) return;
+				if(noRepeats) return;
 			}
 	}
 }

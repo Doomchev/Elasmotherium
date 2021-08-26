@@ -45,7 +45,7 @@ public class VMBase extends Base{
     }
   }
     
-  public static void exec() {
+  public static void execute(boolean showCommands) {
     if(usesWindow) {
       frame = new JFrame();
       frame.setVisible(true);
@@ -55,7 +55,7 @@ public class VMBase extends Base{
     if(log) printChapter("Bytecode execution");
     currentCommand = 0;
     while(true) {
-      if(log) System.out.println(commands[currentCommand].toString());
+      if(showCommands) System.out.println(commands[currentCommand].toString());
 
       try {
         commands[currentCommand].execute();
@@ -63,7 +63,7 @@ public class VMBase extends Base{
         error("Bytecode execution error", ex.message);
       }
 
-      if(log) {
+      if(showCommands) {
         String stack = "";
         for(int index = 0; index <= stackPointer; index++)
           switch(typeStack[index]) {

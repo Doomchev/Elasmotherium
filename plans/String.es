@@ -5,7 +5,7 @@ struc String<AnyChar CharType, AnyInt IndexType> extends Array<CharType> {
 	
   Int compareTo(String string) {
     if(size != string.size) return size - string.size;
-    for(Int i from 0 until size) {
+    for(i from 0 until size) {
 			if(this[i] == string[i]) continue;
 			return this[i] - string[i];
 		}
@@ -13,14 +13,14 @@ struc String<AnyChar CharType, AnyInt IndexType> extends Array<CharType> {
   }
 	
   ThisType lowerCase() {
-		ThisType newString = ThisType(size);
-		for(IndexType i from 0 until size) newString[i] = this[i].lowerCase;
+		newString = ThisType(size);
+		for(i from 0 until size) newString[i] = this[i].lowerCase;
 		return newString;
 	}
 	
   ThisType upperCase() {
-		ThisType newString = ThisType(size);
-		for(IndexType i from 0 until size) newString[i] = this[i].upperCase;
+		newString = ThisType(size);
+		for(i from 0 until size) newString[i] = this[i].upperCase;
 		return newString;
 	}
 	
@@ -33,26 +33,26 @@ struc String<AnyChar CharType, AnyInt IndexType> extends Array<CharType> {
 	}
 
 	Array<ThisType> split(Char char) {
-		List<String> tokens = List();
+		tokens = List<String>();
 		IndexType start = 0;
-		for(IndexType i from 0 until size)
+		for(i from 0 until size)
 			if(this[i] == char) {
-				tokens += this[from start until i];
+				tokens.add(this[from start until i]);
 				start = i + 1;
 			}
-		if(start < size - 1) tokens += this[from start];
+		if(start < size - 1) tokens.add(this[from start]);
 		return tokens;
 	}
 	
 	Question startsWith(String start) {
 		if(start.size > size) return no;
-		for(IndexType i from 0 until start.size) if(this[i] != start[i]) return no;
+		for(i from 0 until start.size) if(this[i] != start[i]) return no;
 		return yes;
 	}
 	
 	Question endsWith(String end) {
 		if(end.size > size) return no;
-		for(IndexType i from size - end.size until size) if(this[i] != start[i]) return no;
+		for(i from size - end.size until size) if(this[i] != start[i]) return no;
 		return yes;
 	}
 }

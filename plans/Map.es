@@ -4,12 +4,12 @@ class Map<KeyType, ValueType> {
 	clear();
 	
 	Question containsKey(KeyType key) {
-		for(each ValueType entry in this) if(entry.key == key) return yes;
+		for(each entry in this) if(entry.key == key) return yes;
 		return no;
 	}
 	
 	Question containsValue(ValueType value) {
-		for(each ValueType entry in this) if(entry.value == value) return yes;
+		for(each entry in this) if(entry.value == value) return yes;
 		return no;
 	}
 	

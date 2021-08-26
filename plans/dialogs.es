@@ -12,7 +12,7 @@ List<String> fruits = ["apples", "peaches", "oranges"];
 
 Option optionAsk = Option("Ask") {
 	execute() {
-		String fruit = select("Select fruit you want to ask about:", fruits, "Question");
+		fruit = select("Select fruit you want to ask about:", fruits, "Question");
 		tell("\(yourName): Do you like \(fruits[fruit])?\n" + "\(myName): Yes, I like to eat \(fruits[fruit]).");
 	}
 }
@@ -21,11 +21,8 @@ Option optionExit = Option("Exit") {
 	execute() exit();
 }
 
-String myName = "Cyrus";
-String yourName = ask("What is your name?");
+myName = "Cyrus";
+yourName = ask("What is your name?");
 List<Option> options = [optionGreet, optionAsk, optionExit];
 
-do {
-	Int option = select("Choose what to do:", options, "Options");
-	options[option].execute()
-}
+do select("Choose what to do:", options, "Options").execute();

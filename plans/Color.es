@@ -7,7 +7,7 @@ class Color extends I32 {
 	create(this.red = 0, this.green = red, this.blue = red, this.alpha = 255);
 	
 	create(String code) {
-		Int size = code.size;
+		size = code.size;
 		if(size < 6) {
 			red = fromHex(code[0]) * 17;
 			green = fromHex(code[1]) * 17;
@@ -25,8 +25,8 @@ class Color extends I32 {
 
 	U8 fromHex(String string) {
 		assert(string.length <= 2);
-		U8 value = 0;
-		for(Int n from 0 until size) value = (value << 4) + fromHex(string[n]);
+		value = 0;
+		for(n from 0 until size) value = (value << 4) + fromHex(string[n]);
 		return value;
 	}
 }

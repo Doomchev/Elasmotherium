@@ -1,13 +1,12 @@
 Layer {
   contents: []
   
-  Void onFirstCollision(I32 x, I32 y, function) {
-    for(object in this.contents) {
-      if(object.onFirstCollision(x, y, function)) return true
-    }
+  Question onFirstCollision(Int x, Int y, function) {
+    for(object in this.contents)
+      if(object.onFirstCollision(x, y, function)) return yes;
+    return no;
   }
   
-  draw() {
-    for(object in this.contents) object.draw()
-  }  
+  draw()
+    for(each object in contents) object.draw()
 }

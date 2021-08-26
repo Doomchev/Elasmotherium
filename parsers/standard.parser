@@ -23,13 +23,13 @@ ERROR error: \0
 /// default symbol switch
 
 DEFAULT nothing: >>
-DEFAULT "/": >> slashComment
+DEFAULT "/": >> slashComment()
 
 
 
 /// base
 
-root: CREATE(code) сodeLines()
+root: сodeLines()
 
 сodeLines: {
   eof: RETURN

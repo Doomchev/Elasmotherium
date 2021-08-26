@@ -3,7 +3,7 @@ package vm;
 import base.ElException;
 import processor.ProParameter;
 
-public class Print extends VMCommand {
+public class Println extends VMCommand {
 
   @Override
   public VMCommand create(ProParameter parameter) throws ElException {

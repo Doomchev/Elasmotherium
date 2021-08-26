@@ -76,7 +76,7 @@ public abstract class Base {
   
   // scopes
   
-  private static final ScopeEntry[] scope = new ScopeEntry[1000];
+  private static final ScopeEntry[] scope = new ScopeEntry[32];
   private static final LinkedList<Integer> scopeEnd = new LinkedList<>();
   private static int lastScopeEntry = -1;
 
@@ -179,6 +179,10 @@ public abstract class Base {
     char[] chars = new char[quantity];
     for(int i = 0; i < quantity; i++) chars[i] = ch;
     return new String(chars);
+  }
+  
+  public static String decapitalize(String string) {
+    return string.substring(0, 1).toLowerCase() + string.substring(1);
   }
   
   // reader

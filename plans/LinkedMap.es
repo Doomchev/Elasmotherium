@@ -1,4 +1,4 @@
-class LinkedMap<KeyType, ValueType; Question unique> extends Map<KeyType, ValueType> {
+class LinkedMap<KeyType, ValueType; Question noRepeats> extends Map<KeyType, ValueType> {
 	class Entry {
 		KeyType key;
 		ValueType value;
@@ -14,20 +14,20 @@ class LinkedMap<KeyType, ValueType; Question unique> extends Map<KeyType, ValueT
 	clear() _entries.clear();
 	
 	ValueType getAtIndex(KeyType key) {
-		forEach(Entry entry in _entries) if(entry.key == key) return entry.value;
+		forEach(each entry in _entries) if(entry.key == key) return entry.value;
 		return null;
 	}
 	
 	setAtIndex(KeyType key, ValueType value) {
-		if(unique) remove(key);
+		if(noRepeats) remove(key);
 		_entries.addFirst(Entry(key, value));
 	}
 	
 	remove(KeyType key) {
-		forEach(Entry entry in _entries)
+		for(each entry in _entries)
 			if(entry.key == key) {
 				removeItem;
-				if(unique) return;
+				if(noRepeats) return;
 			}
 	}
 }
