@@ -1,13 +1,10 @@
 package parser;
 
-import ast.Code;
-import ast.EntityStack;
 import static base.Base.currentFunction;
 import java.util.HashMap;
 import base.ElException;
 import base.Module;
 import static base.Module.current;
-import static base.Module.lineNum;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -15,23 +12,25 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import static parser.ParserBase.path;
+import static base.Module.currentLineNum;
 
 public class Rules extends ParserBase {
-  public Sub root;
+  // masks
   
-  public final HashMap<String, SymbolMask> masks = new HashMap<>();
-  public SymbolMask getMask(String name) throws ElException {
+  private final HashMap<String, SymbolMask> masks = new HashMap<>();
+  
+  private SymbolMask getMask(String name) throws ElException {
     SymbolMask mask = masks.get(name);
     if(mask == null) throw new ElException("Cannot find symbol mask \""
         + name + "\"");
     return mask;
   }
   
-  public final HashMap<String, Sub> subs = new HashMap<>();
-  public final HashMap<String, Error> errors = new HashMap<>();
-  public final LinkedList<String> defSym = new LinkedList<>();
+  // subs
   
-  public Sub getSub(String name) {
+  private final HashMap<String, Sub> subs = new HashMap<>();
+
+  private Sub getSub(String name) {
     Sub sub = subs.get(name);
     if(sub == null) {
       sub = new Sub(name, null);
@@ -40,15 +39,26 @@ public class Rules extends ParserBase {
     return sub;
   }
   
+  // fields
+  
+  private Sub root;
+  private final HashMap<String, Error> errors = new HashMap<>();
+  private final LinkedList<String> defSym = new LinkedList<>();
   private EReader reader;
+  
+  // loading 
+  
   public Rules load(String fileName) {
     currentFileName = fileName;
+    
     masks.clear();
     masks.put("tab", new SymbolMask('\t'));
     masks.put("space", new SymbolMask(' '));
     masks.put("newline", new SymbolMask('\n').set('\r'));
     masks.put("eof", new SymbolMask(129));
+    
     subs.clear();
+    
     try {
       reader = new EReader(fileName);
       String line;
@@ -94,37 +104,9 @@ public class Rules extends ParserBase {
     return this;
   }
   
-  public static LinkedList<String> listSplit(String commands, char delimiter) {
-    LinkedList<String> commandList = new LinkedList<>();
-    int start = -1, brackets = 0;
-    boolean quotes = false;
-    for(int i = 0; i < commands.length(); i++) {
-      char c = commands.charAt(i);
-      if(brackets == 0 && start < 0 && c != delimiter) start = i;
-      if(c == '"') quotes = !quotes;
-      if(quotes) continue;
-      if(c == '(') {
-        brackets++;
-      } else if(c == ')') {
-        brackets--;
-      } else if(c == delimiter) {
-        if(brackets > 0 || start < 0) continue;
-        commandList.add(commands.substring(start, i).trim());
-        start = -1;
-      }
-    }
-    if(start >= 0) commandList.add(commands.substring(start).trim());
-    //System.out.println(commands + " = " + listToString(commandList));
-    return commandList;
-  }
-
-  public static String stringParam(String str) throws ElException {
-    if(!str.endsWith("\"") || str.length() < 2) throw new ElException(
-        "Invalid token");
-    return str.substring(1, str.length() - 1);
-  }
+  // actions
   
-  public static final HashMap<String, Action> actions = new HashMap<>();
+  private static final HashMap<String, Action> actions = new HashMap<>();
   
   static {
     actions.put("RETURN", new ActionReturn());
@@ -238,39 +220,18 @@ public class Rules extends ParserBase {
   public void read(Module module) {
     current = module;
     currentFunction = module.function;
-    Code code = currentFunction.code;
-    readCode(modulesPath + "Base.es", code);
-    for(Module imported: module.modules) readCode(imported.fileName, code);
-    readCode(module.fileName, code);
-    currentFunction.allocation
-          = Math.max(currentFunction.allocation, currentAllocation);
+    readCode(modulesPath + "Base.es");
+    for(Module imported: module.modules) readCode(imported.fileName);
+    readCode(module.fileName);
+    currentFunction.setAllocation();
   }  
   
-  private void readCode(String fileName, Code code) {
+  private void readCode(String fileName) {
     path = Paths.get(fileName).getParent().toString() + "/";
     
-    include(fileName);
-    
-    if(log) printChapter("Parsing " + fileName);
-    
-    EntityStack.code.push(code);
-    
-    Action.currentAction = root.action;
-    try {
-      while(Action.currentAction != null)
-        Action.currentAction.execute();
-    
-      EntityStack.code.stack.clear();
-    } catch (base.ElException ex) {
-      error("Parsing error", currentFileName + " (" + lineNum + ":"
-        + (textPos - lineStart) + ")\n" + ex.message);
-    }
-  }
-  
-  public static void include(String fileName) {
     textPos = 0;
     tokenStart = 0;
-    lineNum = 1;
+    currentLineNum = 1;
     lineStart = -1;
     prefix = "";
     currentFileName = new File(fileName).getName();
@@ -283,6 +244,21 @@ public class Rules extends ParserBase {
       error("I/O error", fileName + " not found.");
     } catch (IOException ex) {
       error("I/O error", "Cannot read " + fileName + ".");
+    }
+    
+    if(log) printChapter("Parsing " + fileName);
+    
+    currentFunction.pushCode();
+    
+    Action.currentAction = root.action;
+    try {
+      while(Action.currentAction != null)
+        Action.currentAction.execute();
+    
+      EntityStack.code.clear();
+    } catch (base.ElException ex) {
+      error("Parsing error", currentFileName + " (" + currentLineNum + ":"
+        + (textPos - lineStart) + ")\n" + ex.message);
     }
   }
 }

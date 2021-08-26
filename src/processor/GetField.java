@@ -5,7 +5,7 @@ import ast.ID;
 import base.ElException;
 
 public class GetField extends ProCommand {
-  public static final GetField instance = new GetField();
+  static final GetField instance = new GetField();
 
   private GetField() {
   }
@@ -17,7 +17,7 @@ public class GetField extends ProCommand {
 
   @Override
   void execute() throws ElException {
-    ID id = current.getParameter(1).getID();
+    ID id = current.getParameter(1).getName();
     ClassEntity type = object.getType();
     current = type.getField(id);
     if(current == null) current = type.getMethod(id);

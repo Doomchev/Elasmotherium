@@ -4,7 +4,7 @@ import base.ElException;
 import processor.ProParameter;
 
 public class IfFalseGoTo extends VMCommand {
-  public int command;
+  private int command;
 
   public IfFalseGoTo() {
   }

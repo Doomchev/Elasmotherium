@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.LinkedList;
+import java.util.List;
 import processor.Processor;
 import vm.I64ToString;
 import vm.VMBase;
@@ -33,7 +34,7 @@ public abstract class Base {
     }
   }
   
-  public String getName() {
+  public String getClassName() {
     return getClass().getSimpleName();
   }
   
@@ -47,8 +48,7 @@ public abstract class Base {
   }
   
   public static int deallocate() {
-    currentFunction.allocation = Math.max(currentFunction.allocation
-        , currentAllocation);
+    currentFunction.setAllocation();
     int value = currentAllocation;
     currentAllocation = allocations.getLast();
     allocations.removeLast();
@@ -101,7 +101,7 @@ public abstract class Base {
   }
   
   public void addToScope(NamedEntity entity) {
-    addToScope(entity.name, entity);
+    addToScope(entity.getName(), entity);
   }
   
   public Entity getFromScope(ID name) throws ElException {
@@ -160,16 +160,6 @@ public abstract class Base {
     return index < 0 ? string : string.substring(0, index);
   }
   
-  public static String startingId(String text) {
-    for(int i = 0; i < text.length(); i++) {
-      char c = text.charAt(i);
-      if(c >= 'A' && c <= 'Z') continue;
-      if(c >= 'a' && c <= 'z') continue;
-      return text.substring(0, i);
-    }
-    return text;
-  }
-  
   public static String expectEnd(String string, String end) throws ElException {
     if(!string.endsWith(end)) throw new ElException(end + " expected.");
     return string.substring(0, string.length() - end.length());
@@ -183,6 +173,50 @@ public abstract class Base {
   
   public static String decapitalize(String string) {
     return string.substring(0, 1).toLowerCase() + string.substring(1);
+  }
+  
+  public static String listToString(List<? extends Object> list) {
+    return listToString(list, ", ");
+  }
+  
+  public static String listToString(List<? extends Object> list
+      , String delimiter) {
+    String str = "";
+    for(Object object : list) {
+      if(!str.isEmpty()) str += delimiter;
+      str += object.toString();
+    }
+    return str;
+  }
+  
+  public static LinkedList<String> listSplit(String commands, char delimiter) {
+    LinkedList<String> commandList = new LinkedList<>();
+    int start = -1, brackets = 0;
+    boolean quotes = false;
+    for(int i = 0; i < commands.length(); i++) {
+      char c = commands.charAt(i);
+      if(brackets == 0 && start < 0 && c != delimiter) start = i;
+      if(c == '"') quotes = !quotes;
+      if(quotes) continue;
+      if(c == '(') {
+        brackets++;
+      } else if(c == ')') {
+        brackets--;
+      } else if(c == delimiter) {
+        if(brackets > 0 || start < 0) continue;
+        commandList.add(commands.substring(start, i).trim());
+        start = -1;
+      }
+    }
+    if(start >= 0) commandList.add(commands.substring(start).trim());
+    //System.out.println(commands + " = " + listToString(commandList));
+    return commandList;
+  }
+
+  public static String stringParam(String str) throws ElException {
+    if(!str.endsWith("\"") || str.length() < 2) throw new ElException(
+        "Invalid token");
+    return str.substring(1, str.length() - 1);
   }
   
   // reader

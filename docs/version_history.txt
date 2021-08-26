@@ -1,3 +1,8 @@
+2021.08.25 (version 0.24.2)
+  * Massive class encapsulation.
+  * All fields are checked and useless fields are removed.
+  * EntityStack is moved to parser package.
+  
 2021.08.25 (version 0.24.1)
   + Attaching vm commands to existing functions instead of creating new.
   + Base.es import by default.

@@ -4,8 +4,8 @@ import base.ElException;
 import base.SimpleMap;
 
 public class Block extends Entity {
-  ID type;
-  public final SimpleMap<ID, Entity> entries = new SimpleMap<>();
+  private final ID type;
+  private final SimpleMap<ID, Entity> entries = new SimpleMap<>();
 
   public Block(ID type) {
     this.type = type;
@@ -41,7 +41,7 @@ public class Block extends Entity {
   @Override
   public void moveToCode(Code code) {
     deallocate();
-    code.lines.add(this);
+    code.addLine(this);
   }
   
   // other
@@ -50,7 +50,7 @@ public class Block extends Entity {
   public void print(String indent, String prefix) {
     println(indent + prefix + type.string + " {");
     indent += "  ";
-    for(SimpleMap.Entry<ID, Entity> entry : entries.entries)
+    for(SimpleMap.Entry<ID, Entity> entry : entries)
       entry.value.print(indent, entry.key + ": ");
   }
 

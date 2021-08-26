@@ -4,7 +4,7 @@ import ast.ClassEntity;
 import base.ElException;
 
 public class ObjectNew extends VMCommand {
-  public ClassEntity classEntity;
+  private final ClassEntity classEntity;
 
   public ObjectNew(ClassEntity classEntity) {
     this.classEntity = classEntity;
@@ -13,7 +13,7 @@ public class ObjectNew extends VMCommand {
   @Override
   public void execute() throws ElException {
     stackPointer++;
-    objectStack[stackPointer] = newObject(classEntity);
+    objectStack[stackPointer] = classEntity.newObject();
     if(log) typeStack[stackPointer] = ValueType.OBJECT;
     currentCommand++;
   }

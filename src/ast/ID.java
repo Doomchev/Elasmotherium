@@ -3,8 +3,9 @@ package ast;
 import java.util.HashMap;
 
 public class ID {
-  public static HashMap<String, ID> all = new HashMap<>();  
-  public String string;
+  public static final HashMap<String, ID> all = new HashMap<>();  
+  
+  public final String string;
 
   private ID(String string) {
     this.string = string;
@@ -18,20 +19,6 @@ public class ID {
       all.put(string, id);
     }
     return id;
-  }
-  
-  public static class Stack {
-    public static Stack instance = new Stack();
-    
-    public final java.util.Stack<ID> stack = new java.util.Stack<>();
-
-    private Stack() {
-    }
-    
-    public static ID pop() {
-      if(instance.stack.isEmpty()) return null;
-      return instance.stack.pop();
-    }
   }
 
   @Override

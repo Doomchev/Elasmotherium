@@ -4,8 +4,8 @@ import base.ElException;
 import vm.VMCommand;
 
 public class AppendCommand extends ProCommand {
-  VMCommand command;
-  ProParameter parameter;
+  private final VMCommand command;
+  private final ProParameter parameter;
   
   public AppendCommand(VMCommand command, String parameter)
       throws ElException {

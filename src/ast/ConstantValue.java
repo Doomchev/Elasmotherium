@@ -3,13 +3,15 @@ package ast;
 import base.ElException;
 
 public class ConstantValue extends Value {
-  public static ID id = ID.get("const");
-  public static ID intID = ID.get("int");
-  public static ID stringID = ID.get("string");
+  public static final ID id = ID.get("const");
+  public static final ID intID = ID.get("int");
+  public static final ID stringID = ID.get("string");
   
-  public ID type;
-  public String value;
+  private final ID type;
+  private final String value;
 
+  // creating
+  
   public ConstantValue(ID type, String value) {
     this.type = type;
     this.value = value;
@@ -38,7 +40,7 @@ public class ConstantValue extends Value {
 
   @Override
   public void moveToStringSequence(StringSequence sequence) {
-    if(!value.isEmpty()) sequence.chunks.add(this);
+    if(!value.isEmpty()) sequence.add(this);
   }
   
   // other

@@ -3,7 +3,13 @@ package ast;
 import java.util.LinkedList;
 
 public class Parameters extends Value {
-  public final LinkedList<Value> parameters = new LinkedList<>();
+  private final LinkedList<Value> parameters = new LinkedList<>();
+  
+  // parameters
+
+  void add(Value value) {
+    parameters.add(value);
+  }
   
   // moving functions
   
@@ -14,12 +20,12 @@ public class Parameters extends Value {
 
   @Override
   public void moveToFormula(Formula formula) {
-    formula.chunks.add(this);
+    formula.add(this);
   }
 
   @Override
   public void moveToFunctionCall(FunctionCall call) {
-    call.parameters.addAll(parameters);
+    call.add(parameters);
     call.priority = VALUE;
   }
   

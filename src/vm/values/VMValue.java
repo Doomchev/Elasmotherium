@@ -1,4 +1,4 @@
-package vm;
+package vm.values;
 
 import base.ElException;
 

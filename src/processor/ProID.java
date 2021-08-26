@@ -5,7 +5,7 @@ import base.ElException;
 import vm.VMCommand;
 
 public class ProID extends ProParameter {
-  ID id;
+  private final ID id;
 
   public ProID(ID label) {
     this.id = label;

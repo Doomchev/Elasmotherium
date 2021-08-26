@@ -1,7 +1,7 @@
 package vm;
 
 public class StringVarEquate extends VMCommand {
-  int index;
+  private final int index;
 
   public StringVarEquate(int index) {
     this.index = index;
@@ -10,7 +10,7 @@ public class StringVarEquate extends VMCommand {
   @Override
   public void execute() {
     stringStack[index + currentCall.paramPosition] = stringStack[stackPointer];
-    if(log) typeStack[index + currentCall.paramPosition] = ValueType.I64;
+    if(log) typeStack[index + currentCall.paramPosition] = ValueType.STRING;
     stackPointer--;
     currentCommand++;
   }

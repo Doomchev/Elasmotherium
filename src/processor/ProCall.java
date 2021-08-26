@@ -5,9 +5,8 @@ import ast.ID;
 import base.ElException;
 
 public class ProCall extends ProCommand {
-  ProParameter callObject;
-  ProParameter parameter;
-  ID method;
+  private final ProParameter callObject, parameter;
+  private final ID method;
   
   public ProCall(String object, String method, String parameter)
       throws ElException {

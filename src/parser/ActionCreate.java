@@ -2,7 +2,6 @@ package parser;
 
 import base.Module;
 import ast.Block;
-import ast.EntityStack;
 import ast.Function;
 import ast.FunctionCall;
 import ast.ID;
@@ -63,7 +62,7 @@ public class ActionCreate extends Action {
       stack.push(new Block(type));
       allocate();
     } else if(function != null) {
-      if(log) log("CREATE FUNCTION CALL(" + function.getName() + ")");
+      if(log) log("CREATE FUNCTION CALL(" + function.getClassName() + ")");
       stack.push(new FunctionCall(function));
     } else {
       stack.push(stack.create());

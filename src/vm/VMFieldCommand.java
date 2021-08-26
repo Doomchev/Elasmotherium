@@ -5,7 +5,7 @@ import processor.ProBase;
 import processor.ProParameter;
 
 public abstract class VMFieldCommand extends VMCommand {
-  int fieldIndex;
+  final int fieldIndex;
 
   public VMFieldCommand(int fieldIndex) {
     this.fieldIndex = fieldIndex;

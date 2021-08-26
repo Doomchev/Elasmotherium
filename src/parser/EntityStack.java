@@ -1,13 +1,12 @@
-package ast;
+package parser;
 
+import ast.*;
+import base.Base;
 import base.ElException;
-import base.SimpleMap;
 import java.util.HashMap;
 import java.util.Stack;
-import parser.Action;
-import parser.ParserBase;
 
-public class EntityStack<EntityType> extends ParserBase {
+public class EntityStack<EntityType> extends Base {
   public static final HashMap<ID, EntityStack> all = new HashMap<>();
   public static final EntityStack<ID> id;
   public static final EntityStack<Block> block;
@@ -110,7 +109,7 @@ public class EntityStack<EntityType> extends ParserBase {
     new EntityStack<Variable>("thisvar", var) {
       @Override
       public Variable create() throws ElException {
-        return new Variable(id.pop(), classStack.peek());
+        return new Variable(id.pop(), true);
       }      
     };
     
@@ -176,6 +175,8 @@ public class EntityStack<EntityType> extends ParserBase {
     };
   }
   
+  // retrieving
+  
   public static EntityStack get(String name) throws ElException {
     return get(ID.get(name));
   }
@@ -186,9 +187,13 @@ public class EntityStack<EntityType> extends ParserBase {
         + name.string + "\"");
     return stack;
   }
+  
+  // class fields
 
-  public final ID name;
-  public final Stack<EntityType> stack;
+  final ID name;
+  private final Stack<EntityType> stack;
+  
+  // creating
 
   public EntityStack(String name) {
     this.name = ID.get(name);
@@ -201,6 +206,28 @@ public class EntityStack<EntityType> extends ParserBase {
     this.stack = entityStack.stack;
     all.put(this.name, this);
   }
+  
+  // properties
+
+  public boolean isStringBased() {
+    return false;
+  }
+  
+  // creating objects
+  
+  public EntityType create() throws ElException {
+    throw new ElException(name);
+  }
+  
+  public EntityType create(String string, ID type) throws ElException {
+    throw new ElException(name);
+  }
+  
+  // commands
+
+  public void clear() {
+    stack.clear();
+  }
 
   public EntityType pop() throws ElException {
     if(stack.isEmpty()) throw new ElException(Action.currentAction
@@ -211,24 +238,14 @@ public class EntityStack<EntityType> extends ParserBase {
   public void push(EntityType entity) {
     stack.push(entity);
   }
-  
-  public EntityType create() throws ElException {
-    throw new ElException(name);
-  }
-  
-  public EntityType create(String string, ID type) throws ElException {
-    throw new ElException(name);
-  }
-
-  public boolean isStringBased() {
-    return false;
-  }
 
   public EntityType peek() throws ElException {
     if(stack.isEmpty()) throw new ElException(Action.currentAction
         , "Trying to peek entity from empty " + name.string + " stack");
     return stack.peek();
   }
+  
+  // other
 
   @Override
   public String toString() {

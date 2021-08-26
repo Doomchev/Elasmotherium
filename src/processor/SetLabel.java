@@ -5,7 +5,7 @@ import base.ElException;
 import vm.VMBase;
 
 public class SetLabel extends ProCommand {
-  ID label;
+  private final ID label;
 
   public SetLabel(ID label) {
     this.label = label;

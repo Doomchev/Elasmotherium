@@ -5,7 +5,7 @@ import processor.ProBase;
 import processor.ProParameter;
 
 public class I64VarPush extends VMCommand {
-  int index;
+  private final int index;
 
   public I64VarPush(int index) {
     this.index = index;

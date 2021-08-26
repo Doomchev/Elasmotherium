@@ -1,4 +1,6 @@
-package vm;
+package vm.values;
+
+import vm.values.VMValue;
 
 public class I64Value extends VMValue {
   public long value;

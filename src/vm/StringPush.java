@@ -4,7 +4,7 @@ import base.ElException;
 import processor.ProParameter;
 
 public class StringPush extends VMCommand {
-  String value = "";
+  private final String value;
 
   public StringPush(String value) {
     this.value = value;

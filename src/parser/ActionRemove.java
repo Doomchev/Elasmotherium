@@ -1,6 +1,5 @@
 package parser;
 
-import ast.EntityStack;
 import base.ElException;
 
 public class ActionRemove extends Action {
@@ -16,10 +15,10 @@ public class ActionRemove extends Action {
   }
   
   @Override
-  public void execute() {
+  public void execute() throws ElException {
     if(log) log("REMOVE(" + stack.name.string + ")");
     currentAction = this;
-    stack.stack.pop();
+    stack.pop();
     currentAction = nextAction;
   }
 

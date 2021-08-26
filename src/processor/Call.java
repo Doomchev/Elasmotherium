@@ -6,7 +6,7 @@ import base.ElException;
 import vm.CallFunction;
 
 public class Call extends ProCommand {
-  public static final Call instance = new Call();
+  static final Call instance = new Call();
 
   @Override
   ProCommand create(String param) throws ElException {

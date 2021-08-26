@@ -5,11 +5,10 @@ import java.util.LinkedList;
 import parser.Action;
 
 public class Link extends Value {
-  public static ID id = ID.get("link");
+  public static final ID id = ID.get("link");
   
-  public ID name;
-  public Entity entity;
-  public boolean thisFlag, isDefinition = false;
+  private final ID name;
+  private Entity entity;
   public final LinkedList<Type> subtypes = new LinkedList<>();
 
   public Link(ID name) {
@@ -22,12 +21,18 @@ public class Link extends Value {
     this.entity = entity;
   }
   
-  // processor fields
+  // properties
   
   @Override
-  public ID getID() throws ElException {
+  public ID getName() throws ElException {
     return name;
   }
+
+  void add(Type type) {
+    subtypes.add(type);
+  }
+  
+  // processor fields
   
   @Override
   public ID getObject() throws ElException {
@@ -56,11 +61,6 @@ public class Link extends Value {
   @Override
   public void move(Entity entity) throws ElException {
     entity.moveToLink(this);
-  }
-
-  @Override
-  public void moveToClass(ClassEntity classEntity) throws ElException {
-    classEntity.parent = this;
   }
   
   // other

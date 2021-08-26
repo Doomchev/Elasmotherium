@@ -5,7 +5,7 @@ import ast.ID;
 import base.ElException;
 
 public class ProBlockParameter extends ProParameter {
-  final ID name;
+  private final ID name;
 
   public ProBlockParameter(String name) {
     this.name = ID.get(name);

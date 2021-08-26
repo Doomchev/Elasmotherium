@@ -6,7 +6,7 @@ import base.ElException;
 public class Process extends ProCommand {
   public static final Process instance = new Process(null);
   
-  ID name;
+  private final ID name;
 
   private Process(ID name) {
     this.name = name;

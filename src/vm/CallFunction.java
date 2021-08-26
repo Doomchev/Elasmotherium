@@ -12,13 +12,10 @@ public class CallFunction extends VMCommand {
   public static void execute(Function function) {
     callStackPointer++;
     callStack[callStackPointer] = currentCall;
-    int params = function.parameters.size();
-    int isMethod = function.isMethod() ? 1 : 0;
-    int isConstructor = function.isConstructor ? 1 : 0;
-    currentCall = new VMFunctionCall(null
-        , stackPointer - params + 1
-        , params + isMethod - isConstructor);
-    currentCommand = function.startingCommand;
+    currentCall = new VMFunctionCall(
+        stackPointer - function.getCallAllocation()
+        , function.getCallDeallocation());
+    currentCommand = function.getStartingCommand();
   }
   
   @Override
@@ -28,6 +25,6 @@ public class CallFunction extends VMCommand {
 
   @Override
   public String toString() {
-    return "Call " + function + "(" + function.startingCommand + "):";
+    return "Call " + function + "(" + function.getStartingCommand() + "):";
   }
 }

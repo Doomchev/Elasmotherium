@@ -1,7 +1,6 @@
 package parser;
 
 import ast.Entity;
-import ast.EntityStack;
 import ast.Function;
 import ast.ID;
 import base.ElException;

@@ -4,7 +4,7 @@ import base.ElException;
 import processor.ProParameter;
 
 public class ObjectVarEquate extends VMCommand {
-  int index;
+  private final int index;
 
   public ObjectVarEquate(int index) {
     this.index = index;

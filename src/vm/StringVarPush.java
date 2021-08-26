@@ -5,7 +5,7 @@ import processor.ProBase;
 import processor.ProParameter;
 
 public class StringVarPush extends VMCommand {
-  int index;
+  private final int index;
 
   public StringVarPush(int index) {
     this.index = index;

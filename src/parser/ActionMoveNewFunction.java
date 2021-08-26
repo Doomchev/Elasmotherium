@@ -1,10 +1,8 @@
 package parser;
 
 import ast.Entity;
-import ast.EntityStack;
 import ast.Function;
 import ast.FunctionCall;
-import base.ElException;
 
 public class ActionMoveNewFunction extends Action {
   private final Function function;
@@ -17,7 +15,7 @@ public class ActionMoveNewFunction extends Action {
   
   @Override
   public void execute() throws base.ElException {
-    if(log) log("MOVING NEW " + function.getName() + " to " + to.name + "("
+    if(log) log("MOVING NEW " + function.getClassName() + " to " + to.name + "("
         + to.peek().toString() + ")");
     to.peek().move(new FunctionCall(function));
     currentAction = nextAction;
@@ -25,6 +23,6 @@ public class ActionMoveNewFunction extends Action {
 
   @Override
   public String toString() {
-    return function.getName() + " to " + to.name;
+    return function.getClassName() + " to " + to.name;
   }
 }

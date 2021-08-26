@@ -1,7 +1,7 @@
 package parser;
 
 public class SymbolMask {
-  public boolean[] symbols = new boolean[130];
+  boolean[] symbols = new boolean[130];
   
   public SymbolMask() {}
   

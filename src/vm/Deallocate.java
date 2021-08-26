@@ -1,7 +1,7 @@
 package vm;
 
 public class Deallocate extends VMCommand {
-  int quantity;
+  private final int quantity;
 
   public Deallocate(int quantity) {
     this.quantity = quantity;

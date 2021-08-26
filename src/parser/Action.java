@@ -36,6 +36,6 @@ public abstract class Action extends ParserBase {
 
   @Override
   public String toString() {
-    return getName();
+    return getClassName();
   }
 }

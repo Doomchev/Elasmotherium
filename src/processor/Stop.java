@@ -3,7 +3,7 @@ package processor;
 import base.ElException;
 
 public class Stop extends ProCommand {
-  public static final Stop instance = new Stop();
+  static final Stop instance = new Stop();
 
   private Stop() {
   }

@@ -3,7 +3,6 @@ package parser;
 import ast.ID;
 import java.util.LinkedList;
 import static parser.ParserBase.log;
-import ast.EntityStack;
 import base.ElException;
 
 public class ActionSwitchID extends ActionSwitch {
@@ -18,7 +17,7 @@ public class ActionSwitchID extends ActionSwitch {
   }
   
   private final LinkedList<Entry> entries = new LinkedList<>();
-  public Action defaultAction;
+  private Action defaultAction;
 
   @Override
   public ActionClear create(String params) throws ElException {

@@ -1,6 +1,7 @@
-package ast;
+package vm.values;
 
-import vm.VMValue;
+import ast.Entity;
+import vm.values.VMValue;
 
 public class ObjectEntity extends Entity {
   public Entity type;

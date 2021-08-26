@@ -2,19 +2,20 @@ package ast;
 
 import base.ElException;
 import java.util.LinkedList;
-import vm.VMValue;
+import vm.values.VMValue;
 
 public class Type extends NamedEntity {
-  public final LinkedList<Type> subtypes = new LinkedList<>();
+  private final LinkedList<Type> subtypes = new LinkedList<>();
+  private ClassEntity typeClass = null;
   
-  public ClassEntity typeClass = null;
+  // creating
   
   public Type(ID name) {
-    this.name = name;
+    super(name);
   }
 
-  public Type(String id) {
-    this.name = ID.get(id);
+  public Type(String name) {
+    super(name);
   }
   
   // processor fields
@@ -46,23 +47,18 @@ public class Type extends NamedEntity {
   }
 
   @Override
-  public void moveToClass(ClassEntity classEntity) {
-    classEntity.parent = this;
-  }
-
-  @Override
   public void moveToVariable(Variable variable) {
-    variable.type = this;
+    variable.setType(this);
   }
 
   @Override
   public void moveToFunction(Function function) {
-    function.returnType = this;
+    function.setReturnType(this);
   }
 
   @Override
   public void moveToLink(Link link) throws ElException {
-    link.subtypes.add(this);
+    link.add(this);
   }
 
   @Override

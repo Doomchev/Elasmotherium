@@ -3,7 +3,7 @@ package processor;
 import base.ElException;
 
 public class SetObject extends ProCommand {
-  public static SetObject instance = new SetObject();
+  static final SetObject instance = new SetObject();
 
   private SetObject() {
   }

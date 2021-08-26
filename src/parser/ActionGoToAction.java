@@ -1,7 +1,5 @@
 package parser;
 
-import base.ElException;
-
 public class ActionGoToAction extends Action {
   private final Action action;
   

@@ -1,42 +1,53 @@
 package ast;
 
+import static ast.Entity.append;
+import static ast.FunctionCall.resolve;
+import static base.Base.currentProcessor;
+import static base.Base.log;
+import static base.Base.println;
 import base.ElException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import parser.EntityStack;
+import vm.Allocate;
+import vm.CallFunction;
+import vm.ObjectNew;
 import vm.Return;
 import vm.VMBase;
 import vm.VMCommand;
 
 public class Function extends NamedEntity  {
-  public static ID id = ID.get("function");
+  public static final ID id = ID.get("function");
   
   public static final HashMap<ID, Function> all = new HashMap<>();
   public static Function ret, equate;
   
-  public Code code = new Code();
-  public Entity returnType = null;
-  public final LinkedList<Variable> parameters = new LinkedList<>();
-  public boolean isConstructor = false;
-  public ClassEntity parentClass = null;
   public byte priority = VALUE;
-  public int startingCommand, allocation = 0;
-  public VMCommand command = null;
+  
+  private boolean isConstructor = false;
+  private ClassEntity parentClass = null;
+  private Entity returnType = null;
+  private final LinkedList<Variable> parameters = new LinkedList<>();
+  private Code code = new Code();
+  private int startingCommand;
+  private int allocation = 0;
+  private VMCommand command = null;
   
   // constructors
   
   public Function(ID name) {
-    this.name = name;
+    super(name);
     if(name == null) this.isConstructor = true;
   }
   
   public Function(ID name, byte priority) {
-    this.name = name;
+    super(name);
     this.priority = priority;
   }
   
   public Function(VMCommand command, String name, ClassEntity... paramTypes) {
+    super(ID.get(name));
     this.command = command;
-    this.name = ID.get(name);
     for(ClassEntity paramType: paramTypes)
       parameters.add(new Variable(paramType));
   }
@@ -97,11 +108,6 @@ public class Function extends NamedEntity  {
   }
   
   // parameters
-
-  @Override
-  public byte getPriority() {
-    return priority;
-  }
   
   public boolean isNative() {
     return priority != VALUE;
@@ -109,6 +115,58 @@ public class Function extends NamedEntity  {
 
   public boolean isMethod() {
     return parentClass != null;
+  }
+
+  @Override
+  public byte getPriority() {
+    return priority;
+  }
+
+  public int getCallAllocation() {
+    return parameters.size() - 1;
+  }
+
+  public int getCallDeallocation() {
+    return parameters.size() + (isMethod() ? 1 : 0) - (isConstructor ? 1 : 0);
+  }
+
+  public int getStartingCommand() {
+    return startingCommand;
+  }
+
+  public void setReturnType(Entity returnType) {
+    this.returnType = returnType;
+  }
+  
+  // allocation
+
+  public void appendAllocation() {
+    appendLog(new Allocate(allocation));
+  }
+
+  public void setAllocation() {
+    allocation = Math.max(allocation, currentAllocation);
+  }
+
+  public void printAllocation(String fileName) {
+    code.print("", fileName + ":" + allocation + " ");
+  }
+  
+  // child objects
+
+  public int addParameter(Variable variable) {
+    int index = allocation;
+    allocation++;
+    parameters.add(variable);
+    return index;
+  }
+
+  public void setFunctionCommand(ID id, VMCommand command) throws ElException {
+    code.setFunctionCommand(id, command);
+  }
+  
+  public void setCommand(VMCommand command) {
+    this.command = command;
   }
   
   // processor fields
@@ -127,6 +185,14 @@ public class Function extends NamedEntity  {
   public Entity getParameter(int index) throws ElException {
     return parameters.get(index);
   }
+
+  void setCode(Code code) {
+    this.code = code;
+  }
+
+  public void pushCode() {
+    EntityStack.code.push(code);
+  }
   
   // processing
   
@@ -141,6 +207,48 @@ public class Function extends NamedEntity  {
     code.processWithoutScope(endingCommand);
     deallocateScope();
     currentFunction = oldFunction;
+  }
+
+  public void process(ClassEntity classEntity) throws ElException {
+    for(Variable param: parameters)
+      param.processField(classEntity, code);
+  }
+
+  public void processConstructors() throws ElException {
+    code.processConstructors();
+  }
+  
+  public void processCode(VMCommand endingCommand) throws ElException {
+    code.processWithoutScope(endingCommand);
+  }
+
+  public void resolve(FunctionCall call) throws ElException {
+    if(log) println("Resolving function call " + toString());
+    
+    if(isConstructor) append(new ObjectNew(parentClass));
+    
+    if(!isNative()) {
+      int i = 0;
+      for(Entity parameter: parameters) {
+        currentProcessor.call(
+            call.getParameter(i), resolve, parameter.getType());
+        i++;
+      }
+    }
+    
+    if(this == Function.ret) {
+      currentProcessor.call(call);
+      return;
+    } else if(isConstructor) {
+      append(new CallFunction(this));
+      return;
+    }
+    
+    if(command != null) {
+      append(command.create(null));
+    } else {
+      append(new CallFunction(this));
+    }
   }
   
   @Override
@@ -168,17 +276,13 @@ public class Function extends NamedEntity  {
   public void moveToClass(ClassEntity classEntity) throws ElException {
     deallocateFunction();
     parentClass = classEntity;
-    if(isConstructor) {
-      classEntity.constructors.add(this);
-    } else {
-      classEntity.methods.add(this);
-    }
+    classEntity.addMethod(this, isConstructor);
   }
 
   @Override
   public void moveToCode(Code code) {
     deallocateFunction();
-    code.functions.add(this);
+    code.add(this);
   }
 
   @Override
@@ -198,7 +302,7 @@ public class Function extends NamedEntity  {
     String str = "";
     for(Variable parameter : parameters) {
       if(!str.isEmpty()) str += ", ";
-      str += parameter.type + " " + parameter.name + ":" + parameter.index;
+      str += parameter.toParamString();
     }
     str = (returnType == null ? "" : returnType + " ") +
         (isConstructor ? "create" : name.string) + "(" +  str + "):"

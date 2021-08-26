@@ -1,7 +1,7 @@
 package vm;
 
 public class ObjectFieldEquate extends VMCommand {
-  int stackIndex, fieldIndex;
+  private final int stackIndex, fieldIndex;
 
   public ObjectFieldEquate(int stackIndex, int fieldIndex) {
     this.stackIndex = stackIndex;

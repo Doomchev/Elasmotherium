@@ -1,6 +1,6 @@
 package vm;
 
-import ast.ObjectEntity;
+import vm.values.ObjectEntity;
 import base.Base;
 import base.ElException;
 import java.util.Arrays;
@@ -16,7 +16,7 @@ public class VMBase extends Base{
   static ObjectEntity[] objectStack = new ObjectEntity[STACK_SIZE];
   static VMFunctionCall[] callStack = new VMFunctionCall[STACK_SIZE];
   static int stackPointer = -1, callStackPointer = -1;
-  static VMFunctionCall currentCall = new VMFunctionCall(null, 0, 0);
+  static VMFunctionCall currentCall = new VMFunctionCall(0, 0);
   static VMCommand[] commands = new VMCommand[COMMANDS_SIZE];
   static JFrame frame;
   static boolean usesWindow = false, usesConsole = false;

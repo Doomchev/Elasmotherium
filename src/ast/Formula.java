@@ -5,9 +5,15 @@ import java.util.LinkedList;
 import java.util.Stack;
 
 public class Formula extends Entity {
-  public final static Function elseOp = Function.all.get(ID.get("elseOp"));
+  private static final Function elseOp = Function.all.get(ID.get("elseOp"));
   
-  public final LinkedList<Value> chunks = new LinkedList<>();
+  private final LinkedList<Value> chunks = new LinkedList<>();
+  private final Stack<Value> valueStack = new Stack<>();
+  private final Stack<FunctionCall> opStack = new Stack<>();
+  
+  public void add(Value value) {
+    chunks.add(value);
+  }
   
   // moving functions
 
@@ -18,17 +24,17 @@ public class Formula extends Entity {
 
   @Override
   public void moveToCode(Code code) throws ElException {
-    code.lines.add(toValue());
+    code.addLine(toValue());
   }
   
   @Override
   public void moveToStringSequence(StringSequence sequence) throws ElException {
-    sequence.chunks.add(toValue());
+    sequence.add(toValue());
   }
 
   @Override
   public void moveToFunctionCall(FunctionCall call) throws ElException {
-    call.parameters.add(toValue());
+    call.add(toValue());
     call.priority = VALUE;
   }
 
@@ -39,12 +45,12 @@ public class Formula extends Entity {
 
   @Override
   public void moveToParameters(Parameters parameters) throws ElException {
-    parameters.parameters.add(toValue());
+    parameters.add(toValue());
   }
 
   @Override
   public void moveToVariable(Variable variable) throws ElException {
-    variable.value = toValue();
+    variable.setValue(toValue());
   }
 
   @Override
@@ -52,10 +58,7 @@ public class Formula extends Entity {
     list.values.add(toValue());
   }
   
-  // other
-  
-  private final Stack<Value> valueStack = new Stack<>();
-  private final Stack<FunctionCall> opStack = new Stack<>();
+  // commands
   
   @Override
   public Value toValue() throws ElException {
@@ -87,32 +90,36 @@ public class Formula extends Entity {
       popOp();
     }
     
-    if(valueStack.size() != 1) throw new ElException("Syntax error");
+    if(valueStack.size() != 1)
+      throw new ElException("Syntax error");
     return valueStack.pop();
   }
 
   private void popOp() throws ElException {
     FunctionCall op = opStack.pop();
-    if(valueStack.size() < 2) throw new ElException("Syntax error");
-    if(op.function == null) {
+    if(valueStack.size() < 2)
+      throw new ElException("Syntax error");
+    if(op.getFunction() == null) {
       valueStack.pop().moveToFunctionCall(op);
-      op.functionID = valueStack.pop().getID();
+      op.setName(valueStack.pop().getName());
       valueStack.push(op);
       if(log) System.out.println(subIndent + "PUSH VALUES TO FUNCTION "
           + op.toString());
-    } else if (op.function == elseOp) {
+    } else if (op.getFunction() == elseOp) {
       Value value = valueStack.pop();
-      valueStack.peek().toCall().parameters.add(value);
+      valueStack.peek().toCall().add(value);
       if(log) System.out.println(subIndent + "PUSH ELSEOP TO FUNCTION "
           + valueStack.peek().toString());
     } else {
-      op.parameters.addFirst(valueStack.pop());
-      op.parameters.addFirst(valueStack.pop());
+      op.addFirst(valueStack.pop());
+      op.addFirst(valueStack.pop());
       valueStack.push(op);
       if(log) System.out.println(subIndent + "PUSH VALUES TO OPERATOR "
           + op.toString());
     }
   }
+  
+  // other
   
   public void print(String indent) {
     System.out.print("\n    ");

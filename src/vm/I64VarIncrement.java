@@ -1,7 +1,7 @@
 package vm;
 
 public class I64VarIncrement extends VMCommand {
-  int index;
+  private final int index;
 
   public I64VarIncrement(int index) {
     this.index = index;

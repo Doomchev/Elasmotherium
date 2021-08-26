@@ -2,12 +2,10 @@ package base;
 
 import static base.Base.workingPath;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import parser.Rules;
-import ast.ClassEntity;
 
 public class Main {
   public static void main(String[] args) throws IOException {

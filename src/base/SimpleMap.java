@@ -1,10 +1,11 @@
 package base;
 
+import base.SimpleMap.Entry;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class SimpleMap<K, V> {
-  public final LinkedList<Entry<K, V>> entries = new LinkedList<>();
+public class SimpleMap<K, V> implements Iterable<Entry<K, V>> {
+  private final LinkedList<Entry<K, V>> entries = new LinkedList<>();
   
   public static class Entry<K, V> {
     public K key;
@@ -19,6 +20,11 @@ public class SimpleMap<K, V> {
     public String toString() {
       return key + " = " + value;
     }
+  }
+  
+  @Override
+  public Iterator<Entry<K, V>> iterator() {
+    return entries.iterator();
   }
   
   public void put(K key, V value) {

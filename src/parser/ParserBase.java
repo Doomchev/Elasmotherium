@@ -3,7 +3,6 @@ package parser;
 import base.Base;
 import static base.Base.log;
 import java.util.Stack;
-import java.util.List;
 
 public class ParserBase extends Base {
   static StringBuffer text;
@@ -51,18 +50,5 @@ public class ParserBase extends Base {
       includes.pop().load();
       if(log) System.out.println(" RETURN FROM INCLUDE");
     }
-  }
-  
-  public static String listToString(List<? extends Object> list) {
-    return listToString(list, ", ");
-  }
-  
-  public static String listToString(List<? extends Object> list, String delimiter) {
-    String str = "";
-    for(Object object : list) {
-      if(!str.isEmpty()) str += delimiter;
-      str += object.toString();
-    }
-    return str;
   }
 }

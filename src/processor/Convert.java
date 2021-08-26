@@ -3,7 +3,7 @@ package processor;
 import base.ElException;
 
 class Convert extends ProCommand {
-  public static final Convert instance = new Convert(null, null);
+  static final Convert instance = new Convert(null, null);
 
   private final ProParameter from, to;
 

@@ -1,11 +1,11 @@
 package ast;
 
+import base.Base;
 import base.ElException;
-import parser.ParserBase;
 import vm.VMCommand;
-import vm.VMValue;
+import vm.values.VMValue;
 
-public abstract class Entity extends ParserBase {
+public abstract class Entity extends Base {
   public static final byte VALUE = -1;
   
   public byte getPriority() {
@@ -14,7 +14,7 @@ public abstract class Entity extends ParserBase {
   
   // processor fields
   
-  public ID getID() throws ElException {
+  public ID getName() throws ElException {
     throw new ElException("Cannot get id from", this);
   }
   
@@ -53,13 +53,13 @@ public abstract class Entity extends ParserBase {
   }
   
   public void resolveAll() throws ElException {
-    throw new ElException(getName() + " is not a function call.");
+    throw new ElException(getClassName() + " is not a function call.");
   }
   
   // type conversion
 
   public ClassEntity toClass() throws ElException {
-    throw new ElException(getName() + " cannot be converted to class.");
+    throw new ElException(getClassName() + " cannot be converted to class.");
   }
 
   public FunctionCall toCall() {

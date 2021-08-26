@@ -3,7 +3,7 @@ package parser;
 import base.ElException;
 
 public class ActionSwitchSymbol extends ActionSwitch {
-  public Action[] action = new Action[130];
+  private final Action[] action = new Action[130];
   
   @Override
   public void setStringAction(String token, Action action) throws ElException {

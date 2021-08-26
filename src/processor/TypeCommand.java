@@ -6,8 +6,8 @@ import static processor.Processor.commands;
 import vm.VMCommand;
 
 public class TypeCommand extends ProCommand {
-  ProParameter type;
-  String postfix;
+  private final ProParameter type;
+  private final String postfix;
   
   public TypeCommand(String type, String postfix)
       throws ElException {
@@ -17,7 +17,7 @@ public class TypeCommand extends ProCommand {
 
   public static VMCommand getCommand(ClassEntity type, String postfix)
       throws ElException {
-    String typeName = type.toNativeClass().name.string;
+    String typeName = type.toNativeClass().getName().string;
     if(typeName.equals("Int")) typeName = "I64";
     VMCommand command = commands.get(typeName + postfix);
     if(command == null)

@@ -8,9 +8,15 @@ import vm.StringAdd;
 import vm.VMCommand;
 
 public class StringSequence extends Value {
-  public static ID id = ID.get("stringSequence");
+  public final static ID id = ID.get("stringSequence");
   
-  public final LinkedList<Value> chunks = new LinkedList<>();
+  private final LinkedList<Value> chunks = new LinkedList<>();
+  
+  // properties
+
+  void add(Value value) {
+    chunks.add(value);
+  }
 
   // processor fields
   

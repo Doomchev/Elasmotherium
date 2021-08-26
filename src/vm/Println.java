@@ -4,7 +4,6 @@ import base.ElException;
 import processor.ProParameter;
 
 public class Println extends VMCommand {
-
   @Override
   public VMCommand create(ProParameter parameter) throws ElException {
     usesConsole = true;

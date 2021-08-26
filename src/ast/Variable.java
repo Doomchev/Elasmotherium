@@ -1,34 +1,42 @@
 package ast;
 
 import base.ElException;
+import vm.values.VMValue;
 
 public class Variable extends NamedEntity {
-  public static ID id = ID.get("variable");
-  public static ID fieldID = ID.get("field");
-  public static ID thisID = ID.get("this");
+  public static final ID id = ID.get("variable");
+  public static final ID fieldID = ID.get("field");
+  public static final ID thisID = ID.get("this");
   
-  public Entity type, value = null;
-  public Code code = null;
-  public ClassEntity parentClass = null;
-  public Function parentFunction;
-  public int index;
+  private Entity type;
+  private Entity value = null;
+  private boolean isField = false;
+  private int index;
+  
+  // creating
 
   public Variable(ID id) {
-    this.name = id;
+    super(id);
   }
 
   public Variable(ClassEntity type) {
-    this.name = id;
+    super(id);
     this.type = type;
   }
 
-  public Variable(ID id, ClassEntity classEntity) {
-    this.name = id;
-    this.parentClass = classEntity;
+  public Variable(ID id, boolean isField) {
+    super(id);
+    this.isField = isField;
   }
   
-  public boolean isField() {
-    return parentClass != null;
+  // properties
+
+  public void setType(Entity type) {
+    this.type = type;
+  }
+
+  public void setValue(Entity value) {
+    this.value = value;
   }
   
   // processor fields
@@ -45,7 +53,7 @@ public class Variable extends NamedEntity {
   
   @Override
   public ID getObject() throws ElException {
-    return isField() ? fieldID : id;
+    return isField ? fieldID : id;
   }
   
   @Override
@@ -60,6 +68,21 @@ public class Variable extends NamedEntity {
     if(log) print("", "");
     addToScope(name, this);
     currentProcessor.call(this);
+  }
+
+  public void processField(ClassEntity classEntity, Code code)
+      throws ElException {
+    if(!isField) return;
+    Variable field = classEntity.getField(name);
+    if(field == null) throw new ElException("Field " + name
+        + " is not found in ", classEntity);
+    FunctionCall equate = new FunctionCall(Function.equate);
+    equate.add(field);
+    equate.add(this);
+    code.addLineFirst(equate);
+    isField = false;
+    type = field.type;
+    value = null;
   }
 
   // type conversion
@@ -78,29 +101,25 @@ public class Variable extends NamedEntity {
 
   @Override
   public void moveToClass(ClassEntity classEntity) {
-    parentClass = classEntity;
-    index = classEntity.allocation;
-    classEntity.allocation++;
-    classEntity.fields.add(this);
+    index = classEntity.addField(this);
+    isField = true;
   }
 
   @Override
   public void moveToFunction(Function function) {
-    index = function.allocation;
-    function.allocation++;
-    function.parameters.add(this);
+    index = function.addParameter(this);
   }
 
   @Override
   public void moveToFormula(Formula formula) {
-    formula.chunks.add(new Link(this));
+    formula.add(new Link(this));
   }
 
   @Override
   public void moveToCode(Code code) {
     index = currentAllocation;
     currentAllocation++;
-    code.lines.add(this);
+    code.addLine(this);
   }
 
   @Override
@@ -110,10 +129,19 @@ public class Variable extends NamedEntity {
   }
   
   // other
+  
+  @Override
+  public VMValue createValue() throws ElException {
+    return type.createValue();
+  }
 
   @Override
   public String toString() {
-    return (isField() ? "this." : "") + name.string;
+    return (isField ? "this." : "") + name.string;
+  }
+
+  public String toParamString() {
+    return type + " " + name + ":" + index;
   }
   
   @Override

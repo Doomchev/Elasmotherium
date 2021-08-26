@@ -4,7 +4,7 @@ import base.ElException;
 import processor.ProParameter;
 
 public class GoTo extends VMCommand {
-  public int command;
+  private int command;
   
   @Override
   public GoTo create(ProParameter parameter) throws ElException {

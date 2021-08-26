@@ -5,13 +5,10 @@ import vm.I64ThisFieldEquate;
 import vm.I64ThisFieldIncrement;
 import vm.StringThisFieldPush;
 import vm.I64ThisFieldPush;
-import ast.ClassEntity;
 import ast.Entity;
-import ast.Function;
 import ast.FunctionCall;
 import ast.ID;
 import ast.Link;
-import ast.Variable;
 import base.ElException;
 import base.Module;
 import base.SimpleMap;
@@ -20,13 +17,14 @@ import java.util.LinkedList;
 import vm.*;
 
 public class Processor extends ProBase {
-  static EReader reader;
   static final HashMap<String, VMCommand> commands = new HashMap<>();
-  static final HashMap<String, ProCommand> proCommands = new HashMap<>();
-  static ID defaultID = ID.get("default");
 
+  private static final HashMap<String, ProCommand> proCommands = new HashMap<>();
+  private static final ID defaultID = ID.get("default");
+  private static EReader reader;
+  
   private static void addCommand(VMCommand command) {
-    commands.put(command.getName(), command);
+    commands.put(command.getClassName(), command);
   }
   
   static {
@@ -82,15 +80,16 @@ public class Processor extends ProBase {
     proCommands.put("process", Process.instance);
   }
   
-  static class ProcessorObject extends SimpleMap<ID, LinkedList<ProCommand>> {}
+  private static class ProcessorObject
+      extends SimpleMap<ID, LinkedList<ProCommand>> {}
   
-  final HashMap<ID, ProcessorObject> methods = new HashMap<>();
+  private final HashMap<ID, ProcessorObject> methods = new HashMap<>();
   
-  ProcessorObject getObject(String name) {
+  private ProcessorObject getObject(String name) {
     return getObject(ID.get(name));
   }
   
-  ProcessorObject getObject(ID id) {
+  private ProcessorObject getObject(ID id) {
     ProcessorObject function = methods.get(id);
     if(function == null) {
       function = new ProcessorObject();
@@ -99,7 +98,7 @@ public class Processor extends ProBase {
     return function;
   }
   
-  LinkedList<ProCommand> getMethod(ProcessorObject function
+  private LinkedList<ProCommand> getMethod(ProcessorObject function
       , ID id) {
     LinkedList<ProCommand> list = function.get(id);
     if(list == null) {
@@ -130,7 +129,7 @@ public class Processor extends ProBase {
     return this;
   }
   
-  void readCode(LinkedList<ProCommand> method) throws ElException {
+  private void readCode(LinkedList<ProCommand> method) throws ElException {
     String line;
     while(true) {
       if((line = reader.readLine()) == null)
@@ -170,9 +169,9 @@ public class Processor extends ProBase {
     current = object;
     ID objectId = object.getObject();
     if(objectId == Link.id) {
-      current = getFromScope(object.getID());
+      current = getFromScope(object.getName());
       if(current == null)
-        throw new ElException(object.getID() + " is not found.");
+        throw new ElException(object.getName() + " is not found.");
       objectId = current.getObject();
     }
     ProcessorObject function = methods.get(objectId);
@@ -184,7 +183,10 @@ public class Processor extends ProBase {
       else
         throw new ElException("No code for " + objectId + "." + method);
     } else {
-      executeCode(code);
+      for(ProCommand command : code) {
+        currentLineNum = command.lineNum;
+        command.execute();
+      }
     }
     ProLabel.apply();
     ProLabel.all = oldLabels;
@@ -201,13 +203,6 @@ public class Processor extends ProBase {
   
   public void call(Entity object) throws ElException {
     call(object, defaultID, null);
-  }
-
-  void executeCode(LinkedList<ProCommand> code) throws ElException {
-    for(ProCommand command : code) {
-      currentLineNum = command.lineNum;
-      command.execute();
-    }
   }
 
   public void process(Module module) {

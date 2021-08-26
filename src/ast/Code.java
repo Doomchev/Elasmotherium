@@ -5,16 +5,44 @@ import java.util.LinkedList;
 import vm.VMCommand;
 
 public class Code extends Entity {
-  public final LinkedList<Entity> lines = new LinkedList<>();
-  public final LinkedList<Function> functions = new LinkedList<>();
-  public final LinkedList<ClassEntity> classes = new LinkedList<>();
-  public Code parent;
+  private final LinkedList<Entity> lines = new LinkedList<>();
+  private final LinkedList<Function> functions = new LinkedList<>();
+  private final LinkedList<ClassEntity> classes = new LinkedList<>();
+  
+  // creating
   
   public Code() {
   }
 
   public Code(FunctionCall call) {
     lines.add(call);
+  }
+  
+  // child objects
+
+  public void addLine(Entity codeLine) {
+    lines.add(codeLine);
+  }
+  
+  public void addLineFirst(Entity codeLine) {
+    lines.addFirst(codeLine);
+  }
+
+  public void add(Function function) {
+    functions.add(function);
+  }
+
+  public void add(ClassEntity classEntity) {
+    classes.add(classEntity);
+  }
+
+  public void setFunctionCommand(ID id, VMCommand command) throws ElException {
+    for(Function function: functions)
+      if(function.getName() == id) {
+        function.setCommand(command);
+        return;
+      }
+    throw new ElException("Function " + id + " is not found.");
   }
   
   // processing
@@ -36,6 +64,10 @@ public class Code extends Entity {
     for(ClassEntity classEntity: classes) classEntity.process();
     for(Function function: functions) function.process();
   }
+
+  void processConstructors() throws ElException {
+    for(ClassEntity classEntity: classes) classEntity.processConstructors();
+  }
   
   // moving functions
 
@@ -46,7 +78,7 @@ public class Code extends Entity {
 
   @Override
   public void moveToFunction(Function function) {
-    function.code = this;
+    function.setCode(this);
     deallocate();
   }
 
