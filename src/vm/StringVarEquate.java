@@ -1,5 +1,8 @@
 package vm;
 
+import base.ElException;
+import processor.ProParameter;
+
 public class StringVarEquate extends VMCommand {
   private final int index;
 
@@ -8,9 +11,14 @@ public class StringVarEquate extends VMCommand {
   }
   
   @Override
+  public VMCommand create(ProParameter parameter) throws ElException {
+    return new StringVarEquate(parameter.getValue().getIndex());
+  }
+  
+  @Override
   public void execute() {
-    stringStack[index + currentCall.paramPosition] = stringStack[stackPointer];
-    if(log) typeStack[index + currentCall.paramPosition] = ValueType.STRING;
+    stringStack[currentCall.varIndex(index)] = stringStack[stackPointer];
+    if(log) typeStack[currentCall.varIndex(index)] = ValueType.STRING;
     stackPointer--;
     currentCommand++;
   }

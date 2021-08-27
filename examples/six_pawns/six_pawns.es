@@ -36,7 +36,7 @@ onClick(Int x, Int y) {
     if(nextTile == empty) {
       tileMap[tileNum, 0] = empty;
       tileMap[tileNum + 1, 0] = white;
-    } else if(tileNum < tileMap.cellXQuantity - 2 && tileMap[tileNum + 2, 0] == empty) {
+    } else if(tileNum < cellsQuantity - 2 && tileMap[tileNum + 2, 0] == empty) {
       tileMap[tileNum, 0] = empty;
       tileMap[tileNum + 2, 0] = white;
     }
@@ -51,7 +51,6 @@ onClick(Int x, Int y) {
     }
   } else return;
   
-  if(tileMap[0, 0] == white) return;
   for(Int n = 0 ..< pawnsQuantity)
     if(tileMap[n, 0] != black || tileMap[n + blackStart, 0] != white) return;
   

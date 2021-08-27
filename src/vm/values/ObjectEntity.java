@@ -1,13 +1,13 @@
 package vm.values;
 
 import ast.Entity;
-import vm.values.VMValue;
 
 public class ObjectEntity extends Entity {
-  public Entity type;
-  public VMValue[] fields;
+  public final Entity type;
+  public final VMValue[] fields;
 
-  public ObjectEntity(Entity type) {
+  public ObjectEntity(Entity type, VMValue[] fields) {
     this.type = type;
+    this.fields = fields;
   }
 }

@@ -177,17 +177,30 @@ more.resolve {
 // blocks
 
 if {
-  condition.resolve(Bool);
+  $condition.resolve(Bool);
   IfFalseGoTo(#else);
-  process(code);
+  process($code);
   GoTo(#end);
   #else:
-  process(else);
+  process($else);
   #end:
 }
 
 do {
   #start:
-  process(code);
+  process($code);
   GoTo(#start);
+}
+
+for {
+  $variable.equate($from);
+  #start:
+  $variable.resolve(Int);
+  $until.resolve($variable);
+  [Int]IsLess;
+  IfFalseGoTo(#end);
+  process($code);
+  $variable.increment;
+  GoTo(#start);
+  #end:
 }

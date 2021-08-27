@@ -15,8 +15,7 @@ public class I64ThisFieldEquate extends VMFieldCommand {
   
   @Override
   public void execute() throws ElException {
-    objectStack[currentCall.paramPosition - 1].fields[fieldIndex]
-        .i64Set(i64Stack[stackPointer]);
+    currentCall.thisField(fieldIndex).i64Set(i64Stack[stackPointer]);
     stackPointer--;
     currentCommand++;
   }

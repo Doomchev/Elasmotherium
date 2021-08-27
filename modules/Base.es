@@ -9,11 +9,6 @@ class Array<ElementType> {
 	at(Int index, ElementType value);
 }
 
-class List<ElementType> {
-	Int size();
-	addLast(ElementType element);
-}
-
 class Map<KeyType, ValueType> {
 	Int size();
 	ValueType at(KeyType key);
@@ -30,11 +25,17 @@ print(String message);
 println(String message) print("\(message)\n");
 
 Int screenWidth();
-Int screenHeight();*/
+Int screenHeight();
 
+class List<ElementType> {
+	Int size();
+	addLast(ElementType element);
+}*/
+
+print(String message);
 println(String message);
 Int askInt(String message);
-tell(String message);
+say(String message);
 Int randomInt(Int value);
 
 exit() {}

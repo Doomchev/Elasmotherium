@@ -16,8 +16,7 @@ public class I64ThisFieldPush extends VMFieldCommand {
   @Override
   public void execute() throws ElException {
     stackPointer++;
-    i64Stack[stackPointer] = objectStack[currentCall.paramPosition - 1]
-        .fields[fieldIndex].i64Get();
+    i64Stack[stackPointer] = currentCall.thisField(fieldIndex).i64Get();
     if(log) typeStack[stackPointer] = ValueType.I64;
     currentCommand++;
   }

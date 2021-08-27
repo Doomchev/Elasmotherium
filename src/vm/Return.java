@@ -11,13 +11,6 @@ public class Return extends VMCommand {
   
   @Override
   public void execute() {
-    returnFromCall(0);
-  }
-
-  protected void returnFromCall(int value) {
-    stackPointer = stackPointer - currentCall.deallocation;
-    currentCommand = currentCall.returnPoint;
-    currentCall = callStack[callStackPointer];
-    callStackPointer--;
+    currentCall.returnFromCall(0);
   }
 }

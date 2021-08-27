@@ -1,5 +1,8 @@
 package vm;
 
+import base.ElException;
+import processor.ProParameter;
+
 public class I64VarIncrement extends VMCommand {
   private final int index;
 
@@ -8,8 +11,13 @@ public class I64VarIncrement extends VMCommand {
   }
   
   @Override
+  public VMCommand create(ProParameter parameter) throws ElException {
+    return new I64VarIncrement(parameter.getValue().getIndex());
+  }
+  
+  @Override
   public void execute() {
-    i64Stack[index + currentCall.paramPosition]++;
+    i64Stack[currentCall.varIndex(index)]++;
     currentCommand++;
   }
   

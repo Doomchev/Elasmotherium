@@ -17,8 +17,8 @@ public class I64VarEquate extends VMCommand {
   
   @Override
   public void execute() {
-    i64Stack[index + currentCall.paramPosition] = i64Stack[stackPointer];
-    if(log) typeStack[index + currentCall.paramPosition] = ValueType.I64;
+    i64Stack[currentCall.varIndex(index)] = i64Stack[stackPointer];
+    if(log) typeStack[currentCall.varIndex(index)] = ValueType.I64;
     stackPointer--;
     currentCommand++;
   }

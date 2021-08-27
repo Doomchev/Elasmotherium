@@ -19,7 +19,7 @@ public class StringVarPush extends VMCommand {
   @Override
   public void execute() {
     stackPointer++;
-    stringStack[stackPointer] = stringStack[currentCall.paramPosition + index];
+    stringStack[stackPointer] = stringStack[currentCall.varIndex(index)];
     if(log) typeStack[stackPointer] = ValueType.STRING;
     currentCommand++;
   }

@@ -19,7 +19,7 @@ public class I64VarPush extends VMCommand {
   @Override
   public void execute() {
     stackPointer++;
-    i64Stack[stackPointer] = i64Stack[currentCall.paramPosition + index];
+    i64Stack[stackPointer] = i64Stack[currentCall.varIndex(index)];
     if(log) typeStack[stackPointer] = ValueType.I64;
     currentCommand++;
   }

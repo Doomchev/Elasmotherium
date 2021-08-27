@@ -56,3 +56,5 @@ struc String<AnyChar CharType, AnyInt IndexType> extends Array<CharType> {
 		return yes;
 	}
 }
+
+Question.from(String string) -> string.size > 0;

@@ -7,6 +7,7 @@
             <file>file:/D:/Dropbox/Elasmotherium/src/ast/Code.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/ast/ClassEntity.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/ast/Function.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/StringPush.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/ast/NamedEntity.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/ast/Entity.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/vm/StringVarEquate.java</file>
@@ -33,7 +34,6 @@
             <file>file:/D:/Dropbox/Elasmotherium/src/parser/ActionSet.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/parser/ActionSwitchID.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/vm/CallFunction.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/StringValue.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/ast/Block.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/vm/Println.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/parser/ActionSwitch.java</file>

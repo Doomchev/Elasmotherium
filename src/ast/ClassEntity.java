@@ -145,9 +145,8 @@ public class ClassEntity extends NamedEntity {
   // creating objects of this class
 
   public ObjectEntity newObject() throws ElException {
-    ObjectEntity object = new ObjectEntity(this);
+    ObjectEntity object = new ObjectEntity(this, new VMValue[fields.size()]);
     int index = -1;
-    object.fields = new VMValue[fields.size()];
     for(Variable parameter: fields) {
       index++;
       object.fields[index] = parameter.createValue();
@@ -167,7 +166,10 @@ public class ClassEntity extends NamedEntity {
     println(indent + prefix + "class " + name + "{");
     String newIndent = indent + "  ";
     for(Variable field: fields) field.print(newIndent, "");
+    if(!fields.isEmpty() && !constructors.isEmpty()) println("");
     for(Function method: constructors) method.print(newIndent, "");
+    if(!constructors.isEmpty() || !fields.isEmpty()
+        && !methods.isEmpty()) println("");
     for(Function method: methods) method.print(newIndent, "");
     println(indent + "}");
   }

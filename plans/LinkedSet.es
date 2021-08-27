@@ -19,4 +19,6 @@ class LinkedSet<ElementType; Question noRepeats = yes> extends Set<ElementType> 
 				if(noRepeats) return;
 			}
 	}
+  
+  Iterator<ElementType> iterator -> _entries.iterator;
 }

@@ -1,3 +1,9 @@
+2021.08.27 (version 0.25)
+  + Fibonacci numbers example.
+  + PC: For-until block.
+  * PC: Block fields are now start with $.
+  * VMFunctionCall encapsulation.
+
 2021.08.25 (version 0.24.2)
   * Massive class encapsulation.
   * All fields are checked and useless fields are removed.

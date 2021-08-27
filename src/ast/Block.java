@@ -15,7 +15,10 @@ public class Block extends Entity {
   
   @Override
   public Entity getBlockParameter(ID name) throws ElException {
-    return entries.get(name);
+    Entity entity = entries.get(name);
+    if(entity == null)
+      throw new ElException(name + " block parameter is not found.");
+    return entity;
   }
   
   @Override

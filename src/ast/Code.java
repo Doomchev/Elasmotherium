@@ -99,7 +99,10 @@ public class Code extends Entity {
     println(indent + prefix + "{");
     String indent2 = indent + "  ";
     for(ClassEntity classEntity : classes) classEntity.print(indent2, "");
+    if(!classes.isEmpty() && !functions.isEmpty()) println("");
     for(Function function : functions) function.print(indent2, "");
+    if(!functions.isEmpty() || !classes.isEmpty()
+        && !lines.isEmpty()) println("");
     for(Entity line : lines) line.print(indent2, "");
     println(indent + "}");
   }

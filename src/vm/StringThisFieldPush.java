@@ -16,8 +16,7 @@ public class StringThisFieldPush extends VMFieldCommand {
   @Override
   public void execute() throws ElException {
     stackPointer++;
-    stringStack[stackPointer]
-        = objectStack[currentCall.paramPosition].fields[fieldIndex].stringGet();
+    stringStack[stackPointer] = currentCall.thisField(fieldIndex).stringGet();
     if(log) typeStack[stackPointer] = ValueType.STRING;
     currentCommand++;
   }

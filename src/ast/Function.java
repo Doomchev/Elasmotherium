@@ -198,6 +198,7 @@ public class Function extends NamedEntity  {
   
   @Override
   public void process() throws ElException {
+    if(command != null) return;
     startingCommand = VMBase.currentCommand + 1;
     Function oldFunction = currentFunction;
     currentFunction = this;
@@ -307,7 +308,11 @@ public class Function extends NamedEntity  {
     str = (returnType == null ? "" : returnType + " ") +
         (isConstructor ? "create" : name.string) + "(" +  str + "):"
         + allocation;
-    code.print(indent, prefix + str);
+    if(command == null) {
+      code.print(indent, prefix + str);
+    } else {
+      println(indent + prefix + str + ";");
+    }
   }
 }
  

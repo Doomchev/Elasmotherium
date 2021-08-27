@@ -1,7 +1,7 @@
 package vm;
 
 public class Allocate extends VMCommand {
-  int quantity;
+  private final int quantity;
 
   public Allocate(int quantity) {
     this.quantity = quantity;

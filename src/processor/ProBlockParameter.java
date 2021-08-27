@@ -8,7 +8,7 @@ public class ProBlockParameter extends ProParameter {
   private final ID name;
 
   public ProBlockParameter(String name) {
-    this.name = ID.get(name);
+    this.name = ID.get(name.substring(1));
   }
 
   @Override

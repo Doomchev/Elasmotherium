@@ -7,8 +7,8 @@ import vm.VMCommand;
 public class ProID extends ProParameter {
   private final ID id;
 
-  public ProID(ID label) {
-    this.id = label;
+  public ProID(String label) {
+    this.id = ID.get(label);
   }
   
   @Override

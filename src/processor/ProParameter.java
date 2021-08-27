@@ -9,7 +9,8 @@ import vm.VMCommand;
 public abstract class ProParameter extends ProBase {
   static ProParameter get(String name) throws ElException {
     if(name.isEmpty()) return ProThis.instance;
-    if(name.startsWith("#")) return new ProID(ID.get(name));
+    if(name.startsWith("#")) return new ProID(name);
+    if(name.startsWith("$")) return new ProBlockParameter(name);
     switch(name) {
       case "this":
         return ProThis.instance;
@@ -25,7 +26,7 @@ public abstract class ProParameter extends ProBase {
         } else {
           ClassEntity classEntity = ClassEntity.all.get(ID.get(name));
           if(classEntity != null) return new ProClass(classEntity);
-          return new ProBlockParameter(name);
+          throw new ElException(name + " is not found.");
         }
     }
   }

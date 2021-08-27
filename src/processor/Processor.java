@@ -57,6 +57,7 @@ public class Processor extends ProBase {
     
     addCommand(new I64FieldIncrement(0));
     addCommand(new I64ThisFieldIncrement(0));
+    addCommand(new I64VarIncrement(0));
     
     addCommand(new StringAdd());
     

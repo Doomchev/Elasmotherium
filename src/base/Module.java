@@ -35,8 +35,6 @@ public class Module extends ParserBase {
   public void process() throws ElException {
     function.processConstructors();
     
-    print();
-    
     currentFunction = function;
     
     addToScope(ClassEntity.Int);
@@ -46,8 +44,10 @@ public class Module extends ParserBase {
     newFunc(new Println());
     newFunc(new AskInt());
     newFunc(new RandomInt());
-    newFunc(new Tell());
+    newFunc(new Say());
     newFunc(new Exit());
+    
+    print();
     
     if(log) printChapter("Processing");
     

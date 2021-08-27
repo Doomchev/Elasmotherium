@@ -1,4 +1,4 @@
-Int max = askInteger("Enter max value:");
+Int max = 100;
 List<Int> values = [];
 for(Int i = 2 ..= max) {
 	Int limit = floor(sqrt(i));

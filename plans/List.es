@@ -4,19 +4,17 @@ class List<ElementType; AnyInt IndexType> {
 	ElementType first();
 	ElementType last();
 	clear();
-	
-	Question contains(ElementType element) {
-		forEach(ElementType e in this) if(e == element) return yes;
-		return no;
-	}
-	
-	IndexType indexOf(ElementType element);
+	Question contains(ElementType element);
+	add(ElementType element) addLast(element);
 	addFirst(ElementType element);
 	addLast(ElementType element);
-	removeAtIndex(IndexType index) assert(0 <= index < size);
-	
-	add(ElementType element) addLast(ElementType element);
-	ElementType getAtIndex(IndexType index) assert(0 <= index < size);
-	setAtIndex(IndexType index, ElementType element) assert(0 <= index <= size);
 	remove(ElementType element);
+  removeFirst() assert(!isEmpty);
+  removeLast() assert(!isEmpty);
+	IndexType indexOf(ElementType element);
+	ElementType getAtIndex(IndexType index) assert(0 <= index < size);
+	setAtIndex(IndexType index, ElementType element) assert(0 <= index < size);
+	removeAtIndex(IndexType index) assert(0 <= index < size);
 }
+
+Question.from(List list) -> !list.isEmpty;

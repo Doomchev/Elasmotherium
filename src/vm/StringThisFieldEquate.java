@@ -1,7 +1,6 @@
 package vm;
 
 import base.ElException;
-import static vm.VMBase.objectStack;
 
 public class StringThisFieldEquate extends VMFieldCommand {
   public StringThisFieldEquate(int fieldIndex) {
@@ -15,8 +14,7 @@ public class StringThisFieldEquate extends VMFieldCommand {
   
   @Override
   public void execute() throws ElException {
-    objectStack[currentCall.paramPosition - 1]
-        .fields[fieldIndex].stringSet(stringStack[stackPointer]);
+    currentCall.thisField(fieldIndex).stringSet(stringStack[stackPointer]);
     stackPointer--;
     currentCommand++;
   }
