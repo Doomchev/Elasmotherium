@@ -1,5 +1,6 @@
 package parser;
 
+import ast.Block;
 import ast.Entity;
 import ast.ID;
 import base.ElException;
@@ -16,18 +17,25 @@ public class ActionSet extends Action {
   @Override
   public ActionSet create(String params) throws ElException {
     String[] param = params.split(",");
-    if(param.length != 2) throw new ElException(
-        "SET command requires 2 parameters");
-    return new ActionSet(ID.get(param[0]), EntityStack.get(param[1]));
+    if(param.length == 1) return new ActionSet(ID.get(param[0]), null);
+    if(param.length == 2)
+      return new ActionSet(ID.get(param[0]), EntityStack.get(param[1]));
+    throw new ElException("SET command requires 2 parameters");
+    
   }
   
   @Override
   public void execute() throws base.ElException {
-    if(log) log("SET " + id.string + " to " + value.name + "("
-        + value.toString() + ")");
+    if(log) log(value == null ? "SET BLOCK TYPE TO " + id
+        : "SET " + id + " to " + value.name + "(" + value + ")");
+      
     currentAction = this;
-    Entity val = value.pop().toValue();
-    EntityStack.block.peek().set(id, val);
+    Block block = EntityStack.block.peek();
+    if(value == null) {
+      block.type = id;
+    } else {
+      block.set(id, value.pop().toValue());
+    }
     currentAction = nextAction;
   }
 

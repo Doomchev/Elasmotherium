@@ -1,53 +1,60 @@
+2021.08.30 (version 0.26)
+  + PE: Block type setting command.
+  + AST: New link resolution system into classes or new type objects.
+  + ProC: Separated processor functions for if and if with else.
+  * PE: Merged types with links.
+
 2021.08.27 (version 0.25)
   + Fibonacci numbers example.
-  + PC: For-until block.
-  * PC: Block fields are now start with $.
-  * VMFunctionCall encapsulation.
+  + ProC: For-until block.
+  * PS: Block fields are now start with $.
 
 2021.08.25 (version 0.24.2)
   * Massive class encapsulation.
   * All fields are checked and useless fields are removed.
-  * EntityStack is moved to parser package.
+  * AST: EntityStack is moved to parser package.
   
 2021.08.25 (version 0.24.1)
-  + Attaching vm commands to existing functions instead of creating new.
+  + VM: Attaching vm commands to existing functions instead of creating new.
   + Base.es import by default.
-  + ShowCommands parameter for VM code execution.
+  + VM: ShowCommands parameter for VM code execution.
   * Fixed module import system.
 
 2021.08.24 (version 0.24)
-  + P: Constructor this value processing.
-  + P: Convert, getField commands.
-  + P: TypeFunction - processor command to add vm command depending on type.
-  + P: Object parameter and setObject command.
+  + PS: Constructor this value processing.
+  + PS: Convert, getField commands.
+  + PS: TypeFunction - processor command to add vm command depending on type.
+  + PS: Object parameter and setObject command.
   + VM: ThisFieldEquate, ThisFieldIncrement, ThisFieldPush
-  * P: Parent parameter is renamed to param.
+  * PS: Parent parameter is renamed to param.
   * VM: Parent class for field commands.
-  - P: Automatic conversion system.
-  - P: Return type for processor functions.
-  - P: GetFromScope, ResolveAll, Switch commands;
+  - PS: Automatic conversion system.
+  - PS: Return type for processor functions.
+  - PS: GetFromScope, ResolveAll, Switch commands;
   - VM: NewMethodCall, NewThis, ReturnThis
 
 2021.08.16 (version 0.23)
-  + P: Return type for processor functions, new type conversion system.
-  * P: Function call parameter changed to ClassEntity and renamed to targetClass.
+  + PS: Return type for processor functions, new type conversion system.
+  * PS: Function call parameter changed to ClassEntity and renamed to targetClass.
   * VM: Fixed function call system.
-  - P: Convert command.
+  - PS: Convert command.
 
 2021.08.16 (version 0.22)
-  + P: Class and ID as function call parameters.
-  + P: Labels system.
-  + P: Stop and Process processor command.
+  + PS: Class and ID as function call parameters.
+  + PS: Labels system.
+  + PS: Stop and Process processor command.
   + Debug log sections highlighing.
   * AST: Function call now has separate function and functionID fields.
   * VM: Allocated stack values are now undefined.
   * VM: Changed command link system to indexed system.
 
 2021.08.10 (version 0.21)
-	+ P: Scope stack system.
+  + New processing system (PS)
+  + New processing system code syntax (ProC)
+	+ PS: Scope stack system.
   + AST: Sections of Entity and subclasses separated by comments.
-  + P: AppendCommand, Call, GetFromScope, ResolveAll, Switch, Convert processor commands.
-  + P: CallParameter, Parent, This, VariableValue processor parameters.
+  + PS: AppendCommand, Call, GetFromScope, ResolveAll, Switch, Convert processor commands.
+  + PS: CallParameter, Parent, This, VariableValue processor parameters.
   * New file reading system.
   * PE: Values and their methods are disjointed from Entity and moved to VM package.
   - AST: ID constants.

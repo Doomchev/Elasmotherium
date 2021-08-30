@@ -32,7 +32,6 @@ class List<ElementType> {
 	addLast(ElementType element);
 }*/
 
-print(String message);
 println(String message);
 Int askInt(String message);
 say(String message);

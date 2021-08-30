@@ -69,7 +69,7 @@ field.equate {
 dot.equate {
   // object = v0.getObject;
   v0.getObject;
-  // this = getField(this, v1);
+  // this = getField(object, v1);
   getField;
   param.resolve(this);
   [this]FieldEquate;
@@ -92,7 +92,7 @@ field.increment {
 dot.increment {
   // object = v0.getObject;
   v0.getObject;
-  // this = getField(this, v1);
+  // this = getField(object, v1);
   getField;
   [this]FieldIncrement;
 }
@@ -178,6 +178,13 @@ more.resolve {
 
 if {
   $condition.resolve(Bool);
+  IfFalseGoTo(#end);
+  process($code);
+  #end:
+}
+
+if_else {
+  $condition.resolve(Bool);
   IfFalseGoTo(#else);
   process($code);
   GoTo(#end);
@@ -192,7 +199,8 @@ do {
   GoTo(#start);
 }
 
-for {
+for_until {
+  process($variable);
   $variable.equate($from);
   #start:
   $variable.resolve(Int);

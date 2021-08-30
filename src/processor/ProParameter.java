@@ -31,6 +31,10 @@ public abstract class ProParameter extends ProBase {
     }
   }
   
+  public ClassEntity getType() throws ElException {
+    return getValue().getType().toClass();
+  }
+  
   public Entity getValue() throws ElException {
     throw new ElException("Cannot get value from", this);
   }

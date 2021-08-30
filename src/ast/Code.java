@@ -56,7 +56,11 @@ public class Code extends Entity {
   
   public void processWithoutScope(VMCommand endingCommand) throws ElException {
     for(ClassEntity classEntity: classes) addToScope(classEntity);
-    for(Function function: functions) addToScope(function);
+    for(Function function: functions) {
+      addToScope(function);
+      function.resolveTypes();
+    }
+    for(ClassEntity classEntity: classes) classEntity.resolveTypes();
     
     for(Entity line: lines) line.process();
     if(endingCommand != null) append(endingCommand);

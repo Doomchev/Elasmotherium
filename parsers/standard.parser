@@ -77,7 +77,7 @@ codeLine: {
 		"do": CREATE(block, do) code() SET(code, code) MOVE(block, code) RETURN
 		"if": EXPECT("(") CREATE(block, if) formula() SET(condition, formula) EXPECT(")") code() SET(code, code) {
 			letter: SAVEPOS id() SWITCHID {
-				"else": code() SET(else, code) MOVE(block, code) RETURN
+				"else": code() SET(else, code) SET(if_else) MOVE(block, code) RETURN
 				other: MOVE(block, code) LOADPOS RETURN
 			}
 			other: MOVE(block, code) RETURN
@@ -90,7 +90,7 @@ codeLine: {
 		other: {
 			// Type var
 			// Type function
-			letter: CREATE(type) def
+			letter: CREATE(link) def
 			// Type<Type> var
 			// Type<Type> function
 			"<": >> type() def
@@ -111,7 +111,7 @@ codeLine: {
 				//call(value
 				letter: id() {
 					//function(Type name
-					letter: CREATE(type) CREATE(function) id() CREATE(variable) MOVE(type, variable) functionParamDefault
+					letter: CREATE(link) CREATE(function) id() CREATE(variable) MOVE(link, variable) functionParamDefault
 					//function(Type< name
 					//function(var
 					other: CREATE(link) CREATE(formula) CREATE(link) MOVE(link, formula) CREATE(parameters) CREATE(formula) MOVE(link, formula) separator() MOVE(formula, parameters) {
@@ -143,7 +143,7 @@ codeLineEnd: EXPECT(";") RETURN
 // Type[<Type...>] function
 def: id() {
   // Type function(
-  "(": >> CREATE(function) MOVE(type, function) functionParameter
+  "(": >> CREATE(function) MOVE(link, function) functionParameter
   // Type var = value;
   // Type var;
   ",;=": varDefault
@@ -158,9 +158,9 @@ varDefault: CREATE(variable) {
 
 varEnd: {
   // Type var,
-  ",": >> DUP(type) MOVE(type, variable) MOVE(variable, code) id() varDefault
+  ",": >> DUP(link) MOVE(link, variable) MOVE(variable, code) id() varDefault
   // Type var;
-  ";": >> MOVE(type, variable) MOVE(variable, code) RETURN
+  ";": >> MOVE(link, variable) MOVE(variable, code) RETURN
   other: syntaxError
 }
 
@@ -174,9 +174,9 @@ functionParameter: {
       other: syntaxError
     }
     // function(Type var
-    letter: CREATE(type) id() CREATE(variable) MOVE(type, variable) functionParamDefault
+    letter: CREATE(link) id() CREATE(variable) MOVE(link, variable) functionParamDefault
     // function(Type<Type> var
-    "<": >> type() id() CREATE(variable) MOVE(type, variable) functionParamDefault
+    "<": >> type() id() CREATE(variable) MOVE(link, variable) functionParamDefault
     // function(var = formula
     "=": expected("Type")
     // function(var,
@@ -241,9 +241,9 @@ for: EXPECT("(") CREATE(block, for) {
       // for(Type variable = from ..
       ".": >> SET(variable, variable) SET(from, formula) {
         // for(Type variable = from ..= to
-        "=": >> formula() SET(to, formula) forEnd
+        "=": >> formula() SET(to, formula) SET(for_to) forEnd
         // for(Type variable = from ..< to
-        "<": >> formula() SET(until, formula) forEnd
+        "<": >> formula() SET(until, formula) SET(for_until) forEnd
 				other: syntaxError
       }
       other: syntaxError
@@ -264,9 +264,9 @@ forCondition: SET(variable, variable) SET(init, formula) {
 
 forIterator: CREATE(code) statement() SET(iterator, code) forEnd
 
-forIndex: SET(item, variable) id() CREATE(type) id() CREATE(variable) MOVE(type, variable) SET(index, variable) EXPECT("]") EXPECT(":") forCollection
+forIndex: SET(item, variable) id() CREATE(link) id() CREATE(variable) MOVE(link, variable) SET(index, variable) EXPECT("]") EXPECT(":") forCollection
 
-forCollection: SET(item, variable) formula() SET(collection, formula) forEnd
+forCollection: SET(item, variable) formula() SET(collection, formula) SET(for_collection) forEnd
 
 forEnd: EXPECT(")") code() SET(code, code) MOVE(block, code) RETURN
 
@@ -278,23 +278,23 @@ variable: id() {
 	// Type0<Type1>
 	"<": >> type()
   // Type name =
-  letter: CREATE(type) varName
+  letter: CREATE(link) varName
   // name =
   other: CREATE(variable) RETURN
 }
 
-varName: id() CREATE(variable) MOVE(type, variable) RETURN
+varName: id() CREATE(variable) MOVE(link, variable) RETURN
 
 
 
 /// subtype
 
-type: CREATE(type) subtype
+type: CREATE(link) subtype
 
-subtype: id() CREATE(type) {
+subtype: id() CREATE(link) {
   "<": >> subtype()
-  ",": >> MOVE(type) subtype
-  ">": >> MOVE(type) RETURN
+  ",": >> MOVE(link) subtype
+  ">": >> MOVE(link) RETURN
   other: error("Error in type syntax")
 }
 
@@ -440,7 +440,7 @@ formulaId: {
 			// Type0<Type1<Type2
 			// Type0<Type1, Type2
 			// Type0<Type1>
-			"<,>": CREATE(type) CREATE(link) linkParameterSubtype
+			"<,>": CREATE(link) CREATE(link) linkParameterSubtype
 			// var0 < var1 ...
 			other: CREATE(link) CREATE(link) MOVE(link, formula) MOVE(less, formula) MOVE(link, formula) separator
 		} 
@@ -451,14 +451,14 @@ formulaId: {
 }
 
 linkParameterSubtype: {
-  "<": >> subtype() MOVE(type) linkParameterEnd
+  "<": >> subtype() MOVE(link) linkParameterEnd
   other: linkParameterEnd
 }
 
-linkParameterEnd: MOVE(type, link) {
+linkParameterEnd: MOVE(link, link) {
   //Type0<Type1>
   ">": >> MOVE(link, formula) EXPECT("(") parameters
-  ",": >> id() CREATE(type) linkParameter
+  ",": >> id() CREATE(link) linkParameter
   other: SyntaxError
 }
 
@@ -613,7 +613,7 @@ class: id() CREATE(class) {
   other: classExtends
 }
 
-classParameter: id() CREATE(type) MOVE(type, class) {
+classParameter: id() CREATE(variable) MOVE(variable, class) {
   ",": >> classParameter
   ">": >> classExtends
   other: syntaxError
@@ -641,13 +641,13 @@ classBody: {
     // this(
     "this": EXPECT("(") CREATE(constructor) methodParameter
     other: {
-      letter: CREATE(type) id() {
+      letter: CREATE(link) id() {
         // Type var,
         // Type var;
         // Type var = value
         ",;=": classFieldValue
         // Type method(
-        "(": >> CREATE(method) MOVE(type, function) methodParameter
+        "(": >> CREATE(method) MOVE(link, function) methodParameter
         other: syntaxError
       }
       // Type0<Type1> var
@@ -673,9 +673,9 @@ classFieldValue: CREATE(variable) {
 
 classFieldEnd: {
   // Type field,
-  ",": >> DUP(type) MOVE(type, variable) MOVE(variable, class) id() classFieldValue
+  ",": >> DUP(link) MOVE(link, variable) MOVE(variable, class) id() classFieldValue
   // Type field;
-  ";": >> MOVE(type, variable) MOVE(variable, class) classBody
+  ";": >> MOVE(link, variable) MOVE(variable, class) classBody
   other: syntaxError
 }
 
@@ -689,9 +689,9 @@ methodParameter: {
       other: syntaxError
     }
     // method(Type var
-    letter: CREATE(type) id() CREATE(variable) MOVE(type, variable) methodParamDefault
+    letter: CREATE(link) id() CREATE(variable) MOVE(link, variable) methodParamDefault
     // method(Type<Type> var
-    "<": >> type() id() CREATE(variable) MOVE(type, variable) methodParamDefault
+    "<": >> type() id() CREATE(variable) MOVE(link, variable) methodParamDefault
     // method(var = formula
     "=": expected("Type")
     // method(var,

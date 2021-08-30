@@ -6,8 +6,12 @@ import javax.swing.JOptionPane;
 public class AskInt extends VMCommand {
   @Override
   public void execute() throws ElException {
-    i64Stack[stackPointer] = Long.parseLong(JOptionPane.showInputDialog(null
-        , stringStack[stackPointer]));
+    try {
+      i64Stack[stackPointer] = Long.parseLong(JOptionPane.showInputDialog(null
+         , stringStack[stackPointer]));
+    } catch(NumberFormatException ex) {
+      System.exit(1);
+    }
     if(log) typeStack[stackPointer] = ValueType.I64;
     currentCommand++;
   }

@@ -12,6 +12,7 @@ public class ClassEntity extends NamedEntity {
   public static final HashMap<ID, ClassEntity> all = new HashMap<>();
   public static final ClassEntity Int, String, Bool, Object;
   
+  private final LinkedList<ID> subTypes = new LinkedList<>();
   private final LinkedList<Variable> fields = new LinkedList<>();
   private final LinkedList<Function> methods = new LinkedList<>();
   private final LinkedList<Function> constructors = new LinkedList<>();
@@ -48,6 +49,10 @@ public class ClassEntity extends NamedEntity {
     classEntity.value = value;
     all.put(classEntity.name, classEntity);
     return classEntity;
+  }
+  
+  public static ClassEntity get(ID name) {
+    return all.get(name);
   }
   
   // properties
@@ -91,7 +96,7 @@ public class ClassEntity extends NamedEntity {
   // processor fields
   
   @Override
-  public ClassEntity getType() throws ElException {
+  public Entity getType() throws ElException {
     return this;
   }
    
@@ -102,6 +107,7 @@ public class ClassEntity extends NamedEntity {
     ClassEntity oldClass = currentClass;
     currentClass = this;
     allocateScope();
+    for(Function method: methods) addToScope(method);
     for(Variable field: fields) addToScope(field);
     for(Function constructor: constructors) constructor.process();
     for(Function method: methods) method.process();
@@ -112,6 +118,12 @@ public class ClassEntity extends NamedEntity {
   public void processConstructors() throws ElException {
     for(Function constructor: constructors)
       constructor.process(this);
+  }
+  
+  public void resolveTypes() throws ElException {
+    for(Variable field: fields) field.resolveType();
+    for(Function constructor: constructors) constructor.resolveTypes();
+    for(Function method: methods) method.resolveTypes();
   }
   
   // type conversion

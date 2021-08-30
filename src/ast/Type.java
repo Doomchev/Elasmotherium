@@ -4,73 +4,51 @@ import base.ElException;
 import java.util.LinkedList;
 import vm.values.VMValue;
 
-public class Type extends NamedEntity {
-  private final LinkedList<Type> subtypes = new LinkedList<>();
-  private ClassEntity typeClass = null;
-  
-  // creating
-  
-  public Type(ID name) {
-    super(name);
-  }
+public class Type extends Entity {
+  private final LinkedList<Entity> subtypes = new LinkedList<>();
+  private final ClassEntity basicClass;
 
-  public Type(String name) {
-    super(name);
+  public Type(ClassEntity basicClass) {
+    this.basicClass = basicClass;
+  }
+  
+  // properties
+
+  public void setSubTypes(LinkedList<Link> subtypeLinks) throws ElException {
+    if(!subtypes.isEmpty())
+      throw new ElException("Subtypes are already resolved.");
+    for(Link link: subtypeLinks)
+      subtypes.add(link.resolve());
   }
   
   // processor fields
   
   @Override
-  public ClassEntity getType() throws ElException {
-    return getFromScope(name).toClass();
+  public Entity getType() throws ElException {
+    return this;
   }
   
   // type conversion
 
   @Override
   public ClassEntity toClass() throws ElException {
-    if(typeClass == null) typeClass = ClassEntity.all.get(name);
-    if(typeClass == null) throw new ElException("Cannot find class " + name);
-    return typeClass;
+    if(!subtypes.isEmpty())
+      throw new ElException("Cannot convert " + toString() + " to class.");
+    return basicClass;
   }
   
   // moving functions
 
   @Override
-  public void move(Entity entity) throws ElException {
-    entity.moveToType(this);
-  }
-
-  @Override
-  public void moveToType(Type type) {
-    type.subtypes.add(this);
-  }
-
-  @Override
-  public void moveToVariable(Variable variable) {
-    variable.setType(this);
-  }
-
-  @Override
-  public void moveToFunction(Function function) {
-    function.setReturnType(this);
-  }
-
-  @Override
-  public void moveToLink(Link link) throws ElException {
-    link.add(this);
-  }
-
-  @Override
   public VMValue createValue() throws ElException {
-    return getType().createValue();
+    return basicClass.createValue();
   }
   
   // other
 
   @Override
   public String toString() {
-    return name.string
+    return basicClass.name
         + (subtypes.isEmpty() ? "" : "<" + listToString(subtypes) + ">");
   }
 }

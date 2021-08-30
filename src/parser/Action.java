@@ -1,16 +1,13 @@
 package parser;
 
-import java.util.LinkedList;
-import ast.ID;
 import base.ElException;
 
 public abstract class Action extends ParserBase {
-  public static int savedTextPos, savedLineNum, savedLineStart;
-  public static final LinkedList<ID> currentFlags = new LinkedList<>();
-  public static Action currentAction;
+  static int savedTextPos, savedLineNum, savedLineStart;
+  static Action currentAction;
   
-  public int parserLine;
-  public Action nextAction;
+  private final int parserLine;
+  Action nextAction;
 
   public Action() {
     parserLine = currentLineNum;
@@ -32,6 +29,10 @@ public abstract class Action extends ParserBase {
   
   public void log(String message) {
     System.out.println(subIndent + parserLine + ": " + message);
+  }
+
+  public String errorString() {
+    return "parser code (" + parserLine + ")\n";
   }
 
   @Override

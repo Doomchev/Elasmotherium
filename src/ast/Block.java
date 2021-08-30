@@ -4,7 +4,7 @@ import base.ElException;
 import base.SimpleMap;
 
 public class Block extends Entity {
-  private final ID type;
+  public ID type;
   private final SimpleMap<ID, Entity> entries = new SimpleMap<>();
 
   public Block(ID type) {

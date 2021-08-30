@@ -28,6 +28,6 @@ public class ElException extends Exception {
   }
 
   public ElException(Action action, String message) {
-    this("parser code (" + action.parserLine + ")\n" + message);
+    this(action.errorString() + message);
   }
 }

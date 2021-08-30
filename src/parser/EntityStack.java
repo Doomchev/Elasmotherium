@@ -113,13 +113,6 @@ public class EntityStack<EntityType> extends Base {
       }      
     };
     
-    new EntityStack<Type>("type") {
-      @Override
-      public Type create() throws ElException {
-        return new Type(id.pop());
-      }
-    };
-    
     new EntityStack<Formula>("formula") {
       @Override
       public Formula create() {

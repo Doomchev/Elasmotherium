@@ -177,8 +177,8 @@ public class Function extends NamedEntity  {
   }
   
   @Override
-  public ClassEntity getType() throws ElException {
-    return isConstructor ? parentClass : returnType.toClass();
+  public Entity getType() throws ElException {
+    return isConstructor ? parentClass : returnType;
   }
   
   @Override
@@ -257,6 +257,11 @@ public class Function extends NamedEntity  {
     if(command == null)
       throw new ElException("Custom functions are not yet implemented.");
     append(command.create(null));
+  }
+  
+  public void resolveTypes() throws ElException {
+    if(returnType != null) returnType = returnType.resolve();
+    for(Variable param: parameters) param.resolveType();
   }
   
   // type conversion

@@ -30,7 +30,7 @@ public abstract class Entity extends Base {
     throw new ElException("Cannot get object from", this);
   }
   
-  public ClassEntity getType() throws ElException {
+  public Entity getType() throws ElException {
     throw new ElException("Cannot get type of", this);
   }
   
@@ -56,10 +56,14 @@ public abstract class Entity extends Base {
     throw new ElException(getClassName() + " is not a function call.");
   }
   
+  public Entity resolve() throws ElException {
+    throw new ElException("Cannot resolve type from", this);
+  }
+  
   // type conversion
 
   public ClassEntity toClass() throws ElException {
-    throw new ElException(getClassName() + " cannot be converted to class.");
+    throw new ElException(getClassName() + " is not a class.");
   }
 
   public FunctionCall toCall() {

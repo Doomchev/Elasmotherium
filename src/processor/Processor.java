@@ -116,7 +116,7 @@ public class Processor extends ProBase {
       String line;
       while((line = reader.readLine()) != null) {
         line = expectEnd(line, "{");
-        String[] part = line.substring(0, line.length() - 1).split("\\.");
+        String[] part = line.split("\\.");
         ProcessorObject function = getObject(part[0]);
         ID methodID = part.length > 1 ? ID.get(part[1]) : defaultID;
         LinkedList<ProCommand> method = getMethod(function, methodID);

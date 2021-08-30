@@ -53,6 +53,8 @@ public class Module extends ParserBase {
     
     function.appendAllocation();
     function.processCode(new Exit());
+    
+    print();
   }
 
   public void print() {

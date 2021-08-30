@@ -27,6 +27,6 @@ public class TypeCommand extends ProCommand {
   
   @Override
   void execute() throws ElException {
-    append(getCommand(type.getValue().getType(), postfix));
+    append(getCommand(type.getType(), postfix));
   }
 }

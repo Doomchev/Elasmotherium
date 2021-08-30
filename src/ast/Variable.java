@@ -47,8 +47,8 @@ public class Variable extends NamedEntity {
   }
   
   @Override
-  public ClassEntity getType() throws ElException {
-    return type.getType();
+  public Entity getType() throws ElException {
+    return type;
   }
   
   @Override
@@ -67,7 +67,8 @@ public class Variable extends NamedEntity {
   public void process() throws ElException {
     if(log) print("", "");
     addToScope(name, this);
-    currentProcessor.call(this);
+    resolveType();
+    if(value != null) currentProcessor.call(this);
   }
 
   public void processField(ClassEntity classEntity, Code code)
@@ -83,6 +84,10 @@ public class Variable extends NamedEntity {
     isField = false;
     type = field.type;
     value = null;
+  }
+  
+  public void resolveType() throws ElException {
+    type = type.resolve();
   }
 
   // type conversion
@@ -108,11 +113,6 @@ public class Variable extends NamedEntity {
   @Override
   public void moveToFunction(Function function) {
     index = function.addParameter(this);
-  }
-
-  @Override
-  public void moveToFormula(Formula formula) {
-    formula.add(new Link(this));
   }
 
   @Override

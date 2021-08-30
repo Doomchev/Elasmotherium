@@ -25,7 +25,7 @@ public class ConstantValue extends Value {
   }
   
   @Override
-  public ClassEntity getType() throws ElException {
+  public Entity getType() throws ElException {
     if(type == intID) return ClassEntity.Int;
     if(type == stringID) return ClassEntity.String;
     throw new ElException("Unknown const type " + type);

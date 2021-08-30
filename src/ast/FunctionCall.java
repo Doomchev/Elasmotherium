@@ -64,7 +64,7 @@ public class FunctionCall extends Value {
   }
   
   @Override
-  public ClassEntity getType() throws ElException {
+  public Entity getType() throws ElException {
     return function.getType();
   }
 
@@ -78,12 +78,8 @@ public class FunctionCall extends Value {
     if(function == null) {
       Entity entity = getFromScope(name);
       function = entity.toFunction();
-      if(function == null) {
-        ClassEntity classEntity = entity.toClass();
-        if(classEntity == null)
-          throw new ElException("Function " + name + " is not found.");
-        function = classEntity.getConstructor();
-      }
+      if(function == null)
+        function = entity.toClass().getConstructor();
     }
   }
   

@@ -18,7 +18,7 @@ public class GetField extends ProCommand {
   @Override
   void execute() throws ElException {
     ID id = current.getParameter(1).getName();
-    ClassEntity type = object.getType();
+    ClassEntity type = object.getType().toClass();
     current = type.getField(id);
     if(current == null) current = type.getMethod(id);
     if(current == null)
