@@ -14,14 +14,16 @@ public class Call extends ProCommand {
   
   @Override
   void execute() throws ElException {
-    Function function = current.toFunction();
-    if(function == null) {
-      FunctionCall call = current.toCall();
-      if(call == null) throw new ElException("Cannot call ", current);
-      call.resolveAll();
-    } else {
+    try {
+      Function function = (Function) current;
       if(log) println("Resolving function call " + toString());
       function.append();
+    } catch(ClassCastException ex) {
+      try {
+        ((FunctionCall) current).resolveAll();
+      } catch(ClassCastException ex2) {
+        throw new ElException("Cannot call ", current);
+      }
     }
   }
 }

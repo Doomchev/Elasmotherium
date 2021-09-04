@@ -25,19 +25,12 @@ public class Type extends Entity {
   
   @Override
   public Entity getType() throws ElException {
-    return this;
-  }
-  
-  // type conversion
-
-  @Override
-  public ClassEntity toClass() throws ElException {
     return basicClass;
   }
   
   @Override
-  public ClassEntity toNativeClass() throws ElException {
-    return basicClass.toNativeClass();
+  public ClassEntity getNativeClass() throws ElException {
+    return basicClass.getNativeClass();
   }
   
   // moving functions

@@ -18,8 +18,17 @@ public abstract class Entity extends Base {
     throw new ElException("Cannot get id from", this);
   }
   
+  public ClassEntity getNativeClass() throws ElException {
+    throw new ElException("Cannot convert " + getClassName()
+        + " to native class.");
+  }
+  
   public Entity getValue() throws ElException {
     throw new ElException("Cannot get value from", this);
+  }
+  
+  public Entity getFormulaValue() throws ElException {
+    return this;
   }
   
   public Entity getParameter(int index) throws ElException {
@@ -58,33 +67,6 @@ public abstract class Entity extends Base {
   
   public Entity resolve() throws ElException {
     throw new ElException("Cannot resolve type from", this);
-  }
-  
-  // type conversion
-
-  public ClassEntity toClass() throws ElException {
-    throw new ElException("Cannot convert " + getClassName() + " to class.");
-  }
-  
-  public ClassEntity toNativeClass() throws ElException {
-    throw new ElException("Cannot convert " + getClassName()
-        + " to native class.");
-  }
-
-  public ClassParameter toClassParameter() {
-    return null;
-  }
-
-  public FunctionCall toCall() {
-    return null;
-  }
-
-  public Function toFunction() {
-    return null;
-  }
-  
-  public Entity toValue() throws ElException {
-    return this;
   }
   
   // moving functions

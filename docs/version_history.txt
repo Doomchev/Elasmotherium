@@ -1,3 +1,6 @@
+2021.09.04 (version 0.27.1)
+  * AST: Type conversion methods are changed to type casting with error handling.
+
 2021.09.04 (version 0.27)
   + Standard library folder system.
   + AST: Class parameters.

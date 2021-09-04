@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import parser.EntityStack;
 import vm.CallFunction;
 import vm.VMCommand;
-import processor.ProCommand;
 import static ast.Entity.append;
 
 public class Function extends NamedEntity  {
@@ -175,7 +174,7 @@ public class Function extends NamedEntity  {
   
   @Override
   public Entity getType() throws ElException {
-    return isConstructor ? parentClass : returnType;
+    return isConstructor ? parentClass : returnType.getType();
   }
   
   @Override
@@ -265,13 +264,6 @@ public class Function extends NamedEntity  {
   
   public void append() {
     append(command == null ? new CallFunction(this) : command);
-  }
-  
-  // type conversion
-
-  @Override
-  public Function toFunction() {
-    return this;
   }
   
   // moving functions

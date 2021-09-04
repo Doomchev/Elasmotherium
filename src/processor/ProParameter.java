@@ -37,7 +37,7 @@ public abstract class ProParameter extends ProBase {
   }
   
   public ClassEntity getNativeClass() throws ElException {
-    return getType().toNativeClass();
+    return getType().getNativeClass();
   }
 
   public int getIndex() throws ElException {

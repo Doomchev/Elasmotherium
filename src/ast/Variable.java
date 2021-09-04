@@ -53,7 +53,7 @@ public class Variable extends NamedEntity {
   
   @Override
   public Entity getType() throws ElException {
-    return type;
+    return type.getType();
   }
   
   @Override

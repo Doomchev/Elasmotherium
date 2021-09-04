@@ -18,13 +18,6 @@ public class ClassParameter extends NamedEntity {
     return ClassEntity.Int;
   }
   
-  // type conversion
-
-  @Override
-  public ClassParameter toClassParameter() {
-    return this;
-  }
-  
   // moving functions
 
   @Override

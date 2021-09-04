@@ -24,17 +24,17 @@ public class Formula extends Entity {
 
   @Override
   public void moveToCode(Code code) throws ElException {
-    code.addLine(toValue());
+    code.addLine(getFormulaValue());
   }
   
   @Override
   public void moveToStringSequence(StringSequence sequence) throws ElException {
-    sequence.add(toValue());
+    sequence.add(getFormulaValue());
   }
 
   @Override
   public void moveToFunctionCall(FunctionCall call) throws ElException {
-    call.add(toValue());
+    call.add(getFormulaValue());
     call.priority = VALUE;
   }
 
@@ -45,23 +45,23 @@ public class Formula extends Entity {
 
   @Override
   public void moveToParameters(Parameters parameters) throws ElException {
-    parameters.add(toValue());
+    parameters.add(getFormulaValue());
   }
 
   @Override
   public void moveToVariable(Variable variable) throws ElException {
-    variable.setValue(toValue());
+    variable.setValue(getFormulaValue());
   }
 
   @Override
   public void moveToList(ListEntity list) throws ElException {
-    list.values.add(toValue());
+    list.values.add(getFormulaValue());
   }
   
   // commands
   
   @Override
-  public Value toValue() throws ElException {
+  public Value getFormulaValue() throws ElException {
     if(log) System.out.println(subIndent + listToString(chunks));
     if(chunks.size() == 1) return chunks.getFirst();
     for(Value entity : chunks) {
@@ -80,7 +80,7 @@ public class Formula extends Entity {
             break;
           }
         }
-        opStack.push(entity.toCall());
+        opStack.push((FunctionCall) entity);
         if(log) System.out.println(subIndent + "PUSH " + entity.toString()
             + " TO OPERATOR STACK");
       }
@@ -107,7 +107,7 @@ public class Formula extends Entity {
           + op.toString());
     } else if (op.getFunction() == elseOp) {
       Value value = valueStack.pop();
-      valueStack.peek().toCall().add(value);
+      ((FunctionCall) valueStack.peek()).add(value);
       if(log) System.out.println(subIndent + "PUSH ELSEOP TO FUNCTION "
           + valueStack.peek().toString());
     } else {

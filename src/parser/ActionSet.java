@@ -34,7 +34,7 @@ public class ActionSet extends Action {
     if(value == null) {
       block.type = id;
     } else {
-      block.set(id, value.pop().toValue());
+      block.set(id, value.pop().getFormulaValue());
     }
     currentAction = nextAction;
   }

@@ -72,8 +72,8 @@ public class FunctionCall extends Value {
     return function;
   }
   
-  public void setFunction(Function function) {
-    this.function = function;
+  public void setFunction(Entity function) {
+    this.function = (Function) function;
   }
   
   // processing
@@ -81,9 +81,11 @@ public class FunctionCall extends Value {
   public void resolveID() throws ElException {
     if(function == null) {
       Entity entity = getFromScope(name);
-      setFunction(entity.toFunction());
-      if(function == null)
-        setFunction(entity.toClass().getConstructor());
+      try {
+        setFunction(entity);
+      } catch(ClassCastException ex) {
+        setFunction(((ClassEntity) entity).getConstructor());
+      }
     }
   }
   
@@ -101,13 +103,6 @@ public class FunctionCall extends Value {
   
   public void resolveParameters() throws ElException {
     function.resolveParameters(this);
-  }
-
-  // type conversion
-  
-  @Override
-  public FunctionCall toCall() {
-    return this;
   }
   
   // moving functions

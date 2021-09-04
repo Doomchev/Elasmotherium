@@ -116,6 +116,11 @@ public class ClassEntity extends NamedEntity {
   public void setValue(VMValue value) {
     this.value = value;
   }
+  
+  @Override
+  public ClassEntity getNativeClass() {
+    return isNative() ? this : Object;
+  }
    
   // processing
   
@@ -153,18 +158,6 @@ public class ClassEntity extends NamedEntity {
     
     deallocateScope();
     currentClass = oldClass;
-  }
-  
-  // type conversion
-  
-  @Override
-  public ClassEntity toClass() {
-    return this;
-  }
-  
-  @Override
-  public ClassEntity toNativeClass() {
-    return isNative() ? this : Object;
   }
   
   // moving funcitons

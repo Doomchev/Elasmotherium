@@ -19,7 +19,7 @@ public class TypeCommand extends ProCommand {
   public static VMCommand getCommand(ClassEntity type, String postfix
       , ProParameter parameter)
       throws ElException {
-    String typeName = type.toNativeClass().getName().string;
+    String typeName = type.getNativeClass().getName().string;
     if(typeName.equals("Int")) typeName = "I64";
     VMCommand command = commands.get(typeName + postfix);
     if(command == null)
