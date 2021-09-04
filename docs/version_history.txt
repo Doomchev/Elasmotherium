@@ -1,4 +1,6 @@
 2021.09.04 (version 0.28.1)
+  * Syntax, Parser code: For syntaх changed to for(type var from start to/until end), for(each type var in collection).
+  - Syntax, Parser code: For_collection with index.
   - Virtual machine: Allocate, Deallocate commands.
 
 2021.09.04 (version 0.28)

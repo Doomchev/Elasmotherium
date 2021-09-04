@@ -22,7 +22,7 @@ public class ActionCreateBlockVariable extends Action {
   
   @Override
   public void execute() throws base.ElException {
-    if(log) log("CREATE BLOCK VARIABLE" + id);
+    if(log) log("CREATE BLOCK VARIABLE " + id);
     EntityStack.block.peek().add(new Variable(id, ClassEntity.Object));
     currentAction = nextAction;
   }

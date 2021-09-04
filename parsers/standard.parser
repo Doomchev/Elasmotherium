@@ -220,42 +220,33 @@ id: {
 /// for loop
 
 for: EXPECT("(") CREATE(block, for) {
-  ";": >> forCondition
-  "[": >> forIndex
-	letter: variable() {
-    // for(Type variable = formula
-    "=": >> formula() {
-      // for(Type variable = formula; condition; iterator)
-      ";": >> forCondition
-      // for(Type variable = from ..
-      "..": >> SET(variable, variable) SET(from, formula) {
-        // for(Type variable = from ..= to
-        "=": >> formula() SET(to, formula) SET(for_to) forEnd
-        // for(Type variable = from ..< to
-        "<": >> formula() SET(until, formula) SET(for_until) forEnd
-				other: syntaxError
-      }
+  // for(Type variable = formula; condition)
+  // for(Type variable = formula; condition; iterator)
+	letter: variable() SET(variable, variable) {
+    "=": >> formula() SET(init, formula) EXPECT(";") formula() SET(condition, formula) {
+      ")": >> forEnd
+      other:  EXPECT(";") CREATE(code) id() var() SET(iterator, code) forEnd
+    }
+    "from": >> formula() SET(from, formula) {
+      // for(Type variable from start to
+      "to": >> formula() SET(to, formula) SET(for_to) forEnd
+      // for(Type variable from start until
+      "until": >> formula() SET(until, formula) SET(for_until) forEnd
       other: syntaxError
     }
-    // for(Type variable: collection)
-    ":": >> forCollection
-    // for([index]: collection)
-    "[": >> forIndex
-    other: error("Error in for syntax")
+    other: syntaxError
+  }
+  // for(each Type variable in collection)
+  "each": >> variable() SET(item, variable) {
+    "in": >> formula() SET(collection, formula) CBV(iterator) SET(for_collection) forEnd
+    other: syntaxError
   }
 	other: syntaxError
 }
 
-forCondition: SET(variable, variable) SET(init, formula) {
-  ";": >> forIterator
-  other: formula() SET(condition, formula) EXPECT(";") forIterator
-}
+forCondition:
 
-forIterator: CREATE(code) statement() SET(iterator, code) forEnd
-
-forIndex: SET(item, variable) id() CREATE(link) id() CREATE(variable) MOVE(link, variable) SET(index, variable) EXPECT("]") EXPECT(":") forCollection
-
-forCollection: SET(item, variable) formula() SET(collection, formula) CBV(iterator) SET(for_collection) forEnd
+forIterator: forEnd
 
 forEnd: EXPECT(")") code() SET(code, code) MOVE(block, code) RETURN
 

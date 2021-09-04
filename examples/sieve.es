@@ -1,8 +1,8 @@
 Int max = 100;
 List<Int> values = [2];
-for(Int i = 3 ..= max) {
+for(Int i from 3 to max) {
 	Int limit = floor(sqrt(i));
-	for(Int j: values) {
+	for(each Int j in values) {
 		if(j > limit) {
 			values.add(i);
 			break;
@@ -11,5 +11,5 @@ for(Int i = 3 ..= max) {
 	}
 }
 String text = "";
-for(Int i: values) text = text + ", \(i)";
+for(each Int i in values) text = text + ", \(i)";
 println(text);
