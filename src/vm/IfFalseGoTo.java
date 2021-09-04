@@ -5,23 +5,16 @@ import processor.ProParameter;
 
 public class IfFalseGoTo extends VMCommand {
   private int command;
-
-  public IfFalseGoTo() {
-  }
-  
-  public IfFalseGoTo(int command) {
-    this.command = command;
-  }
   
   @Override
-  public IfFalseGoTo create(ProParameter parameter) throws ElException {
+  public VMCommand create(ProParameter parameter) throws ElException {
     IfFalseGoTo goTo = new IfFalseGoTo();
     parameter.addLabelCommand(goTo);
     return goTo;
   }
   
   @Override
-  public void setGoto(int command) {
+  public void setPosition(int command) {
     this.command = command;
   }
   

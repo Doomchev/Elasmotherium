@@ -1,0 +1,9 @@
+newName I8, byte;
+newName I16, short;
+newName U16, char;
+newName I32, int;
+newName I64, long;
+newName F32, float;
+newName F64, double;
+newName Bool, boolean;
+newName Char, char;

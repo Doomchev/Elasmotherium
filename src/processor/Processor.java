@@ -1,20 +1,22 @@
 package processor;
 
-import vm.StringThisFieldEquate;
-import vm.I64ThisFieldEquate;
-import vm.I64ThisFieldIncrement;
-import vm.StringThisFieldPush;
-import vm.I64ThisFieldPush;
+import vm.i64.I64IteratorNext;
+import vm.list.ListToIterator;
+import ast.Block;
+import vm.*;
+import vm.iterator.*;
+import vm.object.*;
+import vm.i64.*;
+import vm.string.*;
 import ast.Entity;
 import ast.FunctionCall;
 import ast.ID;
 import ast.Link;
 import base.ElException;
 import base.Module;
-import base.SimpleMap;
+import base.LinkedMap;
 import java.util.HashMap;
 import java.util.LinkedList;
-import vm.*;
 
 public class Processor extends ProBase {
   static final HashMap<String, VMCommand> commands = new HashMap<>();
@@ -54,6 +56,7 @@ public class Processor extends ProBase {
     addCommand(new I64Add());
     addCommand(new I64Subtract());
     addCommand(new I64Multiply());
+    addCommand(new I64Mod());
     
     addCommand(new I64FieldIncrement(0));
     addCommand(new I64ThisFieldIncrement(0));
@@ -70,6 +73,10 @@ public class Processor extends ProBase {
     addCommand(new I64Return());
     addCommand(new StringReturn());
     
+    addCommand(new ListToIterator());
+    addCommand(new IteratorHasNext());
+    addCommand(new I64IteratorNext());
+    
     addCommand(new GoTo());
     addCommand(new IfFalseGoTo());
     
@@ -82,7 +89,7 @@ public class Processor extends ProBase {
   }
   
   private static class ProcessorObject
-      extends SimpleMap<ID, LinkedList<ProCommand>> {}
+      extends LinkedMap<ID, LinkedList<ProCommand>> {}
   
   private final HashMap<ID, ProcessorObject> methods = new HashMap<>();
   
@@ -120,7 +127,39 @@ public class Processor extends ProBase {
         ProcessorObject function = getObject(part[0]);
         ID methodID = part.length > 1 ? ID.get(part[1]) : defaultID;
         LinkedList<ProCommand> method = getMethod(function, methodID);
-        readCode(method);
+        while(true) {
+          if((line = reader.readLine()) == null)
+            throw new ElException("Unexpected end of file");
+          if(line.equals("}")) break;
+          if(line.startsWith("#")) {
+            ID labelID = ID.get(expectEnd(line, ":").substring(1));
+            method.add(new BlockLabelSet(labelID));
+            method.addFirst(new BlockLabelInitialize(labelID));
+          } else {
+            line = expectEnd(line, ";");
+            String param = line.contains("(") ? betweenBrackets(line) : "";
+            line = stringUntil(line, '(');
+            if(line.startsWith("[")) {
+              part = trimmedSplit(line, '[', ']');
+              method.add(new TypeCommand(part[1], part[2], param));
+            } else {
+              part = trimmedSplit(line, '.', '(');
+              if(line.contains(".")) {
+                method.add(new ProCall(part[0], part[1], param));
+              } else {
+                ProCommand proCommand = proCommands.get(line);
+                if(proCommand != null) {
+                  method.add(proCommand.create(param));
+                } else {
+                  VMCommand command = commands.get(line);
+                  if(command == null)
+                    throw new ElException("Command " + line + " is not found.");
+                  method.add(AppendCommand.create(command, param));
+                }
+              }
+            }
+          }
+        }
       }
     } catch (ElException ex) {
       error("Error in processor code"
@@ -130,43 +169,15 @@ public class Processor extends ProBase {
     return this;
   }
   
-  private void readCode(LinkedList<ProCommand> method) throws ElException {
-    String line;
-    while(true) {
-      if((line = reader.readLine()) == null)
-        throw new ElException("Unexpected end of file");
-      if(line.equals("}")) return;
-      if(line.startsWith("[")) {
-        String[] part = trimmedSplit(line, '[', ']', ';');
-        method.add(new TypeCommand(part[1], part[2]));
-      } else if(line.startsWith("#")) {
-        method.add(new SetLabel(ID.get(expectEnd(line, ":"))));
-      } else {
-        line = expectEnd(line, ";");
-        String[] part = trimmedSplit(line, '.', '(');
-        String param = line.contains("(") ? betweenBrackets(line) : "";
-        if(line.contains(".")) {
-          method.add(new ProCall(part[0], part[1], param));
-        } else {
-          line = stringUntil(line, '(');
-          ProCommand proCommand = proCommands.get(line);
-          if(proCommand != null) {
-            method.add(proCommand.create(param));
-          } else {
-            VMCommand command = commands.get(line);
-            if(command == null)
-              throw new ElException("Command " + line + " is not found.");
-            method.add(new AppendCommand(command, param));
-          }
-        }
-      }
-    }
+  public void callBlock(Block block) throws ElException {
+    block.parentBlock = currentBlock;
+    currentBlock = block;
+    call(block);
+    currentBlock = block.parentBlock;
   }
   
   public void call(Entity object, ID method) throws ElException {
     Entity oldCurrent = current;
-    LinkedList<ProLabel> oldLabels = ProLabel.all;
-    ProLabel.all = new LinkedList<>();
     current = object;
     ID objectId = object.getObject();
     if(objectId == Link.id) {
@@ -184,13 +195,11 @@ public class Processor extends ProBase {
       else
         throw new ElException("No code for " + objectId + "." + method);
     } else {
-      for(ProCommand command : code) {
+      for(ProCommand command: code) {
         currentLineNum = command.lineNum;
         command.execute();
       }
     }
-    ProLabel.apply();
-    ProLabel.all = oldLabels;
     current = oldCurrent;
   }
   

@@ -4,28 +4,27 @@ import vm.values.ObjectEntity;
 import base.ElException;
 import java.util.HashMap;
 import java.util.LinkedList;
-import vm.values.I64Value;
-import vm.values.StringValue;
 import vm.values.VMValue;
 
 public class ClassEntity extends NamedEntity {
   public static final HashMap<ID, ClassEntity> all = new HashMap<>();
-  public static final ClassEntity Int, String, Bool, Object;
+  public static final ClassEntity Int, Float, String, Bool, Object;
   
-  private final LinkedList<ID> subTypes = new LinkedList<>();
+  private final LinkedList<ClassParameter> parameters = new LinkedList<>();
   private final LinkedList<Variable> fields = new LinkedList<>();
   private final LinkedList<Function> methods = new LinkedList<>();
   private final LinkedList<Function> constructors = new LinkedList<>();
   private int allocation = 0;
-  private VMValue value;
+  private VMValue value = null;
   
   // native classes
   
   static {
-    Int = create("Int", new I64Value(0));
-    String = create("String", new StringValue(""));
-    Bool = create("Bool", new I64Value(0));
-    Object = create("Object", new I64Value(0));
+    Int = create("Int", new vm.values.I64Value(0));
+    Float = create("Float", new vm.values.F64Value(0));
+    String = create("String", new vm.values.StringValue(""));
+    Bool = create("Bool", new vm.values.I64Value(0));
+    Object = create("Object", new vm.values.I64Value(0));
   }
   
   // creating
@@ -51,6 +50,10 @@ public class ClassEntity extends NamedEntity {
     return classEntity;
   }
   
+  public static ClassEntity get(String name) {
+    return all.get(ID.get(name));
+  }
+  
   public static ClassEntity get(ID name) {
     return all.get(name);
   }
@@ -61,11 +64,15 @@ public class ClassEntity extends NamedEntity {
     return value != null;
   }
   
-  // retrieving child objects
+  // retrieving class objects
   
   public Variable getField(ID id) {
     for(Variable field: fields) if(field.name == id) return field;
     return null;
+  }
+  
+  public Function getMethod(String name) {
+    return getMethod(ID.get(name));
   }
   
   public Function getMethod(ID id) {
@@ -79,14 +86,20 @@ public class ClassEntity extends NamedEntity {
   
   // adding child objects
 
-  int addField(Variable variable) {
+  public int addParameter(ClassParameter parameter) {
+    int index = parameters.size();
+    parameters.add(parameter);
+    return index;
+  }
+
+  public int addField(Variable variable) {
     int index = allocation;
     allocation++;
     fields.add(variable);
     return index;
   }
 
-  void addMethod(Function function, boolean isConstructor) {
+  public void addMethod(Function function, boolean isConstructor) {
     if(isConstructor)
       constructors.add(function);
     else
@@ -99,6 +112,10 @@ public class ClassEntity extends NamedEntity {
   public Entity getType() throws ElException {
     return this;
   }
+
+  public void setValue(VMValue value) {
+    this.value = value;
+  }
    
   // processing
   
@@ -107,10 +124,13 @@ public class ClassEntity extends NamedEntity {
     ClassEntity oldClass = currentClass;
     currentClass = this;
     allocateScope();
-    for(Function method: methods) addToScope(method);
+    
     for(Variable field: fields) addToScope(field);
+    for(Function method: methods) addToScope(method);
+    
     for(Function constructor: constructors) constructor.process();
     for(Function method: methods) method.process();
+    
     deallocateScope();
     currentClass = oldClass;
   }
@@ -121,9 +141,18 @@ public class ClassEntity extends NamedEntity {
   }
   
   public void resolveTypes() throws ElException {
+    ClassEntity oldClass = currentClass;
+    currentClass = this;
+    allocateScope();
+    
+    for(ClassParameter parameter: parameters) addToScope(parameter);
+    
     for(Variable field: fields) field.resolveType();
     for(Function constructor: constructors) constructor.resolveTypes();
     for(Function method: methods) method.resolveTypes();
+    
+    deallocateScope();
+    currentClass = oldClass;
   }
   
   // type conversion
@@ -133,6 +162,7 @@ public class ClassEntity extends NamedEntity {
     return this;
   }
   
+  @Override
   public ClassEntity toNativeClass() {
     return isNative() ? this : Object;
   }
@@ -175,7 +205,8 @@ public class ClassEntity extends NamedEntity {
   
   @Override
   public void print(String indent, String prefix) {
-    println(indent + prefix + "class " + name + "{");
+    println(indent + prefix + "class " + name + (parameters.isEmpty()
+        ? "" : "<" + listToString(parameters) + ">") + " {");
     String newIndent = indent + "  ";
     for(Variable field: fields) field.print(newIndent, "");
     if(!fields.isEmpty() && !constructors.isEmpty()) println("");

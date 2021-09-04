@@ -117,6 +117,7 @@ public class Rules extends ParserBase {
     actions.put("EXPECT", new ActionExpect(' '));
     actions.put("CLEAR", new ActionClear());
     actions.put("CREATE", new ActionCreate(null, null, null));
+    actions.put("CBV", new ActionCreateBlockVariable(null));
     actions.put("DUP", new ActionDup(null));
     actions.put("COPY", new ActionMove(null, null, true));
     actions.put("MOVE", new ActionMove(null, null, false));

@@ -1,0 +1,1 @@
+classList AnyNumber {AnyInt, AnyFloat}

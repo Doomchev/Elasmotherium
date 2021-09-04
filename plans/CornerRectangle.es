@@ -7,19 +7,19 @@ class CornerRectangle<AnyFloat SystemFloat> extends Point<SystemFloat> {
 	SystemFloat halfHeight -> 0.5 * height;
 	halfHeight(SystemFloat value) height = 2 * value;
 	
-	SystemFloat left <-> _x;
+	SystemFloat left <-> x;
 	
-	SystemFloat centerX -> _x + halfWidth;
-	centerX(SystemFloat value) _x = value - halfWidth;
+	SystemFloat centerX -> x + halfWidth;
+	centerX(SystemFloat value) x = value - halfWidth;
 	
-	SystemFloat right -> _x + width;
-	rightX(SystemFloat value) _x = value - width;
+	SystemFloat right -> x + width;
+	rightX(SystemFloat value) x = value - width;
 	
-	SystemFloat top <-> _y;
+	SystemFloat top <-> y;
 	
-	SystemFloat centerY -> _y + halfHeight;
-	centerY(SystemFloat value) _y = value - halfHeight
+	SystemFloat centerY -> y + halfHeight;
+	centerY(SystemFloat value) y = value - halfHeight
 	
-	SystemFloat bottom -> _y + height;
-	bottom(SystemFloat value) _y = value - height;
+	SystemFloat bottom -> y + height;
+	bottom(SystemFloat value) y = value - height;
 }

@@ -1,0 +1,1 @@
+classList AnyFloat {F64, F32}

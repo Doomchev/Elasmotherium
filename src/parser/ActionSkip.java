@@ -4,7 +4,7 @@ import base.ElException;
 
 class ActionSkip extends Action {
   @Override
-  public ActionSkip create(String params) throws ElException {
+  public Action create(String params) throws ElException {
     return new ActionSkip();
   }
   

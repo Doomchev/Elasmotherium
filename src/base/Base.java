@@ -3,18 +3,12 @@ package base;
 import ast.ClassEntity;
 import ast.Entity;
 import ast.Function;
-import java.io.File;
-import java.io.IOException;
 import ast.ID;
 import ast.NamedEntity;
-import base.SimpleMap.Entry;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import base.LinkedMap.Entry;
 import java.util.LinkedList;
 import java.util.List;
 import processor.Processor;
-import vm.I64ToString;
 import vm.VMBase;
 import vm.VMCommand;
 
@@ -28,9 +22,9 @@ public abstract class Base {
   
   static {
     try {
-      workingPath = new File(".").getCanonicalPath() + "/";
-      modulesPath = new File(".").getCanonicalPath() + "/modules/";
-    } catch (IOException ex) {
+      workingPath = new java.io.File(".").getCanonicalPath() + "/";
+      modulesPath = new java.io.File(".").getCanonicalPath() + "/modules/";
+    } catch (java.io.IOException ex) {
     }
   }
   
@@ -222,14 +216,14 @@ public abstract class Base {
   // reader
   
   public static class EReader {
-    private BufferedReader reader;
+    private java.io.BufferedReader reader;
     private String fileName;
 
     public EReader(String fileName) {
       this.fileName = fileName;
       try {
-        reader = new BufferedReader(new FileReader(fileName));
-      } catch (FileNotFoundException ex) {
+        reader = new java.io.BufferedReader(new java.io.FileReader(fileName));
+      } catch (java.io.FileNotFoundException ex) {
         error("I/O error", fileName + " not found.");
       }
       currentLineNum = 0;
@@ -245,7 +239,7 @@ public abstract class Base {
           if(line.isEmpty() || line.startsWith("//")) continue;
           return line;
         }
-      } catch (IOException ex) {
+      } catch (java.io.IOException ex) {
         error("I/O error", "Cannot read " + fileName + ".");
       }
       return null;
@@ -254,17 +248,18 @@ public abstract class Base {
   
   // converters
   
-  private static final SimpleMap<ClassEntity, SimpleMap<ClassEntity
-      , VMCommand>> converters = new SimpleMap<>();
+  private static final LinkedMap<ClassEntity, LinkedMap<ClassEntity
+      , VMCommand>> converters = new LinkedMap<>();
   
   static {
-    add(ClassEntity.Int, ClassEntity.String, new I64ToString());
+    add(ClassEntity.Int, ClassEntity.String, new vm.convert.I64ToString());
+    add(ClassEntity.Int, ClassEntity.Float, new vm.convert.I64ToF64());
   }
   
   private static void add(ClassEntity from, ClassEntity to, VMCommand command) {
-    SimpleMap<ClassEntity, VMCommand> map = converters.get(from);
+    LinkedMap<ClassEntity, VMCommand> map = converters.get(from);
     if(map == null) {
-      map = new SimpleMap<>();
+      map = new LinkedMap<>();
       converters.put(from, map);
     }
     map.put(to, command);
@@ -277,7 +272,7 @@ public abstract class Base {
     if(from == to) {
       return;
     }
-    SimpleMap<ClassEntity, VMCommand> map = converters.get(from);
+    LinkedMap<ClassEntity, VMCommand> map = converters.get(from);
     if(map == null) {
       throw new ElException("Converters from " + from + " are not found.");
     }
@@ -286,7 +281,7 @@ public abstract class Base {
       throw new ElException("Converters from " + from + " to " + to
           + " are not found.");
     }
-    appendLog(command.create(null));
+    appendLog(command.create());
   }
   
   // other

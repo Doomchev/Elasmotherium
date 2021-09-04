@@ -4,7 +4,7 @@ import base.ElException;
 
 class ActionSavePos extends Action {
   @Override
-  public ActionSavePos create(String params) throws ElException {
+  public Action create(String params) throws ElException {
     return new ActionSavePos();
   }
   

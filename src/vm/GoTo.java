@@ -7,14 +7,14 @@ public class GoTo extends VMCommand {
   private int command;
   
   @Override
-  public GoTo create(ProParameter parameter) throws ElException {
+  public VMCommand create(ProParameter parameter) throws ElException {
     GoTo goTo = new GoTo();
     parameter.addLabelCommand(goTo);
     return goTo;
   }
   
   @Override
-  public void setGoto(int command) {
+  public void setPosition(int command) {
     this.command = command;
   }
   

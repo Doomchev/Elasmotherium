@@ -1,5 +1,6 @@
 package parser;
 
+import ast.ListEntity;
 import ast.*;
 import base.Base;
 import base.ElException;
@@ -31,7 +32,7 @@ public class EntityStack<EntityType> extends Base {
     final EntityStack<Value> valueStack = new EntityStack<Value>("value") {
       @Override
       public Value create() throws ElException {
-        throw new ElException("Value is abstract and cannot be created");
+        throw new ElException("Value is abstract and cannot be created.");
       }
     };
 
@@ -70,13 +71,6 @@ public class EntityStack<EntityType> extends Base {
       }
     };
     
-    new EntityStack<Function>("method", function) {
-      @Override
-      public Function create() throws ElException {
-        return Function.create(id.pop());
-      }
-    };
-    
     new EntityStack<Function>("constructor", function) {
       @Override
       public Function create() throws ElException {
@@ -87,8 +81,7 @@ public class EntityStack<EntityType> extends Base {
     code = new EntityStack<Code>("code") {
       @Override
       public Code create() {
-        allocate();
-        return new Code();
+        return Code.create();
       }
     };
     
@@ -111,6 +104,13 @@ public class EntityStack<EntityType> extends Base {
       public Variable create() throws ElException {
         return new Variable(id.pop(), true);
       }      
+    };
+  
+    new EntityStack<ClassParameter>("classParameter") {
+      @Override
+      public ClassParameter create() throws ElException {
+        return new ClassParameter(id.pop());
+      }
     };
     
     new EntityStack<Formula>("formula") {

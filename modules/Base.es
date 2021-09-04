@@ -1,3 +1,5 @@
+import Math;
+
 /*class Float;
 class Question;
 Question yes;
@@ -25,12 +27,12 @@ print(String message);
 println(String message) print("\(message)\n");
 
 Int screenWidth();
-Int screenHeight();
+Int screenHeight();*/
 
 class List<ElementType> {
 	Int size();
-	addLast(ElementType element);
-}*/
+	add(ElementType element);
+}
 
 println(String message);
 Int askInt(String message);

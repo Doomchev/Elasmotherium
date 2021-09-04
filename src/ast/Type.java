@@ -32,9 +32,12 @@ public class Type extends Entity {
 
   @Override
   public ClassEntity toClass() throws ElException {
-    if(!subtypes.isEmpty())
-      throw new ElException("Cannot convert " + toString() + " to class.");
     return basicClass;
+  }
+  
+  @Override
+  public ClassEntity toNativeClass() throws ElException {
+    return basicClass.toNativeClass();
   }
   
   // moving functions

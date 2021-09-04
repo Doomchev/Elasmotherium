@@ -19,7 +19,7 @@ public class ActionCreate extends Action {
   }
   
   @Override
-  public ActionCreate create(String params) throws ElException {
+  public Action create(String params) throws ElException {
     String[] param = params.split(",");
     ID id = ID.get(param[0]);
     if(id == Module.id) {
@@ -59,8 +59,7 @@ public class ActionCreate extends Action {
       tokenStart = textPos;
     } else if(type != null) {
       if(log) log("CREATE BLOCK " + type.string);
-      stack.push(new Block(type));
-      allocate();
+      stack.push(Block.create(type));
     } else if(function != null) {
       if(log) log("CREATE FUNCTION CALL(" + function.getClassName() + ")");
       stack.push(new FunctionCall(function));

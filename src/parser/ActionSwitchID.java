@@ -20,7 +20,7 @@ public class ActionSwitchID extends ActionSwitch {
   private Action defaultAction;
 
   @Override
-  public ActionClear create(String params) throws ElException {
+  public Action create(String params) throws ElException {
     return new ActionClear();
   }
   

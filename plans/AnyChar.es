@@ -1,0 +1,1 @@
+classList AnyChar {Char, AChar}

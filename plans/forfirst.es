@@ -1,5 +1,5 @@
 List<String> list = ["one", "two", "three"];
-for(each string in list) {
-	if(!first) print(", ");
-	print(string); 
-}
+String text = "";
+for(each string in list)
+	text += if(!first then ", ") + string;
+println(text);  

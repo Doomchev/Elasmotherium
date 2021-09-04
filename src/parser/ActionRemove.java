@@ -10,7 +10,7 @@ public class ActionRemove extends Action {
   }
 
   @Override
-  public ActionRemove create(String params) throws ElException {
+  public Action create(String params) throws ElException {
     return new ActionRemove(EntityStack.get(params));
   }
   

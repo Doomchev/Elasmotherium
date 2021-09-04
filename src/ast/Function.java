@@ -1,6 +1,5 @@
 package ast;
 
-import static ast.Entity.append;
 import static ast.FunctionCall.resolve;
 import static base.Base.currentProcessor;
 import static base.Base.log;
@@ -9,12 +8,10 @@ import base.ElException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import parser.EntityStack;
-import vm.Allocate;
 import vm.CallFunction;
-import vm.ObjectNew;
-import vm.Return;
-import vm.VMBase;
 import vm.VMCommand;
+import processor.ProCommand;
+import static ast.Entity.append;
 
 public class Function extends NamedEntity  {
   public static final ID id = ID.get("function");
@@ -141,7 +138,7 @@ public class Function extends NamedEntity  {
   // allocation
 
   public void appendAllocation() {
-    appendLog(new Allocate(allocation));
+    appendLog(new vm.Allocate(allocation));
   }
 
   public void setAllocation() {
@@ -199,12 +196,12 @@ public class Function extends NamedEntity  {
   @Override
   public void process() throws ElException {
     if(command != null) return;
-    startingCommand = VMBase.currentCommand + 1;
+    startingCommand = vm.VMBase.currentCommand + 1;
     Function oldFunction = currentFunction;
     currentFunction = this;
     allocateScope();
     for(Variable param: parameters) addToScope(param);
-    VMCommand endingCommand = returnType == null ? new Return() : null;
+    VMCommand endingCommand = returnType == null ? new vm.Return() : null;
     code.processWithoutScope(endingCommand);
     deallocateScope();
     currentFunction = oldFunction;
@@ -226,29 +223,22 @@ public class Function extends NamedEntity  {
   public void resolve(FunctionCall call) throws ElException {
     if(log) println("Resolving function call " + toString());
     
-    if(isConstructor) append(new ObjectNew(parentClass));
+    if(isConstructor) append(new vm.object.ObjectCreate(parentClass));
     
-    if(!isNative()) {
-      int i = 0;
-      for(Entity parameter: parameters) {
-        currentProcessor.call(
-            call.getParameter(i), resolve, parameter.getType());
-        i++;
-      }
-    }
+    if(!isNative()) resolveParameters(call);
     
     if(this == Function.ret) {
       currentProcessor.call(call);
       return;
     } else if(isConstructor) {
-      append(new CallFunction(this));
+      append(new vm.CallFunction(this));
       return;
     }
     
     if(command != null) {
-      append(command.create(null));
+      append(command.create());
     } else {
-      append(new CallFunction(this));
+      append(new vm.CallFunction(this));
     }
   }
   
@@ -256,12 +246,25 @@ public class Function extends NamedEntity  {
   public void resolveAll() throws ElException {
     if(command == null)
       throw new ElException("Custom functions are not yet implemented.");
-    append(command.create(null));
+    append(command.create());
+  }
+
+  public void resolveParameters(FunctionCall call) throws ElException {
+    int i = 0;
+    for(Entity parameter: parameters) {
+      currentProcessor.call(
+          call.getParameter(i), resolve, parameter.getType());
+      i++;
+    }
   }
   
   public void resolveTypes() throws ElException {
     if(returnType != null) returnType = returnType.resolve();
     for(Variable param: parameters) param.resolveType();
+  }
+  
+  public void append() {
+    append(command == null ? new CallFunction(this) : command);
   }
   
   // type conversion

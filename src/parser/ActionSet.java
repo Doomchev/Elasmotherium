@@ -15,7 +15,7 @@ public class ActionSet extends Action {
   }
   
   @Override
-  public ActionSet create(String params) throws ElException {
+  public Action create(String params) throws ElException {
     String[] param = params.split(",");
     if(param.length == 1) return new ActionSet(ID.get(param[0]), null);
     if(param.length == 2)

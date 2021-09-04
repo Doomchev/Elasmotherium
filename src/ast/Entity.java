@@ -63,7 +63,16 @@ public abstract class Entity extends Base {
   // type conversion
 
   public ClassEntity toClass() throws ElException {
-    throw new ElException(getClassName() + " is not a class.");
+    throw new ElException("Cannot convert " + getClassName() + " to class.");
+  }
+  
+  public ClassEntity toNativeClass() throws ElException {
+    throw new ElException("Cannot convert " + getClassName()
+        + " to native class.");
+  }
+
+  public ClassParameter toClassParameter() {
+    return null;
   }
 
   public FunctionCall toCall() {
@@ -76,10 +85,6 @@ public abstract class Entity extends Base {
   
   public Entity toValue() throws ElException {
     return this;
-  }
-
-  public Variable toVariable() {
-    return null;
   }
   
   // moving functions

@@ -1,11 +1,7 @@
 package ast;
 
-import static ast.FunctionCall.resolve;
-import static base.Base.currentProcessor;
 import base.ElException;
 import java.util.LinkedList;
-import vm.StringAdd;
-import vm.VMCommand;
 
 public class StringSequence extends Value {
   public final static ID id = ID.get("stringSequence");
@@ -31,10 +27,10 @@ public class StringSequence extends Value {
   public void resolveAll() throws ElException {
     boolean isNotFirst = false;
     for(Value value: chunks) {
-      currentProcessor.call(value, resolve, ClassEntity.String);
+      base.Base.currentProcessor.call(value, FunctionCall.resolve
+          , ClassEntity.String);
       if(isNotFirst) {
-        VMCommand command = new StringAdd();
-        append(command);
+        append(new vm.string.StringAdd());
       } else {
         isNotFirst = true;
       }

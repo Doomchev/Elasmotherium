@@ -1,9 +1,9 @@
 package ast;
 
-import base.SimpleMap;
+import base.LinkedMap;
 
 public class MapEntity extends Entity {
-  public final SimpleMap<Value, Value> entries = new SimpleMap<>();
+  public final LinkedMap<Value, Value> entries = new LinkedMap<>();
   
   // moving functions
   

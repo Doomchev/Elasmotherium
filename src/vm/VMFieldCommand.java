@@ -1,11 +1,10 @@
 package vm;
 
 import base.ElException;
-import processor.ProBase;
 import processor.ProParameter;
 
 public abstract class VMFieldCommand extends VMCommand {
-  final int fieldIndex;
+  protected final int fieldIndex;
 
   public VMFieldCommand(int fieldIndex) {
     this.fieldIndex = fieldIndex;
@@ -13,7 +12,7 @@ public abstract class VMFieldCommand extends VMCommand {
   
   @Override
   public VMCommand create(ProParameter parameter) throws ElException {
-    return create(ProBase.getIndex());
+    return create(parameter.getIndex());
   }
   
   public abstract VMCommand create(int index) throws ElException;

@@ -1,7 +1,5 @@
 package vm.values;
 
-import vm.values.VMValue;
-
 public class StringValue extends VMValue {
   public String value;
 

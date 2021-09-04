@@ -1,5 +1,6 @@
 package vm;
 
+import base.ElException;
 import vm.values.VMValue;
 
 public class VMFunctionCall extends VMBase {
@@ -11,8 +12,8 @@ public class VMFunctionCall extends VMBase {
     this.deallocation = deallocation;
   }
 
-  public VMValue thisField(int fieldIndex) {
-    return objectStack[paramPosition - 1].fields[fieldIndex];
+  public VMValue thisField(int fieldIndex) throws ElException {
+    return objectStack[paramPosition - 1].getField(fieldIndex);
   }
 
   public int varIndex(int index) {

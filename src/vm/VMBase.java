@@ -5,25 +5,29 @@ import base.Base;
 import base.ElException;
 import java.util.Arrays;
 import javax.swing.JFrame;
+import vm.values.VMValue;
 
 public class VMBase extends Base{
   private static final int STACK_SIZE = 16, COMMANDS_SIZE = 256;
   
-  static boolean[] booleanStack = new boolean[STACK_SIZE];
-  static ValueType[] typeStack = new ValueType[STACK_SIZE];
-  static long[] i64Stack = new long[STACK_SIZE];
-  static String[] stringStack = new String[STACK_SIZE];
-  static ObjectEntity[] objectStack = new ObjectEntity[STACK_SIZE];
-  static VMFunctionCall[] callStack = new VMFunctionCall[STACK_SIZE];
-  static int stackPointer = -1, callStackPointer = -1;
-  static VMFunctionCall currentCall = new VMFunctionCall(0, 0);
-  static VMCommand[] commands = new VMCommand[COMMANDS_SIZE];
-  static JFrame frame;
-  static boolean usesWindow = false, usesConsole = false;
+  protected static ValueType[] typeStack = new ValueType[STACK_SIZE];
+  
+  protected static long[] i64Stack = new long[STACK_SIZE];
+  protected static double [] f64Stack = new double[STACK_SIZE];
+  protected static String[] stringStack = new String[STACK_SIZE];
+  protected static boolean[] booleanStack = new boolean[STACK_SIZE];
+  protected static VMValue[] objectStack = new VMValue[STACK_SIZE];
+  
+  protected static VMFunctionCall[] callStack = new VMFunctionCall[STACK_SIZE];
+  protected static int stackPointer = -1, callStackPointer = -1;
+  protected static VMFunctionCall currentCall = new VMFunctionCall(0, 0);
+  protected static VMCommand[] commands = new VMCommand[COMMANDS_SIZE];
+  protected static JFrame frame;
+  protected static boolean usesWindow = false, usesConsole = false;
   
   public static int currentCommand = -1;
   
-  public enum ValueType {UNDEFINED, BOOLEAN, I64, STRING, OBJECT};
+  public enum ValueType {UNDEFINED, I64, F64, STRING, BOOLEAN, OBJECT};
   
   public static void append(VMCommand command) {
     currentCommand++;
@@ -55,7 +59,8 @@ public class VMBase extends Base{
     if(log) printChapter("Bytecode execution");
     currentCommand = 0;
     while(true) {
-      if(showCommands) System.out.println(commands[currentCommand].toString());
+      if(showCommands) System.out.println(currentCommand + ": "
+          + commands[currentCommand].toString());
 
       try {
         commands[currentCommand].execute();
@@ -70,17 +75,20 @@ public class VMBase extends Base{
             case UNDEFINED:
               stack += "- ";
               break;
-            case BOOLEAN:
-              stack += booleanStack[index] ? "true " : "false ";
-              break;
             case I64:
               stack += i64Stack[index] + " ";
+              break;
+            case F64:
+              stack += f64Stack[index] + " ";
               break;
             case STRING:
               stack += "\"" + stringStack[index] + "\" ";
               break;
+            case BOOLEAN:
+              stack += booleanStack[index] ? "true " : "false ";
+              break;
             case OBJECT:
-              stack += objectStack[index].type.toString() + " ";
+              stack += objectStack[index].toString() + " ";
               break;
           }
         System.out.println("Stack: " + stack);

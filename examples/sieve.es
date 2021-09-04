@@ -1,6 +1,6 @@
 Int max = 100;
-List<Int> values = [];
-for(Int i = 2 ..= max) {
+List<Int> values = [2];
+for(Int i = 3 ..= max) {
 	Int limit = floor(sqrt(i));
 	for(Int j: values) {
 		if(j > limit) {
@@ -10,4 +10,6 @@ for(Int i = 2 ..= max) {
 		if(i % j == 0) break;
 	}
 }
-for(Int i: values) print(", \(i)");
+String text = "";
+for(Int i: values) text = text + ", \(i)";
+println(text);

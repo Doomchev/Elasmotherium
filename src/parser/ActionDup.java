@@ -11,7 +11,7 @@ public class ActionDup extends Action {
   }
 
   @Override
-  public ActionDup create(String params) throws ElException {
+  public Action create(String params) throws ElException {
     return new ActionDup(EntityStack.all.get(ID.get(params.trim())));
   }
   

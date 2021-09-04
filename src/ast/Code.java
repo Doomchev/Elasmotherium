@@ -80,6 +80,11 @@ public class Code extends Entity {
     entity.moveToCode(this);
   }
 
+  public static Code create() {
+    allocate();
+    return new Code();
+  }
+
   @Override
   public void moveToFunction(Function function) {
     function.setCode(this);

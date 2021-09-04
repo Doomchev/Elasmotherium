@@ -1,13 +1,30 @@
+2021.09.04 (version 0.27)
+  + Standard library folder system.
+  + AST: Class parameters.
+  + TPE: Block variables.
+  + TPC: Break command.
+  + VM: Support of 64-bit floating point values (double).
+  + VM: Iterator and List objects.
+  + VM: Sqrt, Floor, Mod, AddToList, ListCreate, ListToIterator functions.
+  + VM: Converter from F64 to I64.
+  * AST: Fixed list entity.
+  * TPE: Label system for blocks is rewritten to support use of parent block labels.
+  * TPE: AppendCommand refactoring.
+  * PE: Command for creating block variable (CBV).
+  * TPE: Fixed method calling with parameters.
+  * VM: Object stack now contains VMValues.
+  * VM: VM package is split to several subpackages.
+
 2021.08.30 (version 0.26)
-  + PE: Block type setting command.
   + AST: New link resolution system into classes or new type objects.
-  + ProC: Separated processor functions for if and if with else.
+  + PE: Block type setting command.
+  + TPC: Separated processor functions for if and if with else.
   * PE: Merged types with links.
 
 2021.08.27 (version 0.25)
   + Fibonacci numbers example.
-  + ProC: For-until block.
-  * PS: Block fields are now start with $.
+  + TPC: For-until block.
+  * TPE: Block fields are now start with $.
 
 2021.08.25 (version 0.24.2)
   * Massive class encapsulation.
@@ -21,49 +38,49 @@
   * Fixed module import system.
 
 2021.08.24 (version 0.24)
-  + PS: Constructor this value processing.
-  + PS: Convert, getField commands.
-  + PS: TypeFunction - processor command to add vm command depending on type.
-  + PS: Object parameter and setObject command.
+  + TPE: Constructor this value processing.
+  + TPE: Convert, getField commands.
+  + TPE: TypeFunction - processor command to add vm command depending on type.
+  + TPE: Object parameter and setObject command.
   + VM: ThisFieldEquate, ThisFieldIncrement, ThisFieldPush
-  * PS: Parent parameter is renamed to param.
+  * TPE: Parent parameter is renamed to param.
   * VM: Parent class for field commands.
-  - PS: Automatic conversion system.
-  - PS: Return type for processor functions.
-  - PS: GetFromScope, ResolveAll, Switch commands;
+  - TPE: Automatic conversion system.
+  - TPE: Return type for processor functions.
+  - TPE: GetFromScope, ResolveAll, Switch commands;
   - VM: NewMethodCall, NewThis, ReturnThis
 
 2021.08.16 (version 0.23)
-  + PS: Return type for processor functions, new type conversion system.
-  * PS: Function call parameter changed to ClassEntity and renamed to targetClass.
+  + TPE: Return type for processor functions, new type conversion system.
+  * TPE: Function call parameter changed to ClassEntity and renamed to targetClass.
   * VM: Fixed function call system.
-  - PS: Convert command.
+  - TPE: Convert command.
 
 2021.08.16 (version 0.22)
-  + PS: Class and ID as function call parameters.
-  + PS: Labels system.
-  + PS: Stop and Process processor command.
+  + TPE: Class and ID as function call parameters.
+  + TPE: Labels system.
+  + TPE: Stop and Process processor command.
   + Debug log sections highlighing.
   * AST: Function call now has separate function and functionID fields.
   * VM: Allocated stack values are now undefined.
   * VM: Changed command link system to indexed system.
 
 2021.08.10 (version 0.21)
-  + New processing system (PS)
-  + New processing system code syntax (ProC)
-	+ PS: Scope stack system.
   + AST: Sections of Entity and subclasses separated by comments.
-  + PS: AppendCommand, Call, GetFromScope, ResolveAll, Switch, Convert processor commands.
-  + PS: CallParameter, Parent, This, VariableValue processor parameters.
+  + TPE: New AST processing engine
+	+ TPE: Scope stack system.
+  + TPE: AppendCommand, Call, GetFromScope, ResolveAll, Switch, Convert processor commands.
+  + TPE: CallParameter, Parent, This, VariableValue processor parameters.
+  + TPC: New AST processing engine code syntax
   * New file reading system.
   * PE: Values and their methods are disjointed from Entity and moved to VM package.
   - AST: ID constants.
 
 2021.08.05 (version 0.20)
-	* PE: Variable, field and parameter indexation system.
+	* TPE: Variable, field and parameter indexation system.
 	
 2021.08.02 (version 0.19.2)
-	* PE: Commands creating system.
+	* TPE: Commands creating system.
 	
 2021.07.26 (version 0.19.1)
 	+ PE: Hardcoded basic functions priority.
@@ -144,15 +161,15 @@
   * PE: new stack-based parser
   * PE: new abstract syntax tree structure
   * PC: new parsing language
-  * SPE: new syntax tree processing engine
+  * TPE: new syntax tree processing engine
   * TEE: new type inference engine
   * New file extensions
   
 2019.03.25 (version 0.10)
   + PC: abstract methods
   + PC: native classes and functions (will be skipped during export)
-  + SPE: generic subtypes
-  * SPE: native class replacement
+  + TPE: generic subtypes
+  * TPE: native class replacement
   * PC: generic subtypes
   
 2019.03.13 (version 0.9)
@@ -164,7 +181,7 @@
 
 2019.02.13 (version 0.8)
   + Type inference engine (TEE)
-  + Structure processing engine (SPE)
+  + Abstract syntax tree processing engine (TPE)
   + Java export code (JEC)
   + PC: "global" keyword
 
@@ -210,14 +227,12 @@
 
 2018.11.07 (version 0.1)
   + Parsing engine (PE)
-  + Parsing code (PC)
+  + Parser code (PC)
   + Abstract syntax tree (AST)
   + Exporting engine (EE)
   + Javascript export code (JSEC)
 
 To do:  
-  + abstract get fields, methods and constructors
-  + type conversion
   + ranges
   + $[] syntax
   + string slices

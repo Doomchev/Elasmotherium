@@ -1,13 +1,12 @@
 package processor;
 
+import ast.Block;
+import ast.ClassEntity;
 import ast.Entity;
 import base.Base;
-import base.ElException;
 
 public class ProBase extends Base {
-  static Entity current, object, param;
-
-  public static int getIndex() throws ElException {
-    return current.getIndex();
-  }
+  protected static Entity current, object, param, currentField;
+  protected static ClassEntity subtype = null;
+  protected static Block currentBlock = null;
 }

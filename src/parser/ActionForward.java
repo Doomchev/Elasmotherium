@@ -4,7 +4,7 @@ import base.ElException;
 
 class ActionForward extends Action {
   @Override
-  public ActionForward create(String params) throws ElException {
+  public Action create(String params) throws ElException {
     return new ActionForward();
   }
   

@@ -38,6 +38,8 @@ public class Link extends Value {
     Entity entity = getFromScope(name);
     if(entity == null)
       throw new ElException(name + " is not found.");
+    ClassParameter parameter = entity.toClassParameter();
+    if(parameter != null) return parameter;
     ClassEntity classEntity = entity.toClass();
     if(subtypes.isEmpty()) return classEntity;
     Type type = new Type(classEntity);

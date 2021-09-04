@@ -19,15 +19,15 @@ class Rectangle<AnyFloat SystemFloat> extends Point<SystemFloat> {
 		height = value;
 	}
 	
-	SystemFloat left -> _x - halfWidth;
-	left(SystemFloat value) _x = value + halfWidth;
+	SystemFloat left -> x - halfWidth;
+	left(SystemFloat value) x = value + halfWidth;
 	
-	SystemFloat right -> _x + halfWidth;
-	right(SystemFloat value) _x = value - halfWidth;
+	SystemFloat right -> x + halfWidth;
+	right(SystemFloat value) x = value - halfWidth;
 	
-	SystemFloat top -> _y - halfHeight;
-	top(SystemFloat value) _y = value + halfHeight;
+	SystemFloat top -> y - halfHeight;
+	top(SystemFloat value) y = value + halfHeight;
 	
-	SystemFloat bottom -> _y + halfHeight;
-	bottom(SystemFloat value) _y = value - halfHeight;
+	SystemFloat bottom -> y + halfHeight;
+	bottom(SystemFloat value) y = value - halfHeight;
 }

@@ -1,7 +1,6 @@
 package parser;
 
 import base.ElException;
-import static parser.Rules.stringParam;
 
 public class ActionAdd extends Action {
   private final String string;
@@ -11,8 +10,8 @@ public class ActionAdd extends Action {
   }
 
   @Override
-  public ActionAdd create(String params) throws ElException {
-    return new ActionAdd(stringParam(params));
+  public Action create(String params) throws ElException {
+    return new ActionAdd(parser.Rules.stringParam(params));
   }
   
   @Override

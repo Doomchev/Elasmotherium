@@ -12,12 +12,12 @@ class Color extends I32 {
 			red = fromHex(code[0]) * 17;
 			green = fromHex(code[1]) * 17;
 			blue = fromHex(code[2]) * 17;
-			alpha = size >= 4 ? fromHex(code[3]) * 17 : 255;
+			alpha = if(size >= 4 then fromHex(code[3]) * 17 else 255);
 		} else {
 			red = fromHex(code[from 0 until 2]);
 			green = fromHex(code[from 2 until 4]);
 			blue = fromHex(code[from 4 until 6]);
-			alpha = size >= 8 ? fromHex(code[from 6 until 8]) : 255;
+			alpha = if(size >= 8 then fromHex(code[from 6 until 8]) else 255);
 		}
 	}
 	

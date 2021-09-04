@@ -266,7 +266,7 @@ forIterator: CREATE(code) statement() SET(iterator, code) forEnd
 
 forIndex: SET(item, variable) id() CREATE(link) id() CREATE(variable) MOVE(link, variable) SET(index, variable) EXPECT("]") EXPECT(":") forCollection
 
-forCollection: SET(item, variable) formula() SET(collection, formula) SET(for_collection) forEnd
+forCollection: SET(item, variable) formula() SET(collection, formula) CBV(iterator) SET(for_collection) forEnd
 
 forEnd: EXPECT(")") code() SET(code, code) MOVE(block, code) RETURN
 
@@ -613,7 +613,7 @@ class: id() CREATE(class) {
   other: classExtends
 }
 
-classParameter: id() CREATE(variable) MOVE(variable, class) {
+classParameter: id() CREATE(classParameter) MOVE(classParameter, class) {
   ",": >> classParameter
   ">": >> classExtends
   other: syntaxError
@@ -647,17 +647,17 @@ classBody: {
         // Type var = value
         ",;=": classFieldValue
         // Type method(
-        "(": >> CREATE(method) MOVE(link, function) methodParameter
+        "(": >> CREATE(function) MOVE(link, function) methodParameter
         other: syntaxError
       }
       // Type0<Type1> var
 			// Type0<Type1> method
       "<": >> type() id() {
-				"(": >> CREATE(method) methodParameter
+				"(": >> CREATE(function) methodParameter
 				other: classFieldValue
 			}
       // method(
-      "(": >> CREATE(method) methodParameter
+      "(": >> CREATE(function) methodParameter
       other: syntaxError
     }
   }

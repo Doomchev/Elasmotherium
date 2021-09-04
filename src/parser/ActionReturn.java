@@ -4,7 +4,7 @@ import base.ElException;
 
 class ActionReturn extends Action {
   @Override
-  public ActionReturn create(String params) throws ElException {
+  public Action create(String params) throws ElException {
     return new ActionReturn();
   }
   

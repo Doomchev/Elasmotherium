@@ -20,6 +20,6 @@ class Convert extends ProCommand {
 
   @Override
   void execute() throws ElException {
-    convert(from.getType(), to.getType());
+    convert(from.getNativeClass(), to.getNativeClass());
   }
 }

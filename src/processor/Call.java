@@ -3,7 +3,6 @@ package processor;
 import ast.Function;
 import ast.FunctionCall;
 import base.ElException;
-import vm.CallFunction;
 
 public class Call extends ProCommand {
   static final Call instance = new Call();
@@ -21,7 +20,8 @@ public class Call extends ProCommand {
       if(call == null) throw new ElException("Cannot call ", current);
       call.resolveAll();
     } else {
-      append(new CallFunction(function));
+      if(log) println("Resolving function call " + toString());
+      function.append();
     }
   }
 }

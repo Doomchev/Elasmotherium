@@ -12,7 +12,7 @@ dot {
   // object = v0.getObject;
   v0.getObject;
   // this = getField(object, v1);
-  getField;
+  getField(v0);
   // call(this);
   call;
 }
@@ -146,6 +146,13 @@ multiplication.resolve {
   convert(Int, param);
 }
 
+mod.resolve {
+	v0.resolve(Int);
+	v1.resolve(Int);
+  [Int]Mod;
+  convert(Int, param);
+}
+
 equal.resolve {
   v0.resolve(Int);
   v1.resolve(Int);
@@ -178,25 +185,40 @@ more.resolve {
 
 if {
   $condition.resolve(Bool);
-  IfFalseGoTo(#end);
+  IfFalseGoTo(#endIf);
   process($code);
-  #end:
+  #endIf:
 }
 
 if_else {
   $condition.resolve(Bool);
   IfFalseGoTo(#else);
   process($code);
-  GoTo(#end);
+  GoTo(#endIf);
   #else:
   process($else);
-  #end:
+  #endIf:
 }
 
 do {
   #start:
   process($code);
   GoTo(#start);
+  #end:
+}
+
+for_to {
+  process($variable);
+  $variable.equate($from);
+  #start:
+  $variable.resolve(Int);
+  $to.resolve($variable);
+  [Int]IsLessOrEqual;
+  IfFalseGoTo(#end);
+  process($code);
+  $variable.increment;
+  GoTo(#start);
+  #end:
 }
 
 for_until {
@@ -211,4 +233,25 @@ for_until {
   $variable.increment;
   GoTo(#start);
   #end:
+}
+
+for_collection {
+  process($item);
+  $collection.resolve(Object);
+  ListToIterator;
+  ObjectVarEquate(@iterator);
+  #start:
+  @iterator.resolve(Object);
+  IteratorHasNext;
+  IfFalseGoTo(#end);
+  @iterator.resolve(Object);
+  [$item]IteratorNext;
+  [$item]VarEquate($item);
+  process($code);
+  GoTo(#start);
+  #end:
+}
+
+break {
+  GoTo(#end);
 }

@@ -15,8 +15,8 @@ public class Variable extends NamedEntity {
   
   // creating
 
-  public Variable(ID id) {
-    super(id);
+  public Variable(ID name) {
+    super(name);
   }
 
   public Variable(ClassEntity type) {
@@ -27,6 +27,11 @@ public class Variable extends NamedEntity {
   public Variable(ID id, boolean isField) {
     super(id);
     this.isField = isField;
+  }
+
+  public Variable(ID name, ClassEntity type) {
+    super(name);
+    this.type = type;
   }
   
   // properties
@@ -88,13 +93,6 @@ public class Variable extends NamedEntity {
   
   public void resolveType() throws ElException {
     type = type.resolve();
-  }
-
-  // type conversion
-  
-  @Override
-  public Variable toVariable() {
-    return this;
   }
   
   // moving functions
