@@ -3,19 +3,22 @@ package processor;
 import base.ElException;
 
 public class SetObject extends ProCommand {
-  static final SetObject instance = new SetObject();
+  static final SetObject instance = new SetObject(null);
+  
+  private final ProParameter parameter;
 
-  private SetObject() {
+  private SetObject(ProParameter value) {
+    this.parameter = value;
   }
 
   @Override
   ProCommand create(String param) throws ElException {
-    return new SetObject();
+    return new SetObject(ProParameter.get(param));
   }
 
   @Override
   void execute() throws ElException {
-    object = current;
-    if(log) log("Set object to " + object);
+    object = parameter.getValue();
+    if(log) log("Set object to " + parameter);
   }
 }

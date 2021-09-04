@@ -50,11 +50,14 @@ public class FunctionCall extends Value {
     return name;
   }
   
-  @Override
   public Entity getParameter(int index) throws ElException {
-    if(index >= parameters.size()) throw new ElException("Parameter number"
-        + index + " is not found.");
+    if(index >= parameters.size())
+      throw new ElException("Parameter number " + index + " is not found.");
     return parameters.get(index);
+  }
+
+  public void setParameter(int index, Entity value) {
+    parameters.set(index, value);
   }
   
   @Override

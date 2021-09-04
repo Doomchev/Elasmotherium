@@ -1,6 +1,7 @@
 package processor;
 
 import ast.Entity;
+import ast.FunctionCall;
 import base.ElException;
 
 public class ProCallParameter extends ProParameter {
@@ -17,7 +18,7 @@ public class ProCallParameter extends ProParameter {
 
   @Override
   public Entity getValue() throws ElException {
-    return ProBase.current.getParameter(index);
+    return ((FunctionCall) ProBase.current).getParameter(index);
   }
 
   @Override

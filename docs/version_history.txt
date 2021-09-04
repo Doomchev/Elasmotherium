@@ -1,3 +1,6 @@
+2021.09.04 (version 0.27.2)
+  * TPE, TPC: Added parameter to call, setObject and setField processor functions.
+
 2021.09.04 (version 0.27.1)
   * AST: Type conversion methods are changed to type casting with error handling.
 

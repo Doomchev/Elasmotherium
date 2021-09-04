@@ -20,7 +20,8 @@ public class GetField extends ProCommand {
 
   @Override
   void execute() throws ElException {
-    Entity parameter1 = current.getParameter(1);
+    FunctionCall call = ((FunctionCall) current);
+    Entity parameter1 = call.getParameter(1);
     ID id = parameter1.getName();
     ClassEntity classEntity = (ClassEntity) object.getType();
     Entity field = classEntity.getField(id);
@@ -28,14 +29,13 @@ public class GetField extends ProCommand {
     if(field == null)
       throw new ElException(classEntity + "." + id + " not found.");
     try {
-      FunctionCall call = (FunctionCall) parameter1;
+      call = (FunctionCall) parameter1;
       if(log) println("Set call function to " + field + ".");
       call.setFunction(field);
-      current = call;
     } catch(ClassCastException ex) {
       if(log) println("Set current object to " + field + " (as field of "
           + object + ").");
-      current = field;
+      call.setParameter(1, field);
     }
   }  
 }

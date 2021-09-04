@@ -9,45 +9,36 @@ return {
 }
 
 dot {
-  // object = v0.getObject;
   v0.getObject;
-  // this = getField(object, v1);
-  getField(v0);
-  // call(this);
-  call;
+  getField(v1);
+  call(v1);
 }
 
 function {
-  call;
+  call(this);
 }
 
 // get object
 
 variable.getObject {
   [this]VarPush;
-  // object = this;
-  setObject;
+  setObject(this);
 }
 
 field.getObject {
   [this]ThisFieldPush;
-  // object = this;
-  setObject;
+  setObject(this);
 }
 
 function.getObject {
-  // call(this);
-  call;
-  // object = this;
-  setObject;
+  call(this);
+  setObject(this);
 }
 
 dot.getObject {
-  // object = v0.getObject;
   v0.getObject;
-  // this = getField(object, v1);
-  getField;
-  this.getObject;
+  getField(v1);
+  v1.getObject;
 }
 
 // equate
@@ -67,10 +58,8 @@ field.equate {
 }
 
 dot.equate {
-  // object = v0.getObject;
   v0.getObject;
-  // this = getField(object, v1);
-  getField;
+  getField(v1);
   param.resolve(this);
   [this]FieldEquate;
 }
@@ -90,11 +79,9 @@ field.increment {
 }
 
 dot.increment {
-  // object = v0.getObject;
   v0.getObject;
-  // this = getField(object, v1);
-  getField;
-  [this]FieldIncrement;
+  getField(v1);
+  [v1]FieldIncrement;
 }
 
 // resolution
@@ -105,11 +92,9 @@ variable.resolve {
 }
 
 dot.resolve {
-  // object = v0.getObject;
   v0.getObject;
-  // this = getField(object, v1);
-  getField;
-  this.resolve(param);
+  getField(v1);
+  v1.resolve(param);
 }
 
 field.resolve {
@@ -118,7 +103,7 @@ field.resolve {
 }
 
 function.resolve {
-  call;
+  call(this);
   convert(this, param);
 }
 

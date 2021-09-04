@@ -31,10 +31,6 @@ public abstract class Entity extends Base {
     return this;
   }
   
-  public Entity getParameter(int index) throws ElException {
-    throw new ElException("Cannot get parameter from", this);
-  }
-  
   public ID getObject() throws ElException {
     throw new ElException("Cannot get object from", this);
   }

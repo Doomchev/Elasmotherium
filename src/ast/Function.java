@@ -177,7 +177,6 @@ public class Function extends NamedEntity  {
     return isConstructor ? parentClass : returnType.getType();
   }
   
-  @Override
   public Entity getParameter(int index) throws ElException {
     return parameters.get(index);
   }
