@@ -14,7 +14,6 @@ public class BlockLabelInitialize extends ProCommand {
   @Override
   public void execute() throws ElException {
     currentBlock.createLabel(name);
-    if(log) log("set label " + name);
+    if(log) log("initialize label " + name);
   }
-
 }

@@ -47,6 +47,10 @@ public abstract class ProParameter extends ProBase {
   public Entity getValue() throws ElException {
     throw new ElException("Cannot get value from", this);
   }
+
+  public void setValue(Entity value) throws ElException {
+    throw new ElException("Cannot set value of", this);
+  }
   
   public ID getID() throws ElException {
     throw new ElException("Cannot get id from", this);

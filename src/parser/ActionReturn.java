@@ -10,8 +10,11 @@ class ActionReturn extends Action {
   
   @Override
   public void execute() throws ElException {
-    if(returnStack.isEmpty()) throw new ElException(this
-        , "RETURN without function call");
+    if(returnStack.isEmpty()) {
+      currentAction = null;
+      return;
+    }
+    
     ActionSub sub = returnStack.pop();
     if(log) {
       log("RETURN to " + sub.parentSub.name);

@@ -137,7 +137,7 @@ public class Function extends NamedEntity  {
   // allocation
 
   public void appendAllocation() {
-    appendLog(new vm.Allocate(allocation));
+    if(allocation > 0) appendLog(new vm.Allocate(allocation));
   }
 
   public void setAllocation() {
@@ -219,7 +219,7 @@ public class Function extends NamedEntity  {
   }
 
   public void resolve(FunctionCall call) throws ElException {
-    if(log) println("Resolving function call " + toString());
+    if(log) println(subIndent + "Resolving function call " + toString());
     
     if(isConstructor) append(new vm.object.ObjectCreate(parentClass));
     

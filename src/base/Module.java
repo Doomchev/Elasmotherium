@@ -14,8 +14,9 @@ import parser.Rules;
 import ast.Function;
 import ast.ID;
 import vm.*;
-import vm.i64.I64Add;
 import vm.i64.I64AddToList;
+import vm.variables.ScreenHeight;
+import vm.variables.ScreenWidth;
 
 public class Module extends ParserBase {
   public static final ID id = ID.get("module");
@@ -64,6 +65,9 @@ public class Module extends ParserBase {
     
     newFunc(new Say());
     newFunc(new Exit());
+    
+    newFunc(new ScreenHeight());
+    newFunc(new ScreenWidth());
     
     newFunc("List", "add", new I64AddToList());
     

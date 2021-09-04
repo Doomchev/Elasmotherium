@@ -1,2 +1,2 @@
-newName String.size, length;
-newName Array.size, length;
+rename String.size, length;
+rename Array.size, length;

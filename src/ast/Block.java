@@ -58,7 +58,7 @@ public class Block extends Entity {
   }
 
   public void applyLabels() throws ElException {
-    for(Label label: labels)
+    for(Label label: labels) {
       for(VMCommand command: label.commands) {
         ID name = label.name;
         Block block = this;
@@ -71,7 +71,7 @@ public class Block extends Entity {
         }
         command.setPosition(label.position);
       }
-        
+    }
   }
   
   // variables

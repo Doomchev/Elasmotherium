@@ -8,5 +8,5 @@ import base.Base;
 public class ProBase extends Base {
   protected static Entity current, object, param, currentField;
   protected static ClassEntity subtype = null;
-  protected static Block currentBlock = null;
+  protected static Block currentBlock;
 }

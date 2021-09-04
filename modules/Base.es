@@ -21,13 +21,10 @@ class Char;
 class String {
 	Int size();
 	Char at(Int index);
-}
-
-print(String message);
-println(String message) print("\(message)\n");
+}*/
 
 Int screenWidth();
-Int screenHeight();*/
+Int screenHeight();
 
 class List<ElementType> {
 	Int size();

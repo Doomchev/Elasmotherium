@@ -25,7 +25,8 @@ alias Float, F64;
 enum Question {no, yes};
 
 print(String message);
-Int askInteger(String message);
+println(String message) print("\(message)\n");
+Int.ask(String message);
 tell(String message);
 
 exit() {}

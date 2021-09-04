@@ -1,242 +1,247 @@
+2021.09.04 (version 0.28)
+  * Parser, Parser code: Switch symbol and switch id actions are merged.
+  * Syntax: "do" is renamed to "repeat".
+  * Syntax: "this" in class body for constructor is renamed to "create";
+  * Syntax: "this." in constructor parameters is renamed to "field.";
+
 2021.09.04 (version 0.27.2)
-  * TPE, TPC: Added parameter to call, setObject and setField processor functions.
+  * Processor, Processor code: Added parameter to call, setObject and setField processor functions.
 
 2021.09.04 (version 0.27.1)
-  * AST: Type conversion methods are changed to type casting with error handling.
+  * Syntax tree: Type conversion methods are changed to type casting with error handling.
 
 2021.09.04 (version 0.27)
   + Standard library folder system.
-  + AST: Class parameters.
-  + TPE: Block variables.
-  + TPC: Break command.
-  + VM: Support of 64-bit floating point values (double).
-  + VM: Iterator and List objects.
-  + VM: Sqrt, Floor, Mod, AddToList, ListCreate, ListToIterator functions.
-  + VM: Converter from F64 to I64.
-  * AST: Fixed list entity.
-  * TPE: Label system for blocks is rewritten to support use of parent block labels.
-  * TPE: AppendCommand refactoring.
-  * PE: Command for creating block variable (CBV).
-  * TPE: Fixed method calling with parameters.
-  * VM: Object stack now contains VMValues.
-  * VM: VM package is split to several subpackages.
+  + Syntax tree: Class parameters.
+  + Processor: Block variables.
+  + Processor code: Break command.
+  + Virtual machine: Support of 64-bit floating point values (double).
+  + Virtual machine: Iterator and List objects.
+  + Virtual machine: Sqrt, Floor, Mod, AddToList, ListCreate, ListToIterator functions.
+  + Virtual machine: Converter from F64 to I64.
+  * Syntax tree: Fixed list entity.
+  * Processor: Label system for blocks is rewritten to support use of parent block labels.
+  * Processor: AppendCommand refactoring.
+  * Parser: Command for creating block variable (CBV).
+  * Processor: Fixed method calling with parameters.
+  * Virtual machine: Object stack now contains VMValues.
+  * Virtual machine: VM package is split to several subpackages.
 
 2021.08.30 (version 0.26)
-  + AST: New link resolution system into classes or new type objects.
-  + PE: Block type setting command.
-  + TPC: Separated processor functions for if and if with else.
-  * PE: Merged types with links.
+  + Syntax tree: New link resolution system into classes or new type objects.
+  + Parser: Block type setting command.
+  + Processor code: Separated processor functions for if and if with else.
+  * Parser: Merged types with links.
 
 2021.08.27 (version 0.25)
   + Fibonacci numbers example.
-  + TPC: For-until block.
-  * TPE: Block fields are now start with $.
+  + Processor code: For-until block.
+  * Processor: Block fields are now start with $.
 
 2021.08.25 (version 0.24.2)
   * Massive class encapsulation.
   * All fields are checked and useless fields are removed.
-  * AST: EntityStack is moved to parser package.
+  * Syntax tree: EntityStack is moved to parser package.
   
 2021.08.25 (version 0.24.1)
-  + VM: Attaching vm commands to existing functions instead of creating new.
+  + Virtual machine: Attaching vm commands to existing functions instead of creating new.
   + Base.es import by default.
-  + VM: ShowCommands parameter for VM code execution.
+  + Virtual machine: ShowCommands parameter for VM code execution.
   * Fixed module import system.
 
 2021.08.24 (version 0.24)
-  + TPE: Constructor this value processing.
-  + TPE: Convert, getField commands.
-  + TPE: TypeFunction - processor command to add vm command depending on type.
-  + TPE: Object parameter and setObject command.
-  + VM: ThisFieldEquate, ThisFieldIncrement, ThisFieldPush
-  * TPE: Parent parameter is renamed to param.
-  * VM: Parent class for field commands.
-  - TPE: Automatic conversion system.
-  - TPE: Return type for processor functions.
-  - TPE: GetFromScope, ResolveAll, Switch commands;
-  - VM: NewMethodCall, NewThis, ReturnThis
+  + Processor: Constructor this value processing.
+  + Processor: Convert, getField commands.
+  + Processor: TypeFunction - processor command to add vm command depending on type.
+  + Processor: Object parameter and setObject command.
+  + Virtual machine: ThisFieldEquate, ThisFieldIncrement, ThisFieldPush
+  * Processor: Parent parameter is renamed to param.
+  * Virtual machine: Parent class for field commands.
+  - Processor: Automatic conversion system.
+  - Processor: Return type for processor functions.
+  - Processor: GetFromScope, ResolveAll, Switch commands;
+  - Virtual machine: NewMethodCall, NewThis, ReturnThis
 
 2021.08.16 (version 0.23)
-  + TPE: Return type for processor functions, new type conversion system.
-  * TPE: Function call parameter changed to ClassEntity and renamed to targetClass.
-  * VM: Fixed function call system.
-  - TPE: Convert command.
+  + Processor: Return type for processor functions, new type conversion system.
+  * Processor: Function call parameter changed to ClassEntity and renamed to targetClass.
+  * Virtual machine: Fixed function call system.
+  - Processor: Convert command.
 
 2021.08.16 (version 0.22)
-  + TPE: Class and ID as function call parameters.
-  + TPE: Labels system.
-  + TPE: Stop and Process processor command.
+  + Processor: Class and ID as function call parameters.
+  + Processor: Labels system.
+  + Processor: Stop and Process processor command.
   + Debug log sections highlighing.
-  * AST: Function call now has separate function and functionID fields.
-  * VM: Allocated stack values are now undefined.
-  * VM: Changed command link system to indexed system.
+  * Syntax tree: Function call now has separate function and functionID fields.
+  * Virtual machine: Allocated stack values are now undefined.
+  * Virtual machine: Changed command link system to indexed system.
 
 2021.08.10 (version 0.21)
-  + AST: Sections of Entity and subclasses separated by comments.
-  + TPE: New AST processing engine
-	+ TPE: Scope stack system.
-  + TPE: AppendCommand, Call, GetFromScope, ResolveAll, Switch, Convert processor commands.
-  + TPE: CallParameter, Parent, This, VariableValue processor parameters.
-  + TPC: New AST processing engine code syntax
+  + Syntax tree: Sections of Entity and subclasses separated by comments.
+  + Processor: New Syntax tree processing engine
+	+ Processor: Scope stack system.
+  + Processor: AppendCommand, Call, GetFromScope, ResolveAll, Switch, Convert processor commands.
+  + Processor: CallParameter, Parent, This, VariableValue processor parameters.
+  + Processor code: New Syntax tree processing engine code syntax
   * New file reading system.
-  * PE: Values and their methods are disjointed from Entity and moved to VM package.
-  - AST: ID constants.
+  * Parser: Values and their methods are disjointed from Entity and moved to VM package.
+  - Syntax tree: ID constants.
 
 2021.08.05 (version 0.20)
-	* TPE: Variable, field and parameter indexation system.
+	* Processor: Variable, field and parameter indexation system.
 	
 2021.08.02 (version 0.19.2)
-	* TPE: Commands creating system.
+	* Processor: Commands creating system.
 	
 2021.07.26 (version 0.19.1)
-	+ PE: Hardcoded basic functions priority.
-	* PE: Formula resolving is restored.
+	+ Parser: Hardcoded basic functions priority.
+	* Parser: Formula resolving is restored.
 
 2021.07.20 (version 0.19)
-  + PE: multiple symbols in symbolswitch token.
-  + PE: multiple tokens for symbolswitch.
-  + PE: default symbolswitch entries.
+  + Parser: multiple symbols in symbolswitch token.
+  + Parser: multiple tokens for symbolswitch.
+  + Parser: default symbolswitch entries.
   * Error handling system.
-  * PE: spaces in error messages.
-  * PE: spaces inside brackets.
-  * PE: : and + in tokens.
-  * PC: done refactoring.
+  * Parser: spaces in error messages.
+  * Parser: spaces inside brackets.
+  * Parser: : and + in tokens.
+  * Parser code: done refactoring.
   * Restructurized file / directory system.
   - Export system.
   - Old links resolving system.
   - Old bytecode generation system.
 
 2020.10.24 (version 0.18)
-  + LLCG: Class methods, increment.
-  + VM: I64Increment, I64ThisIncrement, VMNewMethodCall commands.
-  + AST: Function parameter's link to function.
-  * AST: Printing.
+  + Code generator: Class methods, increment.
+  + Virtual machine: I64Increment, I64ThisIncrement, VMNewMethodCall commands.
+  + Syntax tree: Function parameter's link to function.
+  * Syntax tree: Printing.
 
 2020.10.17 (version 0.17.1)
-  + AST: Function list of code object.
-  + AST: Cascading variables lists.
-  - AST: Scopes.
-  - AST: Flags list and FlagEntity class.
+  + Syntax tree: Function list of code object.
+  + Syntax tree: Cascading variables lists.
+  - Syntax tree: Scopes.
+  - Syntax tree: Flags list and FlagEntity class.
 
 2020.10.11 (version 0.17)
-  + LLCG: Constructors.
-  * AST: Rewrote equation byte code generation mechanism.
-  * VM: Changed command execution mechanism.
+  + Code generator: Constructors.
+  * Syntax tree: Rewrote equation byte code generation mechanism.
+  * Virtual machine: Changed command execution mechanism.
   * Replaced error function execution with throwing exceptions.
 
 2020.09.28 (version 0.16)
-  + LLCG: New objects.
-  + VM: Object entity, new object command.
-  + VM: Field setting and retrieving commands.
-  * AST: Equation system.
+  + Code generator: New objects.
+  + Virtual machine: Object entity, new object command.
+  + Virtual machine: Field setting and retrieving commands.
+  * Syntax tree: Equation system.
 
 2020.09.28 (version 0.15.1)
-  * AST: Converted anonymous classes of native functions to standalone classes.
-  * AST: Moved "parser.structure" package to "ast" package.
+  * Syntax tree: Converted anonymous classes of native functions to standalone classes.
+  * Syntax tree: Moved "parser.structure" package to "ast" package.
 
 2020.09.14 (version 0.15)
-  * VM: Converted several type stack pointers to one stack pointer.
+  * Virtual machine: Converted several type stack pointers to one stack pointer.
   
 2020.09.14 (version 0.14)
-  + LLCG: if ternary operator, function calling
-  + VM: FunctionCall object
-  + VM: Commands: I64Deallocate, I64StackPush, Call, NewFunctionCall, I64StackMoveReturnValue, Return
+  + Code generator: if ternary operator, function calling
+  + Virtual machine: FunctionCall object
+  + Virtual machine: Commands: I64Deallocate, I64StackPush, Call, NewFunctionCall, I64StackMoveReturnValue, Return
 
 2020.09.09 (version 0.13)
-  + AST: Numeric value types (I8, I16, I32, I64, F32, F64)
-  + AST: Function call return type and covertTo type
-  + Low-level code generation (LLCG):
-  + LLCG: do block, if block, main function, string sequence
-  + LLCG: Type conversion
-  + LLCG: Variable indexation and allocation quantity counting
-  + Virtual machine (VM) for low-level code with stacks, command adding function and goto linking support
-  + VM: Commands: I64Allocate, I64Push, I64Equate, I64StackPush, I64Add, StringPush, I64ToString, StringAdd, VMPrint, VMEnd
-      , VMRandom, VMInput, StringToI64, I64Less, IfFalseGoto, VMShowMessage, VMGoto, I64More
-  * LLCG: Native functions type inference
-  * AST: Converted scope entries hash map to list of entries
+  + Syntax tree: Numeric value types (I8, I16, I32, I64, F32, F64)
+  + Syntax tree: Function call return type and covertTo type
+  + Low-level code generator
+  + Code generator: do block, if block, main function, string sequence
+  + Code generator: Type conversion
+  + Code generator: Variable indexation and allocation quantity counting
+  + Virtual machine for low-level code with stacks, command adding function and goto linking support
+  + Virtual machine: Commands: I64Allocate, I64Push, I64Equate, I64StackPush, I64Add, StringPush, I64ToString, StringAdd, VMPrint, VMEnd, VMRandom, VMInput, StringToI64, I64Less, IfFalseGoto, VMShowMessage, VMGoto, I64More
+  * Code generator: Native functions type inference
+  * Syntax tree: Converted scope entries hash map to list of entries
   - Type inference
 
 2019.07.25 (version 0.12)
-  + PE: import keyword, modules and java binding support
-  + EE: user functions
-  * EE, JEC: proper use of semicolons
+  + Parser: import keyword, modules and java binding support
+  + Export: user functions
+  * Export, Java export: proper use of semicolons
 
 2019.06.17 (version 0.11)
-  + EE: postfixes for entity child and children
+  + Export: postfixes for entity child and children
   + ID system (instead of strings)
-  * PE: new stack-based parser
-  * PE: new abstract syntax tree structure
-  * PC: new parsing language
-  * TPE: new syntax tree processing engine
-  * TEE: new type inference engine
+  * Parser: new stack-based parser
+  * Parser: new abstract syntax tree structure
+  * Parser code: new parsing language
+  * Processor: new syntax tree processing engine
+  * Type inference: new type inference engine
   * New file extensions
   
 2019.03.25 (version 0.10)
-  + PC: abstract methods
-  + PC: native classes and functions (will be skipped during export)
-  + TPE: generic subtypes
-  * TPE: native class replacement
-  * PC: generic subtypes
+  + Parser code: abstract methods
+  + Parser code: native classes and functions (will be skipped during export)
+  + Processor: generic subtypes
+  * Processor: native class replacement
+  * Parser code: generic subtypes
   
 2019.03.13 (version 0.9)
-  + PC: generic subtypes
-  + PC, SPE, JEC: getters
-  + PC: // and /* */ comments
-  + PC: "extends" keyword
+  + Parser code: generic subtypes
+  + Parser code, Parser, Java export: getters
+  + Parser code: // and /* */ comments
+  + Parser code: "extends" keyword
   * Separate classes for field structure, function scope and class scope
 
 2019.02.13 (version 0.8)
-  + Type inference engine (TEE)
-  + Abstract syntax tree processing engine (TPE)
-  + Java export code (JEC)
-  + PC: "global" keyword
+  + Type inference engine
+  + Abstract syntax tree processing engine
+  + Java export
+  + Parser code: "global" keyword
 
 2019.01.05 (version 0.7)
-  + PE: parser code lines in error messages and parsing log
-  + PC: field and variable types
-  + PC: $ prefix
-  * PE, EE: error messages
-  * PE: parsing logging
-  ! PE: node resolving
+  + Parser: parser code lines in error messages and parsing log
+  + Parser code: field and variable types
+  + Parser code: $ prefix
+  * Parser, Export: error messages
+  * Parser: parsing logging
+  ! Parser: node resolving
 
 2018.12.02 (version 0.6)
-  + PE: INCLUDE command
+  + Parser: INCLUDE command
   
 2018.11.24 (version 0.5)
-  + PE: ADD command
-  + PC: value returns string if there is only one string in string sequence
-  + PC: default values and this in function definition parameters
-  + PC, JSEC: classes, objects, methods, constructors
-  + PC, JSEC: anonymous functions
-  + PC, JSEC: return
-  ! PE: // comments
+  + Parser: ADD command
+  + Parser code: value returns string if there is only one string in string sequence
+  + Parser code: default values and this in function definition parameters
+  + Parser code, JavaScript export: classes, objects, methods, constructors
+  + Parser code, JavaScript export: anonymous functions
+  + Parser code, JavaScript export: return
+  ! Parser: // comments
   
 2018.11.23 (version 0.4)
-  + PE, EE: // comments
-  + PC: multiple loops in one for operator
-  + JSEC: for loops
-  * EE, JSEC: new format of tokens (as escape sequences)
+  + Parser, Export: // comments
+  + Parser code: multiple loops in one for operator
+  + JavaScript export: for loops
+  * Export, JavaScript export: new format of tokens (as escape sequences)
 
 2018.11.22 (version 0.3)
-  + PE: expression parser (shutting-yard algorithm with ternary conditional operator)
-  + PC: ranges in for loop
-  + JSEC: other numeric and boolean operators
-  + JSEC: if-then-else clause
-  * PC: # changed to \
-  ! PC: arrays in expressions
-  ! PC: operators
-  ! PC: if-then-else clause
-  ! JSEC: function calls
+  + Parser: expression parser (shutting-yard algorithm with ternary conditional operator)
+  + Parser code: ranges in for loop
+  + JavaScript export: other numeric and boolean operators
+  + JavaScript export: if-then-else clause
+  * Parser code: # changed to \
+  ! Parser code: arrays in expressions
+  ! Parser code: operators
+  ! Parser code: if-then-else clause
+  ! JavaScript export: function calls
   
 2018.11.13 (version 0.2)
-  * PE, PC: fully rewritten
+  * Parser, Parser code: fully rewritten
 
 2018.11.07 (version 0.1)
-  + Parsing engine (PE)
-  + Parser code (PC)
-  + Abstract syntax tree (AST)
-  + Exporting engine (EE)
-  + Javascript export code (JSEC)
+  + Parsing engine
+  + Parser code
+  + Abstract syntax tree
+  + Exporting engine
+  + Javascript export code
 
 To do:  
   + ranges
@@ -244,7 +249,7 @@ To do:
   + string slices
 
 Possible improvements:
-  + SPE: function unpacking
-  + PE: change ActionGoTo actions to straight links
-  + PE: faster subs with no return value
-  + PE: faster inline subs
+  + Parser: function unpacking
+  + Parser: change ActionGoTo actions to straight links
+  + Parser: faster subs with no return value
+  + Parser: faster inline subs

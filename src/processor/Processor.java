@@ -13,8 +13,8 @@ import ast.FunctionCall;
 import ast.ID;
 import ast.Link;
 import base.ElException;
-import base.Module;
 import base.LinkedMap;
+import base.Module;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -89,7 +89,9 @@ public class Processor extends ProBase {
   }
   
   private static class ProcessorObject
-      extends LinkedMap<ID, LinkedList<ProCommand>> {}
+      extends LinkedMap<ID, LinkedList<ProCommand>> {
+    boolean hasLabels = false;
+  }
   
   private final HashMap<ID, ProcessorObject> methods = new HashMap<>();
   
@@ -135,6 +137,7 @@ public class Processor extends ProBase {
             ID labelID = ID.get(expectEnd(line, ":").substring(1));
             method.add(new BlockLabelSet(labelID));
             method.addFirst(new BlockLabelInitialize(labelID));
+            function.hasLabels = true;
           } else {
             line = expectEnd(line, ";");
             String param = line.contains("(") ? betweenBrackets(line) : "";
@@ -189,18 +192,29 @@ public class Processor extends ProBase {
     ProcessorObject function = methods.get(objectId);
     LinkedList<ProCommand> code
         = function == null ? null : function.get(method);
+    
     if(code == null) {
       if(method == FunctionCall.resolve)
         object.resolveAll();
       else
         throw new ElException("No code for " + objectId + "." + method);
+    } else if(function.hasLabels && !(object instanceof Block)) {
+      Block block = currentBlock;
+      currentBlock = new Block(null);
+      executeCode(code);
+      currentBlock.applyLabels();
+      currentBlock = block;
     } else {
-      for(ProCommand command: code) {
-        currentLineNum = command.lineNum;
-        command.execute();
-      }
+      executeCode(code);
     }
     current = oldCurrent;
+  }
+
+  public void executeCode(LinkedList<ProCommand> code) throws ElException {
+    for(ProCommand command: code) {
+      currentLineNum = command.lineNum;
+      command.execute();
+    }
   }
   
   public void call(Entity object, ID method, Entity param)

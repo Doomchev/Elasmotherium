@@ -99,7 +99,7 @@ public class EntityStack<EntityType> extends Base {
       }
     };
     
-    new EntityStack<Variable>("thisvar", var) {
+    new EntityStack<Variable>("field", var) {
       @Override
       public Variable create() throws ElException {
         return new Variable(id.pop(), true);

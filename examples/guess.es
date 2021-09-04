@@ -1,5 +1,5 @@
 Int number = randomInt(100);
-do {
+repeat {
 	Int guess = askInt("What number did I guess?");
 	if(guess < number) {
 		say("Your number is too small!");

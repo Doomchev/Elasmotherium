@@ -124,12 +124,10 @@ public class Rules extends ParserBase {
     actions.put("SET", new ActionSet(null, null));
     actions.put("REMOVE", new ActionRemove(null));
     actions.put(">>", new ActionForward());
-    actions.put("}", new ActionSwitchSymbol());
   }
   
   private Action actionChain(String commands, Action lastAction, Sub currentSub)
       throws ElException {
-    //System.out.println(commands);
     Action firstAction = null, currentAction = null;
     boolean exit = false;
     for(String command : listSplit(commands, ' ')) {
@@ -138,48 +136,40 @@ public class Rules extends ParserBase {
       String name = bracketPos < 0 ? command : command.substring(0, bracketPos);
       String params = bracketPos < 0 ? "" : command.substring(bracketPos + 1
           , command.length() - 1);
-
-      //System.out.println(name);
       
-      ActionSwitch switchAction = null;
-      switch(name) {
-        case "{":
-          switchAction = new ActionSwitchSymbol();
-        case "SWITCHID":
-          if(switchAction == null) switchAction = new ActionSwitchID();
-          
-          String line;
-          Action back = new ActionGoToAction(switchAction);
-          for(String string: defSym)
-            parseLine(string, switchAction, back, currentSub, true);
-          while(true) {
-            if((line = reader.readLine()) == null)
-              throw new ElException("Unexpected end of file");
-            if(line.equals("}")) break;
-            parseLine(line, switchAction, back, currentSub, name.equals("{"));
-          }
-          action = switchAction;
-          exit = true;
-          break;
-        default:
-          action = actions.get(name);
-          if(action != null) {
-            action = action.create(params);
-          } else {
-            Error error = errors.get(name);
-            if(error == null) {
-              //System.out.println(name);
-              if(bracketPos < 0) {
-                action = new ActionGoToSub(getSub(name));
-              } else {
-                action = new ActionSub(getSub(name), currentSub
-                    , params.isEmpty() ? null : getSub(params));
-              }
+      if(name.equals("{")) {
+        ActionSwitch switchAction = new ActionSwitch();
+        String line;
+        Action back = new ActionGoToAction(switchAction);
+        for(String string: defSym)
+          parseLine(string, switchAction, back, currentSub);
+        while(true) {
+          if((line = reader.readLine()) == null)
+            throw new ElException("Unexpected end of file");
+          if(line.equals("}")) break;
+          parseLine(line, switchAction, back, currentSub);
+        }
+        action = switchAction;
+        exit = true;
+      } else {
+        action = actions.get(name);
+        if(action != null) {
+          action = action.create(params);
+        } else {
+          Error error = errors.get(name);
+          if(error == null) {
+            //System.out.println(name);
+            if(bracketPos < 0) {
+              action = new ActionGoToSub(getSub(name));
             } else {
-              if(!params.isEmpty()) error = error.derive(stringParam(params));
-              action = error;
+              action = new ActionSub(getSub(name), currentSub
+                  , params.isEmpty() ? null : getSub(params));
             }
+          } else {
+            if(!params.isEmpty()) error = error.derive(stringParam(params));
+            action = error;
           }
+        }
       }
       //action.parserLine = lineNum;
       if(currentAction == null) {
@@ -195,7 +185,7 @@ public class Rules extends ParserBase {
   }
   
   private void parseLine(String line, ActionSwitch switchAction, Action back
-      , Sub currentSub, boolean isSymbolSwitch) throws ElException {
+      , Sub currentSub) throws ElException {
     LinkedList<String> parts = listSplit(line, ':');
     if(parts.size() < 2) throw new ElException(": expected");
     Action actionChain = actionChain(parts.getLast(), back, currentSub);
@@ -204,14 +194,12 @@ public class Rules extends ParserBase {
         switchAction.setStringAction(stringParam(token), actionChain);
       } else if(token.equals("other")) {
         switchAction.setOtherAction(actionChain);
-      } else if(isSymbolSwitch) {
+      } else {
         SymbolMask symbolMask = getMask(token);
         if(symbolMask == null) throw new ElException("Mask \"" + token
             + "\" is not found");
         switchAction.setMaskAction(symbolMask, actionChain);
         //break;
-      } else {
-        throw new ElException("Invalid token");
       }
     }
   }

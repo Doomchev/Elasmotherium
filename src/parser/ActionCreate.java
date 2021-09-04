@@ -28,17 +28,18 @@ public class ActionCreate extends Action {
       EntityStack stack0 = EntityStack.all.get(id);
       Function function0 = Function.all.get(id);
       if(stack0 == null) {
-        if(function0 == null) throw new ElException("Function " + id
-            + " not found.");
+        if(function0 == null)
+          throw new ElException("Function " + id + " not found.");
         stack0 = EntityStack.call;
       }
       if(stack0 == EntityStack.block || stack0 == EntityStack.constant) {
-        if(param.length != 2) throw new ElException("CREATE "
-            + stack0.name.string + " command requires 2 parameters");
+        if(param.length != 2)
+          throw new ElException("CREATE " + stack0.name.string
+              + " command requires 2 parameters");
         return new ActionCreate(stack0, ID.get(param[1]), null);
       } else {
-        if(param.length != 1) throw new ElException(
-            "CREATE command requires single parameter");
+        if(param.length != 1)
+          throw new ElException("CREATE command requires single parameter");
         return new ActionCreate(stack0, null, function0);
       }
     }
@@ -50,6 +51,7 @@ public class ActionCreate extends Action {
     if(type == Module.id) {
       String name = EntityStack.id.pop().string;
       Module.current.modules.add(new Module(modulesPath + "/" + name + ".es"));
+      if(log) log("CREATE MODULE " + name);
     } else if(stack.isStringBased()) {
       String string = prefix + text.substring(tokenStart, textPos);
       if(log) log("CREATE " + (type == null ? "" : type + " ")

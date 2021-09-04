@@ -25,4 +25,4 @@ myName = "Cyrus";
 yourName = ask("What is your name?");
 List<Option> options = [optionGreet, optionAsk, optionExit];
 
-do select("Choose what to do:", options, "Options").execute();
+repeat select("Choose what to do:", options, "Options").execute();

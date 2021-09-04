@@ -15,7 +15,7 @@ alias this, эт***;
 alias for, для, кажд***;
 alias if, если;
 alias else, иначе;
-alias do, цикл;
+alias repeat, повторять;
 alias while, пока;
 alias switch, выбрать;
 alias case, вариант[ы];

@@ -166,6 +166,16 @@ more.resolve {
   convert(Bool, param);
 }
 
+ifOp.resolve {
+  v0.resolve(Bool);
+  IfFalseGoTo(#opElse);
+  v1.resolve(param);
+  GoTo(#opEnd);
+  #opElse:
+  v2.resolve(param);
+  #opEnd:
+}
+
 // blocks
 
 if {
@@ -185,7 +195,7 @@ if_else {
   #endIf:
 }
 
-do {
+repeat {
   #start:
   process($code);
   GoTo(#start);

@@ -1,3 +1,3 @@
-newName Question, Bool;
-newName Bool.yes, true;
-newName Bool.no, false;
+rename Question, Bool;
+rename Bool.yes, true;
+rename Bool.no, false;

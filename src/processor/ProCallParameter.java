@@ -22,6 +22,11 @@ public class ProCallParameter extends ProParameter {
   }
 
   @Override
+  public void setValue(Entity value) {
+    ((FunctionCall) ProBase.current).setParameter(index, value);
+  }
+
+  @Override
   public String toString() {
     return "v" + index;
   }

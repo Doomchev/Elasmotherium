@@ -55,7 +55,7 @@ Pos {
 Pos first, last
 
 placeApple() {
-	do {
+	repeat {
 		appleX = Int.random(0 ..< width)
 		appleY = Int.random(0 ..< height)
 		if(field[appleX, appleY] == floor) {

@@ -17,6 +17,8 @@ public abstract class Action extends ParserBase {
     throw new ElException("No creating funciton for " + toString());
   }
   
+  public void setOtherAction(Action action) {}
+  
   public abstract void execute() throws ElException;
 
   public Sub getErrorActionSub() {

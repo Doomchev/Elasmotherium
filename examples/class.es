@@ -2,7 +2,7 @@ class Player {
 	String firstName, lastName;
 	Int age;
 	
-	this(this.firstName, this.lastName, this.age);
+	create(field.firstName, field.lastName, field.age);
   
   incrementAge() age++;
   
