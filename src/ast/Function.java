@@ -136,10 +136,6 @@ public class Function extends NamedEntity  {
   
   // allocation
 
-  public void appendAllocation() {
-    if(allocation > 0) appendLog(new vm.Allocate(allocation));
-  }
-
   public void setAllocation() {
     allocation = Math.max(allocation, currentAllocation);
   }
@@ -166,6 +162,10 @@ public class Function extends NamedEntity  {
   }
   
   // processor fields
+
+  public int getAllocation() {
+    return allocation;
+  }
   
   @Override
   public ID getObject() throws ElException {

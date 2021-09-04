@@ -29,6 +29,10 @@ public class Module extends ParserBase {
   public Module(String fileName) {
     this.fileName = fileName;
   }
+
+  public int getAllocation() {
+    return function.getAllocation();
+  }
   
   public static Module read(String fileName, Rules rules) {
     Module module = new Module(fileName);
@@ -75,7 +79,6 @@ public class Module extends ParserBase {
     
     if(log) printChapter("Processing");
     
-    function.appendAllocation();
     function.processCode(new Exit());
     
     print();

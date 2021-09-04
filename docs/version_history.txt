@@ -1,3 +1,6 @@
+2021.09.04 (version 0.28.1)
+  - Virtual machine: Allocate, Deallocate commands.
+
 2021.09.04 (version 0.28)
   * Parser, Parser code: Switch symbol and switch id actions are merged.
   * Syntax: "do" is renamed to "repeat".
