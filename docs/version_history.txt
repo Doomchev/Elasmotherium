@@ -1,10 +1,15 @@
+2021.09.05 (version 0.28.3)
+  * Syntax, parser code: ternary operator(a ? b : c) syntax is changed to if(a then b else c).
+  
+2021.09.04 (version 0.28.2)
+  * Syntax, parser code: For syntaх changed to for(type var from start to/until end), for(each type var in collection).
+  - Parser code: For_collection with index.
+
 2021.09.04 (version 0.28.1)
-  * Syntax, Parser code: For syntaх changed to for(type var from start to/until end), for(each type var in collection).
-  - Syntax, Parser code: For_collection with index.
   - Virtual machine: Allocate, Deallocate commands.
 
 2021.09.04 (version 0.28)
-  * Parser, Parser code: Switch symbol and switch id actions are merged.
+  * Parser, parser code: Switch symbol and switch id actions are merged.
   * Syntax: "do" is renamed to "repeat".
   * Syntax: "this" in class body for constructor is renamed to "create";
   * Syntax: "this." in constructor parameters is renamed to "field.";
@@ -205,7 +210,7 @@
   + Parser: parser code lines in error messages and parsing log
   + Parser code: field and variable types
   + Parser code: $ prefix
-  * Parser, Export: error messages
+  * Parser, export: error messages
   * Parser: parsing logging
   ! Parser: node resolving
 

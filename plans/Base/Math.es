@@ -1,4 +1,10 @@
-Num bound<AnyNumber Num>(Num value, Num from, Num to) -> value < from ? from : (value > to ? to : value);
+bound<AnyNumber Num>(Reference<Num> variable, Num from, Num to) {
+  if(variable.value < from) {
+    variable.value =  ? from;
+  } else if(variable.value > to) {
+    variable.value = to;
+  }
+}
 Num min<AnyNumber Num>(Num value0, Num value1) -> value0 < value1 ? value0 : value1;
 Num max<AnyNumber Num>(Num value0, Num value1) -> value0 > value1 ? value0 : value1;
 Num abs<AnyNumber Num>(Num value) -> value < 0 ? -value : value;

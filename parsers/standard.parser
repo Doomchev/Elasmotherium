@@ -193,8 +193,8 @@ functionEnd: MOVE(function, code) RETURN
 
 slashComment: {
   eof: RETURN
-  newline: >> RETURN
   "/", nothing, other: >>
+  newline: >> RETURN
 }
 
 multiLineComment: {
@@ -379,6 +379,13 @@ value: {
   ")", "]", "}", ",": RETURN
   digit: number() MOVE(value, formula) separator
   letter: id() formulaId
+  "if": >> EXPECT("(") CREATE(ifOp) formula() MOVE(formula, call) {
+    "then": >> formula() MOVE(formula, call) {
+      "else": >> formula() MOVE(formula, call) EXPECT(")") MOVE(call, formula) separator
+      other: syntaxError
+    }
+    other: syntaxError
+  }
   "-": >> CREATE(negative) formula() MOVE(formula, call) MOVE(call, formula) separator
   "!": >> formula() CREATE(not) MOVE(formula, call) MOVE(call, formula) separator
   "(": >> formula() EXPECT(")") CREATE(brackets) MOVE(formula, call) MOVE(call, formula) separator
@@ -447,8 +454,6 @@ separator: {
   "&&": >> MOVE(and, formula) value
   "|": >> MOVE(bitOr, formula) value
   "|": >> MOVE(or, formula) value
-  "?": >> MOVE(ifOp, formula) value
-  ":": >> MOVE(elseOp, formula) value
 	"%": >> MOVE(mod, formula) value
   other: RETURN
 }

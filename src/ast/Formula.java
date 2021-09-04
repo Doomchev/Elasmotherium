@@ -91,7 +91,7 @@ public class Formula extends Entity {
     }
     
     if(valueStack.size() != 1)
-      throw new ElException("Syntax error");
+      throw new ElException("Error in formula.");
     return valueStack.pop();
   }
 
