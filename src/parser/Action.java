@@ -36,9 +36,4 @@ public abstract class Action extends ParserBase {
   public String errorString() {
     return "parser code (" + parserLine + ")\n";
   }
-
-  @Override
-  public String toString() {
-    return getClassName();
-  }
 }

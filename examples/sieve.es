@@ -1,6 +1,5 @@
-Int max = 100;
 List<Int> values = [2];
-for(Int i from 3 to max) {
+for(Int i from 3 to 20) {
 	Int limit = floor(sqrt(i));
 	for(each Int j in values) {
 		if(j > limit) {

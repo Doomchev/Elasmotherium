@@ -111,8 +111,9 @@ public class Formula extends Entity {
       if(log) System.out.println(subIndent + "PUSH ELSEOP TO FUNCTION "
           + valueStack.peek().toString());
     } else {
-      op.addFirst(valueStack.pop());
-      op.addFirst(valueStack.pop());
+      Value value = valueStack.pop();
+      valueStack.pop().moveToFunctionCall(op);
+      value.moveToFunctionCall(op);
       valueStack.push(op);
       if(log) System.out.println(subIndent + "PUSH VALUES TO OPERATOR "
           + op.toString());

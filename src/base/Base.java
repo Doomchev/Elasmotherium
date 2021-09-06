@@ -308,4 +308,9 @@ public abstract class Base {
          + string + " " + createString('=', 39 - (string.length() + 1) / 2));
     System.out.println(createString('=', 80));
   }
+
+  @Override
+  public String toString() {
+    return getClassName();
+  }
 }

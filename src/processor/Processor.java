@@ -1,13 +1,14 @@
 package processor;
 
+import vm.collection.IteratorHasNext;
 import vm.i64.I64IteratorNext;
-import vm.list.ListToIterator;
+import vm.collection.CollectionToIterator;
 import ast.Block;
 import vm.*;
-import vm.iterator.*;
 import vm.object.*;
 import vm.i64.*;
 import vm.string.*;
+import vm.collection.*;
 import ast.Entity;
 import ast.FunctionCall;
 import ast.ID;
@@ -73,9 +74,11 @@ public class Processor extends ProBase {
     addCommand(new I64Return());
     addCommand(new StringReturn());
     
-    addCommand(new ListToIterator());
+    addCommand(new CollectionToIterator());
     addCommand(new IteratorHasNext());
     addCommand(new I64IteratorNext());
+    addCommand(new I64GetAtIndex());
+    addCommand(new I64SetAtIndex());
     
     addCommand(new GoTo());
     addCommand(new IfFalseGoTo());

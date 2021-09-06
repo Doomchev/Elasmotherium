@@ -15,7 +15,7 @@ public class ActionMoveNewFunction extends Action {
   
   @Override
   public void execute() throws base.ElException {
-    if(log) log("MOVING NEW " + function.getClassName() + " to " + to.name + "("
+    if(log) log("MOVING NEW " + function + " to " + to.name + "("
         + to.peek().toString() + ")");
     to.peek().move(new FunctionCall(function));
     currentAction = nextAction;
@@ -23,6 +23,6 @@ public class ActionMoveNewFunction extends Action {
 
   @Override
   public String toString() {
-    return function.getClassName() + " to " + to.name;
+    return function + " to " + to.name;
   }
 }

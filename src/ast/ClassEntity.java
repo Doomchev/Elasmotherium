@@ -14,6 +14,7 @@ public class ClassEntity extends NamedEntity {
   private final LinkedList<Variable> fields = new LinkedList<>();
   private final LinkedList<Function> methods = new LinkedList<>();
   private final LinkedList<Function> constructors = new LinkedList<>();
+  public ClassEntity nativeClass;
   private int allocation = 0;
   private VMValue value = null;
   
@@ -29,22 +30,29 @@ public class ClassEntity extends NamedEntity {
   
   // creating
 
-  public ClassEntity(ID name) {
+  public ClassEntity(ID name, boolean isNative) {
     super(name);
+    this.nativeClass = isNative ? this : Object;
   }
 
-  public ClassEntity(String name) {
+  public ClassEntity(String name, boolean isNative) {
     super(name);
+    this.nativeClass = isNative ? this : Object;
+  }
+
+  public ClassEntity(String name, ClassEntity nativeClass) {
+    super(name);
+    this.nativeClass = nativeClass;
   }
   
   public static ClassEntity create(ID name) {
-    ClassEntity classEntity = new ClassEntity(name);
+    ClassEntity classEntity = new ClassEntity(name, false);
     all.put(name, classEntity);
     return classEntity;
   }
   
   public static ClassEntity create(String name, VMValue value) {
-    ClassEntity classEntity = new ClassEntity(name);
+    ClassEntity classEntity = new ClassEntity(name, true);
     classEntity.value = value;
     all.put(classEntity.name, classEntity);
     return classEntity;
@@ -56,12 +64,6 @@ public class ClassEntity extends NamedEntity {
   
   public static ClassEntity get(ID name) {
     return all.get(name);
-  }
-  
-  // properties
-  
-  public boolean isNative() {
-    return value != null;
   }
   
   // retrieving class objects
@@ -119,7 +121,7 @@ public class ClassEntity extends NamedEntity {
   
   @Override
   public ClassEntity getNativeClass() {
-    return isNative() ? this : Object;
+    return nativeClass;
   }
    
   // processing

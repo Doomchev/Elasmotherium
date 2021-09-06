@@ -12,11 +12,11 @@ public class ElException extends Exception {
   }
 
   public ElException(Base what, String into) {
-    this("Cannot insert " + what.getClassName() + " into " + into + ".");
+    this("Cannot insert " + what + " into " + into + ".");
   }
 
   public ElException(String message, Base entity) {
-    this(message + " " + entity.getClassName() + ".");
+    this(message + " " + entity + ".");
   }
 
   public ElException(String message, VMValue value) {

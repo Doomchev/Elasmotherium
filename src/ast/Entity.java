@@ -19,7 +19,7 @@ public abstract class Entity extends Base {
   }
   
   public ClassEntity getNativeClass() throws ElException {
-    throw new ElException("Cannot convert " + getClassName()
+    throw new ElException("Cannot convert " + this
         + " to native class.");
   }
   
@@ -58,7 +58,7 @@ public abstract class Entity extends Base {
   }
   
   public void resolveAll() throws ElException {
-    throw new ElException(getClassName() + " is not a function call.");
+    throw new ElException(this + " is not a function call.");
   }
   
   public Entity resolve() throws ElException {
@@ -134,11 +134,6 @@ public abstract class Entity extends Base {
 
   public static void append(VMCommand command) {
     appendLog(command);
-  }
-
-  @Override
-  public String toString() {
-    return "";
   }
   
   public void print(String indent, String prefix) {

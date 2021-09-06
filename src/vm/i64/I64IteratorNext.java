@@ -8,7 +8,7 @@ import vm.VMCommand;
 public class I64IteratorNext extends VMCommand {
   @Override
   public void execute() throws ElException {
-    i64Stack[stackPointer] = objectStack[stackPointer].next().i64Get();
+    i64Stack[stackPointer] = objectStack[stackPointer].i64Next();
     if(log) typeStack[stackPointer] = ValueType.I64;
     currentCommand++;
   }

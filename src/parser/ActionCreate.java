@@ -63,7 +63,7 @@ public class ActionCreate extends Action {
       if(log) log("CREATE BLOCK " + type.string);
       stack.push(Block.create(type));
     } else if(function != null) {
-      if(log) log("CREATE FUNCTION CALL(" + function.getClassName() + ")");
+      if(log) log("CREATE FUNCTION CALL(" + function + ")");
       stack.push(new FunctionCall(function));
     } else {
       stack.push(stack.create());

@@ -221,7 +221,14 @@ public class Function extends NamedEntity  {
   public void resolve(FunctionCall call) throws ElException {
     if(log) println(subIndent + "Resolving function call " + toString());
     
-    if(isConstructor) append(new vm.object.ObjectCreate(parentClass));
+    if(isConstructor) {
+      if(command != null) {
+        resolveParameters(call);
+        append(command.create());
+        return;
+      }
+      append(new vm.object.ObjectCreate(parentClass));
+    }
     
     if(!isNative()) resolveParameters(call);
     

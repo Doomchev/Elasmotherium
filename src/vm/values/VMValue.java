@@ -30,6 +30,14 @@ public abstract class VMValue extends VMBase {
   public void stringSet(String value) throws ElException {
     throw new ElException("Cannot set String of ", this);
   }
+
+  public long i64Get(int index) throws ElException {
+    throw new ElException("Cannot set i64 at index of ", this);
+  }
+
+  public void i64Set(int index, long value) throws ElException {
+    throw new ElException("Cannot get i64 at index of ", this);
+  }
   
   public LinkedList<VMValue> listGet() throws ElException {
     throw new ElException("Cannot get List of ", this);
@@ -47,7 +55,7 @@ public abstract class VMValue extends VMBase {
     throw new ElException("Cannot increment ", this);
   }
 
-  public IteratorValue getIterator() throws ElException {
+  public VMValue getIterator() throws ElException {
     throw new ElException("Cannot get iterator from ", this);
   }
   
@@ -55,7 +63,11 @@ public abstract class VMValue extends VMBase {
     throw new ElException(this, " is not an iteraror.");
   }
   
-  public VMValue next() throws ElException {
-    throw new ElException(this, " is not an iteraror.");
+  public long i64Next() throws ElException {
+    throw new ElException("Cannot get next I64 from ", this);
+  }
+  
+  public VMValue valueNext() throws ElException {
+    throw new ElException("Cannot get next value from ", this);
   }
 }

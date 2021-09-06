@@ -64,6 +64,13 @@ dot.equate {
   [this]FieldEquate;
 }
 
+at.equate {
+  v0.getObject;
+  v1.resolve(Int);
+  param.resolve(Int);
+  I64SetAtIndex;
+}
+
 // increment
 
 increment {
@@ -109,6 +116,12 @@ function.resolve {
 
 const.resolve {
   [param]Push;
+}
+
+at.resolve {
+  v0.getObject;
+  v1.resolve(Int);
+  I64GetAtIndex;
 }
 
 addition.resolve {
@@ -233,7 +246,7 @@ for_until {
 for_collection {
   process($item);
   $collection.resolve(Object);
-  ListToIterator;
+  CollectionToIterator;
   ObjectVarEquate(@iterator);
   #start:
   @iterator.resolve(Object);

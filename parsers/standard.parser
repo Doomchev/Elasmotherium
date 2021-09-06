@@ -93,18 +93,25 @@ codeLine: {
     other: CREATE(link) CREATE(formula) MOVE(link, formula) var
   }
   
+  /// keywords
+  
   "class": >> class() MOVE(class, code) RETURN
   "for": >> for
   "repeat": >> CREATE(block, repeat) code() SET(code, code) MOVE(block, code) RETURN
-  "if": >> EXPECT("(") CREATE(block, if) formula() SET(condition, formula) EXPECT(")") code() SET(code, code) {
-    "else": >> code() SET(else, code) SET(if_else) MOVE(block, code) RETURN
-    other: MOVE(block, code) RETURN
+  "if": >> EXPECT("(")  formula() {
+    "then": then
+    other: CREATE(block, if) SET(condition, formula) EXPECT(")") code() SET(code, code) {
+      "else": >> code() SET(else, code) SET(if_else) MOVE(block, code) RETURN
+      other: MOVE(block, code) RETURN
+    }
   }
   "break": >> CREATE(break) MOVE(call, code) codeLineEnd
   "return": >> CREATE(return) {
     ";": >> MOVE(call, code) RETURN
     other: formula() MOVE(formula, call) MOVE(call, code) codeLineEnd
   }
+  
+  /// separators
   
   "[": >> CREATE(formula) list() MOVE(list, formula) {
     "[": >> index
@@ -116,6 +123,8 @@ codeLine: {
 }
 
 codeLineEnd: EXPECT(";") RETURN
+
+if: 
 
 // Type[<Type...>] var
 // Type[<Type...>] function
@@ -244,10 +253,6 @@ for: EXPECT("(") CREATE(block, for) {
 	other: syntaxError
 }
 
-forCondition:
-
-forIterator: forEnd
-
 forEnd: EXPECT(")") code() SET(code, code) MOVE(block, code) RETURN
 
 
@@ -358,17 +363,20 @@ afterCallParameter: {
 /// operator
 
 operator: {
-  "=": >> CREATE(equate) setOperator
-  "+=": >> CREATE(add) setOperator
-  "++": >> CREATE(increment) MOVE(formula, call) MOVE(call, code) EXPECT(";") RETURN
-  "-=": >> CREATE(subtract) setOperator
-  "--": >> CREATE(decrement) MOVE(formula, call) MOVE(formula, code) EXPECT(";") RETURN
-  "/=": >> CREATE(divide) setOperator
-  "*=": >> CREATE(multiply) setOperator
+  "++": >> CREATE(increment) unaryOperator
+  "--": >> CREATE(decrement) unaryOperator
+  "=": >> CREATE(equate) binaryOperator
+  "+=": >> CREATE(add) binaryOperator
+  "-=": >> CREATE(subtract) binaryOperator
+  "/=": >> CREATE(divide) binaryOperator
+  "*=": >> CREATE(multiply) binaryOperator
   other: RETURN
 }
 
-setOperator: MOVE(formula, call) formula() MOVE(formula, call) MOVE(call, code) EXPECT(";") RETURN
+unaryOperator: MOVE(formula, call) MOVE(call, code) EXPECT(";") RETURN
+
+binaryOperator: MOVE(formula, call) formula() MOVE(formula, call) MOVE(call, code) EXPECT(";") RETURN
+
 
 
 
@@ -380,10 +388,7 @@ value: {
   digit: number() MOVE(value, formula) separator
   letter: id() formulaId
   "if": >> EXPECT("(") CREATE(ifOp) formula() MOVE(formula, call) {
-    "then": >> formula() MOVE(formula, call) {
-      "else": >> formula() MOVE(formula, call) EXPECT(")") MOVE(call, formula) separator
-      other: syntaxError
-    }
+    "then": >> then 
     other: syntaxError
   }
   "-": >> CREATE(negative) formula() MOVE(formula, call) MOVE(call, formula) separator
@@ -393,6 +398,11 @@ value: {
   "{": >> map() MOVE(map, formula) separator
   quotes: >> CLEAR string
   other: expected("Value")
+}
+
+then: formula() MOVE(formula, call) {
+  "else": >> formula() MOVE(formula, call) EXPECT(")") MOVE(call, formula) separator
+  other: syntaxError
 }
 
 formulaId: {

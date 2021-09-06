@@ -33,9 +33,4 @@ public abstract class VMCommand extends VMBase {
   public void log() {
     System.out.println(subIndent + lineNum + ": " + toString());
   }
-  
-  @Override
-  public String toString() {
-    return getClassName();
-  }
 }

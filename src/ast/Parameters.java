@@ -33,6 +33,6 @@ public class Parameters extends Value {
 
   @Override
   public String toString() {
-    return listToString(parameters);
+    return "{" + listToString(parameters) + "}";
   }
 }

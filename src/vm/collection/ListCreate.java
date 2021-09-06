@@ -1,4 +1,4 @@
-package vm.list;
+package vm.collection;
 
 import base.ElException;
 import vm.VMCommand;

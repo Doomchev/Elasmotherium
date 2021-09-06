@@ -26,7 +26,7 @@ public class ListEntity extends Value {
   
   @Override
   public void resolveAll() throws ElException {
-    append(new vm.list.ListCreate());
+    append(new vm.collection.ListCreate());
     for(Value value: values) {
       currentProcessor.call(value, FunctionCall.resolve, ClassEntity.Int);
       append(new vm.i64.I64AddToList.I64AddToListNoDelete());

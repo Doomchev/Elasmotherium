@@ -5,12 +5,6 @@ class Question;
 Question yes;
 Question no;
 
-class Array<ElementType> {
-	Int size();
-	ElementType at(Int index);
-	at(Int index, ElementType value);
-}
-
 class Map<KeyType, ValueType> {
 	Int size();
 	ValueType at(KeyType key);
@@ -26,6 +20,11 @@ class String {
 Int screenWidth();
 Int screenHeight();
 
+class Array<ElementType> {
+  create(Int size);
+	Int size();
+}
+
 class List<ElementType> {
 	Int size();
 	add(ElementType element);
@@ -35,5 +34,6 @@ println(String message);
 Int askInt(String message);
 say(String message);
 Int randomInt(Int value);
+Int randomInt2(Int start, Int end);
 
 exit() {}

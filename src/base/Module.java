@@ -1,12 +1,5 @@
 package base;
 
-import vm.functions.Say;
-import vm.functions.Println;
-import vm.functions.Sqrt;
-import vm.functions.RandomInt;
-import vm.functions.Floor;
-import vm.functions.Exit;
-import vm.functions.AskInt;
 import ast.ClassEntity;
 import parser.ParserBase;
 import java.util.LinkedList;
@@ -14,9 +7,11 @@ import parser.Rules;
 import ast.Function;
 import ast.ID;
 import vm.*;
-import vm.i64.I64AddToList;
-import vm.variables.ScreenHeight;
-import vm.variables.ScreenWidth;
+import vm.collection.*;
+import vm.i64.*;
+import vm.values.*;
+import vm.variables.*;
+import vm.functions.*;
 
 public class Module extends ParserBase {
   public static final ID id = ID.get("module");
@@ -48,6 +43,10 @@ public class Module extends ParserBase {
   private void newFunc(String className, String methodName, VMCommand command) {
     ClassEntity.get(className).getMethod(methodName).setCommand(command);
   }
+
+  private void newFunc(String className, VMCommand command) {
+    ClassEntity.get(className).getConstructor().setCommand(command);
+  }
   
   public void process() throws ElException {
     function.processConstructors();
@@ -63,6 +62,7 @@ public class Module extends ParserBase {
     
     newFunc(new AskInt());
     newFunc(new RandomInt());
+    newFunc(new RandomInt2());
     
     newFunc(new Sqrt());
     newFunc(new Floor());
@@ -74,6 +74,9 @@ public class Module extends ParserBase {
     newFunc(new ScreenWidth());
     
     newFunc("List", "add", new I64AddToList());
+    newFunc("Array", new I64ArrayCreate());
+    
+    ClassEntity.get("Array").setValue(new I64ArrayValue(0));
     
     print();
     
