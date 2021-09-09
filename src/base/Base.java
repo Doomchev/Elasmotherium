@@ -2,9 +2,8 @@ package base;
 
 import ast.ClassEntity;
 import ast.Entity;
-import ast.Function;
+import ast.function.CustomFunction;
 import ast.ID;
-import ast.NamedEntity;
 import base.LinkedMap.Entry;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +13,8 @@ import vm.VMCommand;
 
 public abstract class Base {
   public static int currentLineNum = 0;
-  public static String currentFileName, subIndent = "";
+  public static String currentFileName;
+  public static StringBuilder subIndent = new StringBuilder();
   public static final boolean log = true;
   public static String workingPath, modulesPath;
   public static Processor currentProcessor;
@@ -51,10 +51,10 @@ public abstract class Base {
   
   // functions
   
-  private static final LinkedList<Function> functions = new LinkedList<>();
-  public static Function currentFunction;
+  private static final LinkedList<CustomFunction> functions = new LinkedList<>();
+  public static CustomFunction currentFunction;
   
-  public static Function allocateFunction(Function function) {
+  public static CustomFunction allocateFunction(CustomFunction function) {
     allocate();
     currentAllocation = 0;
     functions.add(currentFunction);
@@ -94,17 +94,36 @@ public abstract class Base {
     scope[lastScopeEntry] = new ScopeEntry(name, entity);
   }
   
-  public void addToScope(NamedEntity entity) {
-    addToScope(entity.getName(), entity);
-  }
-  
   public Entity getFromScope(ID name) throws ElException {
     for(int i = lastScopeEntry; i >= 0; i--)
       if(scope[i].key == name) return scope[i].value;
     throw new ElException("Identifier " + name + " is not found.");
   }
+  
+  public ClassEntity getClassFromScope(ID name) throws ElException {
+    for(int i = lastScopeEntry; i >= 0; i--) {
+      if(scope[i].key == name) {
+        Entity value = scope[i].value;
+        if(value instanceof ClassEntity) return (ClassEntity) value;
+      }
+    }
+    throw new ElException("Class " + name + " is not found.");
+  }
+  
+  public void printScope() {
+    StringBuilder string = new StringBuilder();
+    for(int i = 0; i <= lastScopeEntry; i++) {
+      if(i > 0) string.append(", ");
+      string.append(scope[i].key);
+    }
+    println(string.toString());
+  }
 
   // string functios
+
+  public static ID paramName(ID name, int parametersQuantity) {
+    return ID.get(name.string + "(" + parametersQuantity + ")");
+  }
   
   public static String[] trimmedSplit(String text, char separator) {
     int start = 0;
@@ -175,12 +194,12 @@ public abstract class Base {
   
   public static String listToString(List<? extends Object> list
       , String delimiter) {
-    String str = "";
+    StringBuilder str = new StringBuilder();
     for(Object object : list) {
-      if(!str.isEmpty()) str += delimiter;
-      str += object.toString();
+      if(str.length() > 0) str.append(delimiter);
+      str.append(object.toString());
     }
-    return str;
+    return str.toString();
   }
   
   public static LinkedList<String> listSplit(String commands, char delimiter) {
@@ -211,6 +230,13 @@ public abstract class Base {
     if(!str.endsWith("\"") || str.length() < 2) throw new ElException(
         "Invalid token");
     return str.substring(1, str.length() - 1);
+  }
+  
+  public static String removeLastDigit(String string) {
+    int lastIndex = string.length() - 1;
+    char lastSymbol = string.charAt(lastIndex);
+    if(Character.isDigit(lastSymbol)) return string.substring(0, lastIndex);
+    return string;
   }
   
   // reader
@@ -303,10 +329,11 @@ public abstract class Base {
   }
   
   public static void printChapter(String string) {
-    System.out.println(createString('=', 80));
-    System.out.println(createString('=', 39 - string.length() / 2) + " "
-         + string + " " + createString('=', 39 - (string.length() + 1) / 2));
-    System.out.println(createString('=', 80));
+    final int length = 70, half = length / 2 - 1;
+    System.out.println(createString('=', length));
+    System.out.println(createString('=', half - string.length() / 2) + " "
+         + string + " " + createString('=', half - (string.length() + 1) / 2));
+    System.out.println(createString('=', length));
   }
 
   @Override

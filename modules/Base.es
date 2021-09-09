@@ -34,6 +34,6 @@ println(String message);
 Int askInt(String message);
 say(String message);
 Int randomInt(Int value);
-Int randomInt2(Int start, Int end);
+Int randomInt(Int start, Int end);
 
 exit() {}

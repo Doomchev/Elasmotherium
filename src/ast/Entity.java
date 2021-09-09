@@ -1,20 +1,22 @@
 package ast;
 
+import ast.function.FunctionCall;
+import ast.function.CustomFunction;
 import base.Base;
 import base.ElException;
+import java.util.LinkedList;
+import processor.Processor;
 import vm.VMCommand;
 import vm.values.VMValue;
 
 public abstract class Entity extends Base {
-  public static final byte VALUE = -1;
-  
-  public byte getPriority() {
-    return VALUE;
-  }
-  
   // processor fields
   
   public ID getName() throws ElException {
+    throw new ElException("Cannot get name from", this);
+  }
+  
+  public ID getID() throws ElException {
     throw new ElException("Cannot get id from", this);
   }
   
@@ -29,10 +31,6 @@ public abstract class Entity extends Base {
   
   public Entity getFormulaValue() throws ElException {
     return this;
-  }
-  
-  public ID getObject() throws ElException {
-    throw new ElException("Cannot get object from", this);
   }
   
   public Entity getType() throws ElException {
@@ -50,6 +48,10 @@ public abstract class Entity extends Base {
   public Entity getBlockParameter(ID name) throws ElException {
     throw new ElException(name + " for " + this + " is not found.");
   }
+
+  public int getParametersQuantity() throws ElException {
+    throw new ElException("There are no parameters in ", this);
+  }
   
   // processing
     
@@ -57,12 +59,20 @@ public abstract class Entity extends Base {
     throw new ElException("Cannot process", this);
   }
   
-  public void resolveAll() throws ElException {
-    throw new ElException(this + " is not a function call.");
+  public void call(FunctionCall call) throws ElException {
+    throw new ElException("Cannot call", this);
+  }
+
+  public void resolve(ClassEntity parameter) throws ElException {
+    currentProcessor.resolve(this, parameter);
   }
   
   public Entity resolve() throws ElException {
-    throw new ElException("Cannot resolve type from", this);
+    return this;
+  }
+  
+  public Entity resolve(int parametersQuantity) throws ElException {
+    return this;
   }
   
   // moving functions
@@ -90,7 +100,7 @@ public abstract class Entity extends Base {
     throw new ElException(this, "class");
   }
 
-  public void moveToFunction(Function function) throws ElException {
+  public void moveToFunction(CustomFunction function) throws ElException {
     throw new ElException(this, "function");
   }
 
@@ -136,7 +146,11 @@ public abstract class Entity extends Base {
     appendLog(command);
   }
   
-  public void print(String indent, String prefix) {
-    println(indent + prefix + toString() + ";");
+  public void print(StringBuilder indent, String prefix) {
+    println(indent.toString() + prefix + toString() + ";");
+  }
+
+  public void call(LinkedList<Entity> parameters) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 }

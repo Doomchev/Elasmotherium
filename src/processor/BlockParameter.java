@@ -13,7 +13,7 @@ public class BlockParameter extends ProParameter {
 
   @Override
   public Entity getValue() throws ElException {
-    return current.getBlockParameter(name);
+    return currentBlock.getBlockParameter(name);
   }
 
   @Override

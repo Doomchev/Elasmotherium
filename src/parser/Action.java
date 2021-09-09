@@ -30,7 +30,7 @@ public abstract class Action extends ParserBase {
   }
   
   public void log(String message) {
-    System.out.println(subIndent + parserLine + ": " + message);
+    System.out.println(subIndent.toString() + parserLine + ": " + message);
   }
 
   public String errorString() {

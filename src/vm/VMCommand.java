@@ -31,6 +31,6 @@ public abstract class VMCommand extends VMBase {
   }
   
   public void log() {
-    System.out.println(subIndent + lineNum + ": " + toString());
+    System.out.println(subIndent.toString() + lineNum + ": " + toString());
   }
 }

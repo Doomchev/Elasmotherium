@@ -2,6 +2,7 @@ package ast;
 
 import base.ElException;
 import java.util.LinkedList;
+import processor.Processor;
 
 public class ListEntity extends Value {
   public static final ID id = ID.get("list");
@@ -18,17 +19,17 @@ public class ListEntity extends Value {
   // processor fields
   
   @Override
-  public ID getObject() throws ElException {
+  public ID getID() throws ElException {
     return id;
   }
   
   // processing
   
   @Override
-  public void resolveAll() throws ElException {
+  public void process() throws ElException {
     append(new vm.collection.ListCreate());
     for(Value value: values) {
-      currentProcessor.call(value, FunctionCall.resolve, ClassEntity.Int);
+      currentProcessor.resolve(value, ClassEntity.Int);
       append(new vm.i64.I64AddToList.I64AddToListNoDelete());
     }
   }

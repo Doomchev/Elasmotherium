@@ -1,5 +1,6 @@
 package ast;
 
+import ast.function.CustomFunction;
 import vm.values.ObjectEntity;
 import base.ElException;
 import java.util.HashMap;
@@ -12,8 +13,8 @@ public class ClassEntity extends NamedEntity {
   
   private final LinkedList<ClassParameter> parameters = new LinkedList<>();
   private final LinkedList<Variable> fields = new LinkedList<>();
-  private final LinkedList<Function> methods = new LinkedList<>();
-  private final LinkedList<Function> constructors = new LinkedList<>();
+  private final LinkedList<CustomFunction> methods = new LinkedList<>();
+  private final LinkedList<CustomFunction> constructors = new LinkedList<>();
   public ClassEntity nativeClass;
   private int allocation = 0;
   private VMValue value = null;
@@ -68,22 +69,30 @@ public class ClassEntity extends NamedEntity {
   
   // retrieving class objects
   
-  public Variable getField(ID id) {
+  public Variable getField(ID id) throws ElException {
     for(Variable field: fields) if(field.name == id) return field;
-    return null;
+    throw new ElException("Field " + name + " is not found.");
   }
   
-  public Function getMethod(String name) {
-    return getMethod(ID.get(name));
+  public CustomFunction getMethod(String name, int parametersQuantity)
+      throws ElException {
+    return getMethod(ID.get(name), parametersQuantity);
   }
   
-  public Function getMethod(ID id) {
-    for(Function method: methods) if(method.name == id) return method;
-    return null;
+  public CustomFunction getMethod(ID id, int parametersQuantity)
+      throws ElException {
+    for(CustomFunction method: methods)
+      if(method.name == id && method.getParametersQuantity()
+          == parametersQuantity) return method;
+    throw new ElException(this + "." + id + " not found.");
   }
 
-  public Function getConstructor() {
-    return constructors.getFirst();
+  public CustomFunction getConstructor(int parametersQuantity) throws ElException {
+    for(CustomFunction constructor: constructors)
+      if(constructor.getParametersQuantity() == parametersQuantity)
+        return constructor;
+    throw new ElException("Constructor of " + toString() + " with "
+        + parametersQuantity + " parameters is not found.");
   }
   
   // adding child objects
@@ -101,7 +110,7 @@ public class ClassEntity extends NamedEntity {
     return index;
   }
 
-  public void addMethod(Function function, boolean isConstructor) {
+  public void addMethod(CustomFunction function, boolean isConstructor) {
     if(isConstructor)
       constructors.add(function);
     else
@@ -132,19 +141,19 @@ public class ClassEntity extends NamedEntity {
     currentClass = this;
     allocateScope();
     
-    for(Variable field: fields) addToScope(field);
-    for(Function method: methods) addToScope(method);
+    for(Variable field: fields) field.addToScope();
+    for(CustomFunction method: methods) method.addToScope();
     
-    for(Function constructor: constructors) constructor.process();
-    for(Function method: methods) method.process();
+    for(CustomFunction constructor: constructors) constructor.process();
+    for(CustomFunction method: methods) method.process();
     
     deallocateScope();
     currentClass = oldClass;
   }
 
   public void processConstructors() throws ElException {
-    for(Function constructor: constructors)
-      constructor.process(this);
+    for(CustomFunction constructor: constructors)
+      constructor.processConstructor(this);
   }
   
   public void resolveTypes() throws ElException {
@@ -152,14 +161,20 @@ public class ClassEntity extends NamedEntity {
     currentClass = this;
     allocateScope();
     
-    for(ClassParameter parameter: parameters) addToScope(parameter);
+    for(ClassParameter parameter: parameters) parameter.addToScope();
     
     for(Variable field: fields) field.resolveType();
-    for(Function constructor: constructors) constructor.resolveTypes();
-    for(Function method: methods) method.resolveTypes();
+    for(CustomFunction constructor: constructors) constructor.resolveTypes();
+    for(CustomFunction method: methods) method.resolveTypes();
     
     deallocateScope();
     currentClass = oldClass;
+  }
+  
+  @Override
+  public void addToScope() {
+    super.addToScope();
+    for(CustomFunction constructor: constructors) constructor.addToScope();
   }
   
   // moving funcitons
@@ -172,11 +187,6 @@ public class ClassEntity extends NamedEntity {
   @Override
   public void moveToCode(Code code) {
     code.add(this);
-  }
-
-  @Override
-  public void moveToFunctionCall(FunctionCall call) throws ElException {
-    throw new ElException("Anonymous classes are not implemented.");
   }
   
   // creating objects of this class
@@ -199,16 +209,17 @@ public class ClassEntity extends NamedEntity {
   // other
   
   @Override
-  public void print(String indent, String prefix) {
+  public void print(StringBuilder indent, String prefix) {
     println(indent + prefix + "class " + name + (parameters.isEmpty()
         ? "" : "<" + listToString(parameters) + ">") + " {");
-    String newIndent = indent + "  ";
-    for(Variable field: fields) field.print(newIndent, "");
+    indent.append("  ");
+    for(Variable field: fields) field.print(indent, "");
     if(!fields.isEmpty() && !constructors.isEmpty()) println("");
-    for(Function method: constructors) method.print(newIndent, "");
+    for(CustomFunction method: constructors) method.print(indent, "");
     if(!constructors.isEmpty() || !fields.isEmpty()
         && !methods.isEmpty()) println("");
-    for(Function method: methods) method.print(newIndent, "");
+    for(CustomFunction method: methods) method.print(indent, "");
+    indent.delete(0, 2);
     println(indent + "}");
   }
 }

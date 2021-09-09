@@ -2,6 +2,7 @@ package ast;
 
 import base.ElException;
 import java.util.LinkedList;
+import processor.Processor;
 
 public class StringSequence extends Value {
   public final static ID id = ID.get("stringSequence");
@@ -17,18 +18,17 @@ public class StringSequence extends Value {
   // processor fields
   
   @Override
-  public ID getObject() throws ElException {
+  public ID getID() throws ElException {
     return id;
   }
   
   // processing
   
   @Override
-  public void resolveAll() throws ElException {
+  public void process() throws ElException {
     boolean isNotFirst = false;
     for(Value value: chunks) {
-      base.Base.currentProcessor.call(value, FunctionCall.resolve
-          , ClassEntity.String);
+      value.resolve(ClassEntity.String);
       if(isNotFirst) {
         append(new vm.string.StringAdd());
       } else {

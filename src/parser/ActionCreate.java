@@ -2,17 +2,18 @@ package parser;
 
 import base.Module;
 import ast.Block;
-import ast.Function;
-import ast.FunctionCall;
+import ast.function.CustomFunction;
+import ast.function.FunctionCall;
 import ast.ID;
+import ast.function.NativeFunction;
 import base.ElException;
 
 public class ActionCreate extends Action {
   private final EntityStack stack;
-  private final Function function;
+  private final NativeFunction function;
   private final ID type;
 
-  public ActionCreate(EntityStack stack, ID type, Function function) {
+  public ActionCreate(EntityStack stack, ID type, NativeFunction function) {
     this.stack = stack;
     this.type = type;
     this.function = function;
@@ -25,12 +26,16 @@ public class ActionCreate extends Action {
     if(id == Module.id) {
       return new ActionCreate(null, id, null);
     } else {
-      EntityStack stack0 = EntityStack.all.get(id);
-      Function function0 = Function.all.get(id);
-      if(stack0 == null) {
-        if(function0 == null)
+      EntityStack stack0;
+      NativeFunction function0;
+      try {
+        function0 = NativeFunction.get(id);
+        stack0 = EntityStack.function;
+      } catch(ElException ex) {
+        function0 = null;
+        stack0 = EntityStack.all.get(id);
+        if(stack0 == null)
           throw new ElException("Function " + id + " not found.");
-        stack0 = EntityStack.call;
       }
       if(stack0 == EntityStack.block || stack0 == EntityStack.constant) {
         if(param.length != 2)
@@ -63,8 +68,8 @@ public class ActionCreate extends Action {
       if(log) log("CREATE BLOCK " + type.string);
       stack.push(Block.create(type));
     } else if(function != null) {
-      if(log) log("CREATE FUNCTION CALL(" + function + ")");
-      stack.push(new FunctionCall(function));
+      if(log) log("CREATE FUNCTION(" + function + ")");
+      stack.push(function);
     } else {
       stack.push(stack.create());
       if(log) log("CREATE " + stack.name.string + "(" + stack.peek() + ")");

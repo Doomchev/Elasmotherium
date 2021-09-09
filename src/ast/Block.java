@@ -102,7 +102,7 @@ public class Block extends Entity {
   }
   
   @Override
-  public ID getObject() throws ElException {
+  public ID getID() throws ElException {
     return type;
   }
   
@@ -111,7 +111,7 @@ public class Block extends Entity {
   @Override
   public void process() throws ElException {
     if(log) println(type.string);
-    currentProcessor.callBlock(this);
+    currentProcessor.processBlock(this, type);
     applyLabels();
   }
   
@@ -136,12 +136,13 @@ public class Block extends Entity {
   // other
 
   @Override
-  public void print(String indent, String prefix) {
+  public void print(StringBuilder indent, String prefix) {
     println(indent + prefix + type.string + ":" + variables.size() + " {");
-    indent += "  ";
+    indent.append("  ");
     for(Variable variable: variables) variable.print(indent, "");
     for(LinkedMap.Entry<ID, Entity> entry : entries)
       entry.value.print(indent, entry.key + ": ");
+    indent.delete(0, 2);
   }
 
   public void set(ID id, Entity val) throws ElException {

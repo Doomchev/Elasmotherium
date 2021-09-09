@@ -1,14 +1,15 @@
 package parser;
 
 import ast.Entity;
-import ast.Function;
-import ast.FunctionCall;
+import ast.function.FunctionCall;
+import ast.function.NativeFunction;
 
 public class ActionMoveNewFunction extends Action {
-  private final Function function;
+  private final NativeFunction function;
   private final EntityStack<Entity> to;
 
-  public ActionMoveNewFunction(Function function, EntityStack<Entity> to) {
+  public ActionMoveNewFunction(NativeFunction function
+      , EntityStack<Entity> to) {
     this.function = function;
     this.to = to;
   }
@@ -17,7 +18,7 @@ public class ActionMoveNewFunction extends Action {
   public void execute() throws base.ElException {
     if(log) log("MOVING NEW " + function + " to " + to.name + "("
         + to.peek().toString() + ")");
-    to.peek().move(new FunctionCall(function));
+    to.peek().move(function);
     currentAction = nextAction;
   }
 

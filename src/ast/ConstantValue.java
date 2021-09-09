@@ -20,7 +20,7 @@ public class ConstantValue extends Value {
   // processor fields
 
   @Override
-  public ID getObject() throws ElException {
+  public ID getID() throws ElException {
     return id;
   }
   

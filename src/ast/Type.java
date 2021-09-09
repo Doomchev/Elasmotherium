@@ -1,24 +1,18 @@
 package ast;
 
+import ast.function.FunctionCall;
 import base.ElException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import vm.values.VMValue;
 
 public class Type extends Entity {
-  private final LinkedList<Entity> subtypes = new LinkedList<>();
   private final ClassEntity basicClass;
+  private final Entity[] subtypes;
 
-  public Type(ClassEntity basicClass) {
+  public Type(ClassEntity basicClass, Entity[] subtypes) {
     this.basicClass = basicClass;
-  }
-  
-  // properties
-
-  public void setSubTypes(LinkedList<Link> subtypeLinks) throws ElException {
-    if(!subtypes.isEmpty())
-      throw new ElException("Subtypes are already resolved.");
-    for(Link link: subtypeLinks)
-      subtypes.add(link.resolve());
+    this.subtypes = subtypes;
   }
   
   // processor fields
@@ -45,6 +39,6 @@ public class Type extends Entity {
   @Override
   public String toString() {
     return basicClass.name
-        + (subtypes.isEmpty() ? "" : "<" + listToString(subtypes) + ">");
+        + (subtypes.length == 0 ? "" : "<" + Arrays.toString(subtypes) + ">");
   }
 }

@@ -23,7 +23,7 @@ public class Error extends Action {
     Sub errorActionSub = getErrorActionSub();
     if(errorActionSub == null) throw new ElException(this, errorText);
     if(log) log("ERROR - RETURNING TO " + errorActionSub.name);
-    subIndent = subIndent.substring(2);
+    subIndent = subIndent.delete(0, 2);
     currentAction = errorActionSub.action;
   }
 }

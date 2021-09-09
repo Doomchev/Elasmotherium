@@ -10,7 +10,7 @@ public class ProThis extends ProParameter {
   
   @Override
   public Entity getValue() throws ElException {
-    return current;
+    return currentObject;
   }
 
   @Override

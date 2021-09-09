@@ -98,15 +98,15 @@ codeLine: {
   "class": >> class() MOVE(class, code) RETURN
   "for": >> for
   "repeat": >> CREATE(block, repeat) code() SET(code, code) MOVE(block, code) RETURN
-  "if": >> EXPECT("(")  formula() {
+  "if": >> EXPECT("(") formula() {
     "then": then
     other: CREATE(block, if) SET(condition, formula) EXPECT(")") code() SET(code, code) {
       "else": >> code() SET(else, code) SET(if_else) MOVE(block, code) RETURN
       other: MOVE(block, code) RETURN
     }
   }
-  "break": >> CREATE(break) MOVE(call, code) codeLineEnd
-  "return": >> CREATE(return) {
+  "break": >> CREATE(call) MOVE(break, call) MOVE(call, code) codeLineEnd
+  "return": >> CREATE(call) MOVE(return, call) {
     ";": >> MOVE(call, code) RETURN
     other: formula() MOVE(formula, call) MOVE(call, code) codeLineEnd
   }
@@ -173,7 +173,7 @@ functionParameter: {
 
 functionParamDefault: {
   // Type[<Type>] var = default
-  "=": >> formula(call) MOVE(formula, variable) functionParamEnd
+  "=": >> formula() MOVE(formula, variable) functionParamEnd
   // Type[<Type>] var
   other: functionParamEnd
 }
@@ -188,7 +188,7 @@ functionParamEnd: MOVE(variable, function) {
 
 functionCode: {
   // [Type ]function([params]) -> expression;
-  "->": >> formula() CREATE(return) MOVE(formula, call) CREATE(code) MOVE(call, code) MOVE(code, function) functionEnd
+  "->": >> formula() CREATE(call) MOVE(return, call) MOVE(formula, call) CREATE(code) MOVE(call, code) MOVE(code, function) functionEnd
   // [Type ]function([params]) codeLine;
   ";": functionEnd
   other: code() MOVE(code, function) functionEnd
@@ -343,12 +343,12 @@ callParameter: formula() MOVE(formula, parameters) {
   other: expected(", or )")
 }
 
-callParameterEnd: CREATE(call) {
-  "{": >> CREATE(id) CREATE(class) classBody() MOVE(class, call) afterCallParameterEnd
+callParameterEnd: MOVE(callFunction, formula) {
+  "{": >> CREATE(id) CREATE(class) classBody() MOVE(class, formula) afterCallParameterEnd
   other: afterCallParameterEnd
 }
 
-afterCallParameterEnd: MOVE(call, formula) MOVE(parameters, formula) afterCallParameter
+afterCallParameterEnd: MOVE(parameters, formula) afterCallParameter
 
 afterCallParameter: {
   ".": >> dot
@@ -362,21 +362,20 @@ afterCallParameter: {
 
 /// operator
 
-operator: {
-  "++": >> CREATE(increment) unaryOperator
-  "--": >> CREATE(decrement) unaryOperator
-  "=": >> CREATE(equate) binaryOperator
-  "+=": >> CREATE(add) binaryOperator
-  "-=": >> CREATE(subtract) binaryOperator
-  "/=": >> CREATE(divide) binaryOperator
-  "*=": >> CREATE(multiply) binaryOperator
-  other: RETURN
+operator: CREATE(call) {
+  "++": >> MOVE(increment, call) unaryOperator
+  "--": >> MOVE(decrement, call) unaryOperator
+  "=": >> MOVE(equate, call) binaryOperator
+  "+=": >> MOVE(add, call) binaryOperator
+  "-=": >> MOVE(subtract, call) binaryOperator
+  "/=": >> MOVE(divide, call) binaryOperator
+  "*=": >> MOVE(multiply, call) binaryOperator
+  other: syntaxError
 }
 
 unaryOperator: MOVE(formula, call) MOVE(call, code) EXPECT(";") RETURN
 
 binaryOperator: MOVE(formula, call) formula() MOVE(formula, call) MOVE(call, code) EXPECT(";") RETURN
-
 
 
 
@@ -387,13 +386,13 @@ value: {
   ")", "]", "}", ",": RETURN
   digit: number() MOVE(value, formula) separator
   letter: id() formulaId
-  "if": >> EXPECT("(") CREATE(ifOp) formula() MOVE(formula, call) {
+  "if": >> EXPECT("(") CREATE(call) MOVE(ifOp, call) formula() MOVE(formula, call) {
     "then": >> then 
     other: syntaxError
   }
-  "-": >> CREATE(negative) formula() MOVE(formula, call) MOVE(call, formula) separator
-  "!": >> formula() CREATE(not) MOVE(formula, call) MOVE(call, formula) separator
-  "(": >> formula() EXPECT(")") CREATE(brackets) MOVE(formula, call) MOVE(call, formula) separator
+  "-": >> CREATE(call) MOVE(negative, call) formula() MOVE(formula, call) MOVE(call, formula) separator
+  "!": >> formula() CREATE(call) MOVE(not, call) MOVE(formula, call) MOVE(call, formula) separator
+  "(": >> formula() EXPECT(")") CREATE(call) MOVE(brackets, call) MOVE(formula, call) MOVE(call, formula) separator
   "[": >> list() MOVE(list, formula) separator
   "{": >> map() MOVE(map, formula) separator
   quotes: >> CLEAR string
@@ -408,31 +407,27 @@ then: formula() MOVE(formula, call) {
 formulaId: {
 	// var <
 	// Type<
-	"<": >> {
+	"<": >> CREATE(link) {
 		// var0 < var1
 		// Type0<Type1
-		letter: id() {
+		letter: id()  {
 			// Type0<Type1<Type2
+			"<": CREATE(link) subtype() MOVE(link) linkParameter
 			// Type0<Type1, Type2
 			// Type0<Type1>
-			"<", ",", ">": CREATE(link) CREATE(link) linkParameterSubtype
+      ",", ">": CREATE(link) linkParameter
 			// var0 < var1 ...
-			other: CREATE(link) CREATE(link) MOVE(link, formula) MOVE(less, formula) MOVE(link, formula) separator
+			other: MOVE(link, formula) MOVE(less, formula) CREATE(link) MOVE(link, formula) separator
 		} 
 		// var < value
-		other: CREATE(link) MOVE(link, formula) MOVE(less, formula) value
+		other: MOVE(link, formula) MOVE(less, formula) value
 	}
   // var <= value
   "<=": >> CREATE(link) MOVE(link, formula) MOVE(lessOrEqual, formula) value
 	"/", other: CREATE(link) MOVE(link, formula) separator
 }
 
-linkParameterSubtype: {
-  "<": >> subtype() MOVE(link) linkParameterEnd
-  other: linkParameterEnd
-}
-
-linkParameterEnd: MOVE(link, link) {
+linkParameter: MOVE(link) {
   //Type0<Type1>
   ">": >> MOVE(link, formula) EXPECT("(") parameters
   ",": >> id() CREATE(link) linkParameter
@@ -491,7 +486,7 @@ parameter: formula() MOVE(formula, parameters) {
   other: expected(", or )")
 }
 
-parameterEnd: CREATE(call) MOVE(call, formula) MOVE(parameters, formula) separator
+parameterEnd: MOVE(callFunction, formula) MOVE(parameters, formula) separator
 
 
 
@@ -659,7 +654,7 @@ methodParamEnd: MOVE(variable, function) {
 
 methodCode: {
   // [Type ]method([params]) -> expression;
-  "->": >> formula() CREATE(return) MOVE(formula, call) CREATE(code) MOVE(call, code) MOVE(code, function) EXPECT(";") methodEnd
+  "->": >> formula() CREATE(call) MOVE(return, call) MOVE(formula, call) CREATE(code) MOVE(call, code) MOVE(code, function) EXPECT(";") methodEnd
   // [Type ]method([params]) codeLine;
   ";": >> methodEnd
   other: code() MOVE(code, function) methodEnd

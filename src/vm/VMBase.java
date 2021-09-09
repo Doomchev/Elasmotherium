@@ -1,5 +1,6 @@
 package vm;
 
+import vm.call.VMFunctionCall;
 import vm.values.ObjectEntity;
 import base.Base;
 import base.ElException;
@@ -26,7 +27,7 @@ public class VMBase extends Base{
   protected static JFrame frame;
   protected static boolean usesWindow = false, usesConsole = false;
   
-  public static int currentCommand = -1;
+  public static int currentCommand = -1, initialStack;
   
   public enum ValueType {UNDEFINED, I64, F64, STRING, BOOLEAN, OBJECT};
   
@@ -56,7 +57,8 @@ public class VMBase extends Base{
       frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }
     
-    stackPointer = module.getAllocation() - 1;
+    initialStack = module.getAllocation() - 1;
+    stackPointer = initialStack;
     currentCommand = 0;
     while(true) {
       if(showCommands) System.out.println(currentCommand + ": "
@@ -69,26 +71,26 @@ public class VMBase extends Base{
       }
 
       if(showCommands) {
-        String stack = "";
+        StringBuilder stack = new StringBuilder();
         for(int index = 0; index <= stackPointer; index++)
           switch(typeStack[index]) {
             case UNDEFINED:
-              stack += "- ";
+              stack.append("- ");
               break;
             case I64:
-              stack += i64Stack[index] + " ";
+              stack.append(i64Stack[index]).append(" ");
               break;
             case F64:
-              stack += f64Stack[index] + " ";
+              stack.append(f64Stack[index]).append(" ");
               break;
             case STRING:
-              stack += "\"" + stringStack[index] + "\" ";
+              stack.append("\"").append(stringStack[index]).append("\" ");
               break;
             case BOOLEAN:
-              stack += booleanStack[index] ? "true " : "false ";
+              stack.append(booleanStack[index] ? "true " : "false ");
               break;
             case OBJECT:
-              stack += objectStack[index].toString() + " ";
+              stack.append(objectStack[index].toString()).append(" ");
               break;
           }
         System.out.println("Stack: " + stack);

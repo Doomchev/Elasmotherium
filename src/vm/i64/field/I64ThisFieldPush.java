@@ -1,0 +1,24 @@
+package vm.i64.field;
+
+import base.ElException;
+import vm.VMCommand;
+import vm.VMFieldCommand;
+
+public class I64ThisFieldPush extends VMFieldCommand {
+  public I64ThisFieldPush(int fieldIndex) {
+    super(fieldIndex);
+  }
+  
+  @Override
+  public VMCommand create(int index) throws ElException {
+    return new I64ThisFieldPush(index);
+  }
+  
+  @Override
+  public void execute() throws ElException {
+    stackPointer++;
+    i64Stack[stackPointer] = currentCall.thisField(fieldIndex).i64Get();
+    if(log) typeStack[stackPointer] = ValueType.I64;
+    currentCommand++;
+  }
+}

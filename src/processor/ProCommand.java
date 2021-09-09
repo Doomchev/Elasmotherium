@@ -28,6 +28,6 @@ public abstract class ProCommand extends ProBase {
   }
   
   public void log(String message) {
-    System.out.println(subIndent + lineNum + ": " + message);
+    System.out.println(subIndent.toString() + lineNum + ": " + message);
   }
 }

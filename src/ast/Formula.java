@@ -1,18 +1,18 @@
 package ast;
 
+import ast.function.FunctionCall;
+import ast.function.NativeFunction;
 import base.ElException;
 import java.util.LinkedList;
 import java.util.Stack;
 
 public class Formula extends Entity {
-  private static final Function elseOp = Function.all.get(ID.get("elseOp"));
-  
-  private final LinkedList<Value> chunks = new LinkedList<>();
+  private final LinkedList<Entity> chunks = new LinkedList<>();
   private final Stack<Value> valueStack = new Stack<>();
-  private final Stack<FunctionCall> opStack = new Stack<>();
+  private final Stack<NativeFunction> opStack = new Stack<>();
   
-  public void add(Value value) {
-    chunks.add(value);
+  public void add(Entity entity) {
+    chunks.add(entity);
   }
   
   // moving functions
@@ -35,7 +35,6 @@ public class Formula extends Entity {
   @Override
   public void moveToFunctionCall(FunctionCall call) throws ElException {
     call.add(getFormulaValue());
-    call.priority = VALUE;
   }
 
   @Override
@@ -63,32 +62,31 @@ public class Formula extends Entity {
   @Override
   public Value getFormulaValue() throws ElException {
     if(log) System.out.println(subIndent + listToString(chunks));
-    if(chunks.size() == 1) return chunks.getFirst();
-    for(Value entity : chunks) {
-      int priority = entity.getPriority();
-      if(priority == Value.VALUE) {
-        valueStack.push(entity);
-        if(log) System.out.println(subIndent + "PUSH " + entity.toString()
-            + " TO VALUE STACK");
-      } else {
+    if(chunks.size() == 1) return (Value) chunks.getFirst();
+    for(Entity entity : chunks) {
+      if(entity instanceof NativeFunction) {
+        NativeFunction function = (NativeFunction) entity;
+        int priority = function.priority;
         while(!opStack.empty()) {
-          if(opStack.lastElement().getPriority() >= priority) {
-            System.out.println(subIndent + opStack.lastElement().getPriority()
-              + ">=" + priority);
+          if(opStack.lastElement().priority >= priority) {
+            System.out.println(subIndent.toString()
+                + opStack.lastElement().priority + ">=" + priority);
             popOp();
           } else {
             break;
           }
         }
-        opStack.push((FunctionCall) entity);
         if(log) System.out.println(subIndent + "PUSH " + entity.toString()
             + " TO OPERATOR STACK");
+        opStack.push(function);
+      } else {
+        if(log) System.out.println(subIndent + "PUSH " + entity.toString()
+            + " TO VALUE STACK");
+        valueStack.push((Value) entity);
       }
     }
     
-    while(!opStack.empty()) {
-      popOp();
-    }
+    while(!opStack.empty()) popOp();
     
     if(valueStack.size() != 1)
       throw new ElException("Error in formula.");
@@ -96,28 +94,23 @@ public class Formula extends Entity {
   }
 
   private void popOp() throws ElException {
-    FunctionCall op = opStack.pop();
+    NativeFunction op = opStack.pop();
     if(valueStack.size() < 2)
       throw new ElException("Syntax error");
-    if(op.getFunction() == null) {
-      valueStack.pop().moveToFunctionCall(op);
-      op.setName(valueStack.pop().getName());
-      valueStack.push(op);
+    FunctionCall call = new FunctionCall(op);
+    if(op == NativeFunction.callFunction) {
+      valueStack.pop().moveToFunctionCall(call);
+      call.setFunction(valueStack.pop());
       if(log) System.out.println(subIndent + "PUSH VALUES TO FUNCTION "
           + op.toString());
-    } else if (op.getFunction() == elseOp) {
-      Value value = valueStack.pop();
-      ((FunctionCall) valueStack.peek()).add(value);
-      if(log) System.out.println(subIndent + "PUSH ELSEOP TO FUNCTION "
-          + valueStack.peek().toString());
     } else {
       Value value = valueStack.pop();
-      valueStack.pop().moveToFunctionCall(op);
-      value.moveToFunctionCall(op);
-      valueStack.push(op);
+      valueStack.pop().moveToFunctionCall(call);
+      value.moveToFunctionCall(call);
       if(log) System.out.println(subIndent + "PUSH VALUES TO OPERATOR "
           + op.toString());
     }
+    valueStack.push(call);
   }
   
   // other

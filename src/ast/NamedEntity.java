@@ -20,6 +20,10 @@ public abstract class NamedEntity extends Entity {
     return name;
   }
   
+  public void addToScope() {
+    addToScope(name, this);
+  }
+  
   // other
 
   @Override

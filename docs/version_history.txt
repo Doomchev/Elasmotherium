@@ -1,3 +1,10 @@
+2021.09.09 (version 0.30)
+  + Processor: Parameter quantity support for scope entries.
+  * Some strings are replaced by StringBuilders for performance.
+  * AST: Formula resolving refactoring.
+  * AST: Functions are split to CustomFunction and NativeFunction.
+  
+
 2021.09.05 (version 0.29)
   + VM, parser code: at index support.
   + VM: I64Array and iterator.

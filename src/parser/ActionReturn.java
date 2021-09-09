@@ -18,7 +18,7 @@ class ActionReturn extends Action {
     ActionSub sub = returnStack.pop();
     if(log) {
       log("RETURN to " + sub.parentSub.name);
-      subIndent = subIndent.substring(2);
+      subIndent.delete(0, 2);
     } 
     currentAction = sub.nextAction;
   }

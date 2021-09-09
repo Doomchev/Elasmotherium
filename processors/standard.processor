@@ -14,10 +14,6 @@ dot {
   call(v1);
 }
 
-function {
-  call(this);
-}
-
 // get object
 
 variable.getObject {
@@ -68,7 +64,7 @@ at.equate {
   v0.getObject;
   v1.resolve(Int);
   param.resolve(Int);
-  I64SetAtIndex;
+  [Int]SetAtIndex;
 }
 
 // increment
@@ -82,7 +78,7 @@ variable.increment {
 }
 
 field.increment {
-  [this]FieldIncrement;
+  [this]ThisFieldIncrement;
 }
 
 dot.increment {

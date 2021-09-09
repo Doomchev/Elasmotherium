@@ -1,12 +1,14 @@
 package ast;
 
+import ast.function.FunctionCall;
+import ast.function.CustomFunction;
 import base.ElException;
 import java.util.LinkedList;
 import vm.VMCommand;
 
 public class Code extends Entity {
   private final LinkedList<Entity> lines = new LinkedList<>();
-  private final LinkedList<Function> functions = new LinkedList<>();
+  private final LinkedList<CustomFunction> functions = new LinkedList<>();
   private final LinkedList<ClassEntity> classes = new LinkedList<>();
   
   // creating
@@ -28,19 +30,20 @@ public class Code extends Entity {
     lines.addFirst(codeLine);
   }
 
-  public void add(Function function) {
+  public void add(CustomFunction function) {
     functions.add(function);
   }
 
   public void add(ClassEntity classEntity) {
     classes.add(classEntity);
   }
-
-  public void setFunctionCommand(ID id, VMCommand command) throws ElException {
-    for(Function function: functions)
-      if(function.getName() == id) {
-        function.setCommand(command);
-        return;
+  
+  public CustomFunction getFunction(ID id, int parametersQuantity)
+      throws ElException {
+    for(CustomFunction function: functions)
+      if(function.getName() == id
+          && function.getParametersQuantity() == parametersQuantity) {
+        return function;
       }
     throw new ElException("Function " + id + " is not found.");
   }
@@ -55,21 +58,22 @@ public class Code extends Entity {
   }
   
   public void processWithoutScope(VMCommand endingCommand) throws ElException {
-    for(ClassEntity classEntity: classes) addToScope(classEntity);
-    for(Function function: functions) {
-      addToScope(function);
+    for(ClassEntity classEntity: classes) classEntity.addToScope();
+    for(CustomFunction function: functions) {
+      function.addToScope();
       function.resolveTypes();
     }
+    
     for(ClassEntity classEntity: classes) classEntity.resolveTypes();
     
     for(Entity line: lines) line.process();
     if(endingCommand != null) append(endingCommand);
     
     for(ClassEntity classEntity: classes) classEntity.process();
-    for(Function function: functions) function.process();
+    for(CustomFunction function: functions) function.process();
   }
 
-  void processConstructors() throws ElException {
+  public void processConstructors() throws ElException {
     for(ClassEntity classEntity: classes) classEntity.processConstructors();
   }
   
@@ -86,7 +90,7 @@ public class Code extends Entity {
   }
 
   @Override
-  public void moveToFunction(Function function) {
+  public void moveToFunction(CustomFunction function) {
     function.setCode(this);
     deallocate();
   }
@@ -104,15 +108,16 @@ public class Code extends Entity {
   }
 
   @Override
-  public void print(String indent, String prefix) {
+  public void print(StringBuilder indent, String prefix) {
     println(indent + prefix + "{");
-    String indent2 = indent + "  ";
-    for(ClassEntity classEntity : classes) classEntity.print(indent2, "");
+    indent.append("  ");
+    for(ClassEntity classEntity : classes) classEntity.print(indent, "");
     if(!classes.isEmpty() && !functions.isEmpty()) println("");
-    for(Function function : functions) function.print(indent2, "");
+    for(CustomFunction function : functions) function.print(indent, "");
     if(!functions.isEmpty() || !classes.isEmpty()
         && !lines.isEmpty()) println("");
-    for(Entity line : lines) line.print(indent2, "");
+    for(Entity line : lines) line.print(indent, "");
+    indent.delete(0, 2);
     println(indent + "}");
   }
 }

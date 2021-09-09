@@ -14,7 +14,7 @@ public class ActionSub extends Action {
     if(log) {
       log("SUB " + sub.name
         + (errorSub == null ? "" : " ON ERROR " + errorSub.name));
-      subIndent += "| ";
+      subIndent.append("| ");
     }
     returnStack.push(this);
     currentAction = sub.action;

@@ -1,8 +1,8 @@
 package processor;
 
 import ast.Entity;
-import ast.Function;
-import ast.FunctionCall;
+import ast.function.CustomFunction;
+import ast.function.FunctionCall;
 import base.ElException;
 
 public class Call extends ProCommand {
@@ -23,15 +23,17 @@ public class Call extends ProCommand {
   void execute() throws ElException {
     Entity value = parameter.getValue();
     try {
-      Function function = (Function) value;
+      CustomFunction function = (CustomFunction) value;
       if(log) println("Resolving function call " + toString());
-      function.append();
+      function.append(currentCall);
     } catch(ClassCastException ex) {
+      FunctionCall call;
       try {
-        ((FunctionCall) value).resolveAll();
+        call = (FunctionCall) value;
       } catch(ClassCastException ex2) {
-        throw new ElException("Cannot call ", current);
+        throw new ElException("Cannot call ", currentObject);
       }
+      call.process();
     }
   }
 }

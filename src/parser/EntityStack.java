@@ -1,7 +1,10 @@
 package parser;
 
+import ast.function.FunctionCall;
+import ast.function.CustomFunction;
 import ast.ListEntity;
 import ast.*;
+import ast.function.Function;
 import base.Base;
 import base.ElException;
 import java.util.HashMap;
@@ -13,7 +16,7 @@ public class EntityStack<EntityType> extends Base {
   public static final EntityStack<Block> block;
   public static final EntityStack<Code> code;
   public static final EntityStack<ConstantValue> constant;
-  public static final EntityStack<FunctionCall> call;
+  public static final EntityStack<Function> function;
   public static final EntityStack<ClassEntity> classStack;
 
   static {
@@ -50,7 +53,7 @@ public class EntityStack<EntityType> extends Base {
       }
     };
     
-    call = new EntityStack<FunctionCall>("call") {
+    new EntityStack<FunctionCall>("call") {
       @Override
       public FunctionCall create() {
         return new FunctionCall(null);
@@ -64,17 +67,17 @@ public class EntityStack<EntityType> extends Base {
       }
     };
     
-    EntityStack<Function> function = new EntityStack<Function>("function") {
+    function = new EntityStack<Function>("function") {
       @Override
-      public Function create() throws ElException {
-        return Function.create(id.pop());
+      public CustomFunction create() throws ElException {
+        return CustomFunction.create(id.pop());
       }
     };
     
-    new EntityStack<Function>("constructor", function) {
+    new EntityStack<CustomFunction>("constructor", function) {
       @Override
-      public Function create() throws ElException {
-        return Function.create(null);
+      public CustomFunction create() throws ElException {
+        return CustomFunction.create(null);
       }
     };
     
@@ -223,7 +226,8 @@ public class EntityStack<EntityType> extends Base {
   }
 
   public EntityType pop() throws ElException {
-    if(stack.isEmpty()) throw new ElException(Action.currentAction
+    if(stack.isEmpty())
+      throw new ElException(Action.currentAction
         , "Trying to pop entity from empty " + name.string + " stack");
     return stack.pop();
   }
@@ -233,7 +237,8 @@ public class EntityStack<EntityType> extends Base {
   }
 
   public EntityType peek() throws ElException {
-    if(stack.isEmpty()) throw new ElException(Action.currentAction
+    if(stack.isEmpty())
+      throw new ElException(Action.currentAction
         , "Trying to peek entity from empty " + name.string + " stack");
     return stack.peek();
   }

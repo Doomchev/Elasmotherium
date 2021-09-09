@@ -1,15 +1,16 @@
 package parser;
 
 import ast.Entity;
-import ast.Function;
 import ast.ID;
+import ast.function.NativeFunction;
 import base.ElException;
 
 public class ActionMove extends Action {
   private final EntityStack<Entity> from, to;
   private final boolean copy;
 
-  public ActionMove(EntityStack<Entity> from, EntityStack<Entity> to, boolean copy) {
+  public ActionMove(EntityStack<Entity> from, EntityStack<Entity> to
+      , boolean copy) {
     this.from = from;
     this.to = to;
     this.copy = copy;
@@ -20,14 +21,8 @@ public class ActionMove extends Action {
     String[] param = params.split(",");
     EntityStack<Entity> stack0 = EntityStack.all.get(ID.get(param[0]));
     if(stack0 == null) {
-      ID id0 = ID.get(param[0]);
-      Function function = Function.all.get(id0);
-      if(function == null) {
-        function = new Function(id0);
-        function.priority = 0;
-        Function.all.put(id0, function);
-      }
-      return new ActionMoveNewFunction(function, EntityStack.get(param[1]));
+      return new ActionMoveNewFunction(
+          NativeFunction.get(param[0]), EntityStack.get(param[1]));
     } else {
       if(param.length == 1) {
         return new ActionMove(stack0, stack0, copy);

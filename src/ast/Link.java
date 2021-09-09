@@ -1,5 +1,7 @@
 package ast;
 
+import ast.function.CustomFunction;
+import ast.function.FunctionCall;
 import base.ElException;
 import java.util.LinkedList;
 
@@ -7,7 +9,7 @@ public class Link extends Value {
   public static final ID id = ID.get("link");
   
   private final ID name;
-  private final LinkedList<Link> subtypes = new LinkedList<>();
+  private final LinkedList<Link> subTypes = new LinkedList<>();
 
   public Link(ID name) {
     this.name = name;
@@ -21,32 +23,44 @@ public class Link extends Value {
   }
 
   void addSubType(Link type) {
-    subtypes.add(type);
+    subTypes.add(type);
   }
   
   // processor fields
   
   @Override
-  public ID getObject() throws ElException {
+  public ID getID() throws ElException {
     return id;
+  }
+  
+  @Override
+  public Entity getType() throws ElException {
+    return resolve().getType();
   }
   
   // processing
   
   @Override
   public Entity resolve() throws ElException {
-    Entity entity = getFromScope(name);
-    if(entity == null)
-      throw new ElException(name + " is not found.");
-    try {
-      return (ClassParameter) entity;
-    } catch(ClassCastException ex) {
-      ClassEntity classEntity = (ClassEntity) entity;
-      if(subtypes.isEmpty()) return classEntity;
-      Type type = new Type(classEntity);
-      type.setSubTypes(subtypes);
-      return type;
+    if(subTypes.isEmpty()) return getFromScope(name);
+    ClassEntity basicClass = getClassFromScope(name);
+    Entity[] resolvedTypes = new Entity[subTypes.size()];
+    int index = 0;
+    for(Link subType: subTypes) {
+      resolvedTypes[index] = subType.resolve();
+      index++;
     }
+    return new Type(basicClass, resolvedTypes);
+  }
+  
+  @Override
+  public Entity resolve(int parametersQuantity) throws ElException {
+    return getFromScope(paramName(name, parametersQuantity));
+  }
+  
+  @Override
+  public void call(FunctionCall call) throws ElException {
+    resolve(call.getParametersQuantity()).call(call);
   }
   
   // moving functions
@@ -67,7 +81,7 @@ public class Link extends Value {
   }
 
   @Override
-  public void moveToFunction(Function function) {
+  public void moveToFunction(CustomFunction function) {
     function.setReturnType(this);
   }
   
@@ -76,6 +90,6 @@ public class Link extends Value {
   @Override
   public String toString() {
     return "#" + name.string
-        + (subtypes.isEmpty() ? "" : "<" + listToString(subtypes) + ">");
+        + (subTypes.isEmpty() ? "" : "<" + listToString(subTypes) + ">");
   }
 }

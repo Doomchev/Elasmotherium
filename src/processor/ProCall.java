@@ -18,14 +18,14 @@ public class ProCall extends ProCommand {
   
   @Override
   void execute() throws ElException {
-    Entity newCurrent = callObject.getValue();
+    Entity newCurrent = callObject.getValue().resolve();
     Entity callParam = parameter == null ? null : parameter.getValue();
     if(log) {
       log(callObject + "(" + newCurrent.toString() + ")."
           + method + "(" + callParam + ")");
-      subIndent += "| ";
+      subIndent.append("| ");
     }
-    currentProcessor.call(newCurrent, method, callParam);
-    if(log) subIndent = subIndent.substring(2);
+    currentProcessor.process(newCurrent, newCurrent.getID(), method, callParam);
+    if(log) subIndent = subIndent.delete(0, 2);
   }
 }

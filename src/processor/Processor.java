@@ -1,5 +1,10 @@
 package processor;
 
+import vm.call.*;
+import vm.string.var.*;
+import vm.string.field.*;
+import vm.i64.var.*;
+import vm.i64.field.*;
 import vm.collection.IteratorHasNext;
 import vm.i64.I64IteratorNext;
 import vm.collection.CollectionToIterator;
@@ -10,9 +15,9 @@ import vm.i64.*;
 import vm.string.*;
 import vm.collection.*;
 import ast.Entity;
-import ast.FunctionCall;
 import ast.ID;
-import ast.Link;
+import ast.function.FunctionCall;
+import static base.Base.currentLineNum;
 import base.ElException;
 import base.LinkedMap;
 import base.Module;
@@ -20,10 +25,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class Processor extends ProBase {
+  public static final ID callMethod = ID.get("call");
+  public static final ID resolveMethod = ID.get("resolve");
+  
   static final HashMap<String, VMCommand> commands = new HashMap<>();
 
   private static final HashMap<String, ProCommand> proCommands = new HashMap<>();
-  private static final ID defaultID = ID.get("default");
   private static EReader reader;
   
   private static void addCommand(VMCommand command) {
@@ -91,34 +98,49 @@ public class Processor extends ProBase {
     proCommands.put("process", Process.instance);
   }
   
-  private static class ProcessorObject
-      extends LinkedMap<ID, LinkedList<ProCommand>> {
+  private static class Method {
     boolean hasLabels = false;
+    LinkedList<ProCommand> commands = new LinkedList<>();
+
+    public void execute() throws ElException {
+      for(ProCommand command: commands) {
+        currentLineNum = command.lineNum;
+        command.execute();
+      }
+    }
   }
   
-  private final HashMap<ID, ProcessorObject> methods = new HashMap<>();
+  private final HashMap<ID, LinkedMap<ID, Method>>
+      functions = new HashMap<>();
   
-  private ProcessorObject getObject(String name) {
-    return getObject(ID.get(name));
+  private Method getMethod(ID functionName, ID methodName)
+      throws ElException {
+    LinkedMap<ID, Method> function = functions.get(functionName);
+    if(function == null)
+      throw new ElException("No code for " + functionName);
+    Method method = function.get(methodName);
+    if(method == null)
+      throw new ElException("No code for " + object + "." + method);
+    return method;
   }
   
-  private ProcessorObject getObject(ID id) {
-    ProcessorObject function = methods.get(id);
+  private LinkedMap<ID, Method> newFunction(ID functionName) {
+    LinkedMap<ID, Method> function = functions.get(functionName);
     if(function == null) {
-      function = new ProcessorObject();
-      methods.put(id, function);
+      function = new LinkedMap<>();
+      functions.put(functionName, function);
     }
     return function;
   }
   
-  private LinkedList<ProCommand> getMethod(ProcessorObject function
-      , ID id) {
-    LinkedList<ProCommand> list = function.get(id);
-    if(list == null) {
-      list = new LinkedList<>();
-      function.put(id, list);
+  private Method newMethod(
+      LinkedMap<ID, Method> function, ID methodName) {
+    Method method = function.get(methodName);
+    if(method == null) {
+      method = new Method();
+      function.put(methodName, method);
     }
-    return list;
+    return method;
   }
   
   public Processor load(String fileName) {
@@ -129,38 +151,39 @@ public class Processor extends ProBase {
       while((line = reader.readLine()) != null) {
         line = expectEnd(line, "{");
         String[] part = line.split("\\.");
-        ProcessorObject function = getObject(part[0]);
-        ID methodID = part.length > 1 ? ID.get(part[1]) : defaultID;
-        LinkedList<ProCommand> method = getMethod(function, methodID);
+        LinkedMap<ID, Method> function = newFunction(ID.get(part[0]));
+        ID methodID = part.length > 1 ? ID.get(part[1]) : callMethod;
+        Method method = newMethod(function, methodID);
+        LinkedList<ProCommand> code = method.commands;
         while(true) {
           if((line = reader.readLine()) == null)
             throw new ElException("Unexpected end of file");
           if(line.equals("}")) break;
           if(line.startsWith("#")) {
             ID labelID = ID.get(expectEnd(line, ":").substring(1));
-            method.add(new BlockLabelSet(labelID));
-            method.addFirst(new BlockLabelInitialize(labelID));
-            function.hasLabels = true;
+            code.add(new BlockLabelSet(labelID));
+            code.addFirst(new BlockLabelInitialize(labelID));
+            method.hasLabels = true;
           } else {
             line = expectEnd(line, ";");
             String param = line.contains("(") ? betweenBrackets(line) : "";
             line = stringUntil(line, '(');
             if(line.startsWith("[")) {
               part = trimmedSplit(line, '[', ']');
-              method.add(new TypeCommand(part[1], part[2], param));
+              code.add(new TypeCommand(part[1], part[2], param));
             } else {
               part = trimmedSplit(line, '.', '(');
               if(line.contains(".")) {
-                method.add(new ProCall(part[0], part[1], param));
+                code.add(new ProCall(part[0], part[1], param));
               } else {
                 ProCommand proCommand = proCommands.get(line);
                 if(proCommand != null) {
-                  method.add(proCommand.create(param));
+                  code.add(proCommand.create(param));
                 } else {
                   VMCommand command = commands.get(line);
                   if(command == null)
                     throw new ElException("Command " + line + " is not found.");
-                  method.add(AppendCommand.create(command, param));
+                  code.add(AppendCommand.create(command, param));
                 }
               }
             }
@@ -174,62 +197,87 @@ public class Processor extends ProBase {
     }
     return this;
   }
-  
-  public void callBlock(Block block) throws ElException {
+
+  public void processBlock(Block block, ID type) throws ElException {
     block.parentBlock = currentBlock;
     currentBlock = block;
-    call(block);
+    getMethod(type, callMethod).execute();
     currentBlock = block.parentBlock;
   }
   
-  public void call(Entity object, ID method) throws ElException {
-    Entity oldCurrent = current;
-    current = object;
-    ID objectId = object.getObject();
-    if(objectId == Link.id) {
-      current = getFromScope(object.getName());
-      if(current == null)
-        throw new ElException(object.getName() + " is not found.");
-      objectId = current.getObject();
-    }
-    ProcessorObject function = methods.get(objectId);
-    LinkedList<ProCommand> code
-        = function == null ? null : function.get(method);
-    
-    if(code == null) {
-      if(method == FunctionCall.resolve)
-        object.resolveAll();
-      else
-        throw new ElException("No code for " + objectId + "." + method);
-    } else if(function.hasLabels && !(object instanceof Block)) {
-      Block block = currentBlock;
-      currentBlock = new Block(null);
-      executeCode(code);
-      currentBlock.applyLabels();
-      currentBlock = block;
-    } else {
-      executeCode(code);
-    }
-    current = oldCurrent;
-  }
-
-  public void executeCode(LinkedList<ProCommand> code) throws ElException {
-    for(ProCommand command: code) {
-      currentLineNum = command.lineNum;
-      command.execute();
-    }
-  }
-  
-  public void call(Entity object, ID method, Entity param)
-      throws ElException {
+  public void resolve(Entity object, ID functionName, FunctionCall call
+      , Entity param) throws ElException {
     Entity oldParam = Processor.param;
     Processor.param = param;
-    call(object, method);
+    process(object, functionName, resolveMethod, call);
     Processor.param = oldParam;
   }
   
-  public void call(Entity object) throws ElException {
-    call(object, defaultID, null);
+  public void process(Entity object, ID functionName, ID methodName, Entity param)
+      throws ElException {
+    Entity oldParam = Processor.param;
+    Processor.param = param;
+    process(object, functionName, methodName);
+    Processor.param = oldParam;
+  }
+
+  public void call(Entity object, ID functionName, FunctionCall call)
+      throws ElException {
+    process(object, functionName, callMethod, call);
+  }
+
+  public void process(Entity object, ID functionName, ID methodName
+      , FunctionCall call) throws ElException {
+    FunctionCall oldCall = currentCall;
+    currentCall = call;
+    process(object, functionName, methodName);
+    currentCall = oldCall;
+  }
+
+  public void call(Entity object, FunctionCall call) throws ElException {
+    FunctionCall oldCall = currentCall;
+    currentCall = call;
+    process(object, object.getID(), callMethod);
+    currentCall = oldCall;
+  }
+  
+  public void resolve(Entity object, Entity param)
+      throws ElException {
+    Entity oldParam = Processor.param;
+    Processor.param = param;
+    object = object.resolve();
+    process(object, object.getID(), resolveMethod);
+    Processor.param = oldParam;
+  }
+  
+  public void process(Entity object, ID functionName, ID methodName)
+      throws ElException {
+    Entity oldCurrent = currentObject;
+    currentObject = object.resolve();
+    process(functionName, methodName);
+    currentObject = oldCurrent;
+  }
+  
+  public void process(ID functionName, ID methodName) throws ElException {
+    if(log) System.out.println(subIndent.toString() + currentLineNum + ": "
+        + functionName + "." + methodName);
+    Method method;
+    try {
+      method = getMethod(functionName, methodName);
+    } catch(ElException ex) {
+      if(methodName != resolveMethod) throw ex;
+      currentObject.process();
+      return;
+    }
+    if(method.hasLabels) {
+      Block block = currentBlock;
+      currentBlock = new Block(null);
+      method.execute();
+      currentBlock.applyLabels();
+      currentBlock = block;
+    } else {
+      method.execute();
+    }
   }
 
   public void process(Module module) {

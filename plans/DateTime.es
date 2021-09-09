@@ -1,8 +1,8 @@
-class DateTime {
+struc DateTime extends U64 {
   Int year();
   Int month();
   Int day();
-  Int hours();
-  Int minutes();
-  Int seconds();
+  Int hour();
+  Int minute();
+  Int second();
 }

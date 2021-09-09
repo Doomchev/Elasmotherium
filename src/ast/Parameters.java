@@ -1,5 +1,6 @@
 package ast;
 
+import ast.function.FunctionCall;
 import java.util.LinkedList;
 
 public class Parameters extends Value {
@@ -26,7 +27,6 @@ public class Parameters extends Value {
   @Override
   public void moveToFunctionCall(FunctionCall call) {
     call.add(parameters);
-    call.priority = VALUE;
   }
   
   // other

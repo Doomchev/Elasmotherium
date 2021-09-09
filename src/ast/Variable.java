@@ -1,6 +1,10 @@
 package ast;
 
+import ast.function.FunctionCall;
+import ast.function.NativeFunction;
+import ast.function.CustomFunction;
 import base.ElException;
+import processor.Processor;
 import vm.values.VMValue;
 
 public class Variable extends NamedEntity {
@@ -57,7 +61,7 @@ public class Variable extends NamedEntity {
   }
   
   @Override
-  public ID getObject() throws ElException {
+  public ID getID() throws ElException {
     return isField ? fieldID : id;
   }
   
@@ -70,19 +74,17 @@ public class Variable extends NamedEntity {
   
   @Override
   public void process() throws ElException {
-    if(log) print("", "");
+    if(log) print(new StringBuilder(), "");
     addToScope(name, this);
     resolveType();
-    if(value != null) currentProcessor.call(this);
+    if(value != null) currentProcessor.process(this, id, Processor.callMethod);
   }
 
   public void processField(ClassEntity classEntity, Code code)
       throws ElException {
     if(!isField) return;
     Variable field = classEntity.getField(name);
-    if(field == null) throw new ElException("Field " + name
-        + " is not found in ", classEntity);
-    FunctionCall equate = new FunctionCall(Function.equate);
+    FunctionCall equate = new FunctionCall(NativeFunction.equate);
     equate.add(field);
     equate.add(this);
     code.addLineFirst(equate);
@@ -109,7 +111,7 @@ public class Variable extends NamedEntity {
   }
 
   @Override
-  public void moveToFunction(Function function) {
+  public void moveToFunction(CustomFunction function) {
     index = function.addParameter(this);
   }
 
@@ -143,8 +145,8 @@ public class Variable extends NamedEntity {
   }
   
   @Override
-  public void print(String indent, String prefix) {
-    println(indent + prefix + type + " " + toString() + ":" + index
+  public void print(StringBuilder indent, String prefix) {
+    println(indent.toString() + prefix + type + " " + toString() + ":" + index
         + (value == null ? "" : " = " + value) + ";");
   }
 }

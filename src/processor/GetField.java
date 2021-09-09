@@ -2,8 +2,8 @@ package processor;
 
 import ast.ClassEntity;
 import ast.Entity;
-import ast.FunctionCall;
 import ast.ID;
+import ast.function.FunctionCall;
 import base.ElException;
 
 public class GetField extends ProCommand {
@@ -25,10 +25,12 @@ public class GetField extends ProCommand {
     Entity parameterValue = parameter.getValue();
     ID id = parameterValue.getName();
     ClassEntity classEntity = (ClassEntity) object.getType();
-    Entity field = classEntity.getField(id);
-    if(field == null) field = classEntity.getMethod(id);
-    if(field == null)
-      throw new ElException(classEntity + "." + id + " not found.");
+    Entity field;
+    try {
+      field = classEntity.getField(id);
+    } catch(ElException ex) {
+      field = classEntity.getMethod(id, currentCall.getParametersQuantity());
+    }
     try {
       FunctionCall call = (FunctionCall) parameterValue;
       if(log) println("Set call function to " + field + ".");
