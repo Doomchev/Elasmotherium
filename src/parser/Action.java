@@ -1,6 +1,7 @@
 package parser;
 
 import base.ElException;
+import base.ElException.MethodException;
 
 public abstract class Action extends ParserBase {
   static int savedTextPos, savedLineNum, savedLineStart;
@@ -14,7 +15,7 @@ public abstract class Action extends ParserBase {
   }
   
   public Action create(String params) throws ElException {
-    throw new ElException("No creating funciton for " + toString());
+    throw new MethodException(this, "create", "No creating function");
   }
   
   public void setOtherAction(Action action) {}

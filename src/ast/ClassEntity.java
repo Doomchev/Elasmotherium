@@ -1,8 +1,10 @@
 package ast;
 
-import ast.function.CustomFunction;
+import ast.function.Method;
+import ast.function.StaticFunction;
 import vm.values.ObjectEntity;
 import base.ElException;
+import base.ElException.NotFound;
 import java.util.HashMap;
 import java.util.LinkedList;
 import vm.values.VMValue;
@@ -13,8 +15,8 @@ public class ClassEntity extends NamedEntity {
   
   private final LinkedList<ClassParameter> parameters = new LinkedList<>();
   private final LinkedList<Variable> fields = new LinkedList<>();
-  private final LinkedList<CustomFunction> methods = new LinkedList<>();
-  private final LinkedList<CustomFunction> constructors = new LinkedList<>();
+  private final LinkedList<StaticFunction> methods = new LinkedList<>();
+  private final LinkedList<StaticFunction> constructors = new LinkedList<>();
   public ClassEntity nativeClass;
   private int allocation = 0;
   private VMValue value = null;
@@ -71,28 +73,28 @@ public class ClassEntity extends NamedEntity {
   
   public Variable getField(ID id) throws ElException {
     for(Variable field: fields) if(field.name == id) return field;
-    throw new ElException("Field " + name + " is not found.");
+    throw new NotFound(this, "Field " + name);
   }
   
-  public CustomFunction getMethod(String name, int parametersQuantity)
+  public StaticFunction getMethod(String name, int parametersQuantity)
       throws ElException {
     return getMethod(ID.get(name), parametersQuantity);
   }
   
-  public CustomFunction getMethod(ID id, int parametersQuantity)
+  public StaticFunction getMethod(ID id, int parametersQuantity)
       throws ElException {
-    for(CustomFunction method: methods)
+    for(StaticFunction method: methods)
       if(method.name == id && method.getParametersQuantity()
           == parametersQuantity) return method;
-    throw new ElException(this + "." + id + " not found.");
+    throw new NotFound(this, this + "." + id);
   }
 
-  public CustomFunction getConstructor(int parametersQuantity) throws ElException {
-    for(CustomFunction constructor: constructors)
+  public StaticFunction getConstructor(int parametersQuantity) throws ElException {
+    for(StaticFunction constructor: constructors)
       if(constructor.getParametersQuantity() == parametersQuantity)
         return constructor;
-    throw new ElException("Constructor of " + toString() + " with "
-        + parametersQuantity + " parameters is not found.");
+    throw new NotFound(this, "Constructor of " + toString() + " with "
+        + parametersQuantity + " parameters");
   }
   
   // adding child objects
@@ -110,11 +112,12 @@ public class ClassEntity extends NamedEntity {
     return index;
   }
 
-  public void addMethod(CustomFunction function, boolean isConstructor) {
-    if(isConstructor)
-      constructors.add(function);
-    else
-      methods.add(function);
+  public void addMethod(Method method) {
+    methods.add(method);
+  }
+
+  public void addConstructor(StaticFunction function) {
+    constructors.add(function);
   }
   
   // processor fields
@@ -142,17 +145,17 @@ public class ClassEntity extends NamedEntity {
     allocateScope();
     
     for(Variable field: fields) field.addToScope();
-    for(CustomFunction method: methods) method.addToScope();
+    for(StaticFunction method: methods) method.addToScope();
     
-    for(CustomFunction constructor: constructors) constructor.process();
-    for(CustomFunction method: methods) method.process();
+    for(StaticFunction constructor: constructors) constructor.process();
+    for(StaticFunction method: methods) method.process();
     
     deallocateScope();
     currentClass = oldClass;
   }
 
   public void processConstructors() throws ElException {
-    for(CustomFunction constructor: constructors)
+    for(StaticFunction constructor: constructors)
       constructor.processConstructor(this);
   }
   
@@ -164,8 +167,8 @@ public class ClassEntity extends NamedEntity {
     for(ClassParameter parameter: parameters) parameter.addToScope();
     
     for(Variable field: fields) field.resolveType();
-    for(CustomFunction constructor: constructors) constructor.resolveTypes();
-    for(CustomFunction method: methods) method.resolveTypes();
+    for(StaticFunction constructor: constructors) constructor.resolveTypes();
+    for(StaticFunction method: methods) method.resolveTypes();
     
     deallocateScope();
     currentClass = oldClass;
@@ -174,7 +177,7 @@ public class ClassEntity extends NamedEntity {
   @Override
   public void addToScope() {
     super.addToScope();
-    for(CustomFunction constructor: constructors) constructor.addToScope();
+    for(StaticFunction constructor: constructors) constructor.addToScope();
   }
   
   // moving funcitons
@@ -215,10 +218,10 @@ public class ClassEntity extends NamedEntity {
     indent.append("  ");
     for(Variable field: fields) field.print(indent, "");
     if(!fields.isEmpty() && !constructors.isEmpty()) println("");
-    for(CustomFunction method: constructors) method.print(indent, "");
+    for(StaticFunction method: constructors) method.print(indent, "");
     if(!constructors.isEmpty() || !fields.isEmpty()
         && !methods.isEmpty()) println("");
-    for(CustomFunction method: methods) method.print(indent, "");
+    for(StaticFunction method: methods) method.print(indent, "");
     indent.delete(0, 2);
     println(indent + "}");
   }

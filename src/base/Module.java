@@ -12,7 +12,7 @@ import ast.ClassEntity;
 import parser.ParserBase;
 import java.util.LinkedList;
 import parser.Rules;
-import ast.function.CustomFunction;
+import ast.function.StaticFunction;
 import ast.ID;
 import vm.*;
 import vm.collection.*;
@@ -26,7 +26,7 @@ public class Module extends ParserBase {
 
   public String fileName;
   public final LinkedList<Module> modules = new LinkedList<>();
-  public CustomFunction function = new CustomFunction(null);
+  public StaticFunction function = new StaticFunction(null);
 
   public Module(String fileName) {
     this.fileName = fileName;
@@ -36,7 +36,7 @@ public class Module extends ParserBase {
     return function.getAllocation();
   }
   
-  public static Module read(String fileName, Rules rules) {
+  public static Module read(String fileName, Rules rules) throws ElException {
     Module module = new Module(fileName);
     rules.read(module);
     return module;
@@ -100,7 +100,7 @@ public class Module extends ParserBase {
     print();
   }
 
-  public void execute(boolean showCommands) {
+  public void execute(boolean showCommands) throws ElException {
     VMBase.execute(showCommands, this);
   }
 

@@ -3,74 +3,50 @@ package ast.function;
 import ast.ClassEntity;
 import ast.Code;
 import ast.Entity;
+import static ast.Entity.append;
 import ast.ID;
 import ast.Variable;
 import base.ElException;
+import base.ElException.Cannot;
 import java.util.LinkedList;
 import parser.EntityStack;
-import processor.Processor;
 import vm.VMCommand;
 import vm.call.CallFunction;
 
-public class CustomFunction extends Function {
-  private boolean isConstructor = false;
-  private ClassEntity parentClass = null;
-  private Entity returnType = null;
-  private final LinkedList<Variable> parameters = new LinkedList<>();
-  private Code code = new Code();
-  private int startingCommand;
-  private int allocation = 0;
-  private VMCommand command = null;
+public abstract class CustomFunction extends Function {
+  protected final LinkedList<Variable> parameters = new LinkedList<>();
+  protected Code code = new Code();
+  protected int startingCommand;
+  protected int allocation = 0;
+  protected VMCommand command = null;
   
   // constructors
   
   public CustomFunction(ID name) {
     super(name);
-    if(name == null) this.isConstructor = true;
-  }
-  
-  public CustomFunction(VMCommand command, String name, ClassEntity... paramTypes) {
-    super(ID.get(name));
-    this.command = command;
-    for(ClassEntity paramType: paramTypes)
-      parameters.add(new Variable(paramType));
-  }
-  
-  public CustomFunction(VMCommand command, ClassEntity returnType, String name
-      , ClassEntity... paramTypes) {
-    this(command, name, paramTypes);
-    this.returnType = returnType;
-  }
-
-  public static CustomFunction create(ID id) {
-    return allocateFunction(new CustomFunction(id));
   }
   
   // parameters
-
-  public boolean isMethod() {
-    return parentClass != null;
-  }
 
   public int getCallAllocation() {
     return parameters.size() - 1;
   }
 
   public int getCallDeallocation() {
-    return parameters.size() + (isMethod() ? 1 : 0) - (isConstructor ? 1 : 0);
+    return parameters.size();
   }
 
   public int getStartingCommand() {
     return startingCommand;
   }
 
-  public void setReturnType(Entity returnType) {
-    this.returnType = returnType;
-  }
-
   @Override
   public int getParametersQuantity() {
     return parameters.size();
+  }
+
+  public void setReturnType(Entity returnType) throws ElException {
+    throw new Cannot("set return type of", this);
   }
   
   // allocation
@@ -92,7 +68,7 @@ public class CustomFunction extends Function {
     return index;
   } 
   
-  public CustomFunction getFunction(ID id, int parametersQuantity)
+  public StaticFunction getFunction(ID id, int parametersQuantity)
       throws ElException {
     return code.getFunction(id, parametersQuantity);
   }
@@ -112,11 +88,6 @@ public class CustomFunction extends Function {
     return id;
   }
   
-  @Override
-  public Entity getType() throws ElException {
-    return isConstructor ? parentClass : returnType.getType();
-  }
-  
   public Entity getParameter(int index) throws ElException {
     return parameters.get(index);
   }
@@ -133,11 +104,7 @@ public class CustomFunction extends Function {
   
   @Override
   public void addToScope() {
-    if(isConstructor) {
-      addToScope(paramName(parentClass.name, parameters.size()), this);
-    } else {
-      addToScope(paramName(name, parameters.size()), this);
-    }
+    addToScope(paramName(name, parameters.size()), this);
   }
   
   @Override
@@ -148,32 +115,23 @@ public class CustomFunction extends Function {
     currentFunction = this;
     allocateScope();
     for(Variable param: parameters) param.addToScope();
-    VMCommand endingCommand = returnType == null ? new vm.call.Return() : null;
-    code.processWithoutScope(endingCommand);
+    code.processWithoutScope(getEndingCommand());
     deallocateScope();
     currentFunction = oldFunction;
+  }
+  
+  public VMCommand getEndingCommand() throws ElException {
+    return new vm.call.Return();
   }
 
   @Override
   public void call(FunctionCall call) throws ElException {
     if(log) println(subIndent + "Resolving function call " + toString());
-    
-    if(isConstructor) {
-      if(command != null) {
-        resolveParameters(call);
-        append(command.create());
-        return;
-      }
-      append(new vm.object.ObjectCreate(parentClass));
-      resolveParameters(call);
-      append(new vm.call.CallFunction(this));
+    resolveParameters(call);
+    if(command != null) {
+      append(command.create());
     } else {
-      resolveParameters(call);
-      if(command != null) {
-        append(command.create());
-      } else {
-        append(new vm.call.CallFunction(this));
-      }
+      append(new vm.call.CallFunction(this));
     }
   }
 
@@ -190,7 +148,7 @@ public class CustomFunction extends Function {
     code.processWithoutScope(endingCommand);
   }
 
-  private void resolveParameters(FunctionCall call) throws ElException {
+  protected void resolveParameters(FunctionCall call) throws ElException {
     int i = 0;
     for(Entity parameter: parameters) {
       call.getParameter(i).resolve(parameter.getType().getNativeClass());
@@ -198,10 +156,7 @@ public class CustomFunction extends Function {
     }
   }
   
-  public void resolveTypes() throws ElException {
-    if(returnType != null) returnType = returnType.resolve();
-    for(Variable param: parameters) param.resolveType();
-  }
+  public abstract void resolveTypes() throws ElException;
   
   public void append(FunctionCall call) throws ElException {
     resolveParameters(call);
@@ -216,19 +171,6 @@ public class CustomFunction extends Function {
   }
 
   @Override
-  public void moveToClass(ClassEntity classEntity) throws ElException {
-    deallocateFunction();
-    parentClass = classEntity;
-    classEntity.addMethod(this, isConstructor);
-  }
-
-  @Override
-  public void moveToCode(Code code) {
-    deallocateFunction();
-    code.add(this);
-  }
-
-  @Override
   public void moveToBlock() throws ElException {
     deallocateFunction();
   }
@@ -237,14 +179,12 @@ public class CustomFunction extends Function {
 
   @Override
   public String toString() {
-    return isConstructor ? "this" : name.string;// + "." + priority;
+    return name.string;
   }
   
-  @Override
-  public void print(StringBuilder indent, String prefix) {
+  public void print(StringBuilder indent, String prefix, String name) {
     StringBuilder str = new StringBuilder();
-    if(returnType != null) str.append(returnType).append(" ");
-    str.append(isConstructor ? "create" : name.string).append("(");
+    str.append(name).append("(");
     boolean isNotFirst = false;
     for(Variable parameter : parameters) {
       if(isNotFirst) str.append(", ");
@@ -258,4 +198,10 @@ public class CustomFunction extends Function {
       println(indent + prefix + str + ";");
     }
   }
+  
+  @Override
+  public void print(StringBuilder indent, String prefix) {
+    print(indent, prefix, name.string);
+  }
+
 }

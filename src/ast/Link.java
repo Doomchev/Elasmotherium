@@ -81,7 +81,7 @@ public class Link extends Value {
   }
 
   @Override
-  public void moveToFunction(CustomFunction function) {
+  public void moveToFunction(CustomFunction function) throws ElException {
     function.setReturnType(this);
   }
   

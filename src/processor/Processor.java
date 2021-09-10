@@ -5,9 +5,6 @@ import vm.string.var.*;
 import vm.string.field.*;
 import vm.i64.var.*;
 import vm.i64.field.*;
-import vm.collection.IteratorHasNext;
-import vm.i64.I64IteratorNext;
-import vm.collection.CollectionToIterator;
 import ast.Block;
 import vm.*;
 import vm.object.*;
@@ -19,6 +16,8 @@ import ast.ID;
 import ast.function.FunctionCall;
 import static base.Base.currentLineNum;
 import base.ElException;
+import base.ElException.MethodException;
+import base.ElException.NotFound;
 import base.LinkedMap;
 import base.Module;
 import java.util.HashMap;
@@ -117,10 +116,12 @@ public class Processor extends ProBase {
       throws ElException {
     LinkedMap<ID, Method> function = functions.get(functionName);
     if(function == null)
-      throw new ElException("No code for " + functionName);
+      throw new MethodException("Processor", "getMethod"
+          , "No code for " + functionName);
     Method method = function.get(methodName);
     if(method == null)
-      throw new ElException("No code for " + object + "." + method);
+      throw new MethodException("Processor", "getMethod"
+          , "No code for " + object + "." + method);
     return method;
   }
   
@@ -157,7 +158,8 @@ public class Processor extends ProBase {
         LinkedList<ProCommand> code = method.commands;
         while(true) {
           if((line = reader.readLine()) == null)
-            throw new ElException("Unexpected end of file");
+            throw new MethodException("Processor", "load"
+                , "Unexpected end of file");
           if(line.equals("}")) break;
           if(line.startsWith("#")) {
             ID labelID = ID.get(expectEnd(line, ":").substring(1));
@@ -182,7 +184,7 @@ public class Processor extends ProBase {
                 } else {
                   VMCommand command = commands.get(line);
                   if(command == null)
-                    throw new ElException("Command " + line + " is not found.");
+                    throw new NotFound(this, "Command " + line);
                   code.add(AppendCommand.create(command, param));
                 }
               }
@@ -192,8 +194,7 @@ public class Processor extends ProBase {
       }
     } catch (ElException ex) {
       error("Error in processor code"
-          , currentFileName + " (" + currentLineNum + ")\n"
-      + ex.message);
+          , currentFileName + " (" + currentLineNum + ")\n" + ex.message);
     }
     return this;
   }

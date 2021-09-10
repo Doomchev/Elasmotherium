@@ -1,6 +1,7 @@
 package parser;
 
 import base.ElException;
+import base.ElException.ActionException;
 import base.LinkedMap;
 
 public class ActionSwitch extends Action {
@@ -83,6 +84,7 @@ public class ActionSwitch extends Action {
     }
     currentAction = action[currentChar];
     if(currentAction == null)
-      throw new ElException("No command for " + currentChar);
+      throw new ActionException(this, "SWITCH:"
+          , "No command for " + currentChar);
   }
 }

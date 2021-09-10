@@ -1,11 +1,13 @@
 package ast;
 
-import ast.function.FunctionCall;
 import ast.function.CustomFunction;
+import ast.function.FunctionCall;
 import base.Base;
 import base.ElException;
+import base.ElException.Cannot;
+import base.ElException.CannotGet;
+import base.ElException.CannotMove;
 import java.util.LinkedList;
-import processor.Processor;
 import vm.VMCommand;
 import vm.values.VMValue;
 
@@ -13,20 +15,19 @@ public abstract class Entity extends Base {
   // processor fields
   
   public ID getName() throws ElException {
-    throw new ElException("Cannot get name from", this);
+    throw new CannotGet("name", this);
   }
   
   public ID getID() throws ElException {
-    throw new ElException("Cannot get id from", this);
+    throw new CannotGet("id", this);
   }
   
   public ClassEntity getNativeClass() throws ElException {
-    throw new ElException("Cannot convert " + this
-        + " to native class.");
+    throw new CannotGet("native class", this);
   }
   
   public Entity getValue() throws ElException {
-    throw new ElException("Cannot get value from", this);
+    throw new CannotGet("value", this);
   }
   
   public Entity getFormulaValue() throws ElException {
@@ -34,33 +35,33 @@ public abstract class Entity extends Base {
   }
   
   public Entity getType() throws ElException {
-    throw new ElException("Cannot get type of", this);
+    throw new CannotGet("type", this);
   }
   
   public String getStringValue() throws ElException {
-    throw new ElException("Cannot get string value of", this);
+    throw new CannotGet("string value", this);
   }
   
   public int getIndex() throws ElException {
-    throw new ElException("Cannot get index of", this);
+    throw new CannotGet("index", this);
   }
 
   public Entity getBlockParameter(ID name) throws ElException {
-    throw new ElException(name + " for " + this + " is not found.");
+    throw new CannotGet(name + " parameter", this);
   }
 
   public int getParametersQuantity() throws ElException {
-    throw new ElException("There are no parameters in ", this);
+    throw new CannotGet("parameters quantity", this);
   }
   
   // processing
     
   public void process() throws ElException {
-    throw new ElException("Cannot process", this);
+    throw new Cannot("process", this);
   }
   
   public void call(FunctionCall call) throws ElException {
-    throw new ElException("Cannot call", this);
+    throw new Cannot("call", this);
   }
 
   public void resolve(ClassEntity parameter) throws ElException {
@@ -78,68 +79,68 @@ public abstract class Entity extends Base {
   // moving functions
   
   public void move(Entity entity) throws ElException {
-    throw new ElException("Cannot move anything to", this);
+    throw new Cannot("move anything to", this);
   }
 
   public void moveToCode(Code code) throws ElException {
-    throw new ElException(this, "code");
+    throw new CannotMove(this, "code");
   }
 
   public void moveToBlock() throws ElException {
   }
 
   public void moveToFormula(Formula formula) throws ElException {
-    throw new ElException(this, "formula");
+    throw new CannotMove(this, "formula");
   }
 
   public void moveToFunctionCall(FunctionCall call) throws ElException {
-    throw new ElException(this, "function call");
+    throw new CannotMove(this, "function call");
   }
 
   public void moveToClass(ClassEntity classEntity) throws ElException {
-    throw new ElException(this, "class");
+    throw new CannotMove(this, "class");
   }
 
   public void moveToFunction(CustomFunction function) throws ElException {
-    throw new ElException(this, "function");
+    throw new CannotMove(this, "function");
   }
 
   public void moveToVariable(Variable variable) throws ElException {
-    throw new ElException(this, "variable");
+    throw new CannotMove(this, "variable");
   }
 
   public void moveToType(Type type) throws ElException {
-    throw new ElException(this, "type");
+    throw new CannotMove(this, "type");
   }
 
   public void moveToParameters(Parameters parameters) throws ElException {
-    throw new ElException(this, "parameters");
+    throw new CannotMove(this, "parameters");
   }
 
   public void moveToStringSequence(StringSequence seq) throws ElException {
-    throw new ElException(this, "string sequence");
+    throw new CannotMove(this, "string sequence");
   }
 
   public void moveToList(ListEntity list) throws ElException {
-    throw new ElException(this, "list");
+    throw new CannotMove(this, "list");
   }
 
   public void moveToMap(MapEntity map) throws ElException {
-    throw new ElException(this, "map");
+    throw new CannotMove(this, "map");
   }
 
   public void moveToObjectEntry(ObjectEntry entry) throws ElException {
-    throw new ElException(this, "object entry");
+    throw new CannotMove(this, "object entry");
   }
 
   public void moveToLink(Link link) throws ElException {
-    throw new ElException(this, "link");
+    throw new CannotMove(this, "link");
   }
   
   // other
   
   public VMValue createValue() throws ElException {
-    throw new ElException("Cannot create value for ", this);
+    throw new Cannot("create value for ", this);
   }
 
   public static void append(VMCommand command) {
@@ -148,9 +149,5 @@ public abstract class Entity extends Base {
   
   public void print(StringBuilder indent, String prefix) {
     println(indent.toString() + prefix + toString() + ";");
-  }
-
-  public void call(LinkedList<Entity> parameters) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 }

@@ -2,8 +2,10 @@ package base;
 
 import ast.ClassEntity;
 import ast.Entity;
-import ast.function.CustomFunction;
 import ast.ID;
+import ast.function.CustomFunction;
+import base.ElException.MethodException;
+import base.ElException.NotFound;
 import base.LinkedMap.Entry;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,20 +53,21 @@ public abstract class Base {
   
   // functions
   
-  private static final LinkedList<CustomFunction> functions = new LinkedList<>();
+  //private static final LinkedList<CustomFunction> functions
+  //    = new LinkedList<>();
   public static CustomFunction currentFunction;
   
   public static CustomFunction allocateFunction(CustomFunction function) {
     allocate();
     currentAllocation = 0;
-    functions.add(currentFunction);
-    currentFunction = function;
+    //functions.add(currentFunction);
+    //currentFunction = function;
     return function;
   }
   
   public static int deallocateFunction() {
-    currentFunction = functions.getLast();
-    functions.removeLast();
+    //currentFunction = functions.getLast();
+    //functions.removeLast();
     return deallocate();
   }
   
@@ -97,7 +100,7 @@ public abstract class Base {
   public Entity getFromScope(ID name) throws ElException {
     for(int i = lastScopeEntry; i >= 0; i--)
       if(scope[i].key == name) return scope[i].value;
-    throw new ElException("Identifier " + name + " is not found.");
+    throw new NotFound("getFromScope", "Identifier " + name);
   }
   
   public ClassEntity getClassFromScope(ID name) throws ElException {
@@ -107,7 +110,7 @@ public abstract class Base {
         if(value instanceof ClassEntity) return (ClassEntity) value;
       }
     }
-    throw new ElException("Class " + name + " is not found.");
+    throw new NotFound("getClassFromScope", "Class " + name);
   }
   
   public void printScope() {
@@ -174,7 +177,8 @@ public abstract class Base {
   }
   
   public static String expectEnd(String string, String end) throws ElException {
-    if(!string.endsWith(end)) throw new ElException(end + " expected.");
+    if(!string.endsWith(end)) throw new MethodException("Base", "expectEnd"
+        , end + " expected");
     return string.substring(0, string.length() - end.length());
   }
   
@@ -227,8 +231,8 @@ public abstract class Base {
   }
 
   public static String stringParam(String str) throws ElException {
-    if(!str.endsWith("\"") || str.length() < 2) throw new ElException(
-        "Invalid token");
+    if(!str.endsWith("\"") || str.length() < 2) throw new MethodException(
+        "Base", "stringParam", "Invalid token");
     return str.substring(1, str.length() - 1);
   }
   
@@ -299,12 +303,12 @@ public abstract class Base {
       return;
     }
     LinkedMap<ClassEntity, VMCommand> map = converters.get(from);
-    if(map == null) {
-      throw new ElException("Converters from " + from + " are not found.");
-    }
+    if(map == null)
+      throw new ElException(from, "Converters from " + from
+          + " are not found.");
     VMCommand command = map.get(to);
     if(command == null) {
-      throw new ElException("Converters from " + from + " to " + to
+      throw new ElException(from, "Converters from " + from + " to " + to
           + " are not found.");
     }
     appendLog(command.create());

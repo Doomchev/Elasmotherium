@@ -3,6 +3,8 @@ package parser;
 import static base.Base.currentFunction;
 import java.util.HashMap;
 import base.ElException;
+import base.ElException.MethodException;
+import base.ElException.NotFound;
 import base.Module;
 import static base.Module.current;
 import java.io.File;
@@ -21,8 +23,7 @@ public class Rules extends ParserBase {
   
   private SymbolMask getMask(String name) throws ElException {
     SymbolMask mask = masks.get(name);
-    if(mask == null) throw new ElException("Cannot find symbol mask \""
-        + name + "\"");
+    if(mask == null) throw new NotFound(this, "symbol mask \"" + name + "\"");
     return mask;
   }
   
@@ -74,8 +75,8 @@ public class Rules extends ParserBase {
               mask.set(symbol.charAt(0), symbol.charAt(2));
             } else if(symbol.length() >= 2) {
               SymbolMask mask2 = masks.get(symbol);
-              if(mask2 == null) throw new ElException("Mask \"" + symbol
-                  + "\" is not found");
+              if(mask2 == null) throw new NotFound(this
+                  , "Mask \"" + symbol + "\"");
               mask.or(mask2);
             }
           }
@@ -87,11 +88,11 @@ public class Rules extends ParserBase {
           defSym.add(line.substring(8));
         } else {
           if(colonPos < 0 && equalPos < 0)
-            throw new ElException(": or = expected");
+            throw new MethodException("Rules" ,"load", ": or = expected");
           String name = line.substring(0, colonPos).trim();
           Sub sub = getSub(name);
-          if(sub.action != null) throw new ElException("Sub \"" + name
-              + "\" is already defined");
+          if(sub.action != null) throw new MethodException("Rules" ,"load"
+              , "Sub \"" + name + "\" is already defined");
           sub.action = actionChain(line.substring(colonPos + 1), null, sub);
         }
       }
@@ -145,7 +146,8 @@ public class Rules extends ParserBase {
           parseLine(string, switchAction, back, currentSub);
         while(true) {
           if((line = reader.readLine()) == null)
-            throw new ElException("Unexpected end of file");
+            throw new MethodException("Rules", "actionChain"
+                , "Unexpected end of file");
           if(line.equals("}")) break;
           parseLine(line, switchAction, back, currentSub);
         }
@@ -187,7 +189,8 @@ public class Rules extends ParserBase {
   private void parseLine(String line, ActionSwitch switchAction, Action back
       , Sub currentSub) throws ElException {
     LinkedList<String> parts = listSplit(line, ':');
-    if(parts.size() < 2) throw new ElException(": expected");
+    if(parts.size() < 2)
+      throw new MethodException("Rules" , "parseLine", ": expected");
     Action actionChain = actionChain(parts.getLast(), back, currentSub);
     for(String token: listSplit(parts.getFirst(), ',')) {
       if(token.startsWith("\"")) {
@@ -196,8 +199,8 @@ public class Rules extends ParserBase {
         switchAction.setOtherAction(actionChain);
       } else {
         SymbolMask symbolMask = getMask(token);
-        if(symbolMask == null) throw new ElException("Mask \"" + token
-            + "\" is not found");
+        if(symbolMask == null) throw new NotFound(this
+            , "Mask \"" + token + "\"");
         switchAction.setMaskAction(symbolMask, actionChain);
         //break;
       }

@@ -7,8 +7,8 @@ import ast.ID;
 import ast.Value;
 import static base.Base.currentProcessor;
 import base.ElException;
+import base.ElException.NotFound;
 import java.util.LinkedList;
-import processor.Processor;
 
 public class FunctionCall extends Value {
   public static final ID id = ID.get("call");
@@ -52,13 +52,13 @@ public class FunctionCall extends Value {
   
   public void setFunction(Entity function) {
     this.function = function;
-  }
+  }  
   
   // processor fields
   
   public Entity getParameter(int index) throws ElException {
     if(index >= parameters.size())
-      throw new ElException("Parameter number " + index + " is not found.");
+      throw new NotFound(this, "Parameter number " + index);
     return parameters.get(index);
   }
 
@@ -93,7 +93,9 @@ public class FunctionCall extends Value {
   @Override
   public void resolve(ClassEntity parameter) throws ElException {
     function = function.resolve(parameters.size());
-    currentProcessor.resolve(this, function.getID(), this, parameter);
+    currentProcessor.resolve(
+        function instanceof FunctionCall ? function : this
+        , function.getID(), this, parameter);
   }
   
   // moving functions

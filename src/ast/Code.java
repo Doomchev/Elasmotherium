@@ -1,14 +1,15 @@
 package ast;
 
-import ast.function.FunctionCall;
 import ast.function.CustomFunction;
+import ast.function.FunctionCall;
+import ast.function.StaticFunction;
 import base.ElException;
 import java.util.LinkedList;
 import vm.VMCommand;
 
 public class Code extends Entity {
   private final LinkedList<Entity> lines = new LinkedList<>();
-  private final LinkedList<CustomFunction> functions = new LinkedList<>();
+  private final LinkedList<StaticFunction> functions = new LinkedList<>();
   private final LinkedList<ClassEntity> classes = new LinkedList<>();
   
   // creating
@@ -30,7 +31,7 @@ public class Code extends Entity {
     lines.addFirst(codeLine);
   }
 
-  public void add(CustomFunction function) {
+  public void add(StaticFunction function) {
     functions.add(function);
   }
 
@@ -38,14 +39,14 @@ public class Code extends Entity {
     classes.add(classEntity);
   }
   
-  public CustomFunction getFunction(ID id, int parametersQuantity)
+  public StaticFunction getFunction(ID id, int parametersQuantity)
       throws ElException {
-    for(CustomFunction function: functions)
+    for(StaticFunction function: functions)
       if(function.getName() == id
           && function.getParametersQuantity() == parametersQuantity) {
         return function;
       }
-    throw new ElException("Function " + id + " is not found.");
+    throw new ElException.NotFound(this, "Function " + id);
   }
   
   // processing
@@ -59,7 +60,7 @@ public class Code extends Entity {
   
   public void processWithoutScope(VMCommand endingCommand) throws ElException {
     for(ClassEntity classEntity: classes) classEntity.addToScope();
-    for(CustomFunction function: functions) {
+    for(StaticFunction function: functions) {
       function.addToScope();
       function.resolveTypes();
     }
@@ -70,7 +71,7 @@ public class Code extends Entity {
     if(endingCommand != null) append(endingCommand);
     
     for(ClassEntity classEntity: classes) classEntity.process();
-    for(CustomFunction function: functions) function.process();
+    for(StaticFunction function: functions) function.process();
   }
 
   public void processConstructors() throws ElException {
@@ -113,7 +114,7 @@ public class Code extends Entity {
     indent.append("  ");
     for(ClassEntity classEntity : classes) classEntity.print(indent, "");
     if(!classes.isEmpty() && !functions.isEmpty()) println("");
-    for(CustomFunction function : functions) function.print(indent, "");
+    for(StaticFunction function : functions) function.print(indent, "");
     if(!functions.isEmpty() || !classes.isEmpty()
         && !lines.isEmpty()) println("");
     for(Entity line : lines) line.print(indent, "");

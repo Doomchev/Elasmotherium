@@ -4,6 +4,7 @@ import ast.Block;
 import ast.Entity;
 import ast.ID;
 import base.ElException;
+import base.ElException.ActionException;
 
 public class ActionSet extends Action {
   private final EntityStack<? extends Entity> value;
@@ -20,7 +21,7 @@ public class ActionSet extends Action {
     if(param.length == 1) return new ActionSet(ID.get(param[0]), null);
     if(param.length == 2)
       return new ActionSet(ID.get(param[0]), EntityStack.get(param[1]));
-    throw new ElException("SET command requires 2 parameters");
+    throw new ActionException(this, "SET", "requires 2 parameters");
     
   }
   

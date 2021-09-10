@@ -1,6 +1,7 @@
 package parser;
 
 import base.ElException;
+import base.ElException.ActionException;
 
 public class Error extends Action {
   private final String errorText;
@@ -21,7 +22,8 @@ public class Error extends Action {
   @Override
   public void execute() throws ElException {
     Sub errorActionSub = getErrorActionSub();
-    if(errorActionSub == null) throw new ElException(this, errorText);
+    if(errorActionSub == null) throw new ActionException(this, "ERROR"
+        , errorText);
     if(log) log("ERROR - RETURNING TO " + errorActionSub.name);
     subIndent = subIndent.delete(0, 2);
     currentAction = errorActionSub.action;

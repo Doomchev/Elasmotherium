@@ -1,12 +1,10 @@
 package ast.function;
 
-import ast.Entity;
 import ast.Formula;
 import ast.ID;
 import base.ElException;
+import base.ElException.NotFound;
 import java.util.HashMap;
-import java.util.LinkedList;
-import processor.Processor;
 
 public class NativeFunction extends Function {
   private static final HashMap<ID, NativeFunction> all = new HashMap<>();
@@ -33,7 +31,7 @@ public class NativeFunction extends Function {
   public static NativeFunction get(ID name) throws ElException {
     NativeFunction function = all.get(name);
     if(function != null) return function;
-    throw new ElException("Native function " + name + " is not found.");
+    throw new NotFound("NativeFunction.get", "Native function " + name);
   }
   
   static {

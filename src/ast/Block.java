@@ -1,6 +1,7 @@
 package ast;
 
 import base.ElException;
+import base.ElException.NotFound;
 import base.LinkedMap;
 import java.util.LinkedList;
 import processor.ProParameter;
@@ -45,7 +46,7 @@ public class Block extends Entity {
   public Label getLabel(ID name) throws ElException {
     for(Label label: labels) if(label.name == name) return label;
     if(parentBlock == null)
-      throw new ElException("Label " + name + " is not found.");
+      throw new NotFound(this, "Label " + name + " is not found.");
     return parentBlock.getLabel(name);
   }
 
@@ -66,7 +67,7 @@ public class Block extends Entity {
           if(label.position >= 0) break;
           block = block.parentBlock;
           if(block == null)
-            throw new ElException("Label " + name + " is not found.");
+            throw new NotFound(this, "Label " + name);
           label = block.getLabel(name);
         }
         command.setPosition(label.position);
@@ -88,7 +89,7 @@ public class Block extends Entity {
   public Variable getVariable(ID name) throws ElException {
     for(Variable variable: variables)
       if(variable.name == name) return variable;
-    throw new ElException("Variable " + name + " is not found in", this);
+    throw new NotFound(this, "Variable " + name, this);
   }
   
   // processor fields
@@ -97,7 +98,7 @@ public class Block extends Entity {
   public Entity getBlockParameter(ID name) throws ElException {
     Entity entity = entries.get(name);
     if(entity == null)
-      throw new ElException(name + " block parameter is not found.");
+      throw new NotFound(this, name + " block parameter");
     return entity;
   }
   

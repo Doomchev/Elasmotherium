@@ -4,6 +4,9 @@ import ast.ClassEntity;
 import ast.Entity;
 import ast.ID;
 import base.ElException;
+import base.ElException.Cannot;
+import base.ElException.CannotGet;
+import base.ElException.MethodException;
 import vm.VMCommand;
 
 public abstract class ProParameter extends ProBase {
@@ -27,7 +30,8 @@ public abstract class ProParameter extends ProBase {
         } else {
           ClassEntity classEntity = ClassEntity.all.get(ID.get(name));
           if(classEntity != null) return new ProClass(classEntity);
-          throw new ElException(name + " is not found.");
+          throw new MethodException("ProParameter", "get"
+              , name + " is not found.");
         }
     }
   }
@@ -45,18 +49,18 @@ public abstract class ProParameter extends ProBase {
   }
   
   public Entity getValue() throws ElException {
-    throw new ElException("Cannot get value from", this);
+    throw new CannotGet("value", this);
   }
 
   public void setValue(Entity value) throws ElException {
-    throw new ElException("Cannot set value of", this);
+    throw new Cannot("set value of", this);
   }
   
   public ID getID() throws ElException {
-    throw new ElException("Cannot get id from", this);
+    throw new CannotGet("id", this);
   }
   
   public void addLabelCommand(VMCommand command) throws ElException {
-    throw new ElException("Cannot add label command to", this);
+    throw new Cannot("add label command to", this);
   }
 }

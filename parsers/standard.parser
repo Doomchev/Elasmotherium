@@ -585,17 +585,17 @@ classBody: {
       // Type var = value
       ",", ";", "=": classFieldValue
       // Type method(
-      "(": >> CREATE(function) MOVE(link, function) methodParameter
+      "(": >> CREATE(method) MOVE(link, function) methodParameter
       other: syntaxError
     }
     // Type0<Type1> var
     // Type0<Type1> method
     "<": >> type() id() {
-      "(": >> CREATE(function) methodParameter
+      "(": >> CREATE(method) methodParameter
       other: classFieldValue
     }
     // method(
-    "(": >> CREATE(function) methodParameter
+    "(": >> CREATE(method) methodParameter
     other: syntaxError
   }
   "create": >> EXPECT("(") CREATE(constructor) methodParameter

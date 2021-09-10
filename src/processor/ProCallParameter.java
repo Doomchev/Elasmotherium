@@ -3,6 +3,7 @@ package processor;
 import ast.Entity;
 import ast.function.FunctionCall;
 import base.ElException;
+import base.ElException.MethodException;
 
 public class ProCallParameter extends ProParameter {
   private final int index;
@@ -12,7 +13,8 @@ public class ProCallParameter extends ProParameter {
     try {
       this.index = Integer.parseInt(index);
     } catch(NumberFormatException ex) {
-      throw new ElException("Wrong parameter number format.");
+      throw new MethodException("ProCallParameter", "create"
+          , "Wrong parameter number format.");
     }
   }
 

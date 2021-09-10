@@ -1,7 +1,7 @@
 package processor;
 
 import base.ElException;
-import static parser.ParserBase.subIndent;
+import base.ElException.CannotCreate;
 import vm.VMBase;
 import vm.VMCommand;
 
@@ -16,7 +16,7 @@ public abstract class ProCommand extends ProBase {
     try {
       return getClass().newInstance();
     } catch(InstantiationException | IllegalAccessException ex) {
-      throw new ElException("Cannot create ", this);
+      throw new CannotCreate(this, toString());
     }
   }
   

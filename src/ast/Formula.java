@@ -3,6 +3,7 @@ package ast;
 import ast.function.FunctionCall;
 import ast.function.NativeFunction;
 import base.ElException;
+import base.ElException.MethodException;
 import java.util.LinkedList;
 import java.util.Stack;
 
@@ -89,14 +90,14 @@ public class Formula extends Entity {
     while(!opStack.empty()) popOp();
     
     if(valueStack.size() != 1)
-      throw new ElException("Error in formula.");
+      throw new MethodException(this, "getFormulaValue", "Error in formula.");
     return valueStack.pop();
   }
 
   private void popOp() throws ElException {
     NativeFunction op = opStack.pop();
     if(valueStack.size() < 2)
-      throw new ElException("Syntax error");
+      throw new MethodException(this, "popOp", "Syntax error");
     FunctionCall call = new FunctionCall(op);
     if(op == NativeFunction.callFunction) {
       valueStack.pop().moveToFunctionCall(call);

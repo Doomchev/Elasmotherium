@@ -1,12 +1,16 @@
 package parser;
 
 import ast.function.FunctionCall;
-import ast.function.CustomFunction;
+import ast.function.StaticFunction;
 import ast.ListEntity;
 import ast.*;
-import ast.function.Function;
+import ast.function.Constructor;
+import ast.function.CustomFunction;
+import ast.function.Method;
 import base.Base;
 import base.ElException;
+import base.ElException.CannotCreate;
+import base.ElException.MethodException;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -16,7 +20,7 @@ public class EntityStack<EntityType> extends Base {
   public static final EntityStack<Block> block;
   public static final EntityStack<Code> code;
   public static final EntityStack<ConstantValue> constant;
-  public static final EntityStack<Function> function;
+  public static final EntityStack<CustomFunction> function;
   public static final EntityStack<ClassEntity> classStack;
 
   static {
@@ -35,7 +39,8 @@ public class EntityStack<EntityType> extends Base {
     final EntityStack<Value> valueStack = new EntityStack<Value>("value") {
       @Override
       public Value create() throws ElException {
-        throw new ElException("Value is abstract and cannot be created.");
+        throw new MethodException(this, "create"
+            , "Value is abstract and cannot be created");
       }
     };
 
@@ -67,17 +72,24 @@ public class EntityStack<EntityType> extends Base {
       }
     };
     
-    function = new EntityStack<Function>("function") {
+    function = new EntityStack<CustomFunction>("function") {
       @Override
       public CustomFunction create() throws ElException {
-        return CustomFunction.create(id.pop());
+        return StaticFunction.createStaticFunction(id.pop());
       }
     };
     
     new EntityStack<CustomFunction>("constructor", function) {
       @Override
       public CustomFunction create() throws ElException {
-        return CustomFunction.create(null);
+        return Constructor.createConstructor();
+      }
+    };
+    
+    new EntityStack<CustomFunction>("method", function) {
+      @Override
+      public CustomFunction create() throws ElException {
+        return Method.createMethod(id.pop());
       }
     };
     
@@ -179,7 +191,8 @@ public class EntityStack<EntityType> extends Base {
   
   public static EntityStack get(ID name) throws ElException {
     EntityStack stack = all.get(name);
-    if(stack == null) throw new ElException("Invalid entity name \""
+    if(stack == null)
+      throw new MethodException("EntityStack", "get", "Invalid entity name \""
         + name.string + "\"");
     return stack;
   }
@@ -212,11 +225,11 @@ public class EntityStack<EntityType> extends Base {
   // creating objects
   
   public EntityType create() throws ElException {
-    throw new ElException(name);
+    throw new CannotCreate(this, name);
   }
   
   public EntityType create(String string, ID type) throws ElException {
-    throw new ElException(name);
+    throw new CannotCreate(this, name);
   }
   
   // commands
@@ -227,7 +240,7 @@ public class EntityStack<EntityType> extends Base {
 
   public EntityType pop() throws ElException {
     if(stack.isEmpty())
-      throw new ElException(Action.currentAction
+      throw new MethodException(this, "pop"
         , "Trying to pop entity from empty " + name.string + " stack");
     return stack.pop();
   }
@@ -238,7 +251,7 @@ public class EntityStack<EntityType> extends Base {
 
   public EntityType peek() throws ElException {
     if(stack.isEmpty())
-      throw new ElException(Action.currentAction
+      throw new MethodException(this, "peek"
         , "Trying to peek entity from empty " + name.string + " stack");
     return stack.peek();
   }

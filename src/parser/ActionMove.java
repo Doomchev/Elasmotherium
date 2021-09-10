@@ -4,6 +4,7 @@ import ast.Entity;
 import ast.ID;
 import ast.function.NativeFunction;
 import base.ElException;
+import base.ElException.ActionException;
 
 public class ActionMove extends Action {
   private final EntityStack<Entity> from, to;
@@ -27,8 +28,8 @@ public class ActionMove extends Action {
       if(param.length == 1) {
         return new ActionMove(stack0, stack0, copy);
       } else {
-        if(param.length != 2) throw new ElException(
-            "MOVE command requires 2 parameters");
+        if(param.length != 2) throw new ActionException(this, 
+            "MOVE", "requires 2 parameters");
         return new ActionMove(stack0, EntityStack.get(param[1]), copy);
       }
     }

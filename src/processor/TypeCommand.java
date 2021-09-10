@@ -2,6 +2,7 @@ package processor;
 
 import ast.ClassEntity;
 import base.ElException;
+import base.ElException.MethodException;
 import static processor.Processor.commands;
 import vm.VMCommand;
 
@@ -23,7 +24,8 @@ public class TypeCommand extends ProCommand {
     if(typeName.equals("Int")) typeName = "I64";
     VMCommand command = commands.get(typeName + postfix);
     if(command == null)
-      throw new ElException("Command " + typeName + postfix + " is not found.");
+      throw new MethodException("TypeCommand", "getCommand", "Command "
+          + typeName + postfix + " is not found.");
     return command.create(parameter);
   }
   

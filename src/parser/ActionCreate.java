@@ -2,11 +2,13 @@ package parser;
 
 import base.Module;
 import ast.Block;
-import ast.function.CustomFunction;
+import ast.function.StaticFunction;
 import ast.function.FunctionCall;
 import ast.ID;
 import ast.function.NativeFunction;
 import base.ElException;
+import base.ElException.MethodException;
+import base.ElException.NotFound;
 
 public class ActionCreate extends Action {
   private final EntityStack stack;
@@ -35,16 +37,17 @@ public class ActionCreate extends Action {
         function0 = null;
         stack0 = EntityStack.all.get(id);
         if(stack0 == null)
-          throw new ElException("Function " + id + " not found.");
+          throw new NotFound(this, "Function " + id);
       }
       if(stack0 == EntityStack.block || stack0 == EntityStack.constant) {
         if(param.length != 2)
-          throw new ElException("CREATE " + stack0.name.string
-              + " command requires 2 parameters");
+          throw new MethodException(this, "create", "CREATE "
+              + stack0.name.string + " command requires 2 parameters");
         return new ActionCreate(stack0, ID.get(param[1]), null);
       } else {
         if(param.length != 1)
-          throw new ElException("CREATE command requires single parameter");
+          throw new MethodException(this, "create"
+              , "CREATE command requires single parameter");
         return new ActionCreate(stack0, null, function0);
       }
     }
