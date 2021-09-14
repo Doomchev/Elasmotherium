@@ -2,7 +2,6 @@ package ast;
 
 import base.ElException;
 import java.util.LinkedList;
-import processor.Processor;
 
 public class ListEntity extends Value {
   public static final ID id = ID.get("list");

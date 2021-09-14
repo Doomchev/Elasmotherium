@@ -1,7 +1,7 @@
 package vm.function;
 
 import base.ElException;
-import processor.ProParameter;
+import processor.parameter.ProParameter;
 import vm.VMCommand;
 
 public class Println extends VMCommand {

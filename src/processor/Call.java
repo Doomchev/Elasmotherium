@@ -1,5 +1,6 @@
 package processor;
 
+import processor.parameter.ProParameter;
 import ast.Entity;
 import ast.function.StaticFunction;
 import ast.function.FunctionCall;
@@ -16,12 +17,12 @@ public class Call extends ProCommand {
   }
   
   @Override
-  ProCommand create(String param) throws ElException {
+  public ProCommand create(String param) throws ElException {
     return new Call(ProParameter.get(param));
   }
   
   @Override
-  void execute() throws ElException {
+  public void execute() throws ElException {
     Entity value = parameter.getValue();
     try {
       StaticFunction function = (StaticFunction) value;

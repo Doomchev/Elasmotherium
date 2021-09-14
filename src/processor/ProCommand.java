@@ -12,7 +12,7 @@ public abstract class ProCommand extends ProBase {
     lineNum = currentLineNum;
   }
 
-  ProCommand create(String param) throws ElException {
+  public ProCommand create(String param) throws ElException {
     try {
       return getClass().newInstance();
     } catch(InstantiationException | IllegalAccessException ex) {
@@ -20,7 +20,7 @@ public abstract class ProCommand extends ProBase {
     }
   }
   
-  abstract void execute() throws ElException;
+  public abstract void execute() throws ElException;
   
   void append(VMCommand command) {
     if(log) log(command.toString());

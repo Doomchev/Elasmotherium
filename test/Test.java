@@ -2,19 +2,14 @@ import base.Base;
 import base.Module;
 import parser.Rules;
 import processor.Processor;
-import vm.VMBase;
 
 public class Test extends Base {
-  public static void main(String[] args) {
-    test("examples/class2.es");
-  }
-  
-  static void test(String file) {
-    test(file, true);
+  static void test(String name) {
+    test(name, true);
   }
 
-  static void test(String file, boolean showCommands) {
-    Module module = Module.read(file
+  static void test(String name, boolean showCommands) {
+    Module module = Module.read("examples", name
         , new Rules().load("parsers/standard.parser"));
     new Processor().load("processors/standard.processor").process(module);
     module.execute(showCommands);

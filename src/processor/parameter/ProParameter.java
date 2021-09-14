@@ -1,5 +1,8 @@
-package processor;
+package processor.parameter;
 
+import processor.block.BlockVariable;
+import processor.block.BlockLabel;
+import processor.block.BlockParameter;
 import ast.ClassEntity;
 import ast.Entity;
 import ast.ID;
@@ -7,10 +10,12 @@ import base.ElException;
 import base.ElException.Cannot;
 import base.ElException.CannotGet;
 import base.ElException.MethodException;
+import processor.ProBase;
+import processor.ProClass;
 import vm.VMCommand;
 
 public abstract class ProParameter extends ProBase {
-  static ProParameter get(String name) throws ElException {
+  public static ProParameter get(String name) throws ElException {
     if(name.isEmpty()) return ProThis.instance;
     if(name.startsWith("$")) return new BlockParameter(name.substring(1));
     if(name.startsWith("#")) return new BlockLabel(name.substring(1));

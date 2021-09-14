@@ -1,5 +1,8 @@
 package processor;
 
+import processor.parameter.SetObject;
+import processor.block.BlockLabelInitialize;
+import processor.block.BlockLabelSet;
 import vm.call.*;
 import vm.string.var.*;
 import vm.string.field.*;
@@ -63,6 +66,7 @@ public class Processor extends ProBase {
     addCommand(new I64Add());
     addCommand(new I64Subtract());
     addCommand(new I64Multiply());
+    addCommand(new I64Divide());
     addCommand(new I64Mod());
     
     addCommand(new I64FieldIncrement(0));

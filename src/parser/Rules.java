@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
-import static parser.ParserBase.path;
-import static base.Module.currentLineNum;
 
 public class Rules extends ParserBase {
   // masks
@@ -212,15 +210,13 @@ public class Rules extends ParserBase {
   public void read(Module module) {
     current = module;
     currentFunction = module.function;
-    readCode(modulesPath + "Base.es");
-    for(Module imported: module.modules) readCode(imported.fileName);
-    readCode(module.fileName);
+    readCode(modulesPath + "/Base.es");
+    readCode(module.getFileName());
+    for(Module imported: module.modules) readCode(imported.getFileName());
     currentFunction.setAllocation();
   }  
   
   private void readCode(String fileName) {
-    path = Paths.get(fileName).getParent().toString() + "/";
-    
     textPos = 0;
     tokenStart = 0;
     currentLineNum = 1;

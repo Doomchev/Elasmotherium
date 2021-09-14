@@ -1,5 +1,6 @@
 package processor;
 
+import processor.parameter.ProParameter;
 import base.ElException;
 
 public class Process extends ProCommand {
@@ -12,12 +13,12 @@ public class Process extends ProCommand {
   }
   
   @Override
-  Process create(String param) throws ElException {
+  public Process create(String param) throws ElException {
     return new Process(ProParameter.get(param));
   }
   
   @Override
-  void execute() throws ElException {
+  public void execute() throws ElException {
     parameter.getValue().process();
   }
 }

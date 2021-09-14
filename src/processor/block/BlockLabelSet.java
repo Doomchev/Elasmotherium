@@ -1,7 +1,8 @@
-package processor;
+package processor.block;
 
 import ast.ID;
 import base.ElException;
+import processor.ProCommand;
 import vm.VMBase;
 
 public class BlockLabelSet extends ProCommand {

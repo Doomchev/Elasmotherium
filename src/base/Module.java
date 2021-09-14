@@ -1,13 +1,7 @@
 package base;
 
-import vm.function.Exit;
-import vm.function.RandomInt2;
-import vm.function.AskInt;
-import vm.function.Sqrt;
-import vm.function.Floor;
-import vm.function.Println;
-import vm.function.Say;
-import vm.function.RandomInt;
+import vm.texture.*;
+import vm.function.*;
 import ast.ClassEntity;
 import parser.ParserBase;
 import java.util.LinkedList;
@@ -24,41 +18,53 @@ public class Module extends ParserBase {
   public static final ID id = ID.get("module");
   public static Module current;
 
-  public String fileName;
+  public final String name, path;
   public final LinkedList<Module> modules = new LinkedList<>();
   public StaticFunction function = new StaticFunction(null);
 
-  public Module(String fileName) {
-    this.fileName = fileName;
+  public Module(String path, String name) {
+    this.name = name;
+    this.path = path;
   }
 
   public int getAllocation() {
     return function.getAllocation();
   }
+
+  public String getFileName() {
+    return path + "/" + name + ".es";
+  }
   
-  public static Module read(String fileName, Rules rules) throws ElException {
-    Module module = new Module(fileName);
+  public static Module read(String path, String name, Rules rules) {
+    Module module = new Module(path, name);
     rules.read(module);
     return module;
   }
   
-  private void newFunc(VMCommand command, int parametersQuantity)
+  private void newFunction(VMCommand command, int parametersQuantity)
       throws ElException {
-    String name = decapitalize(command.getClass().getSimpleName());
-    function.getFunction(ID.get(removeLastDigit(name))
+    String functionName = decapitalize(command.getClass().getSimpleName());
+    function.getFunction(ID.get(removeLastDigit(functionName))
         , parametersQuantity).setCommand(command);
   }
 
-  private void newFunc(String className, String methodName
+  private void newFunction(String className, String methodName
       , int parametersQuantity, VMCommand command) throws ElException {
     ClassEntity.get(className).getMethod(methodName, parametersQuantity)
         .setCommand(command);
   }
 
-  private void newFunc(String className, int parametersQuantity
-      , VMCommand command) throws ElException {
-    ClassEntity.get(className).getConstructor(parametersQuantity)
+  private void newConstructor(String className, int parametersQuantity
+      , VMCommand command, VMValue value) throws ElException {
+    ClassEntity classEntity = ClassEntity.get(className);
+    classEntity.getConstructor(parametersQuantity)
         .setCommand(command);
+    classEntity.setValue(value);
+  }
+  
+  public boolean hasModule(String name) {
+    for(Module module: modules) if(module.name.equals(name)) return true;
+    return false;
   }
   
   public void process() throws ElException {
@@ -71,25 +77,30 @@ public class Module extends ParserBase {
     ClassEntity.Bool.addToScope();
     ClassEntity.String.addToScope();
     
-    newFunc(new Println(), 1);
+    newFunction(new Println(), 1);
     
-    newFunc(new AskInt(), 1);
-    newFunc(new RandomInt(), 1);
-    newFunc(new RandomInt2(), 2);
+    newFunction(new AskInt(), 1);
+    newFunction(new RandomInt(), 1);
+    newFunction(new RandomInt2(), 2);
     
-    newFunc(new Sqrt(), 1);
-    newFunc(new Floor(), 1);
+    newFunction(new Sqrt(), 1);
+    newFunction(new Floor(), 1);
     
-    newFunc(new Say(), 1);
-    newFunc(new Exit(), 0);
+    newFunction(new Say(), 1);
+    newFunction(new Exit(), 0);
     
-    newFunc(new ScreenHeight(), 0);
-    newFunc(new ScreenWidth(), 0);
+    newFunction(new ScreenHeight(), 0);
+    newFunction(new ScreenWidth(), 0);
     
-    newFunc("List", "add", 1, new I64AddToList());
-    newFunc("Array", 1, new I64ArrayCreate1());
+    newFunction("List", "add", 1, new I64AddToList());
+    newConstructor("Array", 1, new I64ArrayCreate(), new I64ArrayValue(0));
     
-    ClassEntity.get("Array").setValue(new I64ArrayValue(0));
+    if(hasModule("Texture")) {
+      newConstructor("Texture", 1, new TextureCreate(), new Texture());
+      newFunction("Texture", "draw", 8, new TextureDraw());
+      newFunction("Texture", "width", 0, new TextureWidth());
+      newFunction("Texture", "height", 0, new TextureHeight());
+    }
     
     print();
     
@@ -100,13 +111,13 @@ public class Module extends ParserBase {
     print();
   }
 
-  public void execute(boolean showCommands) throws ElException {
+  public void execute(boolean showCommands) {
     VMBase.execute(showCommands, this);
   }
 
   public void print() {
     if(log) {printChapter("Abstract syntax tree");
-      function.printAllocation(fileName);
+      function.printAllocation(getFileName());
       printScope();
     }
   }

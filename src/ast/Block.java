@@ -4,7 +4,7 @@ import base.ElException;
 import base.ElException.NotFound;
 import base.LinkedMap;
 import java.util.LinkedList;
-import processor.ProParameter;
+import processor.parameter.ProParameter;
 import vm.VMCommand;
 
 public class Block extends Entity {

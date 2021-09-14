@@ -3,7 +3,6 @@ package ast;
 import ast.function.CustomFunction;
 import ast.function.FunctionCall;
 import ast.function.NativeFunction;
-import ast.function.StaticFunction;
 import base.ElException;
 import processor.Processor;
 import vm.values.VMValue;

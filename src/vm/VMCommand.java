@@ -3,7 +3,7 @@ package vm;
 import base.ElException;
 import base.ElException.CannotCreate;
 import java.util.LinkedList;
-import processor.ProParameter;
+import processor.parameter.ProParameter;
 
 public abstract class VMCommand extends VMBase {
   private int lineNum;

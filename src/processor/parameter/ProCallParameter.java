@@ -1,9 +1,10 @@
-package processor;
+package processor.parameter;
 
 import ast.Entity;
 import ast.function.FunctionCall;
 import base.ElException;
 import base.ElException.MethodException;
+import processor.ProBase;
 
 public class ProCallParameter extends ProParameter {
   private final int index;

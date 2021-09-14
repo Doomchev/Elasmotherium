@@ -37,6 +37,10 @@ dot.getObject {
   v1.getObject;
 }
 
+brackets.getObject {
+  v0.getObject;
+}
+
 // equate
 
 equate {
@@ -114,6 +118,10 @@ const.resolve {
   [param]Push;
 }
 
+brackets.resolve {
+  v0.resolve(param);
+}
+
 at.resolve {
   v0.getObject;
   v1.resolve(Int);
@@ -137,6 +145,13 @@ multiplication.resolve {
 	v0.resolve(Int);
 	v1.resolve(Int);
   [Int]Multiply;
+  convert(Int, param);
+}
+
+division.resolve {
+	v0.resolve(Int);
+	v1.resolve(Int);
+  [Int]Divide;
   convert(Int, param);
 }
 

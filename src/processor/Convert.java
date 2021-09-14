@@ -1,5 +1,6 @@
 package processor;
 
+import processor.parameter.ProParameter;
 import base.ElException;
 
 class Convert extends ProCommand {
@@ -13,13 +14,13 @@ class Convert extends ProCommand {
   }
 
   @Override
-  ProCommand create(String param) throws ElException {
+  public ProCommand create(String param) throws ElException {
     String[] part = trimmedSplit(param, ',');
     return new Convert(ProParameter.get(part[0]), ProParameter.get(part[1]));
   }
 
   @Override
-  void execute() throws ElException {
+  public void execute() throws ElException {
     convert(from.getNativeClass(), to.getNativeClass());
   }
 }

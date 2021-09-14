@@ -1,5 +1,6 @@
 package processor;
 
+import processor.parameter.ProParameter;
 import ast.ClassEntity;
 import base.ElException;
 import base.ElException.MethodException;
@@ -30,7 +31,7 @@ public class TypeCommand extends ProCommand {
   }
   
   @Override
-  void execute() throws ElException {
+  public void execute() throws ElException {
     append(getCommand(type.getNativeClass(), postfix, parameter));
   }
 }

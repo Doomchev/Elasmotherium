@@ -9,6 +9,6 @@ public class Exit extends VMCommand {
   public void execute() throws ElException {
     if(initialStack != stackPointer)
       throw new MethodException(this, "execute", "Stack leak");
-    System.exit(0);
+    currentCommand = -1;
   }
 }

@@ -6,7 +6,7 @@ import java.util.Stack;
 
 public class ParserBase extends Base {
   static StringBuffer text;
-  static String prefix, path;
+  static String prefix;
   static int tokenStart, textPos, textLength, lineStart;
   static char currentChar;
   static final Stack<ActionSub> returnStack = new Stack<>();

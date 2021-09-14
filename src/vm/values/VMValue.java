@@ -4,6 +4,7 @@ import base.ElException;
 import base.ElException.Cannot;
 import base.ElException.CannotGet;
 import base.ElException.CannotSet;
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import vm.VMBase;
 
@@ -72,5 +73,9 @@ public abstract class VMValue extends VMBase {
   
   public VMValue valueNext() throws ElException {
     throw new CannotGet("next value", this);
+  }
+  
+  public BufferedImage getImage() throws ElException {
+    throw new CannotGet("image", this);
   }
 }

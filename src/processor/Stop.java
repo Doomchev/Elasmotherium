@@ -9,12 +9,12 @@ public class Stop extends ProCommand {
   }
 
   @Override
-  ProCommand create(String param) throws ElException {
+  public ProCommand create(String param) throws ElException {
     return new Stop();
   }
   
   @Override
-  void execute() throws ElException {
+  public void execute() throws ElException {
     int a = 0;
   }
 }

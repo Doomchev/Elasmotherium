@@ -5,8 +5,10 @@ import vm.values.ObjectEntity;
 import base.Base;
 import base.ElException;
 import base.Module;
+import java.awt.Graphics;
 import java.util.Arrays;
 import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 import vm.values.VMValue;
 
 public class VMBase extends Base{
@@ -28,6 +30,7 @@ public class VMBase extends Base{
   protected static boolean usesWindow = false, usesConsole = false;
   
   public static int currentCommand = -1, initialStack;
+  public static Graphics currentGraphics;
   
   public enum ValueType {UNDEFINED, I64, F64, STRING, BOOLEAN, OBJECT};
   
@@ -51,16 +54,30 @@ public class VMBase extends Base{
       printChapter("Bytecode execution");
     }
     
-    if(usesWindow) {
-      frame = new JFrame();
-      frame.setVisible(true);
-      frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-    }
-    
     initialStack = module.getAllocation() - 1;
     stackPointer = initialStack;
     currentCommand = 0;
-    while(true) {
+
+    workingPath = module.path;
+    
+    if(usesWindow) {
+      frame = new JFrame() {
+        @Override
+        public void paint(Graphics graphics) {
+          currentGraphics = graphics;
+          execute(showCommands);
+        }
+      };
+      frame.setVisible(true);
+      frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+      frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    } else {
+      execute(showCommands);
+    }
+  }
+  
+  public static void execute(boolean showCommands) {
+    while(currentCommand >= 0) {
       if(showCommands) System.out.println(currentCommand + ": "
           + commands[currentCommand].toString());
 

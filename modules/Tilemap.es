@@ -3,7 +3,7 @@ class TileMap {
   Array<Int> tiles;
 	Array<Image> images;
 
-  create(this.cellXQuantity, this.cellYQuantity, this.images, Int tileNumber) {
+  create(field.cellXQuantity, field.cellYQuantity, field.images, Int tileNumber) {
     Int tilesQuantity = images.size();
     cellWidth = images[0].width;
     cellHeight = images[0].height;
@@ -14,8 +14,8 @@ class TileMap {
 	Int height() -> cellHeight * cellYQuantity;
   
   draw(Int x = (screenWidth() - width()) / 2, Int y = (screenHeight() - height()) / 2) {
-    for(Int tileY = 0 ..< cellYQuantity)
-			for(Int tileX = 0 ..< cellXQuantity)
+    for(Int tileY from 0 until cellYQuantity)
+			for(Int tileX from 0 until cellXQuantity)
 				images[tiles[tileX + tileY * cellXQuantity]].draw(x + tileX * cellWidth, y + tileY * cellHeight);
   }
   

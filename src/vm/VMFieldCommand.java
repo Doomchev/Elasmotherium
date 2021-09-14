@@ -1,7 +1,7 @@
 package vm;
 
 import base.ElException;
-import processor.ProParameter;
+import processor.parameter.ProParameter;
 
 public abstract class VMFieldCommand extends VMCommand {
   protected final int fieldIndex;

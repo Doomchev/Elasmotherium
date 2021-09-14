@@ -1,8 +1,8 @@
-package processor;
+package processor.block;
 
 import ast.ID;
 import base.ElException;
-import static processor.ProBase.currentBlock;
+import processor.ProCommand;
 
 public class BlockLabelInitialize extends ProCommand {
   ID name;

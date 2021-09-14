@@ -1,5 +1,5 @@
 public class Factorial extends Test {
   public static void main(String[] args) {
-    test("examples/factorial.es");
+    test("factorial");
   }
 }

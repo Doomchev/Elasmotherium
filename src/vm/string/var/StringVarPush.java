@@ -2,7 +2,7 @@ package vm.string.var;
 
 import base.ElException;
 import processor.ProBase;
-import processor.ProParameter;
+import processor.parameter.ProParameter;
 import vm.VMCommand;
 
 public class StringVarPush extends VMCommand {

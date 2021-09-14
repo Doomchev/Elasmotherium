@@ -1,7 +1,8 @@
-package processor;
+package processor.parameter;
 
 import ast.Entity;
 import base.ElException;
+import processor.ProBase;
 
 public class ProParam extends ProParameter {
   static ProParam instance = new ProParam();

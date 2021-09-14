@@ -1,5 +1,6 @@
 package ast;
 
+import ast.function.Constructor;
 import ast.function.Method;
 import ast.function.StaticFunction;
 import vm.values.ObjectEntity;
@@ -16,7 +17,7 @@ public class ClassEntity extends NamedEntity {
   private final LinkedList<ClassParameter> parameters = new LinkedList<>();
   private final LinkedList<Variable> fields = new LinkedList<>();
   private final LinkedList<StaticFunction> methods = new LinkedList<>();
-  private final LinkedList<StaticFunction> constructors = new LinkedList<>();
+  private final LinkedList<Constructor> constructors = new LinkedList<>();
   public ClassEntity nativeClass;
   private int allocation = 0;
   private VMValue value = null;
@@ -86,7 +87,7 @@ public class ClassEntity extends NamedEntity {
     for(StaticFunction method: methods)
       if(method.name == id && method.getParametersQuantity()
           == parametersQuantity) return method;
-    throw new NotFound(this, this + "." + id);
+    throw new NotFound(this, this + "." + id + "&" + parametersQuantity);
   }
 
   public StaticFunction getConstructor(int parametersQuantity) throws ElException {
@@ -116,7 +117,7 @@ public class ClassEntity extends NamedEntity {
     methods.add(method);
   }
 
-  public void addConstructor(StaticFunction function) {
+  public void addConstructor(Constructor function) {
     constructors.add(function);
   }
   

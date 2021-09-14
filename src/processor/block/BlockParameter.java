@@ -1,8 +1,9 @@
-package processor;
+package processor.block;
 
 import ast.Entity;
 import ast.ID;
 import base.ElException;
+import processor.parameter.ProParameter;
 
 public class BlockParameter extends ProParameter {
   private final ID name;

@@ -24,8 +24,8 @@ public abstract class Base {
   
   static {
     try {
-      workingPath = new java.io.File(".").getCanonicalPath() + "/";
-      modulesPath = new java.io.File(".").getCanonicalPath() + "/modules/";
+      workingPath = new java.io.File(".").getCanonicalPath();
+      modulesPath = new java.io.File(".").getCanonicalPath() + "/modules";
     } catch (java.io.IOException ex) {
     }
   }

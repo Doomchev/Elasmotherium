@@ -1,3 +1,9 @@
+2021.09.14 (version 0.31)
+  + VM: Window and graphics.
+  + VM: Textures support, width(), height() and draw() methods.
+  + Processor code: division and brackets support.
+  * Module's path and filename system is tuned up.
+
 2021.09.10 (version 0.30.1)
   * AST, parser code: CustomFunction class is split into StaticFunction, Constructor and Method.
   * Error handling system: added many custom exceptions.
@@ -5,6 +11,7 @@
 2021.09.09 (version 0.30)
   + Processor: Parameter quantity support for scope entries.
   * Some strings are replaced by StringBuilders for performance.
+  * AST: Function overloading.
   * AST: Formula resolving refactoring.
   * AST: Function class is split to CustomFunction and NativeFunction.
 

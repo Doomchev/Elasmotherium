@@ -2,8 +2,6 @@ package parser;
 
 import base.Module;
 import ast.Block;
-import ast.function.StaticFunction;
-import ast.function.FunctionCall;
 import ast.ID;
 import ast.function.NativeFunction;
 import base.ElException;
@@ -58,7 +56,7 @@ public class ActionCreate extends Action {
     currentAction = this;
     if(type == Module.id) {
       String name = EntityStack.id.pop().string;
-      Module.current.modules.add(new Module(modulesPath + "/" + name + ".es"));
+      Module.current.modules.add(new Module(modulesPath, name));
       if(log) log("CREATE MODULE " + name);
     } else if(stack.isStringBased()) {
       String string = prefix + text.substring(tokenStart, textPos);

@@ -1,7 +1,7 @@
 package vm;
 
 import base.ElException;
-import processor.ProParameter;
+import processor.parameter.ProParameter;
 
 public class IfFalseGoTo extends VMCommand {
   private int command;

@@ -1,5 +1,6 @@
 package processor;
 
+import processor.parameter.ProParameter;
 import ast.ClassEntity;
 import ast.Entity;
 import ast.ID;
@@ -16,12 +17,12 @@ public class GetField extends ProCommand {
   }
   
   @Override
-  ProCommand create(String param) throws ElException {
+  public ProCommand create(String param) throws ElException {
     return new GetField(ProParameter.get(param));
   }
 
   @Override
-  void execute() throws ElException {
+  public void execute() throws ElException {
     Entity parameterValue = parameter.getValue();
     ID id = parameterValue.getName();
     ClassEntity classEntity = (ClassEntity) object.getType();

@@ -13,6 +13,12 @@ public class VMFunctionCall extends VMBase {
     this.deallocation = deallocation;
   }
 
+  public void thisPush() throws ElException {
+    stackPointer++;
+    objectStack[stackPointer] = objectStack[paramPosition - 1];
+    if(log) typeStack[stackPointer] = ValueType.OBJECT;
+  }
+
   public VMValue thisField(int fieldIndex) throws ElException {
     return objectStack[paramPosition - 1].getField(fieldIndex);
   }

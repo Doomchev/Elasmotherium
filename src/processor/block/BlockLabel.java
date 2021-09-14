@@ -1,7 +1,8 @@
-package processor;
+package processor.block;
 
 import ast.ID;
 import base.ElException;
+import processor.parameter.ProParameter;
 import vm.VMCommand;
 public class BlockLabel extends ProParameter {
   public final ID name;
