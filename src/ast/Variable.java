@@ -69,13 +69,18 @@ public class Variable extends NamedEntity {
   public int getIndex() throws ElException {
     return index;
   }
-  
+   
   // processing
+  
+  @Override
+  public void addToScope() {
+    addToScope(name, this, 0);
+  }
   
   @Override
   public void process() throws ElException {
     if(log) print(new StringBuilder(), "");
-    addToScope(name, this);
+    addToScope(name, this, 0);
     resolveType();
     if(value != null) currentProcessor.process(this, id, Processor.callMethod);
   }

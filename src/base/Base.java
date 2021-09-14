@@ -77,9 +77,15 @@ public abstract class Base {
   private static final LinkedList<Integer> scopeEnd = new LinkedList<>();
   private static int lastScopeEntry = -1;
 
-  private static class ScopeEntry extends Entry<ID, Entity> {
-    public ScopeEntry(ID key, Entity value) {
-      super(key, value);
+  private static class ScopeEntry {
+    public ID key;
+    public Entity value;
+    public int parametersQuantity;
+
+    public ScopeEntry(ID key, Entity value, int parametersQuantity) {
+      this.key = key;
+      this.value = value;
+      this.parametersQuantity = parametersQuantity;
     }
   }
       
@@ -92,21 +98,26 @@ public abstract class Base {
     scopeEnd.removeLast();
   }
   
-  public void addToScope(ID name, Entity entity) {
+  public void addToScope(ID name, Entity entity, int parametersQuantity) {
     lastScopeEntry++;
-    scope[lastScopeEntry] = new ScopeEntry(name, entity);
+    scope[lastScopeEntry] = new ScopeEntry(name, entity, parametersQuantity);
   }
   
-  public Entity getFromScope(ID name) throws ElException {
-    for(int i = lastScopeEntry; i >= 0; i--)
-      if(scope[i].key == name) return scope[i].value;
+  public Entity getFromScope(ID name, int parametersQuantity)
+      throws ElException {
+    for(int i = lastScopeEntry; i >= 0; i--) {
+      ScopeEntry entry = scope[i];
+      if(entry.key == name && entry.parametersQuantity == parametersQuantity)
+        return scope[i].value;
+    }
     throw new NotFound("getFromScope", "Identifier " + name);
   }
   
   public ClassEntity getClassFromScope(ID name) throws ElException {
     for(int i = lastScopeEntry; i >= 0; i--) {
-      if(scope[i].key == name) {
-        Entity value = scope[i].value;
+      ScopeEntry entry = scope[i];
+      if(entry.key == name) {
+        Entity value = entry.value;
         if(value instanceof ClassEntity) return (ClassEntity) value;
       }
     }
@@ -123,10 +134,6 @@ public abstract class Base {
   }
 
   // string functios
-
-  public static ID paramName(ID name, int parametersQuantity) {
-    return ID.get(name.string + "(" + parametersQuantity + ")");
-  }
   
   public static String[] trimmedSplit(String text, char separator) {
     int start = 0;

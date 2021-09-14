@@ -21,7 +21,7 @@ public class ElException extends Exception {
   
   public static class Cannot extends ElException {
     public Cannot(String action, Base object) {
-      super(object, "Cannot " + action + object);
+      super(object, "Cannot " + action + " " + object);
     }    
   }
   

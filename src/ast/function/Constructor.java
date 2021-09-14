@@ -35,7 +35,7 @@ public class Constructor extends StaticFunction {
   
   @Override
   public void addToScope() {
-    addToScope(paramName(parentClass.name, parameters.size()), this);
+    addToScope(parentClass.name, this, parameters.size());
   }
 
   @Override

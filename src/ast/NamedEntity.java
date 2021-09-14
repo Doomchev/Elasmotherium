@@ -1,5 +1,7 @@
 package ast;
 
+import base.ElException.Cannot;
+
 public abstract class NamedEntity extends Entity {
   public final ID name;
 
@@ -20,8 +22,8 @@ public abstract class NamedEntity extends Entity {
     return name;
   }
   
-  public void addToScope() {
-    addToScope(name, this);
+  public void addToScope() throws Cannot {
+    throw new Cannot("add to scope", this);
   }
   
   // other

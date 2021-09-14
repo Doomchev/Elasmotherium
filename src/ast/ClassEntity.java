@@ -140,6 +140,12 @@ public class ClassEntity extends NamedEntity {
   // processing
   
   @Override
+  public void addToScope() {
+    addToScope(name, this, 0);
+    for(StaticFunction constructor: constructors) constructor.addToScope();
+  }
+  
+  @Override
   public void process() throws ElException {
     ClassEntity oldClass = currentClass;
     currentClass = this;
@@ -173,12 +179,6 @@ public class ClassEntity extends NamedEntity {
     
     deallocateScope();
     currentClass = oldClass;
-  }
-  
-  @Override
-  public void addToScope() {
-    super.addToScope();
-    for(StaticFunction constructor: constructors) constructor.addToScope();
   }
   
   // moving funcitons

@@ -1,3 +1,6 @@
+2021.09.14 (version 0.31.1)
+  * Added separate parameters quantity parameter to scope entry.
+
 2021.09.14 (version 0.31)
   + VM: Window and graphics.
   + VM: Textures support, width(), height() and draw() methods.

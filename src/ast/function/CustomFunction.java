@@ -104,7 +104,7 @@ public abstract class CustomFunction extends Function {
   
   @Override
   public void addToScope() {
-    addToScope(paramName(name, parameters.size()), this);
+    addToScope(name, this, parameters.size());
   }
   
   @Override

@@ -1,5 +1,6 @@
 package ast;
 
+import ast.function.StaticFunction;
 import base.ElException;
 
 public class ClassParameter extends NamedEntity {
@@ -9,6 +10,13 @@ public class ClassParameter extends NamedEntity {
 
   public ClassParameter(ID name) {
     super(name);
+  }
+   
+  // processing
+  
+  @Override
+  public void addToScope() {
+    addToScope(name, this, 0);
   }
   
   // processor fields

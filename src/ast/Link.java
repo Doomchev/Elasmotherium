@@ -42,7 +42,7 @@ public class Link extends Value {
   
   @Override
   public Entity resolve() throws ElException {
-    if(subTypes.isEmpty()) return getFromScope(name);
+    if(subTypes.isEmpty()) return getFromScope(name, 0);
     ClassEntity basicClass = getClassFromScope(name);
     Entity[] resolvedTypes = new Entity[subTypes.size()];
     int index = 0;
@@ -55,7 +55,7 @@ public class Link extends Value {
   
   @Override
   public Entity resolve(int parametersQuantity) throws ElException {
-    return getFromScope(paramName(name, parametersQuantity));
+    return getFromScope(name, parametersQuantity);
   }
   
   @Override
