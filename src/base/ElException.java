@@ -76,7 +76,7 @@ public class ElException extends Exception {
     this.message = object + ": " + message;
   }
   
-  protected ElException(Base object, String message) {
+  public ElException(Base object, String message) {
     this(object.getClassName(), message);
   }
 }

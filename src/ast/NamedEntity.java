@@ -1,5 +1,6 @@
 package ast;
 
+import base.ElException;
 import base.ElException.Cannot;
 
 public abstract class NamedEntity extends Entity {
@@ -21,9 +22,9 @@ public abstract class NamedEntity extends Entity {
   public ID getName() {
     return name;
   }
-  
-  public void addToScope() throws Cannot {
-    throw new Cannot("add to scope", this);
+
+  public boolean matches(ID name, int parametersQuantity) throws ElException {
+    return this.name == name;
   }
   
   // other

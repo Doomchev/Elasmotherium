@@ -13,9 +13,5 @@ class Texture {
 				images[i + j * xQuantity] = Image(this, x + i * xk, y + j * yk, cellWidth, cellHeight);
 		return images;
 	}*/
-  draw() {
-    draw((screenWidth() - width()) / 2, (screenHeight() - height()) / 2, width(), height(), 0, 0, width(), height());
-  }
-  
-  draw(Int targetX = (screenWidth() - targetWidth) / 2, Int targetY = (screenHeight() - targetHeight) / 2, Int targetWidth = width(), Int targetHeight = height(), Int sourceX = 0, Int sourceY = 0, Int sourceWidth = width(), Int sourceHeight = height());
+  draw(Int targetX = (screenWidth() - width()) / 2, Int targetY = (screenHeight() - height()) / 2, Int targetWidth = width(), Int targetHeight = height(), Int sourceX = 0, Int sourceY = 0, Int sourceWidth = width(), Int sourceHeight = height());
 }

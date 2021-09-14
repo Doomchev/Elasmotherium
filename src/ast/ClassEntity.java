@@ -3,6 +3,7 @@ package ast;
 import ast.function.Constructor;
 import ast.function.Method;
 import ast.function.StaticFunction;
+import base.Base;
 import vm.values.ObjectEntity;
 import base.ElException;
 import base.ElException.NotFound;
@@ -85,15 +86,14 @@ public class ClassEntity extends NamedEntity {
   public StaticFunction getMethod(ID id, int parametersQuantity)
       throws ElException {
     for(StaticFunction method: methods)
-      if(method.name == id && method.getParametersQuantity()
-          == parametersQuantity) return method;
+      if(method.matches(id, parametersQuantity)) return method;
     throw new NotFound(this, this + "." + id + "&" + parametersQuantity);
   }
 
-  public StaticFunction getConstructor(int parametersQuantity) throws ElException {
-    for(StaticFunction constructor: constructors)
-      if(constructor.getParametersQuantity() == parametersQuantity)
-        return constructor;
+  public Constructor getConstructor(int parametersQuantity)
+      throws ElException {
+    for(Constructor constructor: constructors)
+      if(constructor.matches(parametersQuantity)) return constructor;
     throw new NotFound(this, "Constructor of " + toString() + " with "
         + parametersQuantity + " parameters");
   }
@@ -138,11 +138,10 @@ public class ClassEntity extends NamedEntity {
   }
    
   // processing
-  
-  @Override
+
   public void addToScope() {
-    addToScope(name, this, 0);
-    for(StaticFunction constructor: constructors) constructor.addToScope();
+    addToScope(this);
+    for(StaticFunction constructor: constructors) addToScope(constructor);
   }
   
   @Override
@@ -151,8 +150,8 @@ public class ClassEntity extends NamedEntity {
     currentClass = this;
     allocateScope();
     
-    for(Variable field: fields) field.addToScope();
-    for(StaticFunction method: methods) method.addToScope();
+    for(Variable field: fields) addToScope(field);
+    for(StaticFunction method: methods) addToScope(method);
     
     for(StaticFunction constructor: constructors) constructor.process();
     for(StaticFunction method: methods) method.process();
@@ -171,7 +170,7 @@ public class ClassEntity extends NamedEntity {
     currentClass = this;
     allocateScope();
     
-    for(ClassParameter parameter: parameters) parameter.addToScope();
+    for(ClassParameter parameter: parameters) addToScope(parameter);
     
     for(Variable field: fields) field.resolveType();
     for(StaticFunction constructor: constructors) constructor.resolveTypes();

@@ -1,3 +1,6 @@
+2021.09.14 (version 0.32)
+  * AST: Default values for functions and methods with overloading support.
+
 2021.09.14 (version 0.31.1)
   * Added separate parameters quantity parameter to scope entry.
 

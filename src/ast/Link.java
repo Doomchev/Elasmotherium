@@ -59,6 +59,16 @@ public class Link extends Value {
   }
   
   @Override
+  public Entity resolveRecursively() throws ElException {
+    return resolve();
+  }
+
+  @Override
+  public Entity resolveRecursively(int parametersQuantity) throws ElException {
+    return resolve(parametersQuantity);
+  }
+  
+  @Override
   public void call(FunctionCall call) throws ElException {
     resolve(call.getParametersQuantity()).call(call);
   }

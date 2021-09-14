@@ -3,6 +3,7 @@ package base;
 import ast.ClassEntity;
 import ast.Entity;
 import ast.ID;
+import ast.NamedEntity;
 import ast.function.CustomFunction;
 import base.ElException.MethodException;
 import base.ElException.NotFound;
@@ -73,21 +74,9 @@ public abstract class Base {
   
   // scopes
   
-  private static final ScopeEntry[] scope = new ScopeEntry[32];
+  private static final NamedEntity[] scope = new NamedEntity[64];
   private static final LinkedList<Integer> scopeEnd = new LinkedList<>();
   private static int lastScopeEntry = -1;
-
-  private static class ScopeEntry {
-    public ID key;
-    public Entity value;
-    public int parametersQuantity;
-
-    public ScopeEntry(ID key, Entity value, int parametersQuantity) {
-      this.key = key;
-      this.value = value;
-      this.parametersQuantity = parametersQuantity;
-    }
-  }
       
   public static void allocateScope() {
     scopeEnd.add(lastScopeEntry);
@@ -98,28 +87,23 @@ public abstract class Base {
     scopeEnd.removeLast();
   }
   
-  public void addToScope(ID name, Entity entity, int parametersQuantity) {
+  public void addToScope(NamedEntity entity) {
     lastScopeEntry++;
-    scope[lastScopeEntry] = new ScopeEntry(name, entity, parametersQuantity);
+    scope[lastScopeEntry] = entity;
   }
   
-  public Entity getFromScope(ID name, int parametersQuantity)
+  public NamedEntity getFromScope(ID name, int parametersQuantity)
       throws ElException {
-    for(int i = lastScopeEntry; i >= 0; i--) {
-      ScopeEntry entry = scope[i];
-      if(entry.key == name && entry.parametersQuantity == parametersQuantity)
-        return scope[i].value;
-    }
+    for(int i = lastScopeEntry; i >= 0; i--)
+      if(scope[i].matches(name, parametersQuantity)) return scope[i];
     throw new NotFound("getFromScope", "Identifier " + name);
   }
   
   public ClassEntity getClassFromScope(ID name) throws ElException {
     for(int i = lastScopeEntry; i >= 0; i--) {
-      ScopeEntry entry = scope[i];
-      if(entry.key == name) {
-        Entity value = entry.value;
-        if(value instanceof ClassEntity) return (ClassEntity) value;
-      }
+      NamedEntity entity = scope[i];
+      if(entity instanceof ClassEntity && entity.matches(name, 0))
+        return (ClassEntity) entity;
     }
     throw new NotFound("getClassFromScope", "Class " + name);
   }
@@ -128,7 +112,7 @@ public abstract class Base {
     StringBuilder string = new StringBuilder();
     for(int i = 0; i <= lastScopeEntry; i++) {
       if(i > 0) string.append(", ");
-      string.append(scope[i].key);
+      string.append(scope[i].getName());
     }
     println(string.toString());
   }

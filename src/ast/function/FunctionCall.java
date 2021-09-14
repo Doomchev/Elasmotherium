@@ -36,7 +36,6 @@ public class FunctionCall extends Value {
     parameters.addFirst(value);
   }
 
-  @Override
   public int getParametersQuantity() throws ElException {
     return parameters.size();
   }
@@ -96,6 +95,17 @@ public class FunctionCall extends Value {
     currentProcessor.resolve(
         function instanceof FunctionCall ? function : this
         , function.getID(), this, parameter);
+  }
+  
+  @Override
+  public Entity resolveRecursively() throws ElException {
+    function = function.resolveRecursively(parameters.size());
+    int index = 0;
+    for(Entity parameter: parameters) {
+      parameters.set(index, parameter.resolveRecursively());
+      index++;
+    }
+    return this;
   }
   
   // moving functions

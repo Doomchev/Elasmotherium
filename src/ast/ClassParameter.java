@@ -11,13 +11,6 @@ public class ClassParameter extends NamedEntity {
   public ClassParameter(ID name) {
     super(name);
   }
-   
-  // processing
-  
-  @Override
-  public void addToScope() {
-    addToScope(name, this, 0);
-  }
   
   // processor fields
   

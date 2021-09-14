@@ -4,6 +4,7 @@ import ast.ClassEntity;
 import ast.ID;
 import base.ElException;
 import vm.object.ObjectThisPush;
+import vm.object.ObjectVarPush;
 
 public class Method extends StaticFunction {
   public Method(ID name) {
@@ -22,7 +23,7 @@ public class Method extends StaticFunction {
   @Override
   public void call(FunctionCall call) throws ElException {
     if(log) println(subIndent + "Resolving method " + toString());
-    append(new ObjectThisPush());
+    append(new ObjectVarPush(currentFunction.allocation));
     resolveParameters(call);
     if(command != null) {
       append(command.create());

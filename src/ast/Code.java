@@ -42,10 +42,7 @@ public class Code extends Entity {
   public StaticFunction getFunction(ID id, int parametersQuantity)
       throws ElException {
     for(StaticFunction function: functions)
-      if(function.getName() == id
-          && function.getParametersQuantity() == parametersQuantity) {
-        return function;
-      }
+      if(function.matches(id, parametersQuantity)) return function;
     throw new ElException.NotFound(this, "Function " + id);
   }
   
@@ -61,7 +58,7 @@ public class Code extends Entity {
   public void processWithoutScope(VMCommand endingCommand) throws ElException {
     for(ClassEntity classEntity: classes) classEntity.addToScope();
     for(StaticFunction function: functions) {
-      function.addToScope();
+      addToScope(function);
       function.resolveTypes();
     }
     

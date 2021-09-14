@@ -73,14 +73,9 @@ public class Variable extends NamedEntity {
   // processing
   
   @Override
-  public void addToScope() {
-    addToScope(name, this, 0);
-  }
-  
-  @Override
   public void process() throws ElException {
     if(log) print(new StringBuilder(), "");
-    addToScope(name, this, 0);
+    addToScope(this);
     resolveType();
     if(value != null) currentProcessor.process(this, id, Processor.callMethod);
   }
@@ -100,6 +95,8 @@ public class Variable extends NamedEntity {
   
   public void resolveType() throws ElException {
     type = type.resolve();
+    if(value != null) 
+      value = value.resolveRecursively();
   }
   
   // moving functions
@@ -116,7 +113,7 @@ public class Variable extends NamedEntity {
   }
 
   @Override
-  public void moveToFunction(CustomFunction function) {
+  public void moveToFunction(CustomFunction function) throws ElException {
     index = function.addParameter(this);
   }
 

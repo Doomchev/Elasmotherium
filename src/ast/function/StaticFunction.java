@@ -35,6 +35,7 @@ public class StaticFunction extends CustomFunction {
   
   @Override
   public void resolveTypes() throws ElException {
+    addToScope(this);
     if(returnType != null) returnType = returnType.resolve();
     for(Variable param: parameters) param.resolveType();
   }

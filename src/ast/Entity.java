@@ -7,7 +7,6 @@ import base.ElException;
 import base.ElException.Cannot;
 import base.ElException.CannotGet;
 import base.ElException.CannotMove;
-import java.util.LinkedList;
 import vm.VMCommand;
 import vm.values.VMValue;
 
@@ -49,10 +48,6 @@ public abstract class Entity extends Base {
   public Entity getBlockParameter(ID name) throws ElException {
     throw new CannotGet(name + " parameter", this);
   }
-
-  public int getParametersQuantity() throws ElException {
-    throw new CannotGet("parameters quantity", this);
-  }
   
   // processing
     
@@ -73,6 +68,14 @@ public abstract class Entity extends Base {
   }
   
   public Entity resolve(int parametersQuantity) throws ElException {
+    return this;
+  }
+  
+  public Entity resolveRecursively() throws ElException {
+    return this;
+  }
+
+  public Entity resolveRecursively(int parametersQuantity) throws ElException {
     return this;
   }
   

@@ -18,6 +18,7 @@ public abstract class CustomFunction extends Function {
   protected Code code = new Code();
   protected int startingCommand;
   protected int allocation = 0;
+  protected int fromParametersQuantity = 0, toParametersQuantity = 0;
   protected VMCommand command = null;
   
   // constructors
@@ -40,13 +41,15 @@ public abstract class CustomFunction extends Function {
     return startingCommand;
   }
 
-  @Override
-  public int getParametersQuantity() {
-    return parameters.size();
-  }
-
   public void setReturnType(Entity returnType) throws ElException {
     throw new Cannot("set return type of", this);
+  }
+
+  @Override
+  public boolean matches(ID name, int parametersQuantity) throws ElException {
+    return this.name == name
+        && fromParametersQuantity <= parametersQuantity
+        && parametersQuantity <= toParametersQuantity;
   }
   
   // allocation
@@ -61,10 +64,13 @@ public abstract class CustomFunction extends Function {
   
   // child objects
 
-  public int addParameter(Variable variable) {
+  public int addParameter(Variable variable) throws ElException {
     int index = allocation;
     allocation++;
     parameters.add(variable);
+    toParametersQuantity = parameters.size();
+    if(variable.getValue() == null)
+      fromParametersQuantity = toParametersQuantity;
     return index;
   } 
   
@@ -103,18 +109,13 @@ public abstract class CustomFunction extends Function {
   // processing
   
   @Override
-  public void addToScope() {
-    addToScope(name, this, parameters.size());
-  }
-  
-  @Override
   public void process() throws ElException {
     if(command != null) return;
     startingCommand = vm.VMBase.currentCommand + 1;
     CustomFunction oldFunction = currentFunction;
     currentFunction = this;
     allocateScope();
-    for(Variable param: parameters) param.addToScope();
+    for(Variable parameter: parameters) addToScope(parameter);
     code.processWithoutScope(getEndingCommand());
     deallocateScope();
     currentFunction = oldFunction;
@@ -149,9 +150,10 @@ public abstract class CustomFunction extends Function {
   }
 
   protected void resolveParameters(FunctionCall call) throws ElException {
-    int i = 0;
+    int i = 0, callParametersQuantity = call.getParametersQuantity();
     for(Entity parameter: parameters) {
-      call.getParameter(i).resolve(parameter.getType().getNativeClass());
+      (callParametersQuantity > i ? call.getParameter(i) : parameter.getValue())
+          .resolve(parameter.getType().getNativeClass());
       i++;
     }
   }
@@ -160,7 +162,7 @@ public abstract class CustomFunction extends Function {
   
   public void append(FunctionCall call) throws ElException {
     resolveParameters(call);
-    append(command == null ? new CallFunction(this) : command);
+    append(command == null ? new CallFunction(this) : command.create());
   }
   
   // moving functions

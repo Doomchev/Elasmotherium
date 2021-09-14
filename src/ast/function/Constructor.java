@@ -3,6 +3,7 @@ package ast.function;
 import ast.ClassEntity;
 import ast.Entity;
 import static ast.Entity.append;
+import ast.ID;
 import ast.Variable;
 import base.ElException;
 
@@ -32,10 +33,17 @@ public class Constructor extends StaticFunction {
   }
   
   // processing
-  
+
   @Override
-  public void addToScope() {
-    addToScope(parentClass.name, this, parameters.size());
+  public boolean matches(ID name, int parametersQuantity) throws ElException {
+    return parentClass.name == name
+        && fromParametersQuantity <= parametersQuantity
+        && parametersQuantity <= toParametersQuantity;
+  }
+
+  public boolean matches(int parametersQuantity) {
+    return fromParametersQuantity <= parametersQuantity
+        && parametersQuantity <= toParametersQuantity;
   }
 
   @Override
