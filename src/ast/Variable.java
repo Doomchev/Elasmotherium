@@ -69,6 +69,12 @@ public class Variable extends NamedEntity {
   public int getIndex() throws ElException {
     return index;
   }
+  
+  @Override
+  public boolean isVariable(ID name)
+      throws ElException {
+    return this.name == name;
+  }
    
   // processing
   
@@ -77,7 +83,7 @@ public class Variable extends NamedEntity {
     if(log) print(new StringBuilder(), "");
     addToScope(this);
     resolveType();
-    if(value != null) currentProcessor.process(this, id, Processor.callMethod);
+    if(value != null) currentProcessor.call(this, id, Processor.callMethod);
   }
 
   public void processField(ClassEntity classEntity, Code code)

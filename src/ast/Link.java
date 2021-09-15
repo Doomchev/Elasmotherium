@@ -1,7 +1,6 @@
 package ast;
 
 import ast.function.CustomFunction;
-import ast.function.FunctionCall;
 import base.ElException;
 import java.util.LinkedList;
 
@@ -42,7 +41,7 @@ public class Link extends Value {
   
   @Override
   public Entity resolve() throws ElException {
-    if(subTypes.isEmpty()) return getFromScope(name, 0);
+    if(subTypes.isEmpty()) return getVariableFromScope(name);
     ClassEntity basicClass = getClassFromScope(name);
     Entity[] resolvedTypes = new Entity[subTypes.size()];
     int index = 0;
@@ -54,8 +53,13 @@ public class Link extends Value {
   }
   
   @Override
-  public Entity resolve(int parametersQuantity) throws ElException {
-    return getFromScope(name, parametersQuantity);
+  public Entity resolveFunction(int parametersQuantity) throws ElException {
+    return getFunctionFromScope(name, parametersQuantity);
+  }
+
+  @Override
+  public void resolve(ClassEntity parameter) throws ElException {
+    getVariableFromScope(name).resolve(parameter);
   }
   
   @Override
@@ -65,12 +69,7 @@ public class Link extends Value {
 
   @Override
   public Entity resolveRecursively(int parametersQuantity) throws ElException {
-    return resolve(parametersQuantity);
-  }
-  
-  @Override
-  public void call(FunctionCall call) throws ElException {
-    resolve(call.getParametersQuantity()).call(call);
+    return resolveFunction(parametersQuantity);
   }
   
   // moving functions

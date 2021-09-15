@@ -1,3 +1,8 @@
+2021.09.15 (version 0.33)
+  + Procesing: Functions now can be resolved like variables (without brackets).
+  * AST, Processor: Resolving and getObject functions for entities.
+  - Processor code: Function and dot sections (are now hardcoded).
+  
 2021.09.14 (version 0.32)
   * AST: Default values for functions and methods with overloading support.
 

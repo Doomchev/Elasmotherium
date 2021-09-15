@@ -3,7 +3,6 @@ package ast;
 import ast.function.Constructor;
 import ast.function.Method;
 import ast.function.StaticFunction;
-import base.Base;
 import vm.values.ObjectEntity;
 import base.ElException;
 import base.ElException.NotFound;
@@ -17,7 +16,7 @@ public class ClassEntity extends NamedEntity {
   
   private final LinkedList<ClassParameter> parameters = new LinkedList<>();
   private final LinkedList<Variable> fields = new LinkedList<>();
-  private final LinkedList<StaticFunction> methods = new LinkedList<>();
+  private final LinkedList<Method> methods = new LinkedList<>();
   private final LinkedList<Constructor> constructors = new LinkedList<>();
   public ClassEntity nativeClass;
   private int allocation = 0;
@@ -78,15 +77,16 @@ public class ClassEntity extends NamedEntity {
     throw new NotFound(this, "Field " + name);
   }
   
-  public StaticFunction getMethod(String name, int parametersQuantity)
+  public Method getMethod(String name, int parametersQuantity)
       throws ElException {
     return getMethod(ID.get(name), parametersQuantity);
   }
   
-  public StaticFunction getMethod(ID id, int parametersQuantity)
+  @Override
+  public Method getMethod(ID id, int parametersQuantity)
       throws ElException {
-    for(StaticFunction method: methods)
-      if(method.matches(id, parametersQuantity)) return method;
+    for(Method method: methods)
+      if(method.isFunction(id, parametersQuantity)) return method;
     throw new NotFound(this, this + "." + id + "&" + parametersQuantity);
   }
 
@@ -135,6 +135,12 @@ public class ClassEntity extends NamedEntity {
   @Override
   public ClassEntity getNativeClass() {
     return nativeClass;
+  }
+  
+  @Override
+  public boolean isVariable(ID name)
+      throws ElException {
+    return this.name == name;
   }
    
   // processing

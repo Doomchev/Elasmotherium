@@ -1,4 +1,4 @@
-package processor;
+package processor.parameter;
 
 import processor.parameter.ProParameter;
 import ast.ClassEntity;

@@ -5,10 +5,13 @@ import ast.Code;
 import ast.Entity;
 import ast.ID;
 import ast.Value;
+import ast.Variable;
 import static base.Base.currentProcessor;
 import base.ElException;
+import base.ElException.Cannot;
 import base.ElException.NotFound;
 import java.util.LinkedList;
+import processor.Processor;
 
 public class FunctionCall extends Value {
   public static final ID id = ID.get("call");
@@ -67,34 +70,38 @@ public class FunctionCall extends Value {
   
   @Override
   public ID getID() throws ElException {
-    if(function == null) return function.getName();
-    function = function.resolve(parameters.size());
-    return function.getID();
+    return function instanceof NativeFunction ? function.getID() : id;
   }
   
   // processing
   
   @Override
   public void process() throws ElException {
-    if(log) println(toString());
-    function.call(this);
+    if(log) println(subIndent + toString());
+    function.resolveFunction(parameters.size()).process(this);
   }
   
   @Override
-  public void call(FunctionCall call) throws ElException {
-    if(call == null) {
-      function.call(this);
-    } else {
-      currentProcessor.call(this, call);
+  public Entity resolveFunction(int parametersQuantity) throws ElException {
+    int thisParametersQuantity = parameters.size();
+    if(function == NativeFunction.dot) {
+      if(parameters.size() != 2)
+        throw new Cannot("resolve", this);
+      Entity type = parameters.getFirst().getObject();
+      return type.getMethod(parameters.getLast().getName(), parametersQuantity);
     }
+    Entity func = function.resolveFunction(thisParametersQuantity);
+    func.process(this);
+    return func.getType();
   }
 
   @Override
   public void resolve(ClassEntity parameter) throws ElException {
-    function = function.resolve(parameters.size());
-    currentProcessor.resolve(
-        function instanceof FunctionCall ? function : this
-        , function.getID(), this, parameter);
+    if(function instanceof NativeFunction) {
+      currentProcessor.resolveCall(this, function.getName(), parameter);
+    } else {
+      function.resolveFunction(parameters.size()).resolve(parameter, this);
+    }
   }
   
   @Override
@@ -106,6 +113,23 @@ public class FunctionCall extends Value {
       index++;
     }
     return this;
+  }
+
+  protected void resolveParameters(LinkedList<Variable> functionParameters)
+      throws ElException {
+    int i = 0, callParametersQuantity = parameters.size();
+    for(Entity parameter: functionParameters) {
+      (callParametersQuantity > i ? parameters.get(i)
+          : parameter.getValue()).resolve(parameter.getType().getNativeClass());
+      i++;
+    }
+  }
+
+  @Override
+  public ClassEntity getObject() throws ElException {
+    Entity func = function.resolveFunction(parameters.size());
+    func.process(this);
+    return func.getNativeClass();
   }
   
   // moving functions

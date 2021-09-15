@@ -3,7 +3,6 @@ package ast.function;
 import ast.ClassEntity;
 import ast.Code;
 import ast.Entity;
-import static ast.Entity.append;
 import ast.ID;
 import ast.Variable;
 import base.ElException;
@@ -11,7 +10,6 @@ import base.ElException.Cannot;
 import java.util.LinkedList;
 import parser.EntityStack;
 import vm.VMCommand;
-import vm.call.CallFunction;
 
 public abstract class CustomFunction extends Function {
   protected final LinkedList<Variable> parameters = new LinkedList<>();
@@ -46,10 +44,17 @@ public abstract class CustomFunction extends Function {
   }
 
   @Override
-  public boolean matches(ID name, int parametersQuantity) throws ElException {
+  public boolean isFunction(ID name, int parametersQuantity)
+      throws ElException {
     return this.name == name
         && fromParametersQuantity <= parametersQuantity
         && parametersQuantity <= toParametersQuantity;
+  }
+  
+  @Override
+  public boolean isVariable(ID name)
+      throws ElException {
+    return this.name == name && fromParametersQuantity == 0;
   }
   
   // allocation
@@ -125,17 +130,6 @@ public abstract class CustomFunction extends Function {
     return new vm.call.Return();
   }
 
-  @Override
-  public void call(FunctionCall call) throws ElException {
-    if(log) println(subIndent + "Resolving function call " + toString());
-    resolveParameters(call);
-    if(command != null) {
-      append(command.create());
-    } else {
-      append(new vm.call.CallFunction(this));
-    }
-  }
-
   public void processConstructor(ClassEntity classEntity) throws ElException {
     for(Variable param: parameters)
       param.processField(classEntity, code);
@@ -148,22 +142,8 @@ public abstract class CustomFunction extends Function {
   public void processCode(VMCommand endingCommand) throws ElException {
     code.processWithoutScope(endingCommand);
   }
-
-  protected void resolveParameters(FunctionCall call) throws ElException {
-    int i = 0, callParametersQuantity = call.getParametersQuantity();
-    for(Entity parameter: parameters) {
-      (callParametersQuantity > i ? call.getParameter(i) : parameter.getValue())
-          .resolve(parameter.getType().getNativeClass());
-      i++;
-    }
-  }
   
   public abstract void resolveTypes() throws ElException;
-  
-  public void append(FunctionCall call) throws ElException {
-    resolveParameters(call);
-    append(command == null ? new CallFunction(this) : command.create());
-  }
   
   // moving functions
 

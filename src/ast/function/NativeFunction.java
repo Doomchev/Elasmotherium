@@ -1,10 +1,13 @@
 package ast.function;
 
+import ast.ClassEntity;
+import ast.Entity;
 import ast.Formula;
 import ast.ID;
 import base.ElException;
 import base.ElException.NotFound;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class NativeFunction extends Function {
   private static final HashMap<ID, NativeFunction> all = new HashMap<>();
@@ -82,8 +85,14 @@ public class NativeFunction extends Function {
   }
   
   @Override
-  public void call(FunctionCall call) throws ElException {
-    currentProcessor.call(call, name, call);
+  public void process(FunctionCall call) throws ElException {
+    currentProcessor.processCall(call, name);
+  }
+
+  @Override
+  public void resolve(ClassEntity parameter, FunctionCall call)
+      throws ElException {
+    currentProcessor.resolveCall(call, name, parameter);
   }
 
   @Override

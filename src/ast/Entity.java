@@ -2,11 +2,13 @@ package ast;
 
 import ast.function.CustomFunction;
 import ast.function.FunctionCall;
+import ast.function.Method;
 import base.Base;
 import base.ElException;
 import base.ElException.Cannot;
 import base.ElException.CannotGet;
 import base.ElException.CannotMove;
+import processor.Processor;
 import vm.VMCommand;
 import vm.values.VMValue;
 
@@ -49,26 +51,35 @@ public abstract class Entity extends Base {
     throw new CannotGet(name + " parameter", this);
   }
   
+  public Method getMethod(ID id, int parametersQuantity) throws ElException {
+    throw new CannotGet("method " + id, this);
+  }
+  
   // processing
     
   public void process() throws ElException {
     throw new Cannot("process", this);
   }
   
-  public void call(FunctionCall call) throws ElException {
-    throw new Cannot("call", this);
-  }
-
-  public void resolve(ClassEntity parameter) throws ElException {
-    currentProcessor.resolve(this, parameter);
+  public void process(FunctionCall call) throws ElException {
+    throw new Cannot("process", this);
   }
   
   public Entity resolve() throws ElException {
     return this;
   }
   
-  public Entity resolve(int parametersQuantity) throws ElException {
+  public Entity resolveFunction(int parametersQuantity) throws ElException {
     return this;
+  }
+
+  public void resolve(ClassEntity parameter) throws ElException {
+    currentProcessor.resolve(this, parameter);
+  }
+
+  public void resolve(ClassEntity parameter, FunctionCall call)
+      throws ElException {
+    throw new Cannot("resolve(" + parameter + ")", this);
   }
   
   public Entity resolveRecursively() throws ElException {
@@ -77,6 +88,11 @@ public abstract class Entity extends Base {
 
   public Entity resolveRecursively(int parametersQuantity) throws ElException {
     return this;
+  }
+
+  public Entity getObject() throws ElException {
+    currentProcessor.getObject(this);
+    return Processor.object;
   }
   
   // moving functions

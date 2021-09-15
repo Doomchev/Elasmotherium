@@ -29,6 +29,7 @@ import java.util.LinkedList;
 public class Processor extends ProBase {
   public static final ID callMethod = ID.get("call");
   public static final ID resolveMethod = ID.get("resolve");
+  public static final ID getObjectMethod = ID.get("getObject");
   
   static final HashMap<String, VMCommand> commands = new HashMap<>();
 
@@ -95,7 +96,6 @@ public class Processor extends ProBase {
     
     proCommands.put("getField", GetField.instance);
     proCommands.put("setObject", SetObject.instance);
-    proCommands.put("call", Call.instance);
     proCommands.put("convert", Convert.instance);
     proCommands.put("stop", Stop.instance);
     proCommands.put("process", Process.instance);
@@ -210,52 +210,56 @@ public class Processor extends ProBase {
     currentBlock = block.parentBlock;
   }
   
-  public void resolve(Entity object, ID functionName, FunctionCall call
+  /*public void resolve(Entity object, ID functionName, FunctionCall call
       , Entity param) throws ElException {
     Entity oldParam = Processor.param;
     Processor.param = param;
     process(object, functionName, resolveMethod, call);
     Processor.param = oldParam;
+  }*/
+  
+  public void getObject(Entity entity) throws ElException {
+    call(entity, entity.getID(), getObjectMethod);
   }
   
-  public void process(Entity object, ID functionName, ID methodName, Entity param)
+  public void resolve(Entity entity, Entity parameter)
       throws ElException {
-    Entity oldParam = Processor.param;
-    Processor.param = param;
-    process(object, functionName, methodName);
-    Processor.param = oldParam;
-  }
-
-  public void call(Entity object, ID functionName, FunctionCall call)
-      throws ElException {
-    process(object, functionName, callMethod, call);
-  }
-
-  public void process(Entity object, ID functionName, ID methodName
-      , FunctionCall call) throws ElException {
-    FunctionCall oldCall = currentCall;
-    currentCall = call;
-    process(object, functionName, methodName);
-    currentCall = oldCall;
-  }
-
-  public void call(Entity object, FunctionCall call) throws ElException {
-    FunctionCall oldCall = currentCall;
-    currentCall = call;
-    process(object, object.getID(), callMethod);
-    currentCall = oldCall;
+    call(entity, entity.getID(), resolveMethod, parameter);
   }
   
-  public void resolve(Entity object, Entity param)
+  public void resolveCall(FunctionCall call, ID functionName, Entity parameter)
+      throws ElException {
+    call(call, functionName, resolveMethod, parameter);
+  }
+  
+  public void call(Entity entity, ID method, Entity param)
+      throws ElException {
+    call(entity, entity.getID(), method, param);
+  }
+  
+  public void call(Entity entity, ID function, ID method, Entity parameter)
+      throws ElException {
+    Entity oldParam = Processor.currentParameter;
+    Processor.currentParameter = parameter;
+    call(entity, function, method);
+    Processor.currentParameter = oldParam;
+  }
+
+  public void processCall(FunctionCall call, ID functionName)
+      throws ElException {
+    call(call, functionName, callMethod);
+  }
+  
+  /*public void resolve(Entity object, Entity param)
       throws ElException {
     Entity oldParam = Processor.param;
     Processor.param = param;
     object = object.resolve();
     process(object, object.getID(), resolveMethod);
     Processor.param = oldParam;
-  }
+  }*/
   
-  public void process(Entity object, ID functionName, ID methodName)
+  public void call(Entity object, ID functionName, ID methodName)
       throws ElException {
     Entity oldCurrent = currentObject;
     currentObject = object.resolve();
@@ -270,8 +274,13 @@ public class Processor extends ProBase {
     try {
       method = getMethod(functionName, methodName);
     } catch(ElException ex) {
-      if(methodName != resolveMethod) throw ex;
-      currentObject.process();
+      if(methodName == resolveMethod) {
+        currentObject.resolve(currentParameter.getType().getNativeClass());
+      } else if(methodName == getObjectMethod) {
+        object = currentObject.getObject();
+      } else {
+        throw ex;
+      }
       return;
     }
     if(method.hasLabels) {

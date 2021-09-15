@@ -1,7 +1,6 @@
 package ast;
 
 import base.ElException;
-import base.ElException.Cannot;
 
 public abstract class NamedEntity extends Entity {
   public final ID name;
@@ -23,8 +22,14 @@ public abstract class NamedEntity extends Entity {
     return name;
   }
 
-  public boolean matches(ID name, int parametersQuantity) throws ElException {
-    return this.name == name;
+  public boolean isFunction(ID name, int parametersQuantity)
+      throws ElException {
+    return false;
+  }
+  
+  public boolean isVariable(ID name)
+      throws ElException {
+    return false;
   }
   
   // other

@@ -1,0 +1,6 @@
+DEFINE fromFor, "="
+DEFINE toFor, "..="
+DEFINE untilFor, "..<"
+DEFINE from, ""
+DEFINE to, "..="
+DEFINE until, "..<"

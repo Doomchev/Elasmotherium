@@ -1,13 +1,11 @@
 package base;
 
 import ast.ClassEntity;
-import ast.Entity;
 import ast.ID;
 import ast.NamedEntity;
 import ast.function.CustomFunction;
 import base.ElException.MethodException;
 import base.ElException.NotFound;
-import base.LinkedMap.Entry;
 import java.util.LinkedList;
 import java.util.List;
 import processor.Processor;
@@ -92,17 +90,24 @@ public abstract class Base {
     scope[lastScopeEntry] = entity;
   }
   
-  public NamedEntity getFromScope(ID name, int parametersQuantity)
+  public NamedEntity getFunctionFromScope(ID name, int parametersQuantity)
       throws ElException {
     for(int i = lastScopeEntry; i >= 0; i--)
-      if(scope[i].matches(name, parametersQuantity)) return scope[i];
-    throw new NotFound("getFromScope", "Identifier " + name);
+      if(scope[i].isFunction(name, parametersQuantity)) return scope[i];
+    throw new NotFound("getFunctionFromScope", name.string);
+  }
+  
+  public NamedEntity getVariableFromScope(ID name)
+      throws ElException {
+    for(int i = lastScopeEntry; i >= 0; i--)
+      if(scope[i].isVariable(name)) return scope[i];
+    throw new NotFound("getVariableFromScope", name.string);
   }
   
   public ClassEntity getClassFromScope(ID name) throws ElException {
     for(int i = lastScopeEntry; i >= 0; i--) {
       NamedEntity entity = scope[i];
-      if(entity instanceof ClassEntity && entity.matches(name, 0))
+      if(entity instanceof ClassEntity && entity.isVariable(name))
         return (ClassEntity) entity;
     }
     throw new NotFound("getClassFromScope", "Class " + name);
@@ -288,11 +293,9 @@ public abstract class Base {
 
   public static void convert(ClassEntity from, ClassEntity to)
       throws ElException {
+    if(from == to) return;
     if(log) System.out.println(subIndent + "converting " + from + " to "
         + to + ".");
-    if(from == to) {
-      return;
-    }
     LinkedMap<ClassEntity, VMCommand> map = converters.get(from);
     if(map == null)
       throw new ElException(from, "Converters from " + from

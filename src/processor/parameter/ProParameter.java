@@ -11,7 +11,6 @@ import base.ElException.Cannot;
 import base.ElException.CannotGet;
 import base.ElException.MethodException;
 import processor.ProBase;
-import processor.ProClass;
 import vm.VMCommand;
 
 public abstract class ProParameter extends ProBase {
@@ -27,7 +26,7 @@ public abstract class ProParameter extends ProBase {
         return ProParam.instance;
       case "value":
         return ProVariableValue.instance;
-      case "function":
+      case "currentFunction":
         return ProCurrentFunction.instance;
       default:
         if(name.startsWith("v")) {

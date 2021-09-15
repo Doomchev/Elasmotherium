@@ -3,12 +3,15 @@ package processor;
 import ast.Block;
 import ast.ClassEntity;
 import ast.Entity;
-import ast.function.FunctionCall;
 import base.Base;
 
 public class ProBase extends Base {
-  protected static Entity currentObject, object, param, currentField;
-  protected static ClassEntity subtype = null;
+
+  public static Entity currentObject;
+  public static Entity currentParameter;
+  public static Entity currentField;
+  public static Entity object;
+  public static ClassEntity subtype = null;
   protected static Block currentBlock;
-  protected static FunctionCall currentCall;
+  protected static int parametersQuantity;
 }

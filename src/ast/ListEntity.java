@@ -25,10 +25,10 @@ public class ListEntity extends Value {
   // processing
   
   @Override
-  public void process() throws ElException {
+  public void resolve(ClassEntity parameter) throws ElException {
     append(new vm.collection.ListCreate());
     for(Value value: values) {
-      currentProcessor.resolve(value, ClassEntity.Int);
+      value.resolve(ClassEntity.Int);
       append(new vm.i64.I64AddToList.I64AddToListNoDelete());
     }
   }

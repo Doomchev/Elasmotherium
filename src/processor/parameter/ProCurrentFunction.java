@@ -15,6 +15,6 @@ public class ProCurrentFunction extends ProParameter {
 
   @Override
   public String toString() {
-    return "function";
+    return "currentFunction";
   }
 }

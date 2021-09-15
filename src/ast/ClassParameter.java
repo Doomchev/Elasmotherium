@@ -1,6 +1,5 @@
 package ast;
 
-import ast.function.StaticFunction;
 import base.ElException;
 
 public class ClassParameter extends NamedEntity {
@@ -17,6 +16,12 @@ public class ClassParameter extends NamedEntity {
   @Override
   public Entity getType() throws ElException {
     return ClassEntity.Int;
+  }
+  
+  @Override
+  public boolean isVariable(ID name)
+      throws ElException {
+    return this.name == name;
   }
   
   // moving functions

@@ -30,7 +30,7 @@ public class GetField extends ProCommand {
     try {
       field = classEntity.getField(id);
     } catch(ElException ex) {
-      field = classEntity.getMethod(id, currentCall.getParametersQuantity());
+      field = classEntity.getMethod(id, parametersQuantity);
     }
     try {
       FunctionCall call = (FunctionCall) parameterValue;

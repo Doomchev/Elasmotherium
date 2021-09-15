@@ -42,7 +42,7 @@ public class Code extends Entity {
   public StaticFunction getFunction(ID id, int parametersQuantity)
       throws ElException {
     for(StaticFunction function: functions)
-      if(function.matches(id, parametersQuantity)) return function;
+      if(function.isFunction(id, parametersQuantity)) return function;
     throw new ElException.NotFound(this, "Function " + id);
   }
   

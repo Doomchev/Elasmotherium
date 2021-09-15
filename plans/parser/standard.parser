@@ -23,41 +23,24 @@ DEFINE return, "return"
 DEFINE class, "class"
 DEFINE field, "field"
 
-// for each
+// for-each
 
-SECTION JavaForEach {
-  DEFINE each, ""
-  DEFINE in, ":"
-} ELSE {
-  DEFINE each, "each"
-  DEFINE in, "in"
-}
+DEFINE each, "each"
+DEFINE in, "in"
 
 // ranges
 
-SECTION ShortRanges {
-  DEFINE fromFor, "="
-  DEFINE toFor, "..="
-  DEFINE untilFor, "..<"
-  DEFINE from, ""
-  DEFINE to, "..="
-  DEFINE until, "..<"
-} ELSE {
-  DEFINE fromFor, "from"
-  DEFINE untilFor, "until"
-  DEFINE toFor, "until"
-  DEFINE from, "from"
-  DEFINE until, "until"
-  DEFINE to, "until"
-}
+DEFINE fromFor, "from"
+DEFINE untilFor, "until"
+DEFINE toFor, "until"
+DEFINE from, "from"
+DEFINE until, "until"
+DEFINE to, "until"
 
 // void
 
-SECTION Void {
-  DEFINE void, "void"
-} ELSE {
-  DEFINE void, ""
-}
+DEFINE void, ""
+
 
 
 

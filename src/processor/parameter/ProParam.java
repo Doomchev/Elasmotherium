@@ -11,7 +11,7 @@ public class ProParam extends ProParameter {
   
   @Override
   public Entity getValue() throws ElException {
-    return ProBase.param;
+    return ProBase.currentParameter;
   }
 
   @Override

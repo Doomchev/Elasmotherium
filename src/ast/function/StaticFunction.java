@@ -33,6 +33,38 @@ public class StaticFunction extends CustomFunction {
     this.returnType = returnType;
   }
   
+  // processing
+
+  @Override
+  public void process(FunctionCall call) throws ElException {
+    if(log) println(subIndent + "Calling static function " + toString());
+    call.resolveParameters(parameters);
+    append();
+  }
+
+  @Override
+  public void resolve(ClassEntity parameter) throws ElException {
+    if(log) println(subIndent + "Resolving static function " + toString()
+      + " without parameters");
+    append();
+  }
+
+  @Override
+  public void resolve(ClassEntity parameter, FunctionCall call) throws ElException {
+    if(log) println(subIndent + "Resolving static function " + toString());
+    call.resolveParameters(parameters);
+    append();
+    convert(returnType.getNativeClass(), parameter);
+  }
+    
+  public void append() throws ElException {
+    if(command != null) {
+      append(command.create());
+    } else {
+      append(new vm.call.CallFunction(this));
+    }
+  }
+  
   @Override
   public void resolveTypes() throws ElException {
     addToScope(this);

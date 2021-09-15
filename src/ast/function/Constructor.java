@@ -2,7 +2,6 @@ package ast.function;
 
 import ast.ClassEntity;
 import ast.Entity;
-import static ast.Entity.append;
 import ast.ID;
 import ast.Variable;
 import base.ElException;
@@ -25,6 +24,11 @@ public class Constructor extends StaticFunction {
     return parentClass;
   }
   
+  @Override
+  public ClassEntity getNativeClass() throws ElException {
+    return parentClass;
+  }
+  
   // parameters
 
   @Override
@@ -35,7 +39,7 @@ public class Constructor extends StaticFunction {
   // processing
 
   @Override
-  public boolean matches(ID name, int parametersQuantity) throws ElException {
+  public boolean isFunction(ID name, int parametersQuantity) throws ElException {
     return parentClass.name == name
         && fromParametersQuantity <= parametersQuantity
         && parametersQuantity <= toParametersQuantity;
@@ -47,23 +51,25 @@ public class Constructor extends StaticFunction {
   }
 
   @Override
-  public void call(FunctionCall call) throws ElException {
+  public void processConstructor(ClassEntity classEntity) throws ElException {
+    for(Variable param: parameters)
+      param.processField(classEntity, code);
+  }
+
+  @Override
+  public void resolve(ClassEntity parameter, FunctionCall call)
+      throws ElException {
     if(log) println(subIndent + "Resolving constructor " + toString());
     
     if(command != null) {
-      resolveParameters(call);
+      call.resolveParameters(parameters);
       append(command.create());
       return;
     }
     append(new vm.object.ObjectCreate(parentClass));
-    resolveParameters(call);
+    call.resolveParameters(parameters);
     append(new vm.call.CallFunction(this));
-  }
-
-  @Override
-  public void processConstructor(ClassEntity classEntity) throws ElException {
-    for(Variable param: parameters)
-      param.processField(classEntity, code);
+    //convert(parentClass, parameter);
   }
   
   // moving functions
@@ -79,7 +85,8 @@ public class Constructor extends StaticFunction {
 
   @Override
   public String toString() {
-    return "this";
+    return (parentClass == null ? "" : parentClass.name)
+        + "(" + listToString(parameters) + ")";
   }
   
   @Override

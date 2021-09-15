@@ -19,7 +19,7 @@ public class SetObject extends ProCommand {
 
   @Override
   public void execute() throws ElException {
-    object = parameter.getValue();
-    if(log) log("Set object to " + parameter);
+    object = parameter.getType();
+    if(log) log("Set object to " + object);
   }
 }

@@ -4,14 +4,8 @@ variable {
 }
 
 return {
-  v0.resolve(function);
-  [function]Return;
-}
-
-dot {
-  v0.getObject;
-  getField(v1);
-  call(v1);
+  v0.resolve(currentFunction);
+  [currentFunction]Return;
 }
 
 // get object
@@ -24,17 +18,6 @@ variable.getObject {
 field.getObject {
   [this]ThisFieldPush;
   setObject(this);
-}
-
-function.getObject {
-  call(this);
-  setObject(this);
-}
-
-dot.getObject {
-  v0.getObject;
-  getField(v1);
-  v1.getObject;
 }
 
 brackets.getObject {
@@ -98,19 +81,8 @@ variable.resolve {
   convert(this, param);
 }
 
-dot.resolve {
-  v0.getObject;
-  getField(v1);
-  v1.resolve(param);
-}
-
 field.resolve {
   [this]ThisFieldPush;
-  convert(this, param);
-}
-
-function.resolve {
-  call(this);
   convert(this, param);
 }
 

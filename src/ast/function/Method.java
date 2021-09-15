@@ -3,7 +3,6 @@ package ast.function;
 import ast.ClassEntity;
 import ast.ID;
 import base.ElException;
-import vm.object.ObjectThisPush;
 import vm.object.ObjectVarPush;
 
 public class Method extends StaticFunction {
@@ -21,15 +20,17 @@ public class Method extends StaticFunction {
   }
 
   @Override
-  public void call(FunctionCall call) throws ElException {
+  public void process(FunctionCall call) throws ElException {
+    if(log) println(subIndent + "Resolving method " + toString());
+    call.resolveParameters(parameters);
+    append();
+  }
+
+  @Override
+  public void resolve(ClassEntity parameter) throws ElException {
     if(log) println(subIndent + "Resolving method " + toString());
     append(new ObjectVarPush(currentFunction.allocation));
-    resolveParameters(call);
-    if(command != null) {
-      append(command.create());
-    } else {
-      append(new vm.call.CallFunction(this));
-    }
+    append();
   }
 
   @Override
