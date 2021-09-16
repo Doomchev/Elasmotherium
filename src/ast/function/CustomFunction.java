@@ -25,7 +25,7 @@ public abstract class CustomFunction extends Function {
     super(name);
   }
   
-  // parameters
+  // properties
 
   public int getCallAllocation() {
     return parameters.size() - 1;
@@ -88,7 +88,7 @@ public abstract class CustomFunction extends Function {
     this.command = command;
   }
   
-  // processor fields
+  // properties
 
   public int getAllocation() {
     return allocation;
@@ -111,6 +111,19 @@ public abstract class CustomFunction extends Function {
     EntityStack.code.push(code);
   }
   
+  // preprocessing
+
+  public void processConstructor(ClassEntity classEntity) throws ElException {
+    for(Variable param: parameters)
+      param.processField(classEntity, code);
+  }
+
+  public void processConstructors() throws ElException {
+    code.processConstructors();
+  }
+  
+  public abstract void resolveTypes() throws ElException;
+  
   // processing
   
   @Override
@@ -129,21 +142,10 @@ public abstract class CustomFunction extends Function {
   public VMCommand getEndingCommand() throws ElException {
     return new vm.call.Return();
   }
-
-  public void processConstructor(ClassEntity classEntity) throws ElException {
-    for(Variable param: parameters)
-      param.processField(classEntity, code);
-  }
-
-  public void processConstructors() throws ElException {
-    code.processConstructors();
-  }
   
   public void processCode(VMCommand endingCommand) throws ElException {
     code.processWithoutScope(endingCommand);
   }
-  
-  public abstract void resolveTypes() throws ElException;
   
   // moving functions
 

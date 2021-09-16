@@ -11,7 +11,7 @@ import vm.VMCommand;
 public class StaticFunction extends CustomFunction {
   protected Entity returnType = null;
   
-  // constructors
+  // creating
   
   public StaticFunction(ID name) {
     super(name);
@@ -20,8 +20,12 @@ public class StaticFunction extends CustomFunction {
   public static CustomFunction createStaticFunction(ID id) {
     return allocateFunction(new StaticFunction(id));
   }
+
+  public void add(StaticFunction function) {
+    code.add(function);
+  }
   
-  // parameters
+  // properties
   
   @Override
   public Entity getType() throws ElException {
@@ -31,6 +35,15 @@ public class StaticFunction extends CustomFunction {
   @Override
   public void setReturnType(Entity returnType) {
     this.returnType = returnType;
+  }
+  
+  // preprocessing
+  
+  @Override
+  public void resolveTypes() throws ElException {
+    addToScope(this);
+    if(returnType != null) returnType = returnType.resolve();
+    for(Variable param: parameters) param.resolveType();
   }
   
   // processing
@@ -50,7 +63,8 @@ public class StaticFunction extends CustomFunction {
   }
 
   @Override
-  public void resolve(ClassEntity parameter, FunctionCall call) throws ElException {
+  public void resolve(ClassEntity parameter, FunctionCall call)
+      throws ElException {
     if(log) println(subIndent + "Resolving static function " + toString());
     call.resolveParameters(parameters);
     append();
@@ -63,13 +77,6 @@ public class StaticFunction extends CustomFunction {
     } else {
       append(new vm.call.CallFunction(this));
     }
-  }
-  
-  @Override
-  public void resolveTypes() throws ElException {
-    addToScope(this);
-    if(returnType != null) returnType = returnType.resolve();
-    for(Variable param: parameters) param.resolveType();
   }
   
   @Override

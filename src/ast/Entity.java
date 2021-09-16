@@ -13,7 +13,7 @@ import vm.VMCommand;
 import vm.values.VMValue;
 
 public abstract class Entity extends Base {
-  // processor fields
+  // properties
   
   public ID getName() throws ElException {
     throw new CannotGet("name", this);

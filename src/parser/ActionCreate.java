@@ -56,7 +56,7 @@ public class ActionCreate extends Action {
     currentAction = this;
     if(type == Module.id) {
       String name = EntityStack.id.pop().string;
-      Module.current.modules.add(new Module(modulesPath, name));
+      Module.current.addModule(name);
       if(log) log("CREATE MODULE " + name);
     } else if(stack.isStringBased()) {
       String string = prefix + text.substring(tokenStart, textPos);

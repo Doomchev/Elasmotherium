@@ -23,8 +23,10 @@ public abstract class Base {
   
   static {
     try {
-      workingPath = new java.io.File(".").getCanonicalPath();
-      modulesPath = new java.io.File(".").getCanonicalPath() + "/modules";
+      String wPath = new java.io.File(".").getCanonicalPath();
+      String mPath = wPath + "/modules";
+      workingPath = wPath;
+      modulesPath = mPath;
     } catch (java.io.IOException ex) {
     }
   }
@@ -52,21 +54,15 @@ public abstract class Base {
   
   // functions
   
-  //private static final LinkedList<CustomFunction> functions
-  //    = new LinkedList<>();
   public static CustomFunction currentFunction;
   
   public static CustomFunction allocateFunction(CustomFunction function) {
     allocate();
     currentAllocation = 0;
-    //functions.add(currentFunction);
-    //currentFunction = function;
     return function;
   }
   
   public static int deallocateFunction() {
-    //currentFunction = functions.getLast();
-    //functions.removeLast();
     return deallocate();
   }
   

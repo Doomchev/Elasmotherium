@@ -6,12 +6,10 @@ import ast.Entity;
 import ast.ID;
 import ast.Value;
 import ast.Variable;
-import static base.Base.currentProcessor;
 import base.ElException;
 import base.ElException.Cannot;
 import base.ElException.NotFound;
 import java.util.LinkedList;
-import processor.Processor;
 
 public class FunctionCall extends Value {
   public static final ID id = ID.get("call");
@@ -25,7 +23,7 @@ public class FunctionCall extends Value {
     this.function = function;
   }
   
-  // parameters
+  // child objects
 
   public void add(Entity value) {
     parameters.add(value);
@@ -37,6 +35,13 @@ public class FunctionCall extends Value {
 
   public void addFirst(Entity value) {
     parameters.addFirst(value);
+  }
+  
+  // properties
+  
+  @Override
+  public ID getID() throws ElException {
+    return function instanceof NativeFunction ? function.getID() : id;
   }
 
   public int getParametersQuantity() throws ElException {
@@ -54,9 +59,7 @@ public class FunctionCall extends Value {
   
   public void setFunction(Entity function) {
     this.function = function;
-  }  
-  
-  // processor fields
+  }
   
   public Entity getParameter(int index) throws ElException {
     if(index >= parameters.size())
@@ -66,11 +69,6 @@ public class FunctionCall extends Value {
 
   public void setParameter(int index, Entity value) {
     parameters.set(index, value);
-  }
-  
-  @Override
-  public ID getID() throws ElException {
-    return function instanceof NativeFunction ? function.getID() : id;
   }
   
   // processing

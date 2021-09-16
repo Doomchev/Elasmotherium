@@ -1,3 +1,9 @@
+2021.09.16 (version 0.33.1)
+  + Test framework.
+  + VM, processor code: Negative funcion.
+  + VM: Assert function.
+  * New module importing system.
+
 2021.09.15 (version 0.33)
   + Procesing: Functions now can be resolved like variables (without brackets).
   * AST, Processor: Resolving and getObject functions for entities.

@@ -1,9 +1,7 @@
 package ast;
 
-import ast.function.FunctionCall;
 import base.ElException;
 import java.util.Arrays;
-import java.util.LinkedList;
 import vm.values.VMValue;
 
 public class Type extends Entity {
@@ -15,7 +13,7 @@ public class Type extends Entity {
     this.subtypes = subtypes;
   }
   
-  // processor fields
+  // properties
   
   @Override
   public Entity getType() throws ElException {

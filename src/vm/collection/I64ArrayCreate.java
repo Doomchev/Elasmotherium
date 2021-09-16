@@ -1,9 +1,7 @@
 package vm.collection;
 
-import static base.Base.log;
 import base.ElException;
 import vm.VMBase;
-import static vm.VMBase.currentCommand;
 import vm.VMCommand;
 import vm.values.I64ArrayValue;
 

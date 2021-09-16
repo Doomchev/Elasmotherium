@@ -17,7 +17,7 @@ public class Constructor extends StaticFunction {
     return allocateFunction(new Constructor());
   }
   
-  // processor fields
+  // properties
   
   @Override
   public Entity getType() throws ElException {
@@ -28,12 +28,18 @@ public class Constructor extends StaticFunction {
   public ClassEntity getNativeClass() throws ElException {
     return parentClass;
   }
-  
-  // parameters
 
   @Override
   public int getCallDeallocation() {
     return parameters.size();
+  }
+  
+  // preprocessing
+
+  @Override
+  public void processConstructor(ClassEntity classEntity) throws ElException {
+    for(Variable param: parameters)
+      param.processField(classEntity, code);
   }
   
   // processing
@@ -48,12 +54,6 @@ public class Constructor extends StaticFunction {
   public boolean matches(int parametersQuantity) {
     return fromParametersQuantity <= parametersQuantity
         && parametersQuantity <= toParametersQuantity;
-  }
-
-  @Override
-  public void processConstructor(ClassEntity classEntity) throws ElException {
-    for(Variable param: parameters)
-      param.processField(classEntity, code);
   }
 
   @Override

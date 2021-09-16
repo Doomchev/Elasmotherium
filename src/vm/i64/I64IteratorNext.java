@@ -1,8 +1,6 @@
 package vm.i64;
 
-import static base.Base.log;
 import base.ElException;
-import static vm.VMBase.currentCommand;
 import vm.VMCommand;
 
 public class I64IteratorNext extends VMCommand {

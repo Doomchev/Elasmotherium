@@ -18,7 +18,7 @@ public class ConstantValue extends Value {
     this.value = value;
   }
   
-  // processor fields
+  // properties
 
   @Override
   public ID getID() throws ElException {

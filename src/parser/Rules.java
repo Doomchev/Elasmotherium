@@ -1,17 +1,9 @@
 package parser;
 
-import static base.Base.currentFunction;
 import java.util.HashMap;
 import base.ElException;
 import base.ElException.MethodException;
 import base.ElException.NotFound;
-import base.Module;
-import static base.Module.current;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.LinkedList;
 
 public class Rules extends ParserBase {
@@ -205,36 +197,16 @@ public class Rules extends ParserBase {
     }
   }
   
-  // reading module
+  // parsing code
   
-  public void read(Module module) {
-    current = module;
-    currentFunction = module.function;
-    readCode(modulesPath + "/Base.es");
-    readCode(module.getFileName());
-    for(Module imported: module.modules) readCode(imported.getFileName());
-    currentFunction.setAllocation();
-  }  
-  
-  private void readCode(String fileName) {
+  public void parseCode(StringBuffer text) {
     textPos = 0;
     tokenStart = 0;
     currentLineNum = 1;
     lineStart = -1;
     prefix = "";
-    currentFileName = new File(fileName).getName();
-    
-    try {
-      text = new StringBuffer(new String(Files.readAllBytes(Paths.get(fileName))
-          , "UTF-8"));
-      textLength = text.length();
-    } catch (FileNotFoundException ex) {
-      error("I/O error", fileName + " not found.");
-    } catch (IOException ex) {
-      error("I/O error", "Cannot read " + fileName + ".");
-    }
-    
-    if(log) printChapter("Parsing " + fileName);
+    Rules.text = text;
+    textLength = text.length();
     
     currentFunction.pushCode();
     

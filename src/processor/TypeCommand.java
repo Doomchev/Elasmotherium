@@ -4,7 +4,6 @@ import processor.parameter.ProParameter;
 import ast.ClassEntity;
 import base.ElException;
 import base.ElException.MethodException;
-import static processor.Processor.commands;
 import vm.VMCommand;
 
 public class TypeCommand extends ProCommand {
@@ -23,7 +22,7 @@ public class TypeCommand extends ProCommand {
       throws ElException {
     String typeName = type.nativeClass.getName().string;
     if(typeName.equals("Int")) typeName = "I64";
-    VMCommand command = commands.get(typeName + postfix);
+    VMCommand command = Processor.commands.get(typeName + postfix);
     if(command == null)
       throw new MethodException("TypeCommand", "getCommand", "Command "
           + typeName + postfix + " is not found.");

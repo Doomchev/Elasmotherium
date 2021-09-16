@@ -121,7 +121,7 @@ public class ClassEntity extends NamedEntity {
     constructors.add(function);
   }
   
-  // processor fields
+  // properties
   
   @Override
   public Entity getType() throws ElException {
@@ -142,6 +142,28 @@ public class ClassEntity extends NamedEntity {
       throws ElException {
     return this.name == name;
   }
+  
+  // preprocessing
+  
+  public void resolveTypes() throws ElException {
+    ClassEntity oldClass = currentClass;
+    currentClass = this;
+    allocateScope();
+    
+    for(ClassParameter parameter: parameters) addToScope(parameter);
+    
+    for(Variable field: fields) field.resolveType();
+    for(StaticFunction constructor: constructors) constructor.resolveTypes();
+    for(StaticFunction method: methods) method.resolveTypes();
+    
+    deallocateScope();
+    currentClass = oldClass;
+  }
+
+  public void processConstructors() throws ElException {
+    for(StaticFunction constructor: constructors)
+      constructor.processConstructor(this);
+  }
    
   // processing
 
@@ -161,26 +183,6 @@ public class ClassEntity extends NamedEntity {
     
     for(StaticFunction constructor: constructors) constructor.process();
     for(StaticFunction method: methods) method.process();
-    
-    deallocateScope();
-    currentClass = oldClass;
-  }
-
-  public void processConstructors() throws ElException {
-    for(StaticFunction constructor: constructors)
-      constructor.processConstructor(this);
-  }
-  
-  public void resolveTypes() throws ElException {
-    ClassEntity oldClass = currentClass;
-    currentClass = this;
-    allocateScope();
-    
-    for(ClassParameter parameter: parameters) addToScope(parameter);
-    
-    for(Variable field: fields) field.resolveType();
-    for(StaticFunction constructor: constructors) constructor.resolveTypes();
-    for(StaticFunction method: methods) method.resolveTypes();
     
     deallocateScope();
     currentClass = oldClass;

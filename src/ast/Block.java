@@ -92,7 +92,7 @@ public class Block extends Entity {
     throw new NotFound(this, "Variable " + name, this);
   }
   
-  // processor fields
+  // properties
   
   @Override
   public Entity getBlockParameter(ID name) throws ElException {

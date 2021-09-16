@@ -1,12 +1,9 @@
 package parser;
 
-import ast.Block;
 import ast.ClassEntity;
 import ast.ID;
 import ast.Variable;
-import static base.Base.log;
 import base.ElException;
-import static parser.Action.currentAction;
 
 public class ActionCreateBlockVariable extends Action {
   private final ID id;

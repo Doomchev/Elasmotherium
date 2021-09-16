@@ -1,7 +1,6 @@
 package parser;
 
 import base.Base;
-import static base.Base.log;
 import java.util.Stack;
 
 public class ParserBase extends Base {

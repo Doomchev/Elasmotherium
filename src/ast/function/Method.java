@@ -13,11 +13,15 @@ public class Method extends StaticFunction {
   public static CustomFunction createMethod(ID id) {
     return allocateFunction(new Method(id));
   }
+  
+  // properties
 
   @Override
   public int getCallDeallocation() {
     return parameters.size() + 1;
   }
+  
+  // processing
 
   @Override
   public void process(FunctionCall call) throws ElException {
@@ -32,6 +36,8 @@ public class Method extends StaticFunction {
     append(new ObjectVarPush(currentFunction.allocation));
     append();
   }
+  
+  // moving functions
 
   @Override
   public void moveToClass(ClassEntity classEntity) throws ElException {

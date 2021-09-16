@@ -17,7 +17,6 @@ import vm.collection.*;
 import ast.Entity;
 import ast.ID;
 import ast.function.FunctionCall;
-import static base.Base.currentLineNum;
 import base.ElException;
 import base.ElException.MethodException;
 import base.ElException.NotFound;
@@ -64,6 +63,7 @@ public class Processor extends ProBase {
     addCommand(new I64ThisFieldEquate(0));
     addCommand(new StringThisFieldEquate(0));
     
+    addCommand(new I64Negative());
     addCommand(new I64Add());
     addCommand(new I64Subtract());
     addCommand(new I64Multiply());

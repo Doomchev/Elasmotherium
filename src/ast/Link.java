@@ -14,18 +14,18 @@ public class Link extends Value {
     this.name = name;
   }
   
+  // child objects
+
+  void addSubType(Link type) {
+    subTypes.add(type);
+  }
+  
   // properties
   
   @Override
   public ID getName() throws ElException {
     return name;
   }
-
-  void addSubType(Link type) {
-    subTypes.add(type);
-  }
-  
-  // processor fields
   
   @Override
   public ID getID() throws ElException {

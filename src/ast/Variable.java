@@ -39,30 +39,28 @@ public class Variable extends NamedEntity {
   }
   
   // properties
-
-  public void setType(Entity type) {
-    this.type = type;
+  
+  @Override
+  public ID getID() throws ElException {
+    return isField ? fieldID : id;
+  }
+  
+  @Override
+  public Entity getValue() throws ElException {
+    return value;
   }
 
   public void setValue(Entity value) {
     this.value = value;
   }
   
-  // processor fields
-  
-  @Override
-  public Entity getValue() throws ElException {
-    return value;
-  }
-  
   @Override
   public Entity getType() throws ElException {
     return type.getType();
   }
-  
-  @Override
-  public ID getID() throws ElException {
-    return isField ? fieldID : id;
+
+  public void setType(Entity type) {
+    this.type = type;
   }
   
   @Override
@@ -74,6 +72,14 @@ public class Variable extends NamedEntity {
   public boolean isVariable(ID name)
       throws ElException {
     return this.name == name;
+  }
+  
+  // preprocessing
+  
+  public void resolveType() throws ElException {
+    type = type.resolve();
+    if(value != null) 
+      value = value.resolveRecursively();
   }
    
   // processing
@@ -97,12 +103,6 @@ public class Variable extends NamedEntity {
     isField = false;
     type = field.type;
     value = null;
-  }
-  
-  public void resolveType() throws ElException {
-    type = type.resolve();
-    if(value != null) 
-      value = value.resolveRecursively();
   }
   
   // moving functions

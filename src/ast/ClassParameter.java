@@ -11,7 +11,7 @@ public class ClassParameter extends NamedEntity {
     super(name);
   }
   
-  // processor fields
+  // properties
   
   @Override
   public Entity getType() throws ElException {

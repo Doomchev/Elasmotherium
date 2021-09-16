@@ -2,20 +2,19 @@ package ast;
 
 import base.ElException;
 import java.util.LinkedList;
-import processor.Processor;
 
 public class StringSequence extends Value {
   public final static ID id = ID.get("stringSequence");
   
   private final LinkedList<Value> chunks = new LinkedList<>();
   
-  // properties
+  // child objects
 
   void add(Value value) {
     chunks.add(value);
   }
 
-  // processor fields
+  // properties
   
   @Override
   public ID getID() throws ElException {

@@ -15,7 +15,7 @@ public class ListEntity extends Value {
     entity.moveToList(this);
   }
   
-  // processor fields
+  // properties
   
   @Override
   public ID getID() throws ElException {

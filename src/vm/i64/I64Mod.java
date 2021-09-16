@@ -1,6 +1,5 @@
 package vm.i64;
 
-import static vm.VMBase.currentCommand;
 import vm.VMCommand;
 
 public class I64Mod extends VMCommand {

@@ -100,6 +100,11 @@ at.resolve {
   I64GetAtIndex;
 }
 
+negative.resolve {
+  v0.resolve(Int);
+  I64Negative;
+}
+
 addition.resolve {
 	v0.resolve(param);
 	v1.resolve(param);

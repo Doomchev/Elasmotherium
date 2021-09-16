@@ -46,6 +46,12 @@ public class Code extends Entity {
     throw new ElException.NotFound(this, "Function " + id);
   }
   
+  // preprocessing
+
+  public void processConstructors() throws ElException {
+    for(ClassEntity classEntity: classes) classEntity.processConstructors();
+  }
+  
   // processing
   
   @Override
@@ -69,10 +75,6 @@ public class Code extends Entity {
     
     for(ClassEntity classEntity: classes) classEntity.process();
     for(StaticFunction function: functions) function.process();
-  }
-
-  public void processConstructors() throws ElException {
-    for(ClassEntity classEntity: classes) classEntity.processConstructors();
   }
   
   // moving functions

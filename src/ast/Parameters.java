@@ -6,7 +6,7 @@ import java.util.LinkedList;
 public class Parameters extends Value {
   private final LinkedList<Value> parameters = new LinkedList<>();
   
-  // parameters
+  // child objects
 
   void add(Value value) {
     parameters.add(value);
