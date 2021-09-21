@@ -1,7 +1,7 @@
 class Array<ElementType, Array<Int> dimensions; AnyNumber IndexType> extends Array<ElementType, __size(dimensions); IndexType> {
   static Int __size(Array<Int> dimensions) {
     _size = 1;
-    for(i from 0 until dimensions.size) _size *= dimensions[i];
+    for(i = 0 ..< dimensions.size) _size *= dimensions[i];
     return _size;
   }
   
@@ -13,7 +13,7 @@ class Array<ElementType, Array<Int> dimensions; AnyNumber IndexType> extends Arr
   Int _index(Array<IndexType> index) {
     assert(index.size == dimensions.size);
     j = 1;
-    for(i from 0 until dimensions.size) {
+    for(i = 0 ..< dimensions.size) {
       assert(0 <= index[i] < dimensions[i]);
       j = j * dimensions[i] + index[i];
     }

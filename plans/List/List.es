@@ -2,7 +2,7 @@ class List<ElementType; AnyInt IndexType> {
   create() -> List.LinkedList<ElementType; IndexType>();
   from(Array<ElementType> array) {
     list = new ThisType(array.size);
-    for(each element in array) list.add(element);
+    for(element: array) list.add(element);
     return list;
   }
   

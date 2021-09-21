@@ -1,3 +1,8 @@
+2021.09.22 (version 0.34.1)
+  + Processor: "last" and "object" parameters for field commands.
+  * Syntax, parser code: For syntaх changed to for(type var = start ..=/< end), for(type var: collection).
+  * VM, processing code: ThisField commands are replaced by modified Field commands.
+
 2021.09.21 (version 0.34)
   + AST: ParameterizedEntity class for connecting methods and fields with subtypes.
   * AST, processor, processor code: Class parameters resolving system is rewritten.
@@ -54,8 +59,8 @@
 2021.09.04 (version 0.28)
   * Parser, parser code: Switch symbol and switch id actions are merged.
   * Syntax: "do" is renamed to "repeat".
-  * Syntax: "this" in class body for constructor is renamed to "create";
-  * Syntax: "this." in constructor parameters is renamed to "field.";
+  * Syntax: "this": class body for constructor is renamed to "create";
+  * Syntax: "this.": constructor parameters is renamed to "field.";
 
 2021.09.04 (version 0.27.2)
   * Processor, Processor code: Added parameter to call, setObject and setField processor functions.
@@ -152,13 +157,13 @@
 	* Parser: Formula resolving is restored.
 
 2021.07.20 (version 0.19)
-  + Parser: multiple symbols in symbolswitch token.
+  + Parser: multiple symbols: symbolswitch token.
   + Parser: multiple tokens for symbolswitch.
   + Parser: default symbolswitch entries.
   * Error handling system.
-  * Parser: spaces in error messages.
+  * Parser: spaces: error messages.
   * Parser: spaces inside brackets.
-  * Parser: : and + in tokens.
+  * Parser: : and +: tokens.
   * Parser code: done refactoring.
   * Restructurized file / directory system.
   - Export system.
@@ -250,7 +255,7 @@
   + Parser code: "global" keyword
 
 2019.01.05 (version 0.7)
-  + Parser: parser code lines in error messages and parsing log
+  + Parser: parser code lines: error messages and parsing log
   + Parser code: field and variable types
   + Parser code: $ prefix
   * Parser, export: error messages
@@ -262,8 +267,8 @@
   
 2018.11.24 (version 0.5)
   + Parser: ADD command
-  + Parser code: value returns string if there is only one string in string sequence
-  + Parser code: default values and this in function definition parameters
+  + Parser code: value returns string if there is only one string: string sequence
+  + Parser code: default values and this: function definition parameters
   + Parser code, JavaScript export: classes, objects, methods, constructors
   + Parser code, JavaScript export: anonymous functions
   + Parser code, JavaScript export: return
@@ -271,17 +276,17 @@
   
 2018.11.23 (version 0.4)
   + Parser, Export: // comments
-  + Parser code: multiple loops in one for operator
+  + Parser code: multiple loops: one for operator
   + JavaScript export: for loops
   * Export, JavaScript export: new format of tokens (as escape sequences)
 
 2018.11.22 (version 0.3)
   + Parser: expression parser (shutting-yard algorithm with ternary conditional operator)
-  + Parser code: ranges in for loop
+  + Parser code: ranges: for loop
   + JavaScript export: other numeric and boolean operators
   + JavaScript export: if-then-else clause
   * Parser code: # changed to \
-  ! Parser code: arrays in expressions
+  ! Parser code: arrays: expressions
   ! Parser code: operators
   ! Parser code: if-then-else clause
   ! JavaScript export: function calls

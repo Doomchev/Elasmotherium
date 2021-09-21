@@ -4,8 +4,8 @@ List<Image> Image.map(String fileName, Int cellXQuantity = 1, Int cellYQuantity 
 	cellHeight = texture.height / cellYQuantity;
 	imageList = List<Image>(cellXQuantity * cellYQuantity);
 	index = 0;
-	for(y from 0 until cellYQuantity)
-		for(x from 0 until cellXQuantity) {
+	for(y = 0 ..< cellYQuantity)
+		for(x = 0 ..< cellXQuantity) {
 			imageList[index] = Image(texture, x * cellWidth, y * cellHeight, cellWidth, cellHeight);
 			index++;
 		}

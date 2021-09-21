@@ -13,7 +13,7 @@ class LinkedSet<ElementType, Question trackSize = no; AnyInt IndexType = Int, Qu
 	}
 	
 	remove(ElementType element) {
-		for(each e in _elements)
+		for(e: _elements)
 			if(e == element) {
 				iterator.remove();
 				if(noRepeats) return;

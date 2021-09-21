@@ -28,6 +28,10 @@ public abstract class ProParameter extends ProBase {
         return ProVariableValue.instance;
       case "currentFunction":
         return ProCurrentFunction.instance;
+      case "object":
+        return ProObject.instance;
+      case "last":
+        return ProLast.instance;
       default:
         if(name.startsWith("v")) {
           return new ProCallParameter(name.substring(1));

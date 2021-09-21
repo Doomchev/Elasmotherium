@@ -1,7 +1,7 @@
 List<Int> values = [2];
-for(Int i from 3 to 20) {
+for(Int i = 3 ..= 20) {
 	Int limit = floor(sqrt(i));
-	for(each Int j in values) {
+	for(Int j: values) {
 		if(j > limit) {
 			values.add(i);
 			break;
@@ -10,5 +10,5 @@ for(Int i from 3 to 20) {
 	}
 }
 String text = "";
-for(each Int i in values) text = text + ", \(i)";
+for(Int i: values) text = text + ", \(i)";
 println(text);

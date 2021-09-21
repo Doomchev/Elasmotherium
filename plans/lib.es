@@ -1,6 +1,6 @@
 Number {
 	isOneOf(Array<Number> values) {
-		for(value in values) if($value == value) return(yes)
+		for(value: values) if($value == value) return(yes)
 		return(no)
 	}
 }
@@ -18,8 +18,8 @@ Texture extends DrawableRectangle {
 	create(String fileName);
 	create(Int width, Int height, Function<Color, Int, Int>)
 		this(width, height)
-		for(y from 0 until height)
-      for(x from 0 until width)
+		for(y = 0 ..< height)
+      for(x = 0 ..< width)
         set(x, y, function);
 	}
 	set(Color c, Int x, Int y) assert(0 <= x < width && 0 <= y < height);

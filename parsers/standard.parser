@@ -229,25 +229,23 @@ id: {
 /// for loop
 
 for: EXPECT("(") CREATE(block, for) {
-  // for(Type variable = formula; condition)
-  // for(Type variable = formula; condition; iterator)
-	letter: variable() SET(variable, variable) {
-    "=": >> formula() SET(init, formula) EXPECT(";") formula() SET(condition, formula) {
-      ")": >> forEnd
-      other:  EXPECT(";") CREATE(code) id() var() SET(iterator, code) forEnd
-    }
-    "from": >> formula() SET(from, formula) {
-      // for(Type variable from start to
-      "to": >> formula() SET(to, formula) SET(for_to) forEnd
-      // for(Type variable from start until
-      "until": >> formula() SET(until, formula) SET(for_until) forEnd
+	letter: variable() {
+    "=": >> SET(variable, variable) formula() {
+      ")", ";": SET(init, formula) EXPECT(";") formula() SET(condition, formula) {
+        // for(Type variable = formula; condition)
+        ")": >> forEnd
+        // for(Type variable = formula; condition; iterator)
+        ";": >> CREATE(code) id() var() SET(iterator, code) forEnd
+        other: syntaxError
+      }
+      // for(Type variable = start ..= end
+      "..=": >> SET(from, formula) formula() SET(to, formula) SET(for_to) forEnd
+      // for(Type variable = start ..< end
+      "..<": >> SET(from, formula) formula() SET(until, formula) SET(for_until) forEnd
       other: syntaxError
     }
-    other: syntaxError
-  }
-  // for(each Type variable in collection)
-  "each": >> variable() SET(item, variable) {
-    "in": >> formula() SET(collection, formula) CBV(iterator) SET(for_collection) forEnd
+    // for(Type variable: collection)
+    ":": >> SET(item, variable) formula() SET(collection, formula) CBV(iterator) SET(for_collection) forEnd
     other: syntaxError
   }
 	other: syntaxError
@@ -280,7 +278,7 @@ subtype: id() CREATE(link) {
   "<": >> subtype()
   ",": >> MOVE(link) subtype
   ">": >> MOVE(link) RETURN
-  other: error("Error in type syntax")
+  other: error("Error: type syntax")
 }
 
 

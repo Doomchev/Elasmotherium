@@ -8,9 +8,9 @@ Array<Float> solve(Float a, Float b, Float c) {
 }
 
 manualTest() {
-	Float a = askFloat("Enter a in ax2 + bx + c = 0 formula");
-	Float b = askFloat("Enter b in ax2 + bx + c = 0 formula");
-	Float c = askFloat("Enter c in ax2 + bx + c = 0 formula");
+	Float a = askFloat("Enter a: ax2 + bx + c = 0 formula");
+	Float b = askFloat("Enter b: ax2 + bx + c = 0 formula");
+	Float c = askFloat("Enter c: ax2 + bx + c = 0 formula");
 	Array[Float] solutions = solve(a, b, c);
 	switch(solutions.size) {
 		case 0:

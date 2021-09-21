@@ -14,17 +14,17 @@ class LinkedMap<KeyType, ValueType, Question trackSize = no; AnyInt IndexType = 
 	clear() _entries.clear();
 
   Question containsKey(KeyType key) {
-		for(each entry in _entries) if(entry.key == key) return yes;
+		for(entry: _entries) if(entry.key == key) return yes;
 		return no;
 	}
   
 	Question containsValue(ValueType value) {
-		for(each entry in _entries) if(entry.value == value) return yes;
+		for(entry: _entries) if(entry.value == value) return yes;
 		return no;
 	}
 	
 	ValueType getAtIndex(KeyType key) {
-		for(each entry in _entries) if(entry.key == key) return entry.value;
+		for(entry: _entries) if(entry.key == key) return entry.value;
 		return null;
 	}
 	
@@ -34,7 +34,7 @@ class LinkedMap<KeyType, ValueType, Question trackSize = no; AnyInt IndexType = 
 	}
 	
 	remove(KeyType key) {
-		for(each entry in _entries)
+		for(entry: _entries)
 			if(entry.key == key) {
 				iterator.remove();
 				if(noRepeats) return;

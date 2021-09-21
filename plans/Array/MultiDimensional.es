@@ -3,7 +3,7 @@ class Array<Int dimensionsQuantity, ElementType; AnyNumber IndexType> extends Ar
   
   create(Array<Int, dimensionsQuantity> dimensions) {
     _size = 1;
-    for(i from 0 until dimensionsQuantity) _size *= dimensions[i];
+    for(i = 0 ..< dimensionsQuantity) _size *= dimensions[i];
     create(size);
     _dimensions = dimensions;
   }
@@ -21,7 +21,7 @@ class Array<Int dimensionsQuantity, ElementType; AnyNumber IndexType> extends Ar
   Int _index(Array<IndexType> index) {
     assert(index.size == dimensionsQuantity);
     j = 1;
-    for(i from 0 until dimensionsQuantity) {
+    for(i = 0 ..< dimensionsQuantity) {
       assert(0 <= index[i] < _dimensions[i]);
       j = j * _dimensions[i] + index[i];
     }

@@ -12,12 +12,12 @@ return {
 
 variable.getObject {
   [this]VarPush;
-  setType(this);
+  setParameter(this);
 }
 
 field.getObject {
-  [this]ThisFieldPush;
-  setType(this);
+  [this]FieldPush(object);
+  setParameter(this);
 }
 
 brackets.getObject {
@@ -37,13 +37,13 @@ variable.equate {
 
 field.equate {
   param.resolve(this);
-  [this]ThisFieldEquate;
+  [this]FieldEquate(object);
 }
 
 dot.equate {
   getField;
   param.resolve(this);
-  [this]FieldEquate;
+  [this]FieldEquate(last);
 }
 
 at.equate {
@@ -64,21 +64,15 @@ variable.increment {
 }
 
 field.increment {
-  [this]ThisFieldIncrement;
+  [this]FieldIncrement(object);
 }
 
 dot.increment {
   getField;
-  [this]FieldIncrement;
+  [this]FieldIncrement(last);
 }
 
 // resolution
-
-dot.resolve {
-  getField;
-  [this]FieldPush;
-  convert(this, param);
-}
 
 variable.resolve {
   [this]VarPush;
@@ -86,7 +80,13 @@ variable.resolve {
 }
 
 field.resolve {
-  [this]ThisFieldPush;
+  [this]FieldPush(object);
+  convert(this, param);
+}
+
+dot.resolve {
+  getField;
+  [this]FieldPush(last);
   convert(this, param);
 }
 

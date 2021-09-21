@@ -5,20 +5,22 @@ import vm.VMCommand;
 import vm.VMFieldCommand;
 
 public class I64FieldPush extends VMFieldCommand {
-  public I64FieldPush(int fieldIndex) {
-    super(fieldIndex);
+  public I64FieldPush(int fieldIndex, int varIndex) {
+    super(fieldIndex, varIndex);
   }
   
   @Override
-  public VMCommand create(int index) throws ElException {
-    return new I64FieldPush(index);
+  public VMCommand create(int fieldIndex, int varIndex) {
+    return new I64FieldPush(fieldIndex, varIndex);
   }
   
   @Override
   public void execute() throws ElException {
-    i64Stack[stackPointer]
-        = objectStack[stackPointer].getField(fieldIndex).i64Get();
-    if(log) typeStack[stackPointer] = ValueType.I64;
+    int newStackPointer = stackPointer + (varIndex == LAST ? 0 : 1);
+    i64Stack[newStackPointer] = objectStack[currentCall.varIndex(varIndex)]
+        .getField(fieldIndex).i64Get();
+    if(log) typeStack[newStackPointer] = ValueType.I64;
+    stackPointer = newStackPointer;
     currentCommand++;
   }
 }

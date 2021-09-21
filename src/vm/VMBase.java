@@ -1,7 +1,6 @@
 package vm;
 
 import vm.call.VMFunctionCall;
-import vm.values.ObjectEntity;
 import base.Base;
 import base.ElException;
 import base.Module;

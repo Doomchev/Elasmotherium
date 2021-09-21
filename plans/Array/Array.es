@@ -12,14 +12,14 @@ class Array<ElementType; AnyNumber IndexType> {
     assert(list.size < IndexType.max);
     array = new ThisType(list.size);
     IndexType index = 0;
-    for(each element in list) {
+    for(element: list) {
       array[index] = element;
       index++;
     }
     return array;
   }
   
-  fill(ElementType value) for(IndexType i from 0 until size) this[i] = value;
+  fill(ElementType value) for(IndexType i = 0 ..< size) this[i] = value;
 	
 	IndexType size();
 	
@@ -30,18 +30,18 @@ class Array<ElementType; AnyNumber IndexType> {
 	ThisType part(Int start, Int quantity) {
 		assert(quantity >= 0 && 0 <= start <= size - quantity);
 		array = ThisType(quantity);
-		for(i from 0 until quantity) array[i] = this[i + start];
+		for(i = 0 ..< quantity) array[i] = this[i + start];
 		return array;
 	}
 	
 	copy(IndexType start, IndexType quantity, Array<ElementType> destination, IndexType destinationStart) {
 		assert(0 <= start < size - quantity && 0 <= destinationStart < destination.size - quantity);
-		for(i from 0 until quantity) destination[i + destinationStart] = this[i + start];
+		for(i = 0 ..< quantity) destination[i + destinationStart] = this[i + start];
 	}
 	
   Question equals(Array array) {
     if(size != array.size) return no;
-    for(i from 0 until size) if(this[i] != array[i]) return no;
+    for(i = 0 ..< size) if(this[i] != array[i]) return no;
     return yes;
   }
 	
@@ -72,12 +72,12 @@ class Array<ElementType; AnyNumber IndexType> {
 	}
 	
 	IndexType indexOf(ElementType element) {
-		for(i from 0 until size) if(this[i] == element) return i;
+		for(i = 0 ..< size) if(this[i] == element) return i;
 		return IndexType.min < 0 ? -1 : IndexType.max;
 	}
 	
 	Question contains(ElementType element) {
-		for(i from 0 until size) if(this[i] == element) return yes;
+		for(i = 0 ..< size) if(this[i] == element) return yes;
 		return no;
 	}
 	

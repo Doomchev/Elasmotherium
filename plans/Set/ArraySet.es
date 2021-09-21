@@ -37,7 +37,7 @@ class ArraySet<ElementType; AnyInt IndexType = Int, Question noRepeats = yes> ex
 	}
 	
 	Question getAtIndex(ElementType element) {
-    for(i from 0 until size) if(_items[i] = element) return yes;
+    for(i = 0 ..< size) if(_items[i] = element) return yes;
     return no;
   }
 	

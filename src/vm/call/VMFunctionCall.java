@@ -2,6 +2,7 @@ package vm.call;
 
 import base.ElException;
 import vm.VMBase;
+import vm.VMFieldCommand;
 import vm.values.VMValue;
 
 public class VMFunctionCall extends VMBase {
@@ -24,7 +25,7 @@ public class VMFunctionCall extends VMBase {
   }
 
   public int varIndex(int index) {
-    return index + paramPosition;
+    return index == VMFieldCommand.LAST ? stackPointer : index + paramPosition;
   }
 
   public void returnFromCall(int value) {

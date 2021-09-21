@@ -8,55 +8,55 @@ struc String<AnyChar CharType, AnyInt IndexType> extends Array<CharType> {
   create.from(char of CharType, quantity of IndexType);
 	
   compareTo(String string) returns Comparsion {
-    if(size is not equal to string.size) return new Comparsion(size, size of string);
-    for(i from 0 until size) {
-			if(this[i] is equal to string[i]) continue;
+    if(size is not equal ..= string.size) return new Comparsion(size, size of string);
+    for(i = 0 ..< size) {
+			if(this[i] is equal ..= string[i]) continue;
 			return new Comparsion(this[i], string[i]);
 		}
     return equal;
   }
 	
   lowerCase returns ThisType {
-		equate newString to new ThisType(size);
-		for(i from 0 until size) equate newString[i] to lowerCase of this[i];
+		equate newString ..= new ThisType(size);
+		for(i = 0 ..< size) equate newString[i] ..= lowerCase of this[i];
 		return newString;
 	}
 	
   upperCase returns ThisType {
-		equate newString to new ThisType(size);
-		for(i from 0 until size) equate newString[i] to upperCase of this[i];
+		equate newString ..= new ThisType(size);
+		for(i = 0 ..< size) equate newString[i] ..= upperCase of this[i];
 		return newString;
 	}
 	
 	trim returns ThisType {
-		equate start of IndexType to 0, end to size - 1;
+		equate start of IndexType ..= 0, end ..= size - 1;
 		while(start is less than size and this[start] is not more than " ") increment start;
-		if(start is equal to size) return "";
+		if(start is equal ..= size) return "";
 		while(this[end] is not more than " ") decrement end;
-		return this[from start to end];
+		return this[start ..= end];
 	}
 
 	split(char of Char) returns Array<of ThisType> {
-		equate tokens to new List<of String>();
-		equate IndexType start to 0;
-		for(i from 0 until size)
-			if(this[i] is equal to char) {
-				add this[from start until i] to tokens;
-				equate start to i + 1;
+		equate tokens ..= new List<of String>();
+		equate IndexType start ..= 0;
+		for(i = 0 ..< size)
+			if(this[i] is equal ..= char) {
+				add this[start ..< i] ..= tokens;
+				equate start ..= i + 1;
 			}
-		if(start is less than size - 1) add this[from start] to tokens;
+		if(start is less than size - 1) add this[start] ..= tokens;
 		return tokens;
 	}
 	
 	Question startsWith(start of String) {
 		if(size of start is more than size) return no;
-		for(i from 0 until size of start) if(this[i] is not equal to start[i]) return no;
+		for(i = 0 ..< size of start) if(this[i] is not equal ..= start[i]) return no;
 		return yes;
 	}
 	
 	 Question endsWith(String end) {
 		if(size of end is more than size) return no;
-		for(i from size - size of end until size) if(this[i] != start[i]) return no;
+		for(i = size - size of end ..< size) if(this[i] != start[i]) return no;
 		return yes;
 	}
 }

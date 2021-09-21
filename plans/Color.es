@@ -14,10 +14,10 @@ class Color extends I32 {
 			blue = fromHex(code[2]) * 17;
 			alpha = if(size >= 4 then fromHex(code[3]) * 17 else 255);
 		} else {
-			red = fromHex(code[from 0 until 2]);
-			green = fromHex(code[from 2 until 4]);
-			blue = fromHex(code[from 4 until 6]);
-			alpha = if(size >= 8 then fromHex(code[from 6 until 8]) else 255);
+			red = fromHex(code[0 ..< 2]);
+			green = fromHex(code[2 ..< 4]);
+			blue = fromHex(code[4 ..< 6]);
+			alpha = if(size >= 8 then fromHex(code[6 ..< 8]) else 255);
 		}
 	}
 	
@@ -26,7 +26,7 @@ class Color extends I32 {
 	U8 fromHex(String string) {
 		assert(string.length <= 2);
 		value = 0;
-		for(n from 0 until size) value = (value << 4) + fromHex(string[n]);
+		for(n = 0 ..< size) value = (value << 4) + fromHex(string[n]);
 		return value;
 	}
 }

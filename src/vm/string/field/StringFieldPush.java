@@ -5,20 +5,22 @@ import vm.VMCommand;
 import vm.VMFieldCommand;
 
 public class StringFieldPush extends VMFieldCommand {
-  public StringFieldPush(int fieldIndex) {
-    super(fieldIndex);
+  public StringFieldPush(int fieldIndex, int varIndex) {
+    super(fieldIndex, varIndex);
   }
   
   @Override
-  public VMCommand create(int index) throws ElException {
-    return new StringFieldPush(index);
+  public VMCommand create(int fieldIndex, int varIndex) {
+    return new StringFieldPush(fieldIndex, varIndex);
   }
   
   @Override
   public void execute() throws ElException {
-    stringStack[stackPointer]
-        = objectStack[stackPointer].getField(fieldIndex).stringGet();
-    if(log) typeStack[stackPointer] = ValueType.STRING;
+    int newStackPointer = stackPointer + (varIndex == LAST ? 0 : 1);
+    stringStack[newStackPointer] = objectStack[currentCall.varIndex(varIndex)]
+        .getField(fieldIndex).stringGet();
+    if(log) typeStack[newStackPointer] = ValueType.STRING;
+    stackPointer = newStackPointer;
     currentCommand++;
   }
 }

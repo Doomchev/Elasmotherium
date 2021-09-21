@@ -1,6 +1,6 @@
 package processor;
 
-import processor.parameter.SetType;
+import processor.parameter.SetParameter;
 import processor.block.BlockLabelInitialize;
 import processor.block.BlockLabelSet;
 import vm.call.*;
@@ -51,17 +51,11 @@ public class Processor extends ProBase {
     addCommand(new StringVarEquate(0));
     addCommand(new ObjectVarEquate(0));
     
-    addCommand(new I64FieldPush(0));
-    addCommand(new StringFieldPush(0));
+    addCommand(new I64FieldPush(0, 0));
+    addCommand(new StringFieldPush(0, 0));
     
-    addCommand(new I64ThisFieldPush(0));
-    addCommand(new StringThisFieldPush(0));
-    
-    addCommand(new I64FieldEquate(0));
-    addCommand(new StringFieldEquate(0));
-    
-    addCommand(new I64ThisFieldEquate(0));
-    addCommand(new StringThisFieldEquate(0));
+    addCommand(new I64FieldEquate(0, 0));
+    addCommand(new StringFieldEquate(0, 0));
     
     addCommand(new I64Negative());
     addCommand(new I64Add());
@@ -70,8 +64,7 @@ public class Processor extends ProBase {
     addCommand(new I64Divide());
     addCommand(new I64Mod());
     
-    addCommand(new I64FieldIncrement(0));
-    addCommand(new I64ThisFieldIncrement(0));
+    addCommand(new I64FieldIncrement(0, 0));
     addCommand(new I64VarIncrement(0));
     
     addCommand(new StringAdd());
@@ -95,7 +88,7 @@ public class Processor extends ProBase {
     addCommand(new IfFalseGoTo());
     
     proCommands.put("getField", GetField.instance);
-    proCommands.put("setType", SetType.instance);
+    proCommands.put("setParameter", SetParameter.instance);
     proCommands.put("convert", Convert.instance);
     proCommands.put("stop", Stop.instance);
     proCommands.put("process", Process.instance);

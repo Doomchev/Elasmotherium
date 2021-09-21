@@ -5,19 +5,20 @@ import vm.VMCommand;
 import vm.VMFieldCommand;
 
 public class StringFieldEquate extends VMFieldCommand {
-  public StringFieldEquate(int fieldIndex) {
-    super(fieldIndex);
+  public StringFieldEquate(int fieldIndex, int varIndex) {
+    super(fieldIndex, varIndex);
   }
-
+  
   @Override
-  public VMCommand create(int index) throws ElException {
-    return new StringFieldEquate(index);
+  public VMCommand create(int fieldIndex, int varIndex) {
+    return new StringFieldEquate(fieldIndex, varIndex);
   }
   
   @Override
   public void execute() throws ElException {
-    objectStack[stackPointer].getField(fieldIndex)
+    objectStack[currentCall.varIndex(varIndex)].getField(fieldIndex)
         .stringSet(stringStack[stackPointer]);
+    stackPointer -= varIndex == LAST ? 2 : 1;
     currentCommand++;
   }
 }
