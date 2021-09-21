@@ -22,7 +22,10 @@ public class ElException extends Exception {
   public static class Cannot extends ElException {
     public Cannot(String action, Base object) {
       super(object, "Cannot " + action + " " + object);
-    }    
+    }
+    public Cannot(String action, Base object, String comment) {
+      super(object, "Cannot " + action + " " + object + " " + comment);
+    }
   }
   
   public static class CannotGet extends ElException {
@@ -67,6 +70,12 @@ public class ElException extends Exception {
   public static class ActionException extends ElException {
     public ActionException(Action action, String name, String message) {
       super(action, name + " " + message);
+    }
+  }
+  
+  public static class NotImplemented extends ElException {
+    public NotImplemented(Base object, String method) {
+      super(object + "." + method, "Not implemented.");
     }
   }
   

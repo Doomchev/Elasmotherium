@@ -27,7 +27,7 @@ public abstract class NamedEntity extends Entity {
     return false;
   }
   
-  public boolean isVariable(ID name)
+  public boolean isValue(ID name)
       throws ElException {
     return false;
   }

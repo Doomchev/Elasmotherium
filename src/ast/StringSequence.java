@@ -24,7 +24,7 @@ public class StringSequence extends Value {
   // processing
   
   @Override
-  public void resolve(ClassEntity parameter) throws ElException {
+  public void resolve(Entity parameter) throws ElException {
     boolean isNotFirst = false;
     for(Value value: chunks) {
       value.resolve(ClassEntity.String);

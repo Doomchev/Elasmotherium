@@ -14,4 +14,4 @@ class Player {
 Player player = Player("John", "Smith", 36);
 player.incrementAge();
 player.addToAge(10);
-println(player.description());
+println(player.description);

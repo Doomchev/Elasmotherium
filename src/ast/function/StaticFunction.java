@@ -31,6 +31,16 @@ public class StaticFunction extends CustomFunction {
   public Entity getType() throws ElException {
     return returnType.getType();
   }
+  
+  @Override
+  public Entity getType(Entity[] subTypes) throws ElException {
+    return returnType.getType(subTypes);
+  }
+  
+  @Override
+  public ClassEntity getNativeClass() throws ElException {
+    return returnType.getNativeClass();
+  }
 
   @Override
   public void setReturnType(Entity returnType) {
@@ -56,19 +66,19 @@ public class StaticFunction extends CustomFunction {
   }
 
   @Override
-  public void resolve(ClassEntity parameter) throws ElException {
+  public void resolve(Entity type) throws ElException {
     if(log) println(subIndent + "Resolving static function " + toString()
       + " without parameters");
     append();
   }
 
   @Override
-  public void resolve(ClassEntity parameter, FunctionCall call)
+  public void resolve(Entity type, FunctionCall call)
       throws ElException {
     if(log) println(subIndent + "Resolving static function " + toString());
     call.resolveParameters(parameters);
     append();
-    convert(returnType.getNativeClass(), parameter);
+    convert(returnType.getNativeClass(), type.getNativeClass());
   }
     
   public void append() throws ElException {

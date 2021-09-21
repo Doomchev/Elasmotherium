@@ -1,6 +1,7 @@
 package ast.function;
 
 import ast.ClassEntity;
+import ast.Entity;
 import ast.Formula;
 import ast.ID;
 import base.ElException;
@@ -92,9 +93,9 @@ public class NativeFunction extends Function {
   }
 
   @Override
-  public void resolve(ClassEntity parameter, FunctionCall call)
+  public void resolve(Entity type, FunctionCall call)
       throws ElException {
-    currentProcessor.resolveCall(call, name, parameter);
+    currentProcessor.resolveCall(call, name, type);
   }
   
   // moving functions

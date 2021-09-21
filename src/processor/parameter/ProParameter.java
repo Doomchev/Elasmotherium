@@ -40,12 +40,12 @@ public abstract class ProParameter extends ProBase {
     }
   }
   
-  public Entity getType() throws ElException {
-    return getValue().getType();
+  public Entity getType(Entity[] subTypes) throws ElException {
+    return getValue().getType(subTypes);
   }
   
   public ClassEntity getNativeClass() throws ElException {
-    return getType().getNativeClass();
+    return getValue().getNativeClass();
   }
 
   public int getIndex() throws ElException {

@@ -96,14 +96,14 @@ public abstract class Base {
   public NamedEntity getVariableFromScope(ID name)
       throws ElException {
     for(int i = lastScopeEntry; i >= 0; i--)
-      if(scope[i].isVariable(name)) return scope[i];
+      if(scope[i].isValue(name)) return scope[i];
     throw new NotFound("getVariableFromScope", name.string);
   }
   
   public ClassEntity getClassFromScope(ID name) throws ElException {
     for(int i = lastScopeEntry; i >= 0; i--) {
       NamedEntity entity = scope[i];
-      if(entity instanceof ClassEntity && entity.isVariable(name))
+      if(entity instanceof ClassEntity && entity.isValue(name))
         return (ClassEntity) entity;
     }
     throw new NotFound("getClassFromScope", "Class " + name);

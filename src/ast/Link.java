@@ -33,8 +33,8 @@ public class Link extends Value {
   }
   
   @Override
-  public Entity getType() throws ElException {
-    return resolve().getType();
+  public Entity getType(Entity[] subTypes) throws ElException {
+    return resolve().getType(subTypes);
   }
   
   // processing
@@ -53,13 +53,14 @@ public class Link extends Value {
   }
   
   @Override
-  public Entity resolveFunction(int parametersQuantity) throws ElException {
+  public Entity resolveFunction(int parametersQuantity)
+      throws ElException {
     return getFunctionFromScope(name, parametersQuantity);
   }
 
   @Override
-  public void resolve(ClassEntity parameter) throws ElException {
-    getVariableFromScope(name).resolve(parameter);
+  public void resolve(Entity type) throws ElException {
+    getVariableFromScope(name).resolve(type);
   }
   
   @Override
@@ -70,6 +71,11 @@ public class Link extends Value {
   @Override
   public Entity resolveRecursively(int parametersQuantity) throws ElException {
     return resolveFunction(parametersQuantity);
+  }
+
+  @Override
+  public Entity getObject() throws ElException {
+    return resolve().getObject();
   }
   
   // moving functions

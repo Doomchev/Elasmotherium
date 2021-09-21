@@ -43,14 +43,18 @@ public class FunctionCall extends Value {
   public ID getID() throws ElException {
     return function instanceof NativeFunction ? function.getID() : id;
   }
-
-  public int getParametersQuantity() throws ElException {
-    return parameters.size();
-  }
   
   @Override
-  public Entity getType() throws ElException {
-    return function.getType();
+  public Entity getType(Entity[] subTypes) throws ElException {
+    return function.getType(subTypes);
+  }
+
+  @Override
+  public Variable getField() throws ElException {
+    if(function == NativeFunction.dot && parameters.size() == 2)
+      return parameters.getFirst().getObject()
+          .getField(parameters.getLast().getName());
+    return super.getField();
   }
 
   public Entity getFunction() {
@@ -80,25 +84,31 @@ public class FunctionCall extends Value {
   }
   
   @Override
-  public Entity resolveFunction(int parametersQuantity) throws ElException {
+  public Entity resolveFunction(int parametersQuantity)
+      throws ElException {
     int thisParametersQuantity = parameters.size();
     if(function == NativeFunction.dot) {
       if(parameters.size() != 2)
         throw new Cannot("resolve", this);
       Entity type = parameters.getFirst().getObject();
-      return type.getMethod(parameters.getLast().getName(), parametersQuantity);
+      return type.getMethod(parameters.getLast().getName()
+          , parametersQuantity);
     }
     Entity func = function.resolveFunction(thisParametersQuantity);
     func.process(this);
-    return func.getType();
+    throw new ElException.NotImplemented(this, "resolveFunction");
+    //return func.getType(null);
   }
 
   @Override
-  public void resolve(ClassEntity parameter) throws ElException {
-    if(function instanceof NativeFunction) {
-      currentProcessor.resolveCall(this, function.getName(), parameter);
+  public void resolve(Entity type) throws ElException {
+    if(function == NativeFunction.dot) {
+      parameters.getFirst().getObject()
+          .resolveField(parameters.getLast().getName(), type);
+    } else if(function instanceof NativeFunction) {
+      currentProcessor.resolveCall(this, function.getName(), type);
     } else {
-      function.resolveFunction(parameters.size()).resolve(parameter, this);
+      function.resolveFunction(parameters.size()).resolve(type, this);
     }
   }
   
@@ -118,7 +128,18 @@ public class FunctionCall extends Value {
     int i = 0, callParametersQuantity = parameters.size();
     for(Entity parameter: functionParameters) {
       (callParametersQuantity > i ? parameters.get(i)
-          : parameter.getValue()).resolve(parameter.getType().getNativeClass());
+          : parameter.getValue()).resolve(parameter.getType());
+      i++;
+    }
+  }
+
+  protected void resolveParameters(LinkedList<Variable> functionParameters
+      , Entity[] subTypes)
+      throws ElException {
+    int i = 0, callParametersQuantity = parameters.size();
+    for(Entity parameter: functionParameters) {
+      (callParametersQuantity > i ? parameters.get(i)
+          : parameter.getValue()).resolve(parameter.getType(subTypes));
       i++;
     }
   }

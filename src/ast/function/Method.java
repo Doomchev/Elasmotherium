@@ -1,6 +1,7 @@
 package ast.function;
 
 import ast.ClassEntity;
+import ast.Entity;
 import ast.ID;
 import base.ElException;
 import vm.object.ObjectVarPush;
@@ -31,10 +32,23 @@ public class Method extends StaticFunction {
   }
 
   @Override
-  public void resolve(ClassEntity parameter) throws ElException {
+  public void process(FunctionCall call, Entity[] subTypes) throws ElException {
     if(log) println(subIndent + "Resolving method " + toString());
-    append(new ObjectVarPush(currentFunction.allocation));
+    call.resolveParameters(parameters, subTypes);
     append();
+  }
+
+  @Override
+  public void resolve(Entity type) throws ElException {
+    append(new ObjectVarPush(currentFunction.allocation));
+    resolveChild(type);
+  }
+
+  @Override
+  public void resolveChild(Entity type) throws ElException {
+    if(log) println(subIndent + "Resolving method " + toString());
+    append();
+    convert(returnType.getNativeClass(), type.getNativeClass());
   }
   
   // moving functions

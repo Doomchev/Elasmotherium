@@ -2,10 +2,10 @@ package ast;
 
 import ast.function.CustomFunction;
 import ast.function.FunctionCall;
-import ast.function.Method;
 import base.Base;
 import base.ElException;
 import base.ElException.Cannot;
+import base.ElException.CannotCreate;
 import base.ElException.CannotGet;
 import base.ElException.CannotMove;
 import processor.Processor;
@@ -23,6 +23,14 @@ public abstract class Entity extends Base {
     throw new CannotGet("id", this);
   }
   
+  public Entity getType() throws ElException {
+    throw new CannotGet("type", this);
+  }
+  
+  public Entity getType(Entity[] subTypes) throws ElException {
+    throw new CannotGet("type using subtypes", this);
+  }
+  
   public ClassEntity getNativeClass() throws ElException {
     throw new CannotGet("native class", this);
   }
@@ -33,10 +41,6 @@ public abstract class Entity extends Base {
   
   public Entity getFormulaValue() throws ElException {
     return this;
-  }
-  
-  public Entity getType() throws ElException {
-    throw new CannotGet("type", this);
   }
   
   public String getStringValue() throws ElException {
@@ -50,9 +54,25 @@ public abstract class Entity extends Base {
   public Entity getBlockParameter(ID name) throws ElException {
     throw new CannotGet(name + " parameter", this);
   }
+
+  public Variable getField() throws ElException {
+    throw new CannotGet("field", this);
+  }
+
+  public Variable getField(ID name) throws ElException {
+    throw new CannotGet("field " + name, this);
+  }
+
+  public void resolveField(ID name, Entity type) throws ElException {
+    throw new Cannot("resolve field " + name + " of", this, "to " + type);
+  }
   
-  public Method getMethod(ID id, int parametersQuantity) throws ElException {
-    throw new CannotGet("method " + id, this);
+  public Entity getMethod(ID name, int parametersQuantity) throws ElException {
+    throw new CannotGet("method " + name, this);
+  }
+
+  public Entity[] getSubTypes(ID classID, int quantity) throws ElException {
+    throw new CannotGet("sub types", this);
   }
   
   // processing
@@ -62,7 +82,11 @@ public abstract class Entity extends Base {
   }
   
   public void process(FunctionCall call) throws ElException {
-    throw new Cannot("process", this);
+    throw new Cannot("process", this, "with call");
+  }
+
+  public void process(FunctionCall call, Entity[] subTypes) throws ElException {
+    throw new Cannot("process", this, "with call and subtypes");
   }
   
   public Entity resolve() throws ElException {
@@ -73,13 +97,13 @@ public abstract class Entity extends Base {
     return this;
   }
 
-  public void resolve(ClassEntity parameter) throws ElException {
-    currentProcessor.resolve(this, parameter);
+  public void resolve(Entity type) throws ElException {
+    currentProcessor.resolve(this, type);
   }
 
-  public void resolve(ClassEntity parameter, FunctionCall call)
+  public void resolve(Entity type, FunctionCall call)
       throws ElException {
-    throw new Cannot("resolve(" + parameter + ")", this);
+    throw new Cannot("resolve", this, "to " + type);
   }
   
   public Entity resolveRecursively() throws ElException {
@@ -89,10 +113,14 @@ public abstract class Entity extends Base {
   public Entity resolveRecursively(int parametersQuantity) throws ElException {
     return this;
   }
+  
+  public void resolveChild(Entity type) throws ElException {
+    throw new Cannot("resolve child", this);
+  }
 
   public Entity getObject() throws ElException {
     currentProcessor.getObject(this);
-    return Processor.object;
+    return Processor.currentParam;
   }
   
   // moving functions
@@ -159,7 +187,7 @@ public abstract class Entity extends Base {
   // other
   
   public VMValue createValue() throws ElException {
-    throw new Cannot("create value for ", this);
+    throw new CannotCreate(this, "value");
   }
 
   public static void append(VMCommand command) {

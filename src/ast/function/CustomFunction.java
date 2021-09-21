@@ -52,7 +52,7 @@ public abstract class CustomFunction extends Function {
   }
   
   @Override
-  public boolean isVariable(ID name)
+  public boolean isValue(ID name)
       throws ElException {
     return this.name == name && fromParametersQuantity == 0;
   }

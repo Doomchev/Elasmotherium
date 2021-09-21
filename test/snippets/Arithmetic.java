@@ -1,26 +1,23 @@
 package snippets;
 
-import base.Module;
 import org.junit.Test;
 
-public class Arithmetic {
-  StringBuffer text = new StringBuffer();
-  
-  protected void append(String line) {
-    text.append(line).append("\n");
-  }
-  
-  protected void execute(String line) {
-    append(line);
-    execute();
-  }
-  
-  protected void execute() {
-    Module.execute(text);
+public class Arithmetic extends TestBase {
+  @Test
+  public void basic() {
+    append("assert(1 + 2 == 3);");
+    append("assert(7 - 5 == 2);");
+    append("assert(2 * 3 == 6);");
+    execute("assert(6 / 3 == 2);");
   }
   
   @Test
-  public void operations() {
-    execute("assert((1 + 2) * (3 - 4) / 3 == -1);");
+  public void brackets() {
+    execute("assert((1 + 2) * (4 - 3) / 3 == 1);");
+  }
+  
+  @Test
+  public void precedence() {
+    execute("assert(4 / 2 + 2 * 3 == 8);");
   }
 }

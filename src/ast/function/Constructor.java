@@ -3,6 +3,7 @@ package ast.function;
 import ast.ClassEntity;
 import ast.Entity;
 import ast.ID;
+import ast.Type;
 import ast.Variable;
 import base.ElException;
 
@@ -20,8 +21,8 @@ public class Constructor extends StaticFunction {
   // properties
   
   @Override
-  public Entity getType() throws ElException {
-    return parentClass;
+  public Entity getType(Entity[] subTypes) throws ElException {
+    return new Type(parentClass, subTypes);
   }
   
   @Override
@@ -57,19 +58,19 @@ public class Constructor extends StaticFunction {
   }
 
   @Override
-  public void resolve(ClassEntity parameter, FunctionCall call)
+  public void resolve(Entity type, FunctionCall call)
       throws ElException {
     if(log) println(subIndent + "Resolving constructor " + toString());
     
     if(command != null) {
       call.resolveParameters(parameters);
       append(command.create());
-      return;
+    } else {
+      append(new vm.object.ObjectCreate(parentClass));
+      call.resolveParameters(parameters);
+      append(new vm.call.CallFunction(this));
     }
-    append(new vm.object.ObjectCreate(parentClass));
-    call.resolveParameters(parameters);
-    append(new vm.call.CallFunction(this));
-    //convert(parentClass, parameter);
+    convert(parentClass.getNativeClass(), type.getNativeClass());
   }
   
   // moving functions

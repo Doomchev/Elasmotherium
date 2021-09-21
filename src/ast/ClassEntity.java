@@ -72,9 +72,26 @@ public class ClassEntity extends NamedEntity {
   
   // retrieving class objects
   
-  public Variable getField(ID id) throws ElException {
-    for(Variable field: fields) if(field.name == id) return field;
+  @Override
+  public Entity getType() throws ElException {
+    return this;
+  }
+  
+  @Override
+  public Variable getField(ID name) throws ElException {
+    for(Variable field: fields) if(field.name == name) return field;
     throw new NotFound(this, "Field " + name);
+  }
+
+  @Override
+  public void resolveField(ID name, Entity type) throws ElException {
+    for(Variable field: fields) {
+      if(field.name == name) {
+        field.resolve(type);
+        return;
+      }
+    }
+    getMethod(name, 0).resolveChild(type);
   }
   
   public Method getMethod(String name, int parametersQuantity)
@@ -122,11 +139,6 @@ public class ClassEntity extends NamedEntity {
   }
   
   // properties
-  
-  @Override
-  public Entity getType() throws ElException {
-    return this;
-  }
 
   public void setValue(VMValue value) {
     this.value = value;
@@ -138,7 +150,7 @@ public class ClassEntity extends NamedEntity {
   }
   
   @Override
-  public boolean isVariable(ID name)
+  public boolean isValue(ID name)
       throws ElException {
     return this.name == name;
   }

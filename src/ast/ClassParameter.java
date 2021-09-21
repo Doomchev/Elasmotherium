@@ -14,12 +14,12 @@ public class ClassParameter extends NamedEntity {
   // properties
   
   @Override
-  public Entity getType() throws ElException {
-    return ClassEntity.Int;
+  public Entity getType(Entity[] subTypes) throws ElException {
+    return subTypes[index];
   }
   
   @Override
-  public boolean isVariable(ID name)
+  public boolean isValue(ID name)
       throws ElException {
     return this.name == name;
   }

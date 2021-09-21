@@ -4,7 +4,7 @@ class TileMap {
 	Array<Image> images;
 
   create(field.cellXQuantity, field.cellYQuantity, field.images, Int tileNumber) {
-    Int tilesQuantity = images.size();
+    Int tilesQuantity = images.size;
     cellWidth = images[0].width;
     cellHeight = images[0].height;
     tiles = Array<Int>(cellXQuantity * cellYQuantity, tileNumber);

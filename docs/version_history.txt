@@ -1,3 +1,7 @@
+2021.09.21 (version 0.34)
+  + AST: ParameterizedEntity class for connecting methods and fields with subtypes.
+  * AST, processor, processor code: Class parameters resolving system is rewritten.
+
 2021.09.16 (version 0.33.1)
   + Test framework.
   + VM, processor code: Negative funcion.

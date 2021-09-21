@@ -1,7 +1,6 @@
-import base.Base;
 import base.Module;
 
-public class Test extends Base {
+public class Test {
   static void test(String name) {
     test(name, true);
   }

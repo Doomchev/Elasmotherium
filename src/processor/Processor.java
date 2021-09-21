@@ -1,6 +1,6 @@
 package processor;
 
-import processor.parameter.SetObject;
+import processor.parameter.SetType;
 import processor.block.BlockLabelInitialize;
 import processor.block.BlockLabelSet;
 import vm.call.*;
@@ -95,7 +95,7 @@ public class Processor extends ProBase {
     addCommand(new IfFalseGoTo());
     
     proCommands.put("getField", GetField.instance);
-    proCommands.put("setObject", SetObject.instance);
+    proCommands.put("setType", SetType.instance);
     proCommands.put("convert", Convert.instance);
     proCommands.put("stop", Stop.instance);
     proCommands.put("process", Process.instance);
@@ -125,7 +125,7 @@ public class Processor extends ProBase {
     Method method = function.get(methodName);
     if(method == null)
       throw new MethodException("Processor", "getMethod"
-          , "No code for " + object + "." + method);
+          , "No code for " + currentParam + "." + method);
     return method;
   }
   
@@ -222,14 +222,14 @@ public class Processor extends ProBase {
     call(entity, entity.getID(), getObjectMethod);
   }
   
-  public void resolve(Entity entity, Entity parameter)
+  public void resolve(Entity entity, Entity type)
       throws ElException {
-    call(entity, entity.getID(), resolveMethod, parameter);
+    call(entity, entity.getID(), resolveMethod, type);
   }
   
-  public void resolveCall(FunctionCall call, ID functionName, Entity parameter)
+  public void resolveCall(FunctionCall call, ID functionName, Entity type)
       throws ElException {
-    call(call, functionName, resolveMethod, parameter);
+    call(call, functionName, resolveMethod, type);
   }
   
   public void call(Entity entity, ID method, Entity param)
@@ -237,27 +237,18 @@ public class Processor extends ProBase {
     call(entity, entity.getID(), method, param);
   }
   
-  public void call(Entity entity, ID function, ID method, Entity parameter)
+  public void call(Entity entity, ID function, ID method, Entity type)
       throws ElException {
-    Entity oldParam = Processor.currentParameter;
-    Processor.currentParameter = parameter;
+    Entity oldParam = Processor.currentParam;
+    Processor.currentParam = type;
     call(entity, function, method);
-    Processor.currentParameter = oldParam;
+    Processor.currentParam = oldParam;
   }
 
   public void processCall(FunctionCall call, ID functionName)
       throws ElException {
     call(call, functionName, callMethod);
   }
-  
-  /*public void resolve(Entity object, Entity param)
-      throws ElException {
-    Entity oldParam = Processor.param;
-    Processor.param = param;
-    object = object.resolve();
-    process(object, object.getID(), resolveMethod);
-    Processor.param = oldParam;
-  }*/
   
   public void call(Entity object, ID functionName, ID methodName)
       throws ElException {
@@ -275,9 +266,9 @@ public class Processor extends ProBase {
       method = getMethod(functionName, methodName);
     } catch(ElException ex) {
       if(methodName == resolveMethod) {
-        currentObject.resolve(currentParameter.getType().getNativeClass());
+        currentObject.resolve(currentParam.getType());
       } else if(methodName == getObjectMethod) {
-        object = currentObject.getObject();
+        currentParam = currentObject.getObject();
       } else {
         throw ex;
       }

@@ -5,6 +5,7 @@ import ast.function.FunctionCall;
 import ast.function.NativeFunction;
 import base.ElException;
 import processor.Processor;
+import processor.TypeCommand;
 import vm.values.VMValue;
 
 public class Variable extends NamedEntity {
@@ -55,8 +56,18 @@ public class Variable extends NamedEntity {
   }
   
   @Override
+  public ClassEntity getNativeClass() throws ElException {
+    return type.getNativeClass();
+  }
+  
+  @Override
   public Entity getType() throws ElException {
     return type.getType();
+  }
+  
+  @Override
+  public Entity getType(Entity[] subTypes) throws ElException {
+    return type.getType(subTypes);
   }
 
   public void setType(Entity type) {
@@ -69,7 +80,7 @@ public class Variable extends NamedEntity {
   }
   
   @Override
-  public boolean isVariable(ID name)
+  public boolean isValue(ID name)
       throws ElException {
     return this.name == name;
   }
@@ -103,6 +114,12 @@ public class Variable extends NamedEntity {
     isField = false;
     type = field.type;
     value = null;
+  }
+
+  @Override
+  public Entity getObject() throws ElException {
+    currentProcessor.getObject(this);
+    return type;
   }
   
   // moving functions

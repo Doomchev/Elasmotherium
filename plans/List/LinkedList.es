@@ -62,7 +62,7 @@ class LinkedList<ElementType, Question trackSize = yes; AnyInt IndexType = Int> 
   
   ElementType first() {
     assert(!isEmpty);
-    return_base._next._element;
+    return _base._next._element;
   }
   
 	ElementType last() {
