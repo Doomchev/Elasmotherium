@@ -1,4 +1,5 @@
 import Texture;
+import Image;
 import Tilemap;
 
 Int empty = 0;
@@ -12,7 +13,7 @@ Texture board = Texture("board.png");
 TileMap tileMap = TileMap(cellsQuantity, 1, Texture("pawns.png").cut(3), empty);
 
 init() {
-	for(Int n from 0 until pawnsQuantity) {
+	for(Int n = 0 ..< pawnsQuantity) {
     tileMap[n] = white;
     tileMap[blackStart + n] = black;
   }
@@ -51,7 +52,7 @@ onClick(Int x, Int y) {
     }
   } else return;
   
-  for(Int n from 0 until pawnsQuantity)
+  for(Int n = 0 ..< pawnsQuantity)
     if(tileMap[n, 0] != black || tileMap[n + blackStart, 0] != white) return;
   
   say("Вы выиграли!");

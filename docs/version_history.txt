@@ -1,3 +1,6 @@
+2021.09.22 (version 0.34.2)
+  * Split base class into several parts.
+  
 2021.09.22 (version 0.34.1)
   + Processor: "last" and "object" parameters for field commands.
   * Syntax, parser code: For syntaх changed to for(type var = start ..=/< end), for(type var: collection).

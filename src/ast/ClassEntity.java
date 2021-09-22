@@ -80,7 +80,7 @@ public class ClassEntity extends NamedEntity {
   @Override
   public Variable getField(ID name) throws ElException {
     for(Variable field: fields) if(field.name == name) return field;
-    throw new NotFound(this, "Field " + name);
+    throw new NotFound(this, "Field " + name + " in " + this.name);
   }
 
   @Override
@@ -158,8 +158,6 @@ public class ClassEntity extends NamedEntity {
   // preprocessing
   
   public void resolveTypes() throws ElException {
-    ClassEntity oldClass = currentClass;
-    currentClass = this;
     allocateScope();
     
     for(ClassParameter parameter: parameters) addToScope(parameter);
@@ -169,7 +167,6 @@ public class ClassEntity extends NamedEntity {
     for(StaticFunction method: methods) method.resolveTypes();
     
     deallocateScope();
-    currentClass = oldClass;
   }
 
   public void processConstructors() throws ElException {
@@ -186,8 +183,6 @@ public class ClassEntity extends NamedEntity {
   
   @Override
   public void process() throws ElException {
-    ClassEntity oldClass = currentClass;
-    currentClass = this;
     allocateScope();
     
     for(Variable field: fields) addToScope(field);
@@ -197,7 +192,6 @@ public class ClassEntity extends NamedEntity {
     for(StaticFunction method: methods) method.process();
     
     deallocateScope();
-    currentClass = oldClass;
   }
   
   // moving funcitons

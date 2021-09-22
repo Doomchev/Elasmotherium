@@ -456,7 +456,7 @@ separator: {
   "&": >> MOVE(bitAnd, formula) value
   "&&": >> MOVE(and, formula) value
   "|": >> MOVE(bitOr, formula) value
-  "|": >> MOVE(or, formula) value
+  "||": >> MOVE(or, formula) value
 	"%": >> MOVE(mod, formula) value
   other: RETURN
 }

@@ -3,18 +3,23 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Dropbox/Elasmotherium/src/processor/GetField.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/ClassEntity.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/function/Constructor.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/function/StaticFunction.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Variable.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/processor/parameter/ProObject.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/object/ObjectVarPush.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMCommand.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/call/StringReturn.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/processor/TypeCommand.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/function/FunctionCall.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/processor/Processor.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Entity.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/base/Base.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/function/Method.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/function/CustomFunction.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/test/Fibonacci.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/string/StringAdd.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMBase.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/processor/parameter/ProLast.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/string/field/StringFieldPush.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/call/VMFunctionCall.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/i64/field/I64FieldEquate.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/i64/var/I64VarEquate.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/string/field/StringFieldEquate.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/i64/field/I64FieldIncrement.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/i64/field/I64FieldPush.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMFieldCommand.java</file>
         </group>
     </open-files>
 </project-private>

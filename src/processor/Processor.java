@@ -17,6 +17,7 @@ import vm.collection.*;
 import ast.Entity;
 import ast.ID;
 import ast.function.FunctionCall;
+import base.Reader;
 import base.ElException;
 import base.ElException.MethodException;
 import base.ElException.NotFound;
@@ -33,7 +34,7 @@ public class Processor extends ProBase {
   static final HashMap<String, VMCommand> commands = new HashMap<>();
 
   private static final HashMap<String, ProCommand> proCommands = new HashMap<>();
-  private static EReader reader;
+  private static Reader reader;
   
   private static void addCommand(VMCommand command) {
     commands.put(command.getClassName(), command);
@@ -144,7 +145,7 @@ public class Processor extends ProBase {
   public Processor load(String fileName) {
     currentFileName = fileName;
     try {
-      reader = new EReader(fileName);
+      reader = new Reader(fileName);
       String line;
       while((line = reader.readLine()) != null) {
         line = expectEnd(line, "{");

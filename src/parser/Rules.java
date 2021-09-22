@@ -1,5 +1,6 @@
 package parser;
 
+import base.Reader;
 import java.util.HashMap;
 import base.ElException;
 import base.ElException.MethodException;
@@ -35,7 +36,7 @@ public class Rules extends ParserBase {
   private Sub root;
   private final HashMap<String, Error> errors = new HashMap<>();
   private final LinkedList<String> defSym = new LinkedList<>();
-  private EReader reader;
+  private Reader reader;
   
   // loading 
   
@@ -51,7 +52,7 @@ public class Rules extends ParserBase {
     subs.clear();
     
     try {
-      reader = new EReader(fileName);
+      reader = new Reader(fileName);
       String line;
       while((line = reader.readLine()) != null) {
         int equalPos = line.indexOf('=');
