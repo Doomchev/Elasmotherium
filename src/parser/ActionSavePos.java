@@ -11,9 +11,7 @@ class ActionSavePos extends Action {
   @Override
   public void execute() {
     if(log) log("SAVEPOS");
-    savedTextPos = textPos;
-    savedLineNum = currentLineNum;
-    savedLineStart = lineStart;
+    currentSymbolReader.savePos();
     currentAction = nextAction;
   }
 }

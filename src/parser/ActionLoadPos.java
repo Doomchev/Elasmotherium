@@ -11,9 +11,7 @@ class ActionLoadPos extends Action {
   @Override
   public void execute() {
     if(log) log("LOADPOS");
-    textPos = savedTextPos;
-    currentLineNum = savedLineNum;
-    lineStart = savedLineStart;
+    currentSymbolReader.loadPos();
     currentAction = nextAction;
   }
 }

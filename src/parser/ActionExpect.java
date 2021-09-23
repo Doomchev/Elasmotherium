@@ -21,8 +21,7 @@ public class ActionExpect extends Action {
   public void execute() throws ElException {
     if(log) log("EXPECT " + symbol);
     while(true) {
-      char c = text.charAt(textPos);
-      incrementTextPos();
+      char c = currentSymbolReader.nextSymbol();
       switch(c) {
         case ' ':
         case '\t':

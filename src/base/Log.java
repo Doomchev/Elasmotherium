@@ -4,6 +4,8 @@ import vm.VMBase;
 import vm.VMCommand;
 
 public class Log extends StringFunctions {
+  public static LineReader currentLineReader;
+  public static SymbolReader currentSymbolReader;
   public static StringBuilder subIndent = new StringBuilder();
   public static final boolean log = true;
   
@@ -19,7 +21,8 @@ public class Log extends StringFunctions {
   public static void error(String title, String message) {
     /*JOptionPane.showMessageDialog(null, message, title
         , JOptionPane.ERROR_MESSAGE);*/
-    System.out.println(title + "\n" + message);
+    System.out.println(title);
+    System.out.println(message);
     System.exit(1);
   }
   

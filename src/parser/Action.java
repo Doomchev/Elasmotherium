@@ -1,17 +1,19 @@
 package parser;
 
+import base.Base;
 import base.ElException;
 import base.ElException.MethodException;
+import java.util.Stack;
 
-public abstract class Action extends ParserBase {
-  static int savedTextPos, savedLineNum, savedLineStart;
+public abstract class Action extends Base {
+  static final Stack<ActionSub> returnStack = new Stack<>();
   static Action currentAction;
   
   private final int parserLine;
   Action nextAction;
 
   public Action() {
-    parserLine = currentLineNum;
+    parserLine = currentLineReader == null ? 0 : currentLineReader.getLineNum();
   }
   
   public Action create(String params) throws ElException {
@@ -31,7 +33,7 @@ public abstract class Action extends ParserBase {
   }
   
   public void log(String message) {
-    System.out.println(subIndent.toString() + parserLine + ": " + message);
+    currentSymbolReader.log(parserLine + ": " + message);
   }
 
   public String errorString() {

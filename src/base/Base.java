@@ -3,8 +3,6 @@ package base;
 import processor.Processor;
 
 public abstract class Base extends Allocation {
-  public static int currentLineNum = 0;
-  public static String currentFileName;
   public static String workingPath, modulesPath;
   public static Processor currentProcessor;
   

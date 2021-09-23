@@ -4,12 +4,10 @@ import vm.function.Assert;
 import vm.texture.*;
 import vm.function.*;
 import ast.ClassEntity;
-import parser.ParserBase;
 import parser.Rules;
 import ast.function.StaticFunction;
 import ast.ID;
 import ast.Variable;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,7 +21,7 @@ import vm.i64.*;
 import vm.values.*;
 import vm.variables.*;
 
-public class Module extends ParserBase {
+public class Module extends Base {
   public static final ID id = ID.get("module");
   public static Rules rules = new Rules().load("parsers/standard.parser");
   public static Processor processor = new Processor()
@@ -84,14 +82,13 @@ public class Module extends ParserBase {
   }  
   
   private void readCode(String fileName) {
-    currentFileName = new File(fileName).getName();
     if(log) printChapter("Parsing " + fileName);
-    rules.parseCode(readText(fileName));
+    rules.parseCode(readText(fileName), fileName);
   }
   
   private void readCode(StringBuffer text) {
     if(log) printChapter("Parsing text");
-    rules.parseCode(text);
+    rules.parseCode(text, "");
   }
   
   public StringBuffer readText(String fileName) {

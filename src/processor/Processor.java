@@ -17,7 +17,7 @@ import vm.collection.*;
 import ast.Entity;
 import ast.ID;
 import ast.function.FunctionCall;
-import base.Reader;
+import base.LineReader;
 import base.ElException;
 import base.ElException.MethodException;
 import base.ElException.NotFound;
@@ -34,7 +34,6 @@ public class Processor extends ProBase {
   static final HashMap<String, VMCommand> commands = new HashMap<>();
 
   private static final HashMap<String, ProCommand> proCommands = new HashMap<>();
-  private static Reader reader;
   
   private static void addCommand(VMCommand command) {
     commands.put(command.getClassName(), command);
@@ -100,10 +99,7 @@ public class Processor extends ProBase {
     LinkedList<ProCommand> commands = new LinkedList<>();
 
     public void execute() throws ElException {
-      for(ProCommand command: commands) {
-        currentLineNum = command.lineNum;
-        command.execute();
-      }
+      for(ProCommand command: commands) command.execute();
     }
   }
   
@@ -143,11 +139,10 @@ public class Processor extends ProBase {
   }
   
   public Processor load(String fileName) {
-    currentFileName = fileName;
     try {
-      reader = new Reader(fileName);
+      currentLineReader = new LineReader(fileName);
       String line;
-      while((line = reader.readLine()) != null) {
+      while((line = currentLineReader.readLine()) != null) {
         line = expectEnd(line, "{");
         String[] part = line.split("\\.");
         LinkedMap<ID, Method> function = newFunction(ID.get(part[0]));
@@ -155,7 +150,7 @@ public class Processor extends ProBase {
         Method method = newMethod(function, methodID);
         LinkedList<ProCommand> code = method.commands;
         while(true) {
-          if((line = reader.readLine()) == null)
+          if((line = currentLineReader.readLine()) == null)
             throw new MethodException("Processor", "load"
                 , "Unexpected end of file");
           if(line.equals("}")) break;
@@ -191,8 +186,7 @@ public class Processor extends ProBase {
         }
       }
     } catch (ElException ex) {
-      error("Error in processor code"
-          , currentFileName + " (" + currentLineNum + ")\n" + ex.message);
+      error("processor code", ex.message);
     }
     return this;
   }
@@ -253,8 +247,7 @@ public class Processor extends ProBase {
   }
   
   public void process(ID functionName, ID methodName) throws ElException {
-    if(log) System.out.println(subIndent.toString() + currentLineNum + ": "
-        + functionName + "." + methodName);
+    if(log) currentLineReader.log(functionName + "." + methodName);
     Method method;
     try {
       method = getMethod(functionName, methodName);
@@ -284,8 +277,7 @@ public class Processor extends ProBase {
       currentProcessor = this;
       module.process();
     } catch (ElException ex) {
-      error("Error while processing", currentFileName + " (" + currentLineNum
-          + ")\n" + ex.message);
+      error("Error while processing", ex.message);
     }
   }
 }

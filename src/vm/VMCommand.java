@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import processor.parameter.ProParameter;
 
 public abstract class VMCommand extends VMBase {
-  private int lineNum;
-  
   public VMCommand create() throws ElException {
     try {
       return getClass().newInstance();
@@ -29,9 +27,5 @@ public abstract class VMCommand extends VMBase {
   public abstract void execute() throws ElException;
   
   public void setPosition(int command) {
-  }
-  
-  public void log() {
-    System.out.println(subIndent.toString() + lineNum + ": " + toString());
   }
 }

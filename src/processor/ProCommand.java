@@ -6,12 +6,6 @@ import vm.VMBase;
 import vm.VMCommand;
 
 public abstract class ProCommand extends ProBase {
-  int lineNum;
-
-  public ProCommand() {
-    lineNum = currentLineNum;
-  }
-
   public ProCommand create(String param) throws ElException {
     try {
       return getClass().newInstance();
@@ -28,6 +22,6 @@ public abstract class ProCommand extends ProBase {
   }
   
   public void log(String message) {
-    System.out.println(subIndent.toString() + lineNum + ": " + message);
+    currentLineReader.log(message);
   }
 }

@@ -11,14 +11,13 @@ public class ActionAdd extends Action {
 
   @Override
   public Action create(String params) throws ElException {
-    return new ActionAdd(parser.Rules.stringParam(params));
+    return new ActionAdd(stringParam(params));
   }
   
   @Override
   public void execute() {
-    if(tokenStart < textPos) prefix += text.substring(tokenStart, textPos);
-    if(log) log("ADD " + string + " to " + prefix);
-    prefix += string;
+    currentSymbolReader.add(string);
+    if(log) log("ADD " + string);
     currentAction = nextAction;
   }
 }

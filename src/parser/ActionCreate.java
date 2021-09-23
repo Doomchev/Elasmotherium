@@ -59,12 +59,11 @@ public class ActionCreate extends Action {
       Module.current.addModule(name);
       if(log) log("CREATE MODULE " + name);
     } else if(stack.isStringBased()) {
-      String string = prefix + text.substring(tokenStart, textPos);
+      String string = currentSymbolReader.getPrefix();
       if(log) log("CREATE " + (type == null ? "" : type + " ")
           + stack.name.string + "(" + string + ")");
       stack.push(stack.create(string, type));
-      prefix = "";
-      tokenStart = textPos;
+      currentSymbolReader.clear();
     } else if(type != null) {
       if(log) log("CREATE BLOCK " + type.string);
       stack.push(Block.create(type));

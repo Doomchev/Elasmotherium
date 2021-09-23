@@ -62,7 +62,7 @@ public class Formula extends Entity {
   
   @Override
   public Value getFormulaValue() throws ElException {
-    if(log) System.out.println(subIndent + listToString(chunks));
+    if(log) currentSymbolReader.log(listToString(chunks));
     if(chunks.size() == 1) return (Value) chunks.getFirst();
     for(Entity entity : chunks) {
       if(entity instanceof NativeFunction) {
@@ -70,18 +70,18 @@ public class Formula extends Entity {
         int priority = function.priority;
         while(!opStack.empty()) {
           if(opStack.lastElement().priority >= priority) {
-            System.out.println(subIndent.toString()
-                + opStack.lastElement().priority + ">=" + priority);
+            if(log) currentSymbolReader.log(
+                opStack.lastElement().priority + ">=" + priority);
             popOp();
           } else {
             break;
           }
         }
-        if(log) System.out.println(subIndent + "PUSH " + entity.toString()
+        if(log) currentSymbolReader.log("PUSH " + entity.toString()
             + " TO OPERATOR STACK");
         opStack.push(function);
       } else {
-        if(log) System.out.println(subIndent + "PUSH " + entity.toString()
+        if(log) currentSymbolReader.log("PUSH " + entity.toString()
             + " TO VALUE STACK");
         valueStack.push((Value) entity);
       }
@@ -102,13 +102,13 @@ public class Formula extends Entity {
     if(op == NativeFunction.callFunction) {
       valueStack.pop().moveToFunctionCall(call);
       call.setFunction(valueStack.pop());
-      if(log) System.out.println(subIndent + "PUSH VALUES TO FUNCTION "
+      if(log) currentSymbolReader.log("PUSH VALUES TO FUNCTION "
           + op.toString());
     } else {
       Value value = valueStack.pop();
       valueStack.pop().moveToFunctionCall(call);
       value.moveToFunctionCall(call);
-      if(log) System.out.println(subIndent + "PUSH VALUES TO OPERATOR "
+      if(log) currentSymbolReader.log("PUSH VALUES TO OPERATOR "
           + op.toString());
     }
     valueStack.push(call);

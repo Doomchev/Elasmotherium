@@ -22,14 +22,14 @@ public class ActionSwitch extends Action {
     public void execute() throws ElException {
       main: for(LinkedMap.Entry<String, Action> entry: cases) {
         for(int i = 0; i < entry.key.length(); i++) {
-          if(entry.key.charAt(i) != text.charAt(textPos + 1 + i))
+          if(entry.key.charAt(i) != currentSymbolReader.charAt(1 + i))
             continue main;
         }
         if(log) log("SWITCH TO " + entry.key);
         currentAction = entry.value;
         if(currentAction instanceof ActionForward) {
           if(log) log(">>>");
-          textPos += entry.key.length() + 1;
+          currentSymbolReader.incrementTextPos(entry.key.length() + 1);
           currentAction = currentAction.nextAction;
         }
         return;
@@ -74,13 +74,12 @@ public class ActionSwitch extends Action {
 
   @Override
   public void execute() throws ElException {
-    if(textPos >= textLength) {
-      currentChar = 129;
-      if(log) log("SWITCH TO END");
-    } else {
-      currentChar = text.charAt(textPos);
-      if(log) log("SWITCH TO " + currentChar);
-      currentChar = currentChar < 128 ? currentChar : 128;
+    char currentChar = currentSymbolReader.getChar();
+    if(log) {
+      if(currentChar == currentSymbolReader.END_OF_FILE)
+        log("SWITCH TO END");
+      else
+        log("SWITCH TO " + currentChar);
     }
     currentAction = action[currentChar];
     if(currentAction == null)

@@ -10,9 +10,8 @@ public class ActionClear extends Action {
   
   @Override
   public void execute() {
+    currentSymbolReader.clear();
     if(log) log("CLEAR");
-    tokenStart = textPos;
-    prefix = "";
     currentAction = nextAction;
   }
 }

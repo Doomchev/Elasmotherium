@@ -1,13 +1,14 @@
 package parser;
 
-import base.Reader;
+import base.LineReader;
 import java.util.HashMap;
 import base.ElException;
 import base.ElException.MethodException;
 import base.ElException.NotFound;
+import base.SymbolReader;
 import java.util.LinkedList;
 
-public class Rules extends ParserBase {
+public class Rules extends Base {
   // masks
   
   private final HashMap<String, SymbolMask> masks = new HashMap<>();
@@ -36,13 +37,10 @@ public class Rules extends ParserBase {
   private Sub root;
   private final HashMap<String, Error> errors = new HashMap<>();
   private final LinkedList<String> defSym = new LinkedList<>();
-  private Reader reader;
   
   // loading 
   
   public Rules load(String fileName) {
-    currentFileName = fileName;
-    
     masks.clear();
     masks.put("tab", new SymbolMask('\t'));
     masks.put("space", new SymbolMask(' '));
@@ -52,9 +50,9 @@ public class Rules extends ParserBase {
     subs.clear();
     
     try {
-      reader = new Reader(fileName);
+      currentLineReader = new LineReader(fileName);
       String line;
-      while((line = reader.readLine()) != null) {
+      while((line = currentLineReader.readLine()) != null) {
         int equalPos = line.indexOf('=');
         int colonPos = line.indexOf(':');
         if(equalPos >= 0 && (equalPos < colonPos || colonPos < 0)) {
@@ -88,8 +86,7 @@ public class Rules extends ParserBase {
         }
       }
     } catch (ElException ex) {
-      error("Error in ruleset", currentFileName + " (" + currentLineNum + ":"
-          + (textPos - lineStart) + ")\n" + ex.message);
+      error("Error in ruleset", currentLineReader.getError() + ex.message);
     }
     
     root = subs.get("root");
@@ -136,7 +133,7 @@ public class Rules extends ParserBase {
         for(String string: defSym)
           parseLine(string, switchAction, back, currentSub);
         while(true) {
-          if((line = reader.readLine()) == null)
+          if((line = currentLineReader.readLine()) == null)
             throw new MethodException("Rules", "actionChain"
                 , "Unexpected end of file");
           if(line.equals("}")) break;
@@ -200,15 +197,8 @@ public class Rules extends ParserBase {
   
   // parsing code
   
-  public void parseCode(StringBuffer text) {
-    textPos = 0;
-    tokenStart = 0;
-    currentLineNum = 1;
-    lineStart = -1;
-    prefix = "";
-    Rules.text = text;
-    textLength = text.length();
-    
+  public void parseCode(StringBuffer text, String fileName) {
+    currentSymbolReader = new SymbolReader(text, fileName);
     currentFunction.pushCode();
     
     Action.currentAction = root.action;
@@ -218,8 +208,7 @@ public class Rules extends ParserBase {
     
       EntityStack.code.clear();
     } catch (base.ElException ex) {
-      error("Parsing error", currentFileName + " (" + currentLineNum + ":"
-        + (textPos - lineStart) + ")\n" + ex.message);
+      error("Parsing error", currentSymbolReader.getError() + ex.message);
     }
   }
 }
