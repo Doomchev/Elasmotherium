@@ -6,7 +6,6 @@ import ast.ID;
 import ast.function.NativeFunction;
 import base.ElException;
 import base.ElException.MethodException;
-import base.ElException.NotFound;
 
 public class ActionCreate extends Action {
   private final EntityStack stack;
@@ -56,14 +55,15 @@ public class ActionCreate extends Action {
   public void execute() throws ElException {
     currentAction = this;
     if(type == Module.id) {
-      String name = EntityStack.id.pop().string;
+      String name = EntityStack.id.pop().value.string;
       Module.current.addModule(name);
       if(log) log("CREATE MODULE " + name);
     } else if(stack.isStringBased()) {
-      String string = currentSymbolReader.getPrefix();
+      String string = currentSymbolReader.getString();
       if(log) log("CREATE " + (type == null ? "" : type + " ")
           + stack.name.string + "(" + string + ")");
-      stack.push(stack.create(string, type));
+      stack.push(stack.create(string, type, currentSymbolReader
+          .getEntityStart(), currentSymbolReader.getTextPos()));
       currentSymbolReader.clear();
     } else if(type != null) {
       if(log) log("CREATE BLOCK " + type.string);

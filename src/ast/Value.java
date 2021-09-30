@@ -4,6 +4,14 @@ import ast.function.FunctionCall;
 import base.ElException;
 
 public abstract class Value extends Entity {
+  public Value(int textStart, int textEnd) {
+    super(textStart, textEnd);
+  }
+  
+  public Value(IDEntity id) {
+    super(id);
+  }
+  
   @Override
   public void moveToStringSequence(StringSequence sequence) {
     sequence.add(this);

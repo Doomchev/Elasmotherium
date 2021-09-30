@@ -5,7 +5,6 @@ import ast.function.FunctionCall;
 import ast.function.NativeFunction;
 import base.ElException;
 import processor.Processor;
-import processor.TypeCommand;
 import vm.values.VMValue;
 
 public class Variable extends NamedEntity {
@@ -20,23 +19,24 @@ public class Variable extends NamedEntity {
   
   // creating
 
-  public Variable(ID name) {
-    super(name);
-  }
-
-  public Variable(ClassEntity type) {
-    super(id);
-    this.type = type;
-  }
-
-  public Variable(ID id, boolean isField) {
-    super(id);
-    this.isField = isField;
-  }
-
   public Variable(ID name, ClassEntity type) {
+    super(name, 0, 0);
+    this.type = type;
+  }
+
+  public Variable(IDEntity name, ClassEntity type) {
     super(name);
     this.type = type;
+  }
+
+  public Variable(IDEntity name) {
+    super(name);
+    this.type = null;
+  }
+
+  public Variable(IDEntity name, boolean isField) {
+    this(name);
+    this.isField = isField;
   }
   
   // properties

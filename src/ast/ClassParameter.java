@@ -7,7 +7,7 @@ public class ClassParameter extends NamedEntity {
   
   // creating
 
-  public ClassParameter(ID name) {
+  public ClassParameter(IDEntity name) {
     super(name);
   }
   

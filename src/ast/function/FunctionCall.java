@@ -20,6 +20,7 @@ public class FunctionCall extends Value {
   // creating
 
   public FunctionCall(NativeFunction function) {
+    super(0, 0);
     this.function = function;
   }
   

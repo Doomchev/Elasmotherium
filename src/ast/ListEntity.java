@@ -8,6 +8,10 @@ public class ListEntity extends Value {
   public static final ID classID = ID.get("List");
   
   public final LinkedList<Value> values = new LinkedList<>();
+
+  public ListEntity() {
+    super(0, 0);
+  }
   
   // moving functions
 

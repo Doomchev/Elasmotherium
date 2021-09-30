@@ -5,6 +5,10 @@ import java.util.LinkedList;
 
 public class Parameters extends Value {
   private final LinkedList<Value> parameters = new LinkedList<>();
+
+  public Parameters() {
+    super(0, 0);
+  }
   
   // child objects
 

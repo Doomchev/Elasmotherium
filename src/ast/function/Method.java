@@ -2,16 +2,16 @@ package ast.function;
 
 import ast.ClassEntity;
 import ast.Entity;
-import ast.ID;
+import ast.IDEntity;
 import base.ElException;
 import vm.object.ObjectVarPush;
 
 public class Method extends StaticFunction {
-  public Method(ID name) {
+  public Method(IDEntity name) {
     super(name);
   }
 
-  public static CustomFunction createMethod(ID id) {
+  public static CustomFunction createMethod(IDEntity id) {
     return allocateFunction(new Method(id));
   }
   

@@ -15,9 +15,11 @@ public class Code extends Entity {
   // creating
   
   public Code() {
+    super(0, 0);
   }
 
   public Code(FunctionCall call) {
+    super(0, 0);
     lines.add(call);
   }
   

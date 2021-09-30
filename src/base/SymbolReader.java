@@ -2,11 +2,13 @@ package base;
 
 public class SymbolReader extends Reader {
   public static final char OTHER_CHAR = 128, END_OF_FILE = 129;
+  private static int savedTextPos, savedLineNum, savedLineStart;
   
-  public StringBuffer text;
-  public StringBuilder prefix = new StringBuilder();
-  public int tokenStart = 0, textPos = 0, textLength, lineStart = -1;
-  static int savedTextPos, savedLineNum, savedLineStart;
+  private final StringBuffer text;
+  private StringBuilder prefix = new StringBuilder();
+  private final int textLength;
+  private int textPos = 0, tokenStart = 0, lineStart = -1
+      , entityStart = 0;
 
   public SymbolReader(StringBuffer text, String fileName) {
     this.text = text;
@@ -14,8 +16,17 @@ public class SymbolReader extends Reader {
     this.textLength = text.length();
   }
 
+  public int getTextPos() {
+    return textPos;
+  }
+
+  public int getEntityStart() {
+    return entityStart;
+  }
+
   public void clear() {
     tokenStart = textPos;
+    entityStart = textPos;
     if(prefix.length() > 0) prefix = new StringBuilder();
   }
 
@@ -42,9 +53,13 @@ public class SymbolReader extends Reader {
   public void incrementTextPos(int delta) {
     textPos += delta;
   }
+
+  private String getTextChunk() {
+    return text.substring(tokenStart, textPos);
+  }
   
   public void appendToPrefix() {
-    if(tokenStart < textPos) prefix.append(text.substring(tokenStart, textPos));
+    if(tokenStart < textPos) prefix.append(getTextChunk());
   }
 
   public void add(String string) {
@@ -58,7 +73,8 @@ public class SymbolReader extends Reader {
     tokenStart = textPos;
   }
 
-  public String getPrefix() {
+  public String getString() {
+    if(prefix.length() == 0) return getTextChunk();
     appendToPrefix();
     return prefix.toString();
   }

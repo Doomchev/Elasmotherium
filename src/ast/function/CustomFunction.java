@@ -4,6 +4,7 @@ import ast.ClassEntity;
 import ast.Code;
 import ast.Entity;
 import ast.ID;
+import ast.IDEntity;
 import ast.Variable;
 import base.ElException;
 import base.ElException.Cannot;
@@ -21,7 +22,11 @@ public abstract class CustomFunction extends Function {
   
   // constructors
   
-  public CustomFunction(ID name) {
+  public CustomFunction() {
+    super(null, 0, 0);
+  }
+  
+  public CustomFunction(IDEntity name) {
     super(name);
   }
   

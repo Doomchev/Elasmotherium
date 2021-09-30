@@ -3,7 +3,7 @@ package ast.function;
 import ast.ClassEntity;
 import ast.Code;
 import ast.Entity;
-import ast.ID;
+import ast.IDEntity;
 import ast.Variable;
 import base.ElException;
 import vm.VMCommand;
@@ -13,11 +13,14 @@ public class StaticFunction extends CustomFunction {
   
   // creating
   
-  public StaticFunction(ID name) {
+  public StaticFunction() {
+  }
+  
+  public StaticFunction(IDEntity name) {
     super(name);
   }
 
-  public static CustomFunction createStaticFunction(ID id) {
+  public static CustomFunction createStaticFunction(IDEntity id) {
     return allocateFunction(new StaticFunction(id));
   }
 

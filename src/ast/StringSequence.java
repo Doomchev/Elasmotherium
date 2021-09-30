@@ -7,6 +7,10 @@ public class StringSequence extends Value {
   public final static ID id = ID.get("stringSequence");
   
   private final LinkedList<Value> chunks = new LinkedList<>();
+
+  public StringSequence() {
+    super(0, 0);
+  }
   
   // child objects
 

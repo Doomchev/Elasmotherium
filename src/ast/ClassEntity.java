@@ -34,24 +34,19 @@ public class ClassEntity extends NamedEntity {
   
   // creating
 
-  public ClassEntity(ID name, boolean isNative) {
+  public ClassEntity(IDEntity name, boolean isNative) {
     super(name);
     this.nativeClass = isNative ? this : Object;
   }
 
   public ClassEntity(String name, boolean isNative) {
-    super(name);
+    super(name, 0, 0);
     this.nativeClass = isNative ? this : Object;
   }
-
-  public ClassEntity(String name, ClassEntity nativeClass) {
-    super(name);
-    this.nativeClass = nativeClass;
-  }
   
-  public static ClassEntity create(ID name) {
+  public static ClassEntity create(IDEntity name) {
     ClassEntity classEntity = new ClassEntity(name, false);
-    all.put(name, classEntity);
+    all.put(name.value, classEntity);
     return classEntity;
   }
   

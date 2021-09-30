@@ -11,6 +11,7 @@ public class Type extends Entity {
   private final Entity[] subtypes;
 
   public Type(ClassEntity basicClass, Entity[] subtypes) {
+    super(0, 0);
     this.basicClass = basicClass;
     this.subtypes = subtypes;
   }

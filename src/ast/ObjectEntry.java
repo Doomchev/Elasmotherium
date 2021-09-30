@@ -4,8 +4,9 @@ public class ObjectEntry extends Entity {
   public ID key;
   public Value value;
 
-  public ObjectEntry(ID key) {
-    this.key = key;
+  public ObjectEntry(IDEntity key) {
+    super(key);
+    this.key = key.value;
   }
   
   // moving functions

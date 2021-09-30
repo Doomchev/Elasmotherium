@@ -11,7 +11,6 @@ public class Constructor extends StaticFunction {
   protected ClassEntity parentClass = null;
   
   public Constructor() {
-    super(null);
   }
 
   public static CustomFunction createConstructor() {

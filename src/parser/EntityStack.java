@@ -1,12 +1,7 @@
 package parser;
 
-import ast.function.FunctionCall;
-import ast.function.StaticFunction;
-import ast.ListEntity;
 import ast.*;
-import ast.function.Constructor;
-import ast.function.CustomFunction;
-import ast.function.Method;
+import ast.function.*;
 import base.Base;
 import base.ElException;
 import base.ElException.CannotCreate;
@@ -16,7 +11,7 @@ import java.util.Stack;
 
 public class EntityStack<EntityType> extends Base {
   public static final HashMap<ID, EntityStack> all = new HashMap<>();
-  public static final EntityStack<ID> id;
+  public static final EntityStack<IDEntity> id;
   public static final EntityStack<Block> block;
   public static final EntityStack<Code> code;
   public static final EntityStack<ConstantValue> constant;
@@ -24,15 +19,16 @@ public class EntityStack<EntityType> extends Base {
   public static final EntityStack<ClassEntity> classStack;
 
   static {
-    id = new EntityStack<ID>("id") {
+    id = new EntityStack<IDEntity>("id") {
       @Override
       public boolean isStringBased() {
         return true;
       }
 
       @Override
-      public ID create(String string, ID type) {
-        return ID.get(string);
+      public IDEntity create(String string, ID type, int textStart
+          , int textEnd) {
+        return new IDEntity(ID.get(string), textStart, textEnd);
       }
     };
 
@@ -53,8 +49,9 @@ public class EntityStack<EntityType> extends Base {
       }
 
       @Override
-      public ConstantValue create(String string, ID type) {
-        return new ConstantValue(type, string);
+      public ConstantValue create(String string, ID type, int textStart
+          , int textEnd) {
+        return new ConstantValue(type, string, textStart, textEnd);
       }
     };
     
@@ -149,8 +146,10 @@ public class EntityStack<EntityType> extends Base {
       }
 
       @Override
-      public ConstantValue create(String string, ID type) {
-        return new ConstantValue(ConstantValue.stringID, string);
+      public ConstantValue create(String string, ID type, int textStart
+          , int textEnd) {
+        return new ConstantValue(ConstantValue.stringID, string, textStart
+            , textEnd);
       }
     };
     
@@ -228,7 +227,8 @@ public class EntityStack<EntityType> extends Base {
     throw new CannotCreate(this, name);
   }
   
-  public EntityType create(String string, ID type) throws ElException {
+  public EntityType create(String string, ID type, int textStart, int textEnd)
+    throws ElException {
     throw new CannotCreate(this, name);
   }
   

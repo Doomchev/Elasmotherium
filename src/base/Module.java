@@ -31,7 +31,7 @@ public class Module extends Base {
   public final String name, path;
   public final TreeSet<String> moduleNames = new TreeSet<>();
   public final Stack<Module> moduleStack = new Stack<>();
-  public StaticFunction function = new StaticFunction(null);
+  public StaticFunction function = new StaticFunction();
 
   public Module() {
     this.name = "";
@@ -178,13 +178,6 @@ public class Module extends Base {
       newFunction("Texture", "width", 0, new TextureWidth());
       newFunction("Texture", "height", 0, new TextureHeight());
     }
-    
-    StaticFunction assertFunction = new StaticFunction(ID.get("assert"));
-    Variable parameter = new Variable(ID.get("value"));
-    parameter.setType(ClassEntity.Bool);
-    assertFunction.addParameter(parameter);
-    assertFunction.setCommand(new Assert());
-    function.add(assertFunction);
     
     print();
     

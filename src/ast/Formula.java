@@ -11,6 +11,10 @@ public class Formula extends Entity {
   private final LinkedList<Entity> chunks = new LinkedList<>();
   private final Stack<Value> valueStack = new Stack<>();
   private final Stack<NativeFunction> opStack = new Stack<>();
+
+  public Formula() {
+    super(0, 0);
+  }
   
   public void add(Entity entity) {
     chunks.add(entity);

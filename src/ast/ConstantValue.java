@@ -13,7 +13,8 @@ public class ConstantValue extends Value {
 
   // creating
   
-  public ConstantValue(ID type, String value) {
+  public ConstantValue(ID type, String value, int textStart, int textEnd) {
+    super(textStart, textEnd);
     this.type = type;
     this.value = value;
   }

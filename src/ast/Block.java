@@ -30,6 +30,7 @@ public class Block extends Entity {
   private final LinkedMap<ID, Entity> entries = new LinkedMap<>();
 
   public Block(ID type) {
+    super(0, 0);
     this.type = type;
   }
   

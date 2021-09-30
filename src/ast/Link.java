@@ -10,8 +10,9 @@ public class Link extends Value {
   private final ID name;
   private final LinkedList<Link> subTypes = new LinkedList<>();
 
-  public Link(ID name) {
-    this.name = name;
+  public Link(IDEntity id) {
+    super(id);
+    this.name = id.value;
   }
   
   // child objects

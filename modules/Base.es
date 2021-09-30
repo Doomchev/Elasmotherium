@@ -36,4 +36,5 @@ say(String message);
 Int randomInt(Int value);
 Int randomInt(Int start, Int end);
 
+assert(Bool condition);
 exit() {}

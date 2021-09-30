@@ -6,13 +6,20 @@ public abstract class NamedEntity extends Entity {
   public final ID name;
 
   // creating
-  
-  public NamedEntity(ID name) {
+
+  public NamedEntity(ID name, int textStart, int textEnd) {
+    super(textStart, textEnd);
     this.name = name;
   }
-  
-  public NamedEntity(String name) {
+
+  public NamedEntity(String name, int textStart, int textEnd) {
+    super(textStart, textEnd);
     this.name = ID.get(name);
+  }
+
+  public NamedEntity(IDEntity id) {
+    super(id);
+    this.name = id.value;
   }
   
   // properties

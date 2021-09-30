@@ -15,6 +15,7 @@ public class TestBase {
   }
   
   protected void execute() {
+    append("assert(Bool condition);");
     Module.execute(text);
   }
 }

@@ -1,6 +1,5 @@
 package ast.function;
 
-import ast.ClassEntity;
 import ast.Entity;
 import ast.Formula;
 import ast.ID;
@@ -15,7 +14,7 @@ public class NativeFunction extends Function {
   public final byte priority;
   
   public NativeFunction(ID name, byte priority) {
-    super(name);
+    super(name, 0, 0);
     this.priority = priority;
   }
   

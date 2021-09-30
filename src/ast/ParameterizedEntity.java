@@ -8,9 +8,9 @@ public class ParameterizedEntity extends Entity {
   public final Entity entity;
 
   public ParameterizedEntity(Entity[] subTypes, Entity entity) {
+    super(0, 0);
     this.subTypes = subTypes;
     this.entity = entity;
-    Object a;
   }
   
   // processing

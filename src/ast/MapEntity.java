@@ -4,6 +4,10 @@ import base.LinkedMap;
 
 public class MapEntity extends Entity {
   public final LinkedMap<Value, Value> entries = new LinkedMap<>();
+
+  public MapEntity() {
+    super(0, 0);
+  }
   
   // moving functions
   

@@ -8,11 +8,27 @@ import base.ElException.Cannot;
 import base.ElException.CannotCreate;
 import base.ElException.CannotGet;
 import base.ElException.CannotMove;
+import base.Module;
 import processor.Processor;
 import vm.VMCommand;
 import vm.values.VMValue;
 
 public abstract class Entity extends Base {
+  public Module module;
+  int textStart, textEnd;
+  
+  public Entity(int textStart, int textEnd) {
+    this.module = Module.current;
+    this.textStart = textStart;
+    this.textEnd = textEnd;
+  }
+  
+  public Entity(IDEntity id) {
+    this.module = Module.current;
+    this.textStart = id == null ? 0 : id.textStart;
+    this.textEnd = id == null ? 0 : id.textEnd;
+  }
+  
   // properties
   
   public ID getName() throws ElException {
