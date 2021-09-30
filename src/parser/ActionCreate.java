@@ -35,7 +35,8 @@ public class ActionCreate extends Action {
         function0 = null;
         stack0 = EntityStack.all.get(id);
         if(stack0 == null)
-          throw new NotFound(this, "Function " + id);
+          throw new ElException.ActionException(this, "function " + id
+              , "not found");
       }
       if(stack0 == EntityStack.block || stack0 == EntityStack.constant) {
         if(param.length != 2)

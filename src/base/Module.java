@@ -23,7 +23,7 @@ import vm.variables.*;
 
 public class Module extends Base {
   public static final ID id = ID.get("module");
-  public static Rules rules = new Rules().load("parsers/standard.parser");
+  public static Rules rules = new Rules("parsers/standard.parser").load();
   public static Processor processor = new Processor()
       .load("processors/standard.processor");
   public static Module current;
@@ -68,16 +68,14 @@ public class Module extends Base {
   public Module read(StringBuffer text, boolean base) {
     Module.current = this;
     currentFunction = function;
-    if(text == null) {
+    if(text == null)
       readCode(getFileName());
-    } else {
+    else
       readCode(text);
-    }
     currentFunction.setAllocation();
     if(base) addModule("Base");
-    while(!moduleStack.isEmpty()) {
+    while(!moduleStack.isEmpty())
       readCode(moduleStack.pop().getFileName());
-    }
     return this;
   }  
   
@@ -159,9 +157,6 @@ public class Module extends Base {
       newFunction(new RandomInt(), 1);
       newFunction(new RandomInt2(), 2);
 
-      newFunction(new Sqrt(), 1);
-      newFunction(new Floor(), 1);
-
       newFunction(new Say(), 1);
       newFunction(new Exit(), 0);
 
@@ -170,6 +165,11 @@ public class Module extends Base {
 
       newFunction("List", "add", 1, new I64AddToList());
       newConstructor("Array", 1, new I64ArrayCreate(), new I64ArrayValue(0));
+    }
+    
+    if(hasModule("Math")) {
+      newFunction(new Sqrt(), 1);
+      newFunction(new Floor(), 1);
     }
     
     if(hasModule("Texture")) {

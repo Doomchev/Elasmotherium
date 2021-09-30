@@ -33,7 +33,8 @@ public class Processor extends ProBase {
   
   static final HashMap<String, VMCommand> commands = new HashMap<>();
 
-  private static final HashMap<String, ProCommand> proCommands = new HashMap<>();
+  private static final HashMap<String, ProCommand> proCommands
+      = new HashMap<>();
   
   private static void addCommand(VMCommand command) {
     commands.put(command.getClassName(), command);
@@ -177,7 +178,7 @@ public class Processor extends ProBase {
                 } else {
                   VMCommand command = commands.get(line);
                   if(command == null)
-                    throw new NotFound(this, "Command " + line);
+                    throw new NotFound("Processor", "Command " + line);
                   code.add(AppendCommand.create(command, param));
                 }
               }

@@ -1,5 +1,6 @@
 package parser;
 
+import base.Base;
 import base.LineReader;
 import java.util.HashMap;
 import base.ElException;
@@ -9,13 +10,20 @@ import base.SymbolReader;
 import java.util.LinkedList;
 
 public class Rules extends Base {
+  public final String fileName;
+
+  public Rules(String fileName) {
+    this.fileName = fileName;
+  }
+  
   // masks
   
   private final HashMap<String, SymbolMask> masks = new HashMap<>();
   
   private SymbolMask getMask(String name) throws ElException {
     SymbolMask mask = masks.get(name);
-    if(mask == null) throw new NotFound(this, "symbol mask \"" + name + "\"");
+    if(mask == null) throw new NotFound(fileName
+        , "symbol mask \"" + name + "\"");
     return mask;
   }
   
@@ -40,7 +48,7 @@ public class Rules extends Base {
   
   // loading 
   
-  public Rules load(String fileName) {
+  public Rules load() {
     masks.clear();
     masks.put("tab", new SymbolMask('\t'));
     masks.put("space", new SymbolMask(' '));
@@ -64,7 +72,7 @@ public class Rules extends Base {
               mask.set(symbol.charAt(0), symbol.charAt(2));
             } else if(symbol.length() >= 2) {
               SymbolMask mask2 = masks.get(symbol);
-              if(mask2 == null) throw new NotFound(this
+              if(mask2 == null) throw new NotFound(fileName
                   , "Mask \"" + symbol + "\"");
               mask.or(mask2);
             }
@@ -187,7 +195,7 @@ public class Rules extends Base {
         switchAction.setOtherAction(actionChain);
       } else {
         SymbolMask symbolMask = getMask(token);
-        if(symbolMask == null) throw new NotFound(this
+        if(symbolMask == null) throw new NotFound(fileName
             , "Mask \"" + token + "\"");
         switchAction.setMaskAction(symbolMask, actionChain);
         //break;
