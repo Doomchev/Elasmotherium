@@ -1,3 +1,6 @@
+2021.09.01 (version 0.35)
+  + Error's module text displaying, error highlighting.
+
 2021.09.30 (version 0.34.6)
   + EntityException is distinguished from ElException.
 

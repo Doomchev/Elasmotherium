@@ -6,7 +6,6 @@ import base.Base;
 import base.ElException;
 import base.ElException.CannotMove;
 import base.EntityException;
-import base.EntityException.CannotCreate;
 import base.EntityException.CannotGet;
 import base.Module;
 import processor.Processor;
@@ -14,8 +13,8 @@ import vm.VMCommand;
 import vm.values.VMValue;
 
 public abstract class Entity extends Base {
-  public Module module;
-  int textStart, textEnd;
+  protected final Module module;
+  protected final int textStart, textEnd;
   
   public Entity(int textStart, int textEnd) {
     this.module = Module.current;
@@ -223,5 +222,10 @@ public abstract class Entity extends Base {
   
   public void print(StringBuilder indent, String prefix) {
     println(indent.toString() + prefix + toString() + ";");
+  }
+  
+  public void showDebugMessage(String message) {
+    showDebugMessage("Error while processing", message, module, textStart
+        , textEnd);
   }
 }

@@ -26,8 +26,6 @@ import base.LinkedMap;
 import base.Module;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Processor extends ProBase {
   public static final ID callMethod = ID.get("call");
@@ -275,7 +273,7 @@ public class Processor extends ProBase {
       currentProcessor = this;
       module.process();
     } catch (EntityException ex) {
-      error("Error while processing", ex.entity + ": " + ex.message);
+      ex.entity.showDebugMessage(ex.message);
     }
   }
 }

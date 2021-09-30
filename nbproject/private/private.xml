@@ -3,22 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Dropbox/Elasmotherium/src/base/LineReader.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/ActionAdd.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMCommand.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/base/Reader.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMBase.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/base/SymbolReader.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/base/Scopes.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/base/Module.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/processor/ProBase.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Formula.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/Rules.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/base/StringFunctions.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/parser/Action.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/ast/function/Constructor.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/base/Log.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/processor/Processor.java</file>
-            <file>file:/D:/Dropbox/Elasmotherium/src/base/Base.java</file>
         </group>
     </open-files>
 </project-private>

@@ -64,20 +64,21 @@ public class Module extends Base {
   }
   
   public Module read(StringBuffer text, boolean base) {
-    Module.current = this;
     currentFunction = function;
     if(text == null)
-      readCode(getFileName());
+      readCode();
     else
       readCode(text);
     currentFunction.setAllocation();
     if(base) addModule("Base");
     while(!moduleStack.isEmpty())
-      readCode(moduleStack.pop().getFileName());
+      moduleStack.pop().readCode();
     return this;
   }  
   
-  private void readCode(String fileName) {
+  private void readCode() {
+    Module.current = this;
+    String fileName = getFileName();
     if(log) printChapter("Parsing " + fileName);
     rules.parseCode(new StringBuffer(readText(fileName)), fileName);
   }
@@ -199,5 +200,10 @@ public class Module extends Base {
       function.printAllocation(getFileName());
       printScope();
     }
+  }
+
+  @Override
+  public String toString() {
+    return name;
   }
 }

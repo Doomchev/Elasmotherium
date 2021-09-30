@@ -1,11 +1,9 @@
 package base;
 
-import ast.Entity;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.TextField;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
@@ -54,10 +52,22 @@ public class Debug extends StringFunctions {
   // debugger window
   
   private static JTextPane code = null;
-  private static int line, startingColumn, endingColumn;
+  private static int blockLine, blockColumn, blockWidth;
   
   public static void showDebugMessage(String title, String message
       , Module module, int textStart, int textEnd) {
+    String text = module.readText().replace("\t", "  ");
+    blockLine = 1; blockColumn = 0; blockWidth = 0;
+    for(int index = 0; index < textStart; index++) {
+      if(text.charAt(index) == '\n') {
+        blockLine++;
+        blockColumn = 0;
+      } else {
+        blockColumn++;
+      }
+    }
+    blockWidth = textEnd - textStart;
+    
     if(code == null) {
       JFrame frame = new JFrame();
       frame.setVisible(true);
@@ -73,10 +83,10 @@ public class Debug extends StringFunctions {
           g2.setColor(new Color(255, 0, 0, 128));
 
           FontMetrics fm = getFontMetrics(getFont());
-          int x1 = fm.charWidth('w') * startingColumn;
-          int x2 = fm.charWidth('w') * endingColumn;
-          int y = fm.getHeight() * (line - 1) + 2;
-          g2.fillRect(x1, y, x2, 4);
+          int x = fm.charWidth('w') * blockColumn;
+          int width = fm.charWidth('w') * blockWidth;
+          int y = fm.getHeight() * blockLine + 2;
+          g2.fillRect(x, y, width, 4);
 
           g2.dispose();
         }
@@ -87,10 +97,15 @@ public class Debug extends StringFunctions {
           <= getParent().getSize().width;
         }
       };
+      code.setFont(new java.awt.Font("Monospaced", 0, 13));
       frame.add(code);
     }
-    code.setText(module.readText());
+    
+    code.setText(text);
+    
+    println(message);
     JOptionPane.showMessageDialog(null, message, title
         , JOptionPane.ERROR_MESSAGE);
+    System.exit(1);
   }
 }
