@@ -1,13 +1,15 @@
 package vm;
 
 import base.ElException;
+import base.EntityException;
 import processor.parameter.ProParameter;
 
 public class IfFalseGoTo extends VMCommand {
   private int command;
   
   @Override
-  public VMCommand create(ProParameter parameter) throws ElException {
+  public VMCommand create(ProParameter parameter)
+      throws ElException, EntityException {
     IfFalseGoTo goTo = new IfFalseGoTo();
     parameter.addLabelCommand(goTo);
     return goTo;

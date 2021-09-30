@@ -4,6 +4,7 @@ import ast.function.CustomFunction;
 import ast.function.FunctionCall;
 import ast.function.NativeFunction;
 import base.ElException;
+import base.EntityException;
 import processor.Processor;
 import vm.values.VMValue;
 
@@ -42,12 +43,12 @@ public class Variable extends NamedEntity {
   // properties
   
   @Override
-  public ID getID() throws ElException {
+  public ID getID() {
     return isField ? fieldID : id;
   }
   
   @Override
-  public Entity getValue() throws ElException {
+  public Entity getValue() {
     return value;
   }
 
@@ -56,17 +57,17 @@ public class Variable extends NamedEntity {
   }
   
   @Override
-  public ClassEntity getNativeClass() throws ElException {
+  public ClassEntity getNativeClass() throws EntityException {
     return type.getNativeClass();
   }
   
   @Override
-  public Entity getType() throws ElException {
+  public Entity getType() throws EntityException {
     return type.getType();
   }
   
   @Override
-  public Entity getType(Entity[] subTypes) throws ElException {
+  public Entity getType(Entity[] subTypes) throws EntityException {
     return type.getType(subTypes);
   }
 
@@ -75,19 +76,18 @@ public class Variable extends NamedEntity {
   }
   
   @Override
-  public int getIndex() throws ElException {
+  public int getIndex() {
     return index;
   }
   
   @Override
-  public boolean isValue(ID name)
-      throws ElException {
+  public boolean isValue(ID name) {
     return this.name == name;
   }
   
   // preprocessing
   
-  public void resolveType() throws ElException {
+  public void resolveType() throws EntityException {
     type = type.resolve();
     if(value != null) 
       value = value.resolveRecursively();
@@ -96,15 +96,21 @@ public class Variable extends NamedEntity {
   // processing
   
   @Override
-  public void process() throws ElException {
+  public void process() throws EntityException {
     if(log) print(new StringBuilder(), "");
     addToScope(this);
     resolveType();
-    if(value != null) currentProcessor.call(this, id, Processor.callMethod);
+    if(value != null) {
+      try {
+        currentProcessor.call(this, id, Processor.callMethod);
+      } catch (ElException ex) {
+        throw new EntityException(this, ex.message);
+      }
+    }
   }
 
   public void processField(ClassEntity classEntity, Code code)
-      throws ElException {
+      throws EntityException {
     if(!isField) return;
     Variable field = classEntity.getField(name);
     FunctionCall equate = new FunctionCall(NativeFunction.equate);
@@ -117,15 +123,19 @@ public class Variable extends NamedEntity {
   }
 
   @Override
-  public Entity getObject() throws ElException {
-    currentProcessor.getObject(this);
-    return type;
+  public Entity getObject() throws EntityException {
+    try {
+      currentProcessor.getObject(this);
+      return type;
+    } catch (ElException ex) {
+      throw new EntityException(this, ex.message);
+    }
   }
   
   // moving functions
   
   @Override
-  public void move(Entity entity) throws base.ElException {
+  public void move(Entity entity) throws ElException {
     entity.moveToVariable(this);
   }
 
@@ -148,7 +158,7 @@ public class Variable extends NamedEntity {
   }
 
   @Override
-  public void moveToBlock() throws ElException {
+  public void moveToBlock() {
     index = currentAllocation;
     currentAllocation++;
   }
@@ -156,7 +166,7 @@ public class Variable extends NamedEntity {
   // other
   
   @Override
-  public VMValue createValue() throws ElException {
+  public VMValue createValue() {
     return type.createValue();
   }
 

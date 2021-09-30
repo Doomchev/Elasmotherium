@@ -2,6 +2,7 @@ package processor;
 
 import base.ElException;
 import base.ElException.CannotCreate;
+import base.EntityException;
 import vm.VMBase;
 import vm.VMCommand;
 
@@ -14,7 +15,7 @@ public abstract class ProCommand extends ProBase {
     }
   }
   
-  public abstract void execute() throws ElException;
+  public abstract void execute() throws ElException, EntityException;
   
   void append(VMCommand command) {
     if(log) log(command.toString());

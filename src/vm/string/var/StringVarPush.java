@@ -1,7 +1,7 @@
 package vm.string.var;
 
 import base.ElException;
-import processor.ProBase;
+import base.EntityException;
 import processor.parameter.ProParameter;
 import vm.VMCommand;
 
@@ -13,7 +13,8 @@ public class StringVarPush extends VMCommand {
   }
 
   @Override
-  public VMCommand create(ProParameter parameter) throws ElException {
+  public VMCommand create(ProParameter parameter)
+      throws ElException, EntityException {
     return new StringVarPush(parameter.getIndex());
   }
   

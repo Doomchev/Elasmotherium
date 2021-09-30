@@ -1,6 +1,7 @@
 package vm;
 
 import base.ElException;
+import base.EntityException;
 import processor.ProBase;
 import processor.parameter.ProParameter;
 
@@ -15,12 +16,13 @@ public abstract class VMFieldCommand extends VMCommand {
   }
   
   @Override
-  public VMCommand create(ProParameter parameter) throws ElException {
+  public VMCommand create(ProParameter parameter)
+      throws ElException, EntityException {
     return create(ProBase.currentObject.getIndex(), parameter.getIndex());
   }
       
   public abstract VMCommand create(int fieldIndex, int varIndex)
-      throws ElException;
+      throws ElException, EntityException;
   
   @Override
   public String toString() {

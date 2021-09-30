@@ -4,6 +4,7 @@ import ast.ClassEntity;
 import ast.ID;
 import ast.Variable;
 import base.ElException;
+import base.EntityException;
 
 public class ActionCreateBlockVariable extends Action {
   private final ID id;
@@ -18,7 +19,7 @@ public class ActionCreateBlockVariable extends Action {
   }
   
   @Override
-  public void execute() throws base.ElException {
+  public void execute() throws ElException, EntityException {
     if(log) log("CREATE BLOCK VARIABLE " + id);
     EntityStack.block.peek().add(new Variable(id, ClassEntity.Object));
     currentAction = nextAction;

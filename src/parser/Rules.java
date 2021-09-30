@@ -6,8 +6,11 @@ import java.util.HashMap;
 import base.ElException;
 import base.ElException.MethodException;
 import base.ElException.NotFound;
+import base.EntityException;
 import base.SymbolReader;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Rules extends Base {
   public final String fileName;
@@ -217,6 +220,9 @@ public class Rules extends Base {
       EntityStack.code.clear();
     } catch (base.ElException ex) {
       error("Parsing error", currentSymbolReader.getError() + ex.message);
+    } catch (EntityException ex) {
+      error("Parsing error", currentSymbolReader.getError() + ex.entity
+          + ex.message);
     }
   }
 }

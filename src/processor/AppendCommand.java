@@ -2,6 +2,7 @@ package processor;
 
 import processor.parameter.ProParameter;
 import base.ElException;
+import base.EntityException;
 import java.util.LinkedList;
 import vm.VMCommand;
 
@@ -16,7 +17,7 @@ public class AppendCommand extends ProCommand {
     }
 
     @Override
-    public void execute() throws ElException {
+    public void execute() throws ElException, EntityException {
       append(command.create(parameter));
     } 
   }
@@ -31,7 +32,7 @@ public class AppendCommand extends ProCommand {
     }
 
     @Override
-    public void execute() throws ElException {
+    public void execute() throws ElException, EntityException {
       append(command.create(parameters));
     } 
   }
@@ -52,7 +53,7 @@ public class AppendCommand extends ProCommand {
   }
 
   @Override
-  public void execute() throws ElException {
+  public void execute() throws ElException, EntityException {
     append(command.create());
   } 
 }

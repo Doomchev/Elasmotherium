@@ -2,6 +2,7 @@ package processor;
 
 import processor.parameter.ProParameter;
 import base.ElException;
+import base.EntityException;
 
 class Convert extends ProCommand {
   static final Convert instance = new Convert(null, null);
@@ -20,7 +21,7 @@ class Convert extends ProCommand {
   }
 
   @Override
-  public void execute() throws ElException {
+  public void execute() throws ElException, EntityException {
     convert(from.getNativeClass(), to.getNativeClass());
   }
 }

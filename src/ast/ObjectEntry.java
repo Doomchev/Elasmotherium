@@ -1,5 +1,7 @@
 package ast;
 
+import base.ElException;
+
 public class ObjectEntry extends Entity {
   public ID key;
   public Value value;
@@ -12,7 +14,7 @@ public class ObjectEntry extends Entity {
   // moving functions
   
   @Override
-  public void move(Entity entity) throws base.ElException {
+  public void move(Entity entity) throws ElException {
     entity.moveToObjectEntry(this);
   }
 }

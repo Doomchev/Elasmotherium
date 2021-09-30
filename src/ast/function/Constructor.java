@@ -6,6 +6,7 @@ import ast.ID;
 import ast.Type;
 import ast.Variable;
 import base.ElException;
+import base.EntityException;
 
 public class Constructor extends StaticFunction {
   protected ClassEntity parentClass = null;
@@ -20,12 +21,12 @@ public class Constructor extends StaticFunction {
   // properties
   
   @Override
-  public Entity getType(Entity[] subTypes) throws ElException {
+  public Entity getType(Entity[] subTypes) throws EntityException {
     return new Type(parentClass, subTypes);
   }
   
   @Override
-  public ClassEntity getNativeClass() throws ElException {
+  public ClassEntity getNativeClass() throws EntityException {
     return parentClass;
   }
 
@@ -37,7 +38,8 @@ public class Constructor extends StaticFunction {
   // preprocessing
 
   @Override
-  public void processConstructor(ClassEntity classEntity) throws ElException {
+  public void processConstructor(ClassEntity classEntity)
+      throws EntityException {
     for(Variable param: parameters)
       param.processField(classEntity, code);
   }
@@ -45,7 +47,7 @@ public class Constructor extends StaticFunction {
   // processing
 
   @Override
-  public boolean isFunction(ID name, int parametersQuantity) throws ElException {
+  public boolean isFunction(ID name, int parametersQuantity) {
     return parentClass.name == name
         && fromParametersQuantity <= parametersQuantity
         && parametersQuantity <= toParametersQuantity;
@@ -58,24 +60,28 @@ public class Constructor extends StaticFunction {
 
   @Override
   public void resolve(Entity type, FunctionCall call)
-      throws ElException {
+      throws EntityException {
     if(log) println(subIndent + "Resolving constructor " + toString());
     
-    if(command != null) {
-      call.resolveParameters(parameters);
-      append(command.create());
-    } else {
-      append(new vm.object.ObjectCreate(parentClass));
-      call.resolveParameters(parameters);
-      append(new vm.call.CallFunction(this));
+    try {
+      if(command != null) {
+        call.resolveParameters(parameters);
+        append(command.create());
+      } else {
+        append(new vm.object.ObjectCreate(parentClass));
+        call.resolveParameters(parameters);
+        append(new vm.call.CallFunction(this));
+      }
+      convert(parentClass.getNativeClass(), type.getNativeClass());
+    } catch (ElException ex) {
+      throw new EntityException(this, ex.message);
     }
-    convert(parentClass.getNativeClass(), type.getNativeClass());
   }
   
   // moving functions
 
   @Override
-  public void moveToClass(ClassEntity classEntity) throws ElException {
+  public void moveToClass(ClassEntity classEntity) {
     deallocateFunction();
     parentClass = classEntity;
     classEntity.addConstructor(this);

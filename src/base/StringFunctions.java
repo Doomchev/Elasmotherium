@@ -53,8 +53,8 @@ public class StringFunctions {
   }
   
   public static String expectEnd(String string, String end) throws ElException {
-    if(!string.endsWith(end)) throw new ElException.MethodException("Base", "expectEnd"
-        , end + " expected");
+    if(!string.endsWith(end)) throw new ElException.MethodException("Base"
+        , "expectEnd", end + " expected");
     return string.substring(0, string.length() - end.length());
   }
   

@@ -3,10 +3,10 @@ package base;
 import ast.ClassEntity;
 import ast.ID;
 import ast.NamedEntity;
-import static base.Log.println;
+import static base.Debug.println;
 import java.util.LinkedList;
 
-public class Scopes extends Log {
+public class Scopes extends Debug {
   private static final NamedEntity[] scope = new NamedEntity[64];
   private static final LinkedList<Integer> scopeEnd = new LinkedList<>();
   private static int lastScopeEntry = -1;

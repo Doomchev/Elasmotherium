@@ -1,7 +1,7 @@
 package processor.parameter;
 
 import ast.Entity;
-import base.ElException;
+import base.EntityException;
 
 public class ProVariableValue extends ProParameter {
   static ProVariableValue instance = new ProVariableValue();
@@ -9,7 +9,7 @@ public class ProVariableValue extends ProParameter {
   private ProVariableValue() {}
   
   @Override
-  public Entity getValue() throws ElException {
+  public Entity getValue() throws EntityException {
     return currentObject.getValue();
   }
 

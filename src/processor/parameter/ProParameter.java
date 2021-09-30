@@ -10,6 +10,7 @@ import base.ElException;
 import base.ElException.Cannot;
 import base.ElException.CannotGet;
 import base.ElException.MethodException;
+import base.EntityException;
 import processor.ProBase;
 import vm.VMCommand;
 
@@ -44,19 +45,19 @@ public abstract class ProParameter extends ProBase {
     }
   }
   
-  public Entity getType(Entity[] subTypes) throws ElException {
+  public Entity getType(Entity[] subTypes) throws ElException, EntityException {
     return getValue().getType(subTypes);
   }
   
-  public ClassEntity getNativeClass() throws ElException {
+  public ClassEntity getNativeClass() throws ElException, EntityException {
     return getValue().getNativeClass();
   }
 
-  public int getIndex() throws ElException {
+  public int getIndex() throws ElException, EntityException {
     return getValue().getIndex();
   }
   
-  public Entity getValue() throws ElException {
+  public Entity getValue() throws ElException, EntityException {
     throw new CannotGet("value", this);
   }
 
@@ -68,7 +69,8 @@ public abstract class ProParameter extends ProBase {
     throw new CannotGet("id", this);
   }
   
-  public void addLabelCommand(VMCommand command) throws ElException {
+  public void addLabelCommand(VMCommand command)
+      throws ElException, EntityException {
     throw new Cannot("add label command to", this);
   }
 }

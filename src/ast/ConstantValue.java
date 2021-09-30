@@ -1,7 +1,7 @@
 package ast;
 
-import base.ElException;
-import base.ElException.MethodException;
+import base.EntityException;
+import base.EntityException.MethodException;
 
 public class ConstantValue extends Value {
   public static final ID id = ID.get("const");
@@ -22,19 +22,19 @@ public class ConstantValue extends Value {
   // properties
 
   @Override
-  public ID getID() throws ElException {
+  public ID getID() throws EntityException {
     return id;
   }
   
   @Override
-  public Entity getType() throws ElException {
+  public Entity getType() throws EntityException {
     if(type == intID) return ClassEntity.Int;
     if(type == stringID) return ClassEntity.String;
     throw new MethodException(this, "getType", "Unknown const type " + type);
   }
   
   @Override
-  public String getStringValue() throws ElException {
+  public String getStringValue() throws EntityException {
     return value;
   }
   

@@ -2,6 +2,7 @@ package ast;
 
 import ast.function.FunctionCall;
 import base.ElException;
+import base.EntityException;
 
 public abstract class Value extends Entity {
   public Value(int textStart, int textEnd) {
@@ -33,7 +34,7 @@ public abstract class Value extends Entity {
   }
 
   @Override
-  public void moveToList(ListEntity list) throws ElException {
+  public void moveToList(ListEntity list) {
     list.values.add(this);
   }
 

@@ -3,9 +3,10 @@ package ast;
 import ast.function.Constructor;
 import ast.function.Method;
 import ast.function.StaticFunction;
-import vm.values.ObjectEntity;
 import base.ElException;
-import base.ElException.NotFound;
+import vm.values.ObjectEntity;
+import base.EntityException;
+import base.EntityException.NotFound;
 import java.util.HashMap;
 import java.util.LinkedList;
 import vm.values.VMValue;
@@ -68,18 +69,18 @@ public class ClassEntity extends NamedEntity {
   // retrieving class objects
   
   @Override
-  public Entity getType() throws ElException {
+  public Entity getType() throws EntityException {
     return this;
   }
   
   @Override
-  public Variable getField(ID name) throws ElException {
+  public Variable getField(ID name) throws EntityException {
     for(Variable field: fields) if(field.name == name) return field;
     throw new NotFound(this, "Field " + name + " in " + this.name);
   }
 
   @Override
-  public void resolveField(ID name, Entity type) throws ElException {
+  public void resolveField(ID name, Entity type) throws EntityException {
     for(Variable field: fields) {
       if(field.name == name) {
         field.resolve(type);
@@ -90,20 +91,20 @@ public class ClassEntity extends NamedEntity {
   }
   
   public Method getMethod(String name, int parametersQuantity)
-      throws ElException {
+      throws EntityException {
     return getMethod(ID.get(name), parametersQuantity);
   }
   
   @Override
   public Method getMethod(ID id, int parametersQuantity)
-      throws ElException {
+      throws EntityException {
     for(Method method: methods)
       if(method.isFunction(id, parametersQuantity)) return method;
     throw new NotFound(this, this + "." + id + "&" + parametersQuantity);
   }
 
   public Constructor getConstructor(int parametersQuantity)
-      throws ElException {
+      throws EntityException {
     for(Constructor constructor: constructors)
       if(constructor.matches(parametersQuantity)) return constructor;
     throw new NotFound(this, "Constructor of " + toString() + " with "
@@ -145,14 +146,13 @@ public class ClassEntity extends NamedEntity {
   }
   
   @Override
-  public boolean isValue(ID name)
-      throws ElException {
+  public boolean isValue(ID name) {
     return this.name == name;
   }
   
   // preprocessing
   
-  public void resolveTypes() throws ElException {
+  public void resolveTypes() throws EntityException {
     allocateScope();
     
     for(ClassParameter parameter: parameters) addToScope(parameter);
@@ -164,7 +164,7 @@ public class ClassEntity extends NamedEntity {
     deallocateScope();
   }
 
-  public void processConstructors() throws ElException {
+  public void processConstructors() throws EntityException {
     for(StaticFunction constructor: constructors)
       constructor.processConstructor(this);
   }
@@ -177,7 +177,7 @@ public class ClassEntity extends NamedEntity {
   }
   
   @Override
-  public void process() throws ElException {
+  public void process() throws EntityException {
     allocateScope();
     
     for(Variable field: fields) addToScope(field);
@@ -203,7 +203,7 @@ public class ClassEntity extends NamedEntity {
   
   // creating objects of this class
 
-  public ObjectEntity newObject() throws ElException {
+  public ObjectEntity newObject() {
     ObjectEntity object = new ObjectEntity(this, new VMValue[fields.size()]);
     int index = -1;
     for(Variable parameter: fields) {
@@ -214,7 +214,7 @@ public class ClassEntity extends NamedEntity {
   }
 
   @Override
-  public VMValue createValue() throws ElException {
+  public VMValue createValue() {
     return value.create();
   }
   

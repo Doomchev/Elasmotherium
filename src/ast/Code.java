@@ -4,6 +4,7 @@ import ast.function.CustomFunction;
 import ast.function.FunctionCall;
 import ast.function.StaticFunction;
 import base.ElException;
+import base.EntityException;
 import java.util.LinkedList;
 import vm.VMCommand;
 
@@ -42,28 +43,28 @@ public class Code extends Entity {
   }
   
   public StaticFunction getFunction(ID id, int parametersQuantity)
-      throws ElException {
+      throws EntityException {
     for(StaticFunction function: functions)
       if(function.isFunction(id, parametersQuantity)) return function;
-    throw new ElException.NotFound(this, "Function " + id);
+    throw new EntityException.NotFound(this, "Function " + id);
   }
   
   // preprocessing
 
-  public void processConstructors() throws ElException {
+  public void processConstructors() throws EntityException {
     for(ClassEntity classEntity: classes) classEntity.processConstructors();
   }
   
   // processing
   
   @Override
-  public void process() throws ElException {
+  public void process() throws EntityException {
     allocateScope();
     processWithoutScope(null);
     deallocateScope();
   }
   
-  public void processWithoutScope(VMCommand endingCommand) throws ElException {
+  public void processWithoutScope(VMCommand endingCommand) throws EntityException {
     for(ClassEntity classEntity: classes) classEntity.addToScope();
     for(StaticFunction function: functions) {
       addToScope(function);

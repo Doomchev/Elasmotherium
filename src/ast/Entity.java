@@ -4,10 +4,10 @@ import ast.function.CustomFunction;
 import ast.function.FunctionCall;
 import base.Base;
 import base.ElException;
-import base.ElException.Cannot;
-import base.ElException.CannotCreate;
-import base.ElException.CannotGet;
 import base.ElException.CannotMove;
+import base.EntityException;
+import base.EntityException.CannotCreate;
+import base.EntityException.CannotGet;
 import base.Module;
 import processor.Processor;
 import vm.VMCommand;
@@ -31,118 +31,129 @@ public abstract class Entity extends Base {
   
   // properties
   
-  public ID getName() throws ElException {
+  public ID getName() throws EntityException {
     throw new CannotGet("name", this);
   }
   
-  public ID getID() throws ElException {
+  public ID getID() throws EntityException {
     throw new CannotGet("id", this);
   }
   
-  public Entity getType() throws ElException {
+  public Entity getType() throws EntityException {
     throw new CannotGet("type", this);
   }
   
-  public Entity getType(Entity[] subTypes) throws ElException {
+  public Entity getType(Entity[] subTypes) throws EntityException {
     throw new CannotGet("type using subtypes", this);
   }
   
-  public ClassEntity getNativeClass() throws ElException {
+  public ClassEntity getNativeClass() throws EntityException {
     throw new CannotGet("native class", this);
   }
   
-  public Entity getValue() throws ElException {
+  public Entity getValue() throws EntityException {
     throw new CannotGet("value", this);
   }
   
-  public Entity getFormulaValue() throws ElException {
-    return this;
-  }
-  
-  public String getStringValue() throws ElException {
+  public String getStringValue() throws EntityException {
     throw new CannotGet("string value", this);
   }
   
-  public int getIndex() throws ElException {
+  public int getIndex() throws EntityException {
     throw new CannotGet("index", this);
   }
 
-  public Entity getBlockParameter(ID name) throws ElException {
+  public Entity getBlockParameter(ID name) throws EntityException {
     throw new CannotGet(name + " parameter", this);
   }
 
-  public Variable getField() throws ElException {
+  public Variable getField() throws EntityException {
     throw new CannotGet("field", this);
   }
 
-  public Variable getField(ID name) throws ElException {
+  public Variable getField(ID name) throws EntityException {
     throw new CannotGet("field " + name, this);
   }
 
-  public void resolveField(ID name, Entity type) throws ElException {
-    throw new Cannot("resolve field " + name + " of", this, "to " + type);
+  public void resolveField(ID name, Entity type) throws EntityException {
+    throw new EntityException.Cannot("resolve field " + name + " of", this
+        , "to " + type);
   }
   
-  public Entity getMethod(ID name, int parametersQuantity) throws ElException {
+  public Entity getMethod(ID name, int parametersQuantity)
+      throws EntityException {
     throw new CannotGet("method " + name, this);
   }
 
-  public Entity[] getSubTypes(ID classID, int quantity) throws ElException {
+  public Entity[] getSubTypes(ID classID, int quantity) throws EntityException {
     throw new CannotGet("sub types", this);
   }
   
   // processing
     
-  public void process() throws ElException {
-    throw new Cannot("process", this);
+  public void process() throws EntityException {
+    throw new EntityException.Cannot("process", this);
   }
   
-  public void process(FunctionCall call) throws ElException {
-    throw new Cannot("process", this, "with call");
+  public void process(FunctionCall call) throws EntityException {
+    throw new EntityException.Cannot("process", this, "with call");
   }
 
-  public void process(FunctionCall call, Entity[] subTypes) throws ElException {
-    throw new Cannot("process", this, "with call and subtypes");
+  public void process(FunctionCall call, Entity[] subTypes)
+      throws EntityException {
+    throw new EntityException.Cannot("process", this, "with call and subtypes");
   }
   
-  public Entity resolve() throws ElException {
+  public Entity resolve() throws EntityException {
     return this;
   }
   
-  public Entity resolveFunction(int parametersQuantity) throws ElException {
+  public Entity resolveFunction(int parametersQuantity) throws EntityException {
     return this;
   }
 
-  public void resolve(Entity type) throws ElException {
-    currentProcessor.resolve(this, type);
+  public void resolve(Entity type) throws EntityException {
+    try {
+      currentProcessor.resolve(this, type);
+    } catch (ElException ex) {
+      throw new EntityException(this, ex.message);
+    }
   }
 
   public void resolve(Entity type, FunctionCall call)
-      throws ElException {
-    throw new Cannot("resolve", this, "to " + type);
+      throws EntityException {
+    throw new EntityException.Cannot("resolve", this, "to " + type);
   }
   
-  public Entity resolveRecursively() throws ElException {
+  public Entity resolveRecursively() throws EntityException {
     return this;
   }
 
-  public Entity resolveRecursively(int parametersQuantity) throws ElException {
+  public Entity resolveRecursively(int parametersQuantity) throws EntityException {
     return this;
   }
   
-  public void resolveChild(Entity type) throws ElException {
-    throw new Cannot("resolve child", this);
+  public void resolveChild(Entity type) throws EntityException {
+    throw new EntityException.Cannot("resolve child", this);
   }
 
-  public Entity getObject() throws ElException {
-    currentProcessor.getObject(this);
+  public Entity getObject() throws EntityException {
+    try {
+      currentProcessor.getObject(this);
+    } catch (ElException ex) {
+      throw new EntityException(this, ex.message);
+    }
     return Processor.currentParam;
   }
   
   // moving functions
   
+  public Entity getFormulaValue() throws ElException {
+    return this;
+  }
+  
   public void move(Entity entity) throws ElException {
-    throw new Cannot("move anything to", this);
+    throw new ElException.Cannot("move anything to", this);
   }
 
   public void moveToCode(Code code) throws ElException {
@@ -202,8 +213,8 @@ public abstract class Entity extends Base {
   
   // other
   
-  public VMValue createValue() throws ElException {
-    throw new CannotCreate(this, "value");
+  public VMValue createValue() {
+    throw new NullPointerException();
   }
 
   public static void append(VMCommand command) {

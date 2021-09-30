@@ -1,6 +1,7 @@
 package ast;
 
 import base.ElException;
+import base.EntityException;
 import java.util.LinkedList;
 
 public class StringSequence extends Value {
@@ -21,14 +22,14 @@ public class StringSequence extends Value {
   // properties
   
   @Override
-  public ID getID() throws ElException {
+  public ID getID() throws EntityException {
     return id;
   }
   
   // processing
   
   @Override
-  public void resolve(Entity parameter) throws ElException {
+  public void resolve(Entity parameter) throws EntityException {
     boolean isNotFirst = false;
     for(Value value: chunks) {
       value.resolve(ClassEntity.String);
@@ -43,7 +44,7 @@ public class StringSequence extends Value {
   // moving functions
   
   @Override
-  public void move(Entity entity) throws base.ElException {
+  public void move(Entity entity) throws ElException {
     entity.moveToStringSequence(this);
   }
   

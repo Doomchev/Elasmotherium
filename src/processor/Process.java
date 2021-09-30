@@ -2,6 +2,7 @@ package processor;
 
 import processor.parameter.ProParameter;
 import base.ElException;
+import base.EntityException;
 
 public class Process extends ProCommand {
   public static final Process instance = new Process(null);
@@ -18,7 +19,7 @@ public class Process extends ProCommand {
   }
   
   @Override
-  public void execute() throws ElException {
+  public void execute() throws ElException, EntityException {
     parameter.getValue().process();
   }
 }

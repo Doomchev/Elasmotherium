@@ -1,8 +1,9 @@
 package parser;
 
 import ast.Entity;
-import ast.function.FunctionCall;
 import ast.function.NativeFunction;
+import base.ElException;
+import base.EntityException;
 
 public class ActionMoveNewFunction extends Action {
   private final NativeFunction function;
@@ -15,7 +16,7 @@ public class ActionMoveNewFunction extends Action {
   }
   
   @Override
-  public void execute() throws base.ElException {
+  public void execute() throws ElException, EntityException {
     if(log) log("MOVING NEW " + function + " to " + to.name + "("
         + to.peek().toString() + ")");
     to.peek().move(function);

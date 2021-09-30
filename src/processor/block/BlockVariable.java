@@ -3,6 +3,7 @@ package processor.block;
 import ast.Entity;
 import ast.ID;
 import base.ElException;
+import base.EntityException;
 import processor.parameter.ProParameter;
 
 public class BlockVariable extends ProParameter {
@@ -13,7 +14,7 @@ public class BlockVariable extends ProParameter {
   }
 
   @Override
-  public Entity getValue() throws ElException {
+  public Entity getValue() throws ElException, EntityException {
     return currentBlock.getVariable(name);
   }
 

@@ -4,6 +4,7 @@ import processor.parameter.ProParameter;
 import ast.Entity;
 import ast.ID;
 import base.ElException;
+import base.EntityException;
 
 public class ProCall extends ProCommand {
   private final ProParameter callObject, parameter;
@@ -18,7 +19,7 @@ public class ProCall extends ProCommand {
   }
   
   @Override
-  public void execute() throws ElException {
+  public void execute() throws ElException, EntityException {
     Entity newCurrent = callObject.getValue().resolve();
     Entity callParam = parameter == null ? null : parameter.getValue();
     if(log) {

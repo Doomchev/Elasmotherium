@@ -6,6 +6,7 @@ import ast.Entity;
 import ast.IDEntity;
 import ast.Variable;
 import base.ElException;
+import base.EntityException;
 import vm.VMCommand;
 
 public class StaticFunction extends CustomFunction {
@@ -31,17 +32,17 @@ public class StaticFunction extends CustomFunction {
   // properties
   
   @Override
-  public Entity getType() throws ElException {
+  public Entity getType() throws EntityException {
     return returnType.getType();
   }
   
   @Override
-  public Entity getType(Entity[] subTypes) throws ElException {
+  public Entity getType(Entity[] subTypes) throws EntityException {
     return returnType.getType(subTypes);
   }
   
   @Override
-  public ClassEntity getNativeClass() throws ElException {
+  public ClassEntity getNativeClass() throws EntityException {
     return returnType.getNativeClass();
   }
 
@@ -53,7 +54,7 @@ public class StaticFunction extends CustomFunction {
   // preprocessing
   
   @Override
-  public void resolveTypes() throws ElException {
+  public void resolveTypes() throws EntityException {
     addToScope(this);
     if(returnType != null) returnType = returnType.resolve();
     for(Variable param: parameters) param.resolveType();
@@ -62,14 +63,14 @@ public class StaticFunction extends CustomFunction {
   // processing
 
   @Override
-  public void process(FunctionCall call) throws ElException {
+  public void process(FunctionCall call) throws EntityException {
     if(log) println(subIndent + "Calling static function " + toString());
     call.resolveParameters(parameters);
     append();
   }
 
   @Override
-  public void resolve(Entity type) throws ElException {
+  public void resolve(Entity type) throws EntityException {
     if(log) println(subIndent + "Resolving static function " + toString()
       + " without parameters");
     append();
@@ -77,23 +78,31 @@ public class StaticFunction extends CustomFunction {
 
   @Override
   public void resolve(Entity type, FunctionCall call)
-      throws ElException {
+      throws EntityException {
     if(log) println(subIndent + "Resolving static function " + toString());
     call.resolveParameters(parameters);
     append();
-    convert(returnType.getNativeClass(), type.getNativeClass());
+    try {
+      convert(returnType.getNativeClass(), type.getNativeClass());
+    } catch (ElException ex) {
+      throw new EntityException(this, ex.message);
+    }
   }
     
-  public void append() throws ElException {
+  public void append() throws EntityException {
     if(command != null) {
-      append(command.create());
+      try {
+        append(command.create());
+      } catch (ElException ex) {
+        throw new EntityException(this, ex.message);
+      }
     } else {
       append(new vm.call.CallFunction(this));
     }
   }
   
   @Override
-  public VMCommand getEndingCommand() throws ElException {
+  public VMCommand getEndingCommand() throws EntityException {
     return new vm.call.Return();
   }
   

@@ -1,7 +1,7 @@
 package processor.block;
 
 import ast.ID;
-import base.ElException;
+import base.EntityException;
 import processor.ProCommand;
 import vm.VMBase;
 
@@ -13,7 +13,7 @@ public class BlockLabelSet extends ProCommand {
   }
 
   @Override
-  public void execute() throws ElException {
+  public void execute() throws EntityException {
     currentBlock.setLabelPosition(label, VMBase.currentCommand + 1);
     if(log) log("set label " + label);
   }

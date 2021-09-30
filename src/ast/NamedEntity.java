@@ -1,6 +1,6 @@
 package ast;
 
-import base.ElException;
+import base.EntityException;
 
 public abstract class NamedEntity extends Entity {
   public final ID name;
@@ -29,13 +29,11 @@ public abstract class NamedEntity extends Entity {
     return name;
   }
 
-  public boolean isFunction(ID name, int parametersQuantity)
-      throws ElException {
+  public boolean isFunction(ID name, int parametersQuantity) {
     return false;
   }
   
-  public boolean isValue(ID name)
-      throws ElException {
+  public boolean isValue(ID name) {
     return false;
   }
   

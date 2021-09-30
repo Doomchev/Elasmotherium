@@ -4,6 +4,7 @@ import ast.Entity;
 import ast.Formula;
 import ast.ID;
 import base.ElException;
+import base.EntityException;
 import base.ElException.NotFound;
 import java.util.HashMap;
 
@@ -80,32 +81,40 @@ public class NativeFunction extends Function {
   // properties
   
   @Override
-  public ID getID() throws ElException {
+  public ID getID() throws EntityException {
     return name;
   }
   
   // processing
   
   @Override
-  public void process(FunctionCall call) throws ElException {
-    currentProcessor.processCall(call, name);
+  public void process(FunctionCall call) throws EntityException {
+    try {
+      currentProcessor.processCall(call, name);
+    } catch (ElException ex) {
+      throw new EntityException(this, ex.message);
+    }
   }
 
   @Override
   public void resolve(Entity type, FunctionCall call)
-      throws ElException {
-    currentProcessor.resolveCall(call, name, type);
+      throws EntityException {
+    try {
+      currentProcessor.resolveCall(call, name, type);
+    } catch (ElException ex) {
+      throw new EntityException(this, ex.message);
+    }
   }
   
   // moving functions
 
   @Override
-  public void moveToFunctionCall(FunctionCall call) throws ElException {
+  public void moveToFunctionCall(FunctionCall call) {
     call.setFunction(this);
   }
 
   @Override
-  public void moveToFormula(Formula formula) throws ElException {
+  public void moveToFormula(Formula formula) {
     formula.add(this);
   }
 }

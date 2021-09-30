@@ -1,7 +1,8 @@
 package ast;
 
 import base.ElException;
-import base.ElException.NotFound;
+import base.EntityException;
+import base.EntityException.NotFound;
 import base.LinkedMap;
 import java.util.LinkedList;
 import processor.parameter.ProParameter;
@@ -40,26 +41,26 @@ public class Block extends Entity {
     labels.add(new Label(name));
   }
 
-  public Label getLabel(String name) throws ElException {
+  public Label getLabel(String name) throws EntityException {
     return getLabel(ID.get(name));
   }
   
-  public Label getLabel(ID name) throws ElException {
+  public Label getLabel(ID name) throws EntityException {
     for(Label label: labels) if(label.name == name) return label;
     if(parentBlock == null)
       throw new NotFound(this, "Label " + name + " is not found.");
     return parentBlock.getLabel(name);
   }
 
-  public void addLabelCommand(ID id, VMCommand command) throws ElException {
+  public void addLabelCommand(ID id, VMCommand command) throws EntityException {
     getLabel(id).commands.add(command);
   }
 
-  public void setLabelPosition(ID id, int pos) throws ElException {
+  public void setLabelPosition(ID id, int pos) throws EntityException {
     getLabel(id).position = pos;
   }
 
-  public void applyLabels() throws ElException {
+  public void applyLabels() throws EntityException {
     for(Label label: labels) {
       for(VMCommand command: label.commands) {
         ID name = label.name;
@@ -78,16 +79,16 @@ public class Block extends Entity {
   
   // variables
 
-  public void add(Variable variable) throws ElException {
+  public void add(Variable variable) throws EntityException {
     variable.moveToBlock();
     variables.add(variable);
   }
 
-  public Variable getVariable(String name) throws ElException {
+  public Variable getVariable(String name) throws EntityException {
     return getVariable(ID.get(name));
   }
   
-  public Variable getVariable(ID name) throws ElException {
+  public Variable getVariable(ID name) throws EntityException {
     for(Variable variable: variables)
       if(variable.name == name) return variable;
     throw new NotFound(this, "Variable " + name, this);
@@ -96,7 +97,7 @@ public class Block extends Entity {
   // properties
   
   @Override
-  public Entity getBlockParameter(ID name) throws ElException {
+  public Entity getBlockParameter(ID name) throws EntityException {
     Entity entity = entries.get(name);
     if(entity == null)
       throw new NotFound(this, name + " block parameter");
@@ -104,16 +105,20 @@ public class Block extends Entity {
   }
   
   @Override
-  public ID getID() throws ElException {
+  public ID getID() throws EntityException {
     return type;
   }
   
   // processing
   
   @Override
-  public void process() throws ElException {
+  public void process() throws EntityException {
     if(log) println(type.string);
-    currentProcessor.processBlock(this, type);
+    try {
+      currentProcessor.processBlock(this, type);
+    } catch (ElException ex) {
+      throw new EntityException(this, ex.message);
+    }
     applyLabels();
   }
   

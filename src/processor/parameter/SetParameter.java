@@ -1,6 +1,7 @@
 package processor.parameter;
 
 import base.ElException;
+import base.EntityException;
 import processor.ProCommand;
 
 public class SetParameter extends ProCommand {
@@ -18,7 +19,7 @@ public class SetParameter extends ProCommand {
   }
 
   @Override
-  public void execute() throws ElException {
+  public void execute() throws ElException, EntityException {
     currentParam = parameter.getValue();
     if(log) log("Set current type to " + currentParam);
   }

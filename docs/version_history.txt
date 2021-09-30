@@ -1,3 +1,6 @@
+2021.09.30 (version 0.34.6)
+  + EntityException is distinguished from ElException.
+
 2021.09.30 (version 0.34.5)
   + AST: Module, text start and end positions for Entity.
   + AST: IDEntity class for storing text position with id.

@@ -3,6 +3,7 @@ package parser;
 import base.Base;
 import base.ElException;
 import base.ElException.MethodException;
+import base.EntityException;
 import java.util.Stack;
 
 public abstract class Action extends Base {
@@ -22,7 +23,7 @@ public abstract class Action extends Base {
   
   public void setOtherAction(Action action) {}
   
-  public abstract void execute() throws ElException;
+  public abstract void execute() throws ElException, EntityException;
 
   public Sub getErrorActionSub() {
     while(!returnStack.isEmpty()) {

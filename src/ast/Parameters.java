@@ -1,6 +1,7 @@
 package ast;
 
 import ast.function.FunctionCall;
+import base.ElException;
 import java.util.LinkedList;
 
 public class Parameters extends Value {
@@ -19,7 +20,7 @@ public class Parameters extends Value {
   // moving functions
   
   @Override
-  public void move(Entity entity) throws base.ElException {
+  public void move(Entity entity) throws ElException {
     entity.moveToParameters(this);
   }
 

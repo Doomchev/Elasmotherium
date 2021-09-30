@@ -1,7 +1,7 @@
 package ast;
 
 import ast.function.FunctionCall;
-import base.ElException;
+import base.EntityException;
 
 public class ParameterizedEntity extends Entity {
   public final Entity[] subTypes;
@@ -16,7 +16,7 @@ public class ParameterizedEntity extends Entity {
   // processing
 
   @Override
-  public void process(FunctionCall call) throws ElException {
+  public void process(FunctionCall call) throws EntityException {
     entity.process(call, subTypes);
   }
 }

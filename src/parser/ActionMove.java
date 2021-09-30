@@ -5,6 +5,7 @@ import ast.ID;
 import ast.function.NativeFunction;
 import base.ElException;
 import base.ElException.ActionException;
+import base.EntityException;
 
 public class ActionMove extends Action {
   private final EntityStack<Entity> from, to;
@@ -36,7 +37,7 @@ public class ActionMove extends Action {
   }
   
   @Override
-  public void execute() throws base.ElException {
+  public void execute() throws ElException, EntityException {
     currentAction = this;
     Entity entity = copy ? from.peek() : from.pop();
     if(log) log("MOVING " + from.name.string + " to " + to.name.string + "("

@@ -4,6 +4,7 @@ import processor.parameter.ProParameter;
 import ast.ClassEntity;
 import base.ElException;
 import base.ElException.MethodException;
+import base.EntityException;
 import vm.VMCommand;
 
 public class TypeCommand extends ProCommand {
@@ -18,8 +19,7 @@ public class TypeCommand extends ProCommand {
   }
 
   public static VMCommand getCommand(ClassEntity type, String postfix
-      , ProParameter parameter)
-      throws ElException {
+      , ProParameter parameter) throws ElException, EntityException {
     String typeName = type.nativeClass.getName().string;
     if(typeName.equals("Int")) typeName = "I64";
     VMCommand command = Processor.commands.get(typeName + postfix);
@@ -30,7 +30,7 @@ public class TypeCommand extends ProCommand {
   }
   
   @Override
-  public void execute() throws ElException {
+  public void execute() throws ElException, EntityException {
     append(getCommand(type.getNativeClass(), postfix, parameter));
   }
 }

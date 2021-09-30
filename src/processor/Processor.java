@@ -21,10 +21,13 @@ import base.LineReader;
 import base.ElException;
 import base.ElException.MethodException;
 import base.ElException.NotFound;
+import base.EntityException;
 import base.LinkedMap;
 import base.Module;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Processor extends ProBase {
   public static final ID callMethod = ID.get("call");
@@ -99,7 +102,7 @@ public class Processor extends ProBase {
     boolean hasLabels = false;
     LinkedList<ProCommand> commands = new LinkedList<>();
 
-    public void execute() throws ElException {
+    public void execute() throws ElException, EntityException {
       for(ProCommand command: commands) command.execute();
     }
   }
@@ -192,42 +195,35 @@ public class Processor extends ProBase {
     return this;
   }
 
-  public void processBlock(Block block, ID type) throws ElException {
+  public void processBlock(Block block, ID type)
+      throws ElException, EntityException {
     block.parentBlock = currentBlock;
     currentBlock = block;
     getMethod(type, callMethod).execute();
     currentBlock = block.parentBlock;
   }
   
-  /*public void resolve(Entity object, ID functionName, FunctionCall call
-      , Entity param) throws ElException {
-    Entity oldParam = Processor.param;
-    Processor.param = param;
-    process(object, functionName, resolveMethod, call);
-    Processor.param = oldParam;
-  }*/
-  
-  public void getObject(Entity entity) throws ElException {
+  public void getObject(Entity entity) throws EntityException, ElException {
     call(entity, entity.getID(), getObjectMethod);
   }
   
   public void resolve(Entity entity, Entity type)
-      throws ElException {
+      throws ElException, EntityException {
     call(entity, entity.getID(), resolveMethod, type);
   }
   
   public void resolveCall(FunctionCall call, ID functionName, Entity type)
-      throws ElException {
+      throws ElException, EntityException {
     call(call, functionName, resolveMethod, type);
   }
   
   public void call(Entity entity, ID method, Entity param)
-      throws ElException {
+      throws ElException, EntityException {
     call(entity, entity.getID(), method, param);
   }
   
   public void call(Entity entity, ID function, ID method, Entity type)
-      throws ElException {
+      throws ElException, EntityException {
     Entity oldParam = Processor.currentParam;
     Processor.currentParam = type;
     call(entity, function, method);
@@ -235,19 +231,20 @@ public class Processor extends ProBase {
   }
 
   public void processCall(FunctionCall call, ID functionName)
-      throws ElException {
+      throws ElException, EntityException {
     call(call, functionName, callMethod);
   }
   
   public void call(Entity object, ID functionName, ID methodName)
-      throws ElException {
+      throws ElException, EntityException {
     Entity oldCurrent = currentObject;
     currentObject = object.resolve();
     process(functionName, methodName);
     currentObject = oldCurrent;
   }
   
-  public void process(ID functionName, ID methodName) throws ElException {
+  public void process(ID functionName, ID methodName)
+      throws ElException, EntityException {
     if(log) currentLineReader.log(functionName + "." + methodName);
     Method method;
     try {
@@ -277,8 +274,8 @@ public class Processor extends ProBase {
     try {
       currentProcessor = this;
       module.process();
-    } catch (ElException ex) {
-      error("Error while processing", ex.message);
+    } catch (EntityException ex) {
+      error("Error while processing", ex.entity + ": " + ex.message);
     }
   }
 }

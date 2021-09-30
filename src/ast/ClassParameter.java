@@ -1,6 +1,6 @@
 package ast;
 
-import base.ElException;
+import base.EntityException;
 
 public class ClassParameter extends NamedEntity {
   private int index;
@@ -14,13 +14,12 @@ public class ClassParameter extends NamedEntity {
   // properties
   
   @Override
-  public Entity getType(Entity[] subTypes) throws ElException {
+  public Entity getType(Entity[] subTypes) throws EntityException {
     return subTypes[index];
   }
   
   @Override
-  public boolean isValue(ID name)
-      throws ElException {
+  public boolean isValue(ID name) {
     return this.name == name;
   }
   

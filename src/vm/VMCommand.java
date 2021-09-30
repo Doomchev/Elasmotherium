@@ -2,6 +2,7 @@ package vm;
 
 import base.ElException;
 import base.ElException.CannotCreate;
+import base.EntityException;
 import java.util.LinkedList;
 import processor.parameter.ProParameter;
 
@@ -14,12 +15,13 @@ public abstract class VMCommand extends VMBase {
     }
   }
   
-  public VMCommand create(ProParameter parameter) throws ElException {
+  public VMCommand create(ProParameter parameter)
+      throws EntityException, ElException {
     return create();
   }
   
   public VMCommand create(LinkedList<ProParameter> parameters)
-      throws ElException {
+      throws ElException, EntityException {
     throw new CannotCreate(this, toString() + " with "
         + parameters.size() + " parameters");
   }

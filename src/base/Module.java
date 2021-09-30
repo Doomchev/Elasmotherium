@@ -1,13 +1,11 @@
 package base;
 
-import vm.function.Assert;
 import vm.texture.*;
 import vm.function.*;
 import ast.ClassEntity;
 import parser.Rules;
 import ast.function.StaticFunction;
 import ast.ID;
-import ast.Variable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -81,24 +79,28 @@ public class Module extends Base {
   
   private void readCode(String fileName) {
     if(log) printChapter("Parsing " + fileName);
-    rules.parseCode(readText(fileName), fileName);
+    rules.parseCode(new StringBuffer(readText(fileName)), fileName);
   }
   
   private void readCode(StringBuffer text) {
     if(log) printChapter("Parsing text");
     rules.parseCode(text, "");
   }
+
+  public String readText() {
+    return readText(getFileName());
+  }
   
-  public StringBuffer readText(String fileName) {
+  public static String readText(String fileName) {
     try {
-      return new StringBuffer(new String(Files.readAllBytes(Paths.get(fileName))
-          , "UTF-8"));
+      return new String(Files.readAllBytes(Paths.get(fileName))
+          , "UTF-8");
     } catch (FileNotFoundException ex) {
       error("I/O error", fileName + " not found.");
     } catch (IOException ex) {
       error("I/O error", "Cannot read " + fileName + ".");
     }
-    return null;
+    return "";
   }
 
   public static void execute(String examples, String name
@@ -115,20 +117,20 @@ public class Module extends Base {
   }
   
   private void newFunction(VMCommand command, int parametersQuantity)
-      throws ElException {
+      throws EntityException {
     String functionName = decapitalize(command.getClass().getSimpleName());
     function.getFunction(ID.get(removeLastDigit(functionName))
         , parametersQuantity).setCommand(command);
   }
 
   private void newFunction(String className, String methodName
-      , int parametersQuantity, VMCommand command) throws ElException {
+      , int parametersQuantity, VMCommand command) throws EntityException {
     ClassEntity.get(className).getMethod(methodName, parametersQuantity)
         .setCommand(command);
   }
 
   private void newConstructor(String className, int parametersQuantity
-      , VMCommand command, VMValue value) throws ElException {
+      , VMCommand command, VMValue value) throws EntityException {
     ClassEntity classEntity = ClassEntity.get(className);
     classEntity.getConstructor(parametersQuantity)
         .setCommand(command);
@@ -140,7 +142,7 @@ public class Module extends Base {
     return false;
   }
   
-  public void process() throws ElException {
+  public void process() throws EntityException {
     function.processConstructors();
     
     currentFunction = function;

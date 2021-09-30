@@ -1,6 +1,7 @@
 package ast;
 
 import base.ElException;
+import base.EntityException;
 import java.util.LinkedList;
 
 public class ListEntity extends Value {
@@ -23,14 +24,14 @@ public class ListEntity extends Value {
   // properties
   
   @Override
-  public ID getID() throws ElException {
+  public ID getID() throws EntityException {
     return id;
   }
   
   // processing
   
   @Override
-  public void resolve(Entity type) throws ElException {
+  public void resolve(Entity type) throws EntityException {
     Entity elementType = type.getSubTypes(classID, 1)[0];
     append(new vm.collection.ListCreate());
     for(Value value: values) {

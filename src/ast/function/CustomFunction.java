@@ -7,7 +7,8 @@ import ast.ID;
 import ast.IDEntity;
 import ast.Variable;
 import base.ElException;
-import base.ElException.Cannot;
+import base.EntityException;
+import base.EntityException.Cannot;
 import java.util.LinkedList;
 import parser.EntityStack;
 import vm.VMCommand;
@@ -44,21 +45,19 @@ public abstract class CustomFunction extends Function {
     return startingCommand;
   }
 
-  public void setReturnType(Entity returnType) throws ElException {
+  public void setReturnType(Entity returnType) throws EntityException {
     throw new Cannot("set return type of", this);
   }
 
   @Override
-  public boolean isFunction(ID name, int parametersQuantity)
-      throws ElException {
+  public boolean isFunction(ID name, int parametersQuantity) {
     return this.name == name
         && fromParametersQuantity <= parametersQuantity
         && parametersQuantity <= toParametersQuantity;
   }
   
   @Override
-  public boolean isValue(ID name)
-      throws ElException {
+  public boolean isValue(ID name) {
     return this.name == name && fromParametersQuantity == 0;
   }
   
@@ -74,7 +73,7 @@ public abstract class CustomFunction extends Function {
   
   // child objects
 
-  public int addParameter(Variable variable) throws ElException {
+  public int addParameter(Variable variable) {
     int index = allocation;
     allocation++;
     parameters.add(variable);
@@ -85,7 +84,7 @@ public abstract class CustomFunction extends Function {
   } 
   
   public StaticFunction getFunction(ID id, int parametersQuantity)
-      throws ElException {
+      throws EntityException {
     return code.getFunction(id, parametersQuantity);
   }
   
@@ -100,11 +99,11 @@ public abstract class CustomFunction extends Function {
   }
   
   @Override
-  public ID getID() throws ElException {
+  public ID getID() throws EntityException {
     return id;
   }
   
-  public Entity getParameter(int index) throws ElException {
+  public Entity getParameter(int index) throws EntityException {
     return parameters.get(index);
   }
 
@@ -118,21 +117,21 @@ public abstract class CustomFunction extends Function {
   
   // preprocessing
 
-  public void processConstructor(ClassEntity classEntity) throws ElException {
+  public void processConstructor(ClassEntity classEntity) throws EntityException {
     for(Variable param: parameters)
       param.processField(classEntity, code);
   }
 
-  public void processConstructors() throws ElException {
+  public void processConstructors() throws EntityException {
     code.processConstructors();
   }
   
-  public abstract void resolveTypes() throws ElException;
+  public abstract void resolveTypes() throws EntityException;
   
   // processing
   
   @Override
-  public void process() throws ElException {
+  public void process() throws EntityException {
     if(command != null) return;
     startingCommand = vm.VMBase.currentCommand + 1;
     CustomFunction oldFunction = currentFunction;
@@ -144,18 +143,18 @@ public abstract class CustomFunction extends Function {
     currentFunction = oldFunction;
   }
   
-  public VMCommand getEndingCommand() throws ElException {
+  public VMCommand getEndingCommand() throws EntityException {
     return new vm.call.Return();
   }
   
-  public void processCode(VMCommand endingCommand) throws ElException {
+  public void processCode(VMCommand endingCommand) throws EntityException {
     code.processWithoutScope(endingCommand);
   }
   
   // moving functions
 
   @Override
-  public void move(Entity entity) throws base.ElException {
+  public void move(Entity entity) throws ElException {
     entity.moveToFunction(this);
   }
 

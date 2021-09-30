@@ -1,6 +1,7 @@
 package vm.i64.var;
 
 import base.ElException;
+import base.EntityException;
 import processor.parameter.ProParameter;
 import vm.VMCommand;
 
@@ -12,7 +13,8 @@ public class I64VarPush extends VMCommand {
   }
   
   @Override
-  public VMCommand create(ProParameter parameter) throws ElException {
+  public VMCommand create(ProParameter parameter)
+      throws ElException, EntityException {
     return new I64VarPush(parameter.getIndex());
   }
   

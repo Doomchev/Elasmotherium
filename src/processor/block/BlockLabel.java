@@ -1,7 +1,7 @@
 package processor.block;
 
 import ast.ID;
-import base.ElException;
+import base.EntityException;
 import processor.parameter.ProParameter;
 import vm.VMCommand;
 public class BlockLabel extends ProParameter {
@@ -12,7 +12,7 @@ public class BlockLabel extends ProParameter {
   }
   
   @Override
-  public void addLabelCommand(VMCommand command) throws ElException {
+  public void addLabelCommand(VMCommand command) throws EntityException {
     currentBlock.addLabelCommand(name, command);
   }
 

@@ -1,8 +1,8 @@
 package ast;
 
 import ast.function.Method;
-import base.ElException;
-import base.ElException.Cannot;
+import base.EntityException;
+import base.EntityException.Cannot;
 import java.util.Arrays;
 import vm.values.VMValue;
 
@@ -19,24 +19,24 @@ public class Type extends Entity {
   // properties
   
   @Override
-  public ClassEntity getNativeClass() throws ElException {
+  public ClassEntity getNativeClass() throws EntityException {
     return basicClass.getNativeClass();
   }
   
   @Override
-  public Entity getType() throws ElException {
+  public Entity getType() throws EntityException {
     return this;
   }
   
   @Override
-  public Entity getMethod(ID id, int parametersQuantity) throws ElException {
+  public Entity getMethod(ID id, int parametersQuantity) throws EntityException {
     Method method = basicClass.getMethod(id, parametersQuantity);
     if(subtypes.length == 0) return method;
     return new ParameterizedEntity(subtypes, method);
   }
 
   @Override
-  public Entity[] getSubTypes(ID className, int quantity) throws ElException {
+  public Entity[] getSubTypes(ID className, int quantity) throws EntityException {
     if(basicClass.name != className || quantity != subtypes.length)
       throw new Cannot("convert " + basicClass.name + " to ", this);
     return subtypes;
@@ -45,7 +45,7 @@ public class Type extends Entity {
   // other
 
   @Override
-  public VMValue createValue() throws ElException {
+  public VMValue createValue() {
     return basicClass.createValue();
   }
 
