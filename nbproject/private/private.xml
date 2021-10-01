@@ -3,8 +3,29 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/ClassEntity.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/base/LineReader.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/function/Function.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/processor/TypeCommand.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/VMBase.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/base/Scopes.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Entity.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/base/SymbolReader.java</file>
             <file>file:/D:/Dropbox/Elasmotherium/src/base/Module.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/parser/ActionMove.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/vm/object/ObjectThisPush.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/base/Debug.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/parser/Rules.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/function/NativeFunction.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/base/ElException.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Variable.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/ClassParameter.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/function/FunctionCall.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/Link.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/processor/Processor.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/parser/EntityStack.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/function/CustomFunction.java</file>
+            <file>file:/D:/Dropbox/Elasmotherium/src/ast/This.java</file>
         </group>
     </open-files>
 </project-private>

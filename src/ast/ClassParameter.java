@@ -19,8 +19,8 @@ public class ClassParameter extends NamedEntity {
   }
   
   @Override
-  public boolean isValue(ID name) {
-    return this.name == name;
+  public boolean isValue(ID name, boolean isThis) {
+    return this.name == name && isThis == false;
   }
   
   // moving functions

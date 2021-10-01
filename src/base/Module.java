@@ -27,9 +27,9 @@ public class Module extends Base {
   public static Module current;
 
   public final String name, path;
-  public final TreeSet<String> moduleNames = new TreeSet<>();
-  public final Stack<Module> moduleStack = new Stack<>();
-  public StaticFunction function = new StaticFunction();
+  private static final TreeSet<String> moduleNames = new TreeSet<>();
+  private static final Stack<Module> moduleStack = new Stack<>();
+  private final StaticFunction function = new StaticFunction();
 
   public Module() {
     this.name = "";
@@ -56,23 +56,33 @@ public class Module extends Base {
   public static Module read(String path, String name) {
     return new Module(path, name).read(null, true);
   }
+  
+  public static boolean hasModule(String name) {
+    for(String moduleName: moduleNames) if(moduleName.equals(name)) return true;
+    return false;
+  }
 
-  public void addModule(String name) {
+  public static void add(String name) {
     if(hasModule(name)) return;
     moduleStack.add(new Module(modulesPath, name));
     moduleNames.add(name);
   }
   
   public Module read(StringBuffer text, boolean base) {
+    moduleStack.clear();
+    moduleNames.clear();
+    
     currentFunction = function;
     if(text == null)
       readCode();
     else
       readCode(text);
     currentFunction.setAllocation();
-    if(base) addModule("Base");
+    
+    if(base) add("Base");
     while(!moduleStack.isEmpty())
       moduleStack.pop().readCode();
+    
     return this;
   }  
   
@@ -90,18 +100,6 @@ public class Module extends Base {
 
   public String readText() {
     return readText(getFileName());
-  }
-  
-  public static String readText(String fileName) {
-    try {
-      return new String(Files.readAllBytes(Paths.get(fileName))
-          , "UTF-8");
-    } catch (FileNotFoundException ex) {
-      error("I/O error", fileName + " not found.");
-    } catch (IOException ex) {
-      error("I/O error", "Cannot read " + fileName + ".");
-    }
-    return "";
   }
 
   public static void execute(String examples, String name
@@ -136,11 +134,6 @@ public class Module extends Base {
     classEntity.getConstructor(parametersQuantity)
         .setCommand(command);
     classEntity.setValue(value);
-  }
-  
-  public boolean hasModule(String name) {
-    for(String moduleName: moduleNames) if(moduleName.equals(name)) return true;
-    return false;
   }
   
   public void process() throws EntityException {

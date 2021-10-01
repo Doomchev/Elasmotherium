@@ -380,10 +380,15 @@ binaryOperator: MOVE(formula, call) formula() MOVE(formula, call) MOVE(call, cod
 /// formula
 
 formula: CREATE(formula) value
+
 value: {
   ")", "]", "}", ",": RETURN
   digit: number() MOVE(value, formula) separator
   letter: id() formulaId
+  "this": >> {
+    ".": >> id() CREATE(link) MOVE(link, formula) separator
+    other: CREATE(this) MOVE(this, formula) separator
+  }
   "if": >> EXPECT("(") CREATE(call) MOVE(ifOp, call) formula() MOVE(formula, call) {
     "then": >> then 
     other: syntaxError

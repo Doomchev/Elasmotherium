@@ -100,4 +100,9 @@ public class SymbolReader extends Reader {
     System.out.println(subIndent.toString() + lineNum + ":"
         + (textPos - lineStart) + ", " + message);
   }
+
+  public void showDebugMessage(String message) {
+    showDebugMessage("Parsing error", message, text.toString()
+        , textPos - 1, textPos + 1);
+  }
 }

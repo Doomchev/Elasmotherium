@@ -11,7 +11,6 @@ import vm.values.VMValue;
 public class Variable extends NamedEntity {
   public static final ID id = ID.get("variable");
   public static final ID fieldID = ID.get("field");
-  public static final ID thisID = ID.get("this");
   
   private Entity type;
   private Entity value = null;
@@ -81,8 +80,8 @@ public class Variable extends NamedEntity {
   }
   
   @Override
-  public boolean isValue(ID name) {
-    return this.name == name;
+  public boolean isValue(ID name, boolean isThis) {
+    return this.name == name && isThis == isField;
   }
   
   // preprocessing
@@ -176,7 +175,8 @@ public class Variable extends NamedEntity {
   }
 
   public String toParamString() {
-    return type + " " + name + ":" + index;
+    return type + " " + (isField ? "this." : "") + name + ":" + index
+        + (value == null ? "" : " = " + value);
   }
   
   @Override

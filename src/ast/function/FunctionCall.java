@@ -173,6 +173,6 @@ public class FunctionCall extends Value {
   
   @Override
   public String toString() {
-    return function + "(" + listToString(parameters) + ")";
+    return function == null ? "" : function.toString(parameters);
   }
 }

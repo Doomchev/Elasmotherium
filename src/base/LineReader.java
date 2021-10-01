@@ -43,4 +43,9 @@ public class LineReader extends Reader {
   public void log(String message) {
     System.out.println(subIndent.toString() + lineNum + ": " + message);
   }
+
+  public void showDebugMessage(String message) {
+    showDebugMessage(fileName + ": " + lineNum, message, readText(fileName)
+        , lineNum);
+  }
 }

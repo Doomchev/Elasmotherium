@@ -1,5 +1,4 @@
 import Texture;
-import Image;
 import Tilemap;
 
 Int empty = 0;

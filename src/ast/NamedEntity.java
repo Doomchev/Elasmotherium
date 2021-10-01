@@ -33,7 +33,7 @@ public abstract class NamedEntity extends Entity {
     return false;
   }
   
-  public boolean isValue(ID name) {
+  public boolean isValue(ID name, boolean isThis) {
     return false;
   }
   

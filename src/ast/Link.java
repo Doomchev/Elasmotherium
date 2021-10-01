@@ -4,18 +4,18 @@ import ast.function.CustomFunction;
 import base.ElException;
 import base.EntityException;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Link extends Value {
   public static final ID id = ID.get("link");
   
   private final ID name;
   private final LinkedList<Link> subTypes = new LinkedList<>();
+  private final boolean isThis;
 
-  public Link(IDEntity id) {
+  public Link(IDEntity id, boolean isThis) {
     super(id);
     this.name = id.value;
+    this.isThis = isThis;
   }
   
   // child objects
@@ -46,7 +46,7 @@ public class Link extends Value {
   @Override
   public Entity resolve() throws EntityException {
     try {
-      if(subTypes.isEmpty()) return getVariableFromScope(name);
+      if(subTypes.isEmpty()) return getVariableFromScope(name, isThis);
       ClassEntity basicClass = getClassFromScope(name);
       Entity[] resolvedTypes = new Entity[subTypes.size()];
       int index = 0;
@@ -73,7 +73,7 @@ public class Link extends Value {
   @Override
   public void resolve(Entity type) throws EntityException {
     try {
-      getVariableFromScope(name).resolve(type);
+      getVariableFromScope(name, isThis).resolve(type);
     } catch (ElException ex) {
       throw new EntityException(this, ex.message);
     }
@@ -124,7 +124,12 @@ public class Link extends Value {
   
   @Override
   public String toString() {
-    return "#" + name.string
+    return "#" + (isThis ? "this." : "") + name.string
         + (subTypes.isEmpty() ? "" : "<" + listToString(subTypes) + ">");
+  }
+
+  @Override
+  public String toString(LinkedList<Entity> parameters) {
+    return name + "(" + listToString(parameters) + ")";
   }
 }

@@ -14,6 +14,7 @@ import vm.values.VMValue;
 public class ClassEntity extends NamedEntity {
   public static final HashMap<ID, ClassEntity> all = new HashMap<>();
   public static final ClassEntity Int, Float, String, Bool, Object;
+  public static ClassEntity current;
   
   private final LinkedList<ClassParameter> parameters = new LinkedList<>();
   private final LinkedList<Variable> fields = new LinkedList<>();
@@ -146,22 +147,28 @@ public class ClassEntity extends NamedEntity {
   }
   
   @Override
-  public boolean isValue(ID name) {
-    return this.name == name;
+  public boolean isValue(ID name, boolean isThis) {
+    return this.name == name && isThis == false;
   }
   
   // preprocessing
   
   public void resolveTypes() throws EntityException {
+    ClassEntity oldCurrent = current;
+    current = this;
     allocateScope();
     
     for(ClassParameter parameter: parameters) addToScope(parameter);
     
-    for(Variable field: fields) field.resolveType();
+    for(Variable field: fields) {
+      field.resolveType();
+      addToScope(field);
+    }
     for(StaticFunction constructor: constructors) constructor.resolveTypes();
     for(StaticFunction method: methods) method.resolveTypes();
     
     deallocateScope();
+    current = oldCurrent;
   }
 
   public void processConstructors() throws EntityException {
@@ -178,6 +185,8 @@ public class ClassEntity extends NamedEntity {
   
   @Override
   public void process() throws EntityException {
+    ClassEntity oldCurrent = current;
+    current = this;
     allocateScope();
     
     for(Variable field: fields) addToScope(field);
@@ -187,6 +196,7 @@ public class ClassEntity extends NamedEntity {
     for(StaticFunction method: methods) method.process();
     
     deallocateScope();
+    current = oldCurrent;
   }
   
   // moving funcitons

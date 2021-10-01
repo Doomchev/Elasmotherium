@@ -1,3 +1,8 @@
+2021.09.01 (version 0.35.1)
+  + AST: This object, isThis attribute for Links.
+  + Debugger: displaying parser code. 
+  * Logging: Standard string representation of native functions.
+
 2021.09.01 (version 0.35)
   + Error's module text displaying, error highlighting.
 

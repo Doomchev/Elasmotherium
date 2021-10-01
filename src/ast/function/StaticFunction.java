@@ -3,6 +3,7 @@ package ast.function;
 import ast.ClassEntity;
 import ast.Code;
 import ast.Entity;
+import ast.ID;
 import ast.IDEntity;
 import ast.Variable;
 import base.ElException;
@@ -51,13 +52,19 @@ public class StaticFunction extends CustomFunction {
     this.returnType = returnType;
   }
   
+  @Override
+  public boolean isValue(ID name, boolean isThis) {
+    return this.name == name && fromParametersQuantity == 0 && isThis == false;
+  }
+  
   // preprocessing
   
   @Override
   public void resolveTypes() throws EntityException {
     addToScope(this);
     if(returnType != null) returnType = returnType.resolve();
-    for(Variable param: parameters) param.resolveType();
+    for(Variable parameter: parameters) addToScope(parameter);
+    for(Variable parameter: parameters) parameter.resolveType();
   }
   
   // processing

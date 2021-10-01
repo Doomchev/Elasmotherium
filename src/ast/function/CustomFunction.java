@@ -56,11 +56,6 @@ public abstract class CustomFunction extends Function {
         && parametersQuantity <= toParametersQuantity;
   }
   
-  @Override
-  public boolean isValue(ID name) {
-    return this.name == name && fromParametersQuantity == 0;
-  }
-  
   // allocation
 
   public void setAllocation() {

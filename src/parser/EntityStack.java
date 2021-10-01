@@ -16,7 +16,6 @@ public class EntityStack<EntityType> extends Base {
   public static final EntityStack<Code> code;
   public static final EntityStack<ConstantValue> constant;
   public static final EntityStack<CustomFunction> function;
-  public static final EntityStack<ClassEntity> classStack;
 
   static {
     id = new EntityStack<IDEntity>("id") {
@@ -62,10 +61,24 @@ public class EntityStack<EntityType> extends Base {
       }
     };
     
-    new EntityStack<Link>("link") {
+    EntityStack<Link> link = new EntityStack<Link>("link") {
       @Override
       public Link create() throws ElException {
-        return new Link(id.pop());
+        return new Link(id.pop(), false);
+      }
+    };
+    
+    new EntityStack("thislink", link) {
+      @Override
+      public Link create() throws ElException {
+        return new Link(id.pop(), true);
+      }
+    };
+    
+    new EntityStack<This>("this") {
+      @Override
+      public This create() throws ElException {
+        return new This();
       }
     };
     
@@ -97,7 +110,7 @@ public class EntityStack<EntityType> extends Base {
       }
     };
     
-    classStack = new EntityStack<ClassEntity>("class") {
+    new EntityStack<ClassEntity>("class") {
       @Override
       public ClassEntity create() throws ElException {
         return ClassEntity.create(id.pop());

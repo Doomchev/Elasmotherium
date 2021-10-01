@@ -1,5 +1,10 @@
 package base;
 
+import static base.Debug.error;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import processor.Processor;
 
 public abstract class Base extends Allocation {

@@ -6,11 +6,10 @@ import java.util.HashMap;
 import base.ElException;
 import base.ElException.MethodException;
 import base.ElException.NotFound;
+import base.ElException.ParserException;
 import base.EntityException;
 import base.SymbolReader;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Rules extends Base {
   public final String fileName;
@@ -97,7 +96,7 @@ public class Rules extends Base {
         }
       }
     } catch (ElException ex) {
-      error("Error in ruleset", currentLineReader.getError() + ex.message);
+      currentLineReader.showDebugMessage(ex.message);
     }
     
     root = subs.get("root");
@@ -189,7 +188,7 @@ public class Rules extends Base {
       , Sub currentSub) throws ElException {
     LinkedList<String> parts = listSplit(line, ':');
     if(parts.size() < 2)
-      throw new MethodException("Rules" , "parseLine", ": expected");
+      throw new ParserException(": expected before commands");
     Action actionChain = actionChain(parts.getLast(), back, currentSub);
     for(String token: listSplit(parts.getFirst(), ',')) {
       if(token.startsWith("\"")) {
@@ -218,11 +217,10 @@ public class Rules extends Base {
         Action.currentAction.execute();
     
       EntityStack.code.clear();
-    } catch (base.ElException ex) {
-      error("Parsing error", currentSymbolReader.getError() + ex.message);
+    } catch (ElException ex) {
+      currentSymbolReader.showDebugMessage(ex.message);
     } catch (EntityException ex) {
-      error("Parsing error", currentSymbolReader.getError() + ex.entity
-          + ex.message);
+      currentSymbolReader.showDebugMessage(ex.message);
     }
   }
 }

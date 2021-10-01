@@ -56,7 +56,7 @@ public class ActionCreate extends Action {
     currentAction = this;
     if(type == Module.id) {
       String name = EntityStack.id.pop().value.string;
-      Module.current.addModule(name);
+      Module.add(name);
       if(log) log("CREATE MODULE " + name);
     } else if(stack.isStringBased()) {
       String string = currentSymbolReader.getString();

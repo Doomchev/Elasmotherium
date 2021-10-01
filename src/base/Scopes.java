@@ -7,7 +7,7 @@ import static base.Debug.println;
 import java.util.LinkedList;
 
 public class Scopes extends Debug {
-  private static final NamedEntity[] scope = new NamedEntity[64];
+  private static final NamedEntity[] scope = new NamedEntity[1024];
   private static final LinkedList<Integer> scopeEnd = new LinkedList<>();
   private static int lastScopeEntry = -1;
       
@@ -32,17 +32,17 @@ public class Scopes extends Debug {
     throw new ElException.NotFound("getFunctionFromScope", name.string);
   }
   
-  public NamedEntity getVariableFromScope(ID name)
+  public NamedEntity getVariableFromScope(ID name, boolean isThis)
       throws ElException {
     for(int i = lastScopeEntry; i >= 0; i--)
-      if(scope[i].isValue(name)) return scope[i];
+      if(scope[i].isValue(name, isThis)) return scope[i];
     throw new ElException.NotFound("getVariableFromScope", name.string);
   }
   
   public ClassEntity getClassFromScope(ID name) throws ElException {
     for(int i = lastScopeEntry; i >= 0; i--) {
       NamedEntity entity = scope[i];
-      if(entity instanceof ClassEntity && entity.isValue(name))
+      if(entity instanceof ClassEntity && entity.isValue(name, false))
         return (ClassEntity) entity;
     }
     throw new ElException.NotFound("getClassFromScope", "Class " + name);

@@ -98,7 +98,17 @@ public class ElException extends Exception {
     }
   }
   
+  public static class ParserException extends ElException {
+    public ParserException(String message) {
+      super(message);
+    }
+  }
+  
   public final String message;
+  
+  protected ElException(String message) {
+    this.message = message;
+  }
   
   protected ElException(String object, String message) {
     this.message = object + ": " + message;

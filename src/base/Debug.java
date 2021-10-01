@@ -4,9 +4,15 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import vm.VMBase;
 import vm.VMCommand;
@@ -52,12 +58,30 @@ public class Debug extends StringFunctions {
   // debugger window
   
   private static JTextPane code = null;
+  private static JScrollPane codeView;
   private static int blockLine, blockColumn, blockWidth;
   
+  public static String readText(String fileName) {
+    try {
+      return new String(Files.readAllBytes(Paths.get(fileName))
+          , "UTF-8");
+    } catch (FileNotFoundException ex) {
+      error("I/O error", fileName + " not found.");
+    } catch (IOException ex) {
+      error("I/O error", "Cannot read " + fileName + ".");
+    }
+    return "";
+  }
+
   public static void showDebugMessage(String title, String message
-      , Module module, int textStart, int textEnd) {
-    String text = module.readText().replace("\t", "  ");
-    blockLine = 1; blockColumn = 0; blockWidth = 0;
+      , String text, int lineNumber) {
+    blockLine = lineNumber; blockColumn = 0; blockWidth = 0;
+    showDebugMessage(title, message, text);
+  }
+  
+  public static void showDebugMessage(String title, String message
+      , String text, int textStart, int textEnd) {
+    blockLine = 1; blockColumn = 0;
     for(int index = 0; index < textStart; index++) {
       if(text.charAt(index) == '\n') {
         blockLine++;
@@ -67,12 +91,17 @@ public class Debug extends StringFunctions {
       }
     }
     blockWidth = textEnd - textStart;
-    
+    showDebugMessage(title, message, text);
+  }
+  
+  public static void showDebugMessage(String title, String message
+      , String text) {
     if(code == null) {
       JFrame frame = new JFrame();
-      frame.setVisible(true);
       frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
       frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+      
+      codeView = new JScrollPane();
       code = new JTextPane() {
         @Override
         public void paintComponent(Graphics g) {
@@ -81,11 +110,21 @@ public class Debug extends StringFunctions {
           Graphics2D g2 = (Graphics2D) g;
 
           g2.setColor(new Color(255, 0, 0, 128));
+          
+          FontMetrics fm = code.getFontMetrics(code.getFont());
+          int symbolWidth = fm.charWidth('w');
+          int symbolHeight = fm.getHeight();
 
-          FontMetrics fm = getFontMetrics(getFont());
-          int x = fm.charWidth('w') * blockColumn;
-          int width = fm.charWidth('w') * blockWidth;
-          int y = fm.getHeight() * blockLine + 2;
+          /*for(int xx = 0; xx < 100; xx++) {
+            int x = symbolWidth * xx + 2;
+            int width = 1;
+            int y = symbolHeight * blockLine + 2;
+            g2.fillRect(x, y, width, 4);
+          }*/
+          
+          int x = symbolWidth * blockColumn + 3;
+          int width = blockWidth == 0 ? getWidth() : symbolWidth * blockWidth;
+          int y = symbolHeight * blockLine + 2;
           g2.fillRect(x, y, width, 4);
 
           g2.dispose();
@@ -98,12 +137,20 @@ public class Debug extends StringFunctions {
         }
       };
       code.setFont(new java.awt.Font("Monospaced", 0, 13));
-      frame.add(code);
+      
+      codeView.setViewportView(code);
+      frame.add(codeView);
+      frame.setVisible(true);
     }
     
-    code.setText(text);
-    
     println(message);
+    code.setText(text);
+    SwingUtilities.invokeLater(() -> {
+      FontMetrics fm = code.getFontMetrics(code.getFont());
+      codeView.getVerticalScrollBar().setValue(blockLine * fm.getHeight()
+          - codeView.getHeight() / 2);
+    });
+
     JOptionPane.showMessageDialog(null, message, title
         , JOptionPane.ERROR_MESSAGE);
     System.exit(1);

@@ -8,6 +8,7 @@ import base.ElException.CannotMove;
 import base.EntityException;
 import base.EntityException.CannotGet;
 import base.Module;
+import java.util.LinkedList;
 import processor.Processor;
 import vm.VMCommand;
 import vm.values.VMValue;
@@ -225,7 +226,11 @@ public abstract class Entity extends Base {
   }
   
   public void showDebugMessage(String message) {
-    showDebugMessage("Error while processing", message, module, textStart
-        , textEnd);
+    showDebugMessage("Error while processing", message
+        , module.readText().replace("\t", "  "), textStart, textEnd);
+  }
+
+  public String toString(LinkedList<Entity> parameters) {
+    return toString() + "(" + listToString(parameters) + ")";
   }
 }

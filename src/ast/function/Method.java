@@ -2,6 +2,7 @@ package ast.function;
 
 import ast.ClassEntity;
 import ast.Entity;
+import ast.ID;
 import ast.IDEntity;
 import base.ElException;
 import base.EntityException;
@@ -21,6 +22,11 @@ public class Method extends StaticFunction {
   @Override
   public int getCallDeallocation() {
     return parameters.size() + 1;
+  }
+  
+  @Override
+  public boolean isValue(ID name, boolean isThis) {
+    return this.name == name && fromParametersQuantity == 0;
   }
   
   // processing
