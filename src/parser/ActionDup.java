@@ -1,7 +1,7 @@
 package parser;
 
 import ast.ID;
-import base.ElException;
+import ast.exception.ElException;
 
 public class ActionDup extends Action {
   private final EntityStack stack;
@@ -17,7 +17,7 @@ public class ActionDup extends Action {
   
   @Override
   public void execute() throws ElException {
-    if(log) log("DUP " + stack.name);
+    if(log) log("DUP " + stack.name + " (" + stack.peek() + ")");
     stack.push(stack.peek());
     currentAction = nextAction;
   }

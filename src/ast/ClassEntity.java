@@ -3,10 +3,10 @@ package ast;
 import ast.function.Constructor;
 import ast.function.Method;
 import ast.function.StaticFunction;
-import base.ElException;
+import ast.exception.ElException;
 import vm.values.ObjectEntity;
-import base.EntityException;
-import base.EntityException.NotFound;
+import ast.exception.EntityException;
+import ast.exception.NotFound;
 import java.util.HashMap;
 import java.util.LinkedList;
 import vm.values.VMValue;
@@ -75,9 +75,9 @@ public class ClassEntity extends NamedEntity {
   }
   
   @Override
-  public Variable getField(ID name) throws EntityException {
+  public Variable getField(ID name) throws NotFound {
     for(Variable field: fields) if(field.name == name) return field;
-    throw new NotFound(this, "Field " + name + " in " + this.name);
+    throw new NotFound("Field " + name, this);
   }
 
   @Override
@@ -88,28 +88,29 @@ public class ClassEntity extends NamedEntity {
         return;
       }
     }
-    getMethod(name, 0).resolveChild(type);
+    try {
+      getMethod(name, 0).resolveChild(type);
+    } catch (NotFound ex) {
+      throw new EntityException(this, ex.message);
+    } 
   }
   
-  public Method getMethod(String name, int parametersQuantity)
-      throws EntityException {
+  public Method getMethod(String name, int parametersQuantity) throws NotFound {
     return getMethod(ID.get(name), parametersQuantity);
   }
   
   @Override
-  public Method getMethod(ID id, int parametersQuantity)
-      throws EntityException {
+  public Method getMethod(ID id, int parametersQuantity) throws NotFound {
     for(Method method: methods)
       if(method.isFunction(id, parametersQuantity)) return method;
-    throw new NotFound(this, this + "." + id + "&" + parametersQuantity);
+    throw new NotFound("method " + id, parametersQuantity, this);
   }
 
   public Constructor getConstructor(int parametersQuantity)
-      throws EntityException {
+      throws NotFound {
     for(Constructor constructor: constructors)
       if(constructor.matches(parametersQuantity)) return constructor;
-    throw new NotFound(this, "Constructor of " + toString() + " with "
-        + parametersQuantity + " parameters");
+    throw new NotFound("Constructor", parametersQuantity, this);
   }
   
   // adding child objects
@@ -171,7 +172,7 @@ public class ClassEntity extends NamedEntity {
     current = oldCurrent;
   }
 
-  public void processConstructors() throws EntityException {
+  public void processConstructors() throws NotFound {
     for(StaticFunction constructor: constructors)
       constructor.processConstructor(this);
   }

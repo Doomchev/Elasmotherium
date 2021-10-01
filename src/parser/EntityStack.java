@@ -3,9 +3,9 @@ package parser;
 import ast.*;
 import ast.function.*;
 import base.Base;
-import base.ElException;
-import base.ElException.CannotCreate;
-import base.ElException.MethodException;
+import ast.exception.ElException;
+import ast.exception.ElException.CannotCreate;
+import ast.exception.ElException.MethodException;
 import java.util.HashMap;
 import java.util.Stack;
 

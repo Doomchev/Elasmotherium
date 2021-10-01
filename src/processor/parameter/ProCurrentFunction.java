@@ -1,7 +1,7 @@
 package processor.parameter;
 
 import ast.Entity;
-import base.ElException;
+import ast.exception.ElException;
 
 public class ProCurrentFunction extends ProParameter {
   static ProCurrentFunction instance = new ProCurrentFunction();

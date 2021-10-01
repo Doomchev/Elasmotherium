@@ -2,7 +2,7 @@ package processor.block;
 
 import ast.Entity;
 import ast.ID;
-import base.EntityException;
+import ast.exception.EntityException;
 import processor.parameter.ProParameter;
 
 public class BlockParameter extends ProParameter {

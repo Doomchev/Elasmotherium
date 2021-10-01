@@ -1,7 +1,7 @@
 package parser;
 
-import base.ElException;
-import base.ElException.ActionException;
+import ast.exception.ElException;
+import ast.exception.ElException.ActionException;
 import base.LinkedMap;
 
 public class ActionSwitch extends Action {

@@ -1,7 +1,7 @@
 package processor.block;
 
 import ast.ID;
-import base.EntityException;
+import ast.exception.EntityException;
 import processor.parameter.ProParameter;
 import vm.VMCommand;
 public class BlockLabel extends ProParameter {

@@ -1,7 +1,7 @@
 package processor.parameter;
 
 import ast.Entity;
-import base.ElException;
+import ast.exception.ElException;
 import processor.ProBase;
 
 public class ProParam extends ProParameter {

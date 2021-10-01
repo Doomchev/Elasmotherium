@@ -2,8 +2,8 @@ package parser;
 
 import ast.Entity;
 import ast.function.NativeFunction;
-import base.ElException;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.EntityException;
 
 public class ActionMoveNewFunction extends Action {
   private final NativeFunction function;

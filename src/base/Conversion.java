@@ -1,5 +1,6 @@
 package base;
 
+import ast.exception.ElException;
 import ast.ClassEntity;
 import vm.VMCommand;
 

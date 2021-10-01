@@ -1,6 +1,6 @@
 package parser;
 
-import base.ElException;
+import ast.exception.ElException;
 
 class ActionForward extends Action {
   @Override

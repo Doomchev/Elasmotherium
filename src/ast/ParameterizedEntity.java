@@ -1,7 +1,7 @@
 package ast;
 
 import ast.function.FunctionCall;
-import base.EntityException;
+import ast.exception.EntityException;
 
 public class ParameterizedEntity extends Entity {
   public final Entity[] subTypes;

@@ -1,7 +1,5 @@
 package ast;
 
-import base.EntityException;
-
 public abstract class NamedEntity extends Entity {
   public final ID name;
 

@@ -3,10 +3,11 @@ package ast;
 import ast.function.CustomFunction;
 import ast.function.FunctionCall;
 import base.Base;
-import base.ElException;
-import base.ElException.CannotMove;
-import base.EntityException;
-import base.EntityException.CannotGet;
+import ast.exception.ElException;
+import ast.exception.ElException.CannotMove;
+import ast.exception.EntityException;
+import ast.exception.EntityException.CannotGet;
+import ast.exception.NotFound;
 import base.Module;
 import java.util.LinkedList;
 import processor.Processor;
@@ -14,8 +15,8 @@ import vm.VMCommand;
 import vm.values.VMValue;
 
 public abstract class Entity extends Base {
-  protected final Module module;
-  protected final int textStart, textEnd;
+  public Module module;
+  public int textStart, textEnd;
   
   public Entity(int textStart, int textEnd) {
     this.module = Module.current;
@@ -71,7 +72,7 @@ public abstract class Entity extends Base {
     throw new CannotGet("field", this);
   }
 
-  public Variable getField(ID name) throws EntityException {
+  public Variable getField(ID name) throws EntityException, NotFound {
     throw new CannotGet("field " + name, this);
   }
 
@@ -81,7 +82,7 @@ public abstract class Entity extends Base {
   }
   
   public Entity getMethod(ID name, int parametersQuantity)
-      throws EntityException {
+      throws NotFound, EntityException {
     throw new CannotGet("method " + name, this);
   }
 
@@ -226,7 +227,7 @@ public abstract class Entity extends Base {
   }
   
   public void showDebugMessage(String message) {
-    showDebugMessage("Error while processing", message
+    showDebugMessage(module.name + ".es", message
         , module.readText().replace("\t", "  "), textStart, textEnd);
   }
 

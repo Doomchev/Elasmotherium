@@ -3,8 +3,8 @@ package parser;
 import ast.ClassEntity;
 import ast.ID;
 import ast.Variable;
-import base.ElException;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.EntityException;
 
 public class ActionCreateBlockVariable extends Action {
   private final ID id;

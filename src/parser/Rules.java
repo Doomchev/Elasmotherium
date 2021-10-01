@@ -3,11 +3,11 @@ package parser;
 import base.Base;
 import base.LineReader;
 import java.util.HashMap;
-import base.ElException;
-import base.ElException.MethodException;
-import base.ElException.NotFound;
-import base.ElException.ParserException;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.ElException.MethodException;
+import ast.exception.ElException.ParserException;
+import ast.exception.EntityException;
+import ast.exception.NotFound;
 import base.SymbolReader;
 import java.util.LinkedList;
 
@@ -22,7 +22,7 @@ public class Rules extends Base {
   
   private final HashMap<String, SymbolMask> masks = new HashMap<>();
   
-  private SymbolMask getMask(String name) throws ElException {
+  private SymbolMask getMask(String name) throws NotFound {
     SymbolMask mask = masks.get(name);
     if(mask == null) throw new NotFound(fileName
         , "symbol mask \"" + name + "\"");
@@ -97,6 +97,8 @@ public class Rules extends Base {
       }
     } catch (ElException ex) {
       currentLineReader.showDebugMessage(ex.message);
+    } catch (NotFound ex) {
+      currentLineReader.showDebugMessage(ex.message);
     }
     
     root = subs.get("root");
@@ -126,7 +128,7 @@ public class Rules extends Base {
   }
   
   private Action actionChain(String commands, Action lastAction, Sub currentSub)
-      throws ElException {
+      throws ElException, NotFound {
     Action firstAction = null, currentAction = null;
     boolean exit = false;
     for(String command : listSplit(commands, ' ')) {
@@ -185,7 +187,7 @@ public class Rules extends Base {
   }
   
   private void parseLine(String line, ActionSwitch switchAction, Action back
-      , Sub currentSub) throws ElException {
+      , Sub currentSub) throws ElException, NotFound {
     LinkedList<String> parts = listSplit(line, ':');
     if(parts.size() < 2)
       throw new ParserException(": expected before commands");

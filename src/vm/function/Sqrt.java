@@ -1,6 +1,6 @@
 package vm.function;
 
-import base.ElException;
+import ast.exception.ElException;
 import vm.VMCommand;
 
 public class Sqrt extends VMCommand {

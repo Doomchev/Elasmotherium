@@ -1,7 +1,8 @@
-package base;
+package ast.exception;
 
 import ast.Entity;
 import ast.ID;
+import base.Base;
 import parser.Action;
 import parser.EntityStack;
 import processor.ProCommand;
@@ -11,7 +12,7 @@ import vm.values.VMValue;
 
 public class ElException extends Exception {
   public static class NotFound extends ElException {
-    public NotFound(String object, String what) {
+    public NotFound(Base object, String what) {
       super(object, what + " is not found");
     }
   }

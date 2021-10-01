@@ -1,6 +1,6 @@
 package ast;
 
-import base.EntityException;
+import ast.exception.EntityException;
 import static base.StringFunctions.listToString;
 import java.util.LinkedList;
 

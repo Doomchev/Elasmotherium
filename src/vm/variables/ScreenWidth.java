@@ -1,6 +1,6 @@
 package vm.variables;
 
-import base.ElException;
+import ast.exception.ElException;
 import vm.VMCommand;
 
 public class ScreenWidth extends VMCommand {

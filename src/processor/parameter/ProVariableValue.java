@@ -1,7 +1,7 @@
 package processor.parameter;
 
 import ast.Entity;
-import base.EntityException;
+import ast.exception.EntityException;
 
 public class ProVariableValue extends ProParameter {
   static ProVariableValue instance = new ProVariableValue();

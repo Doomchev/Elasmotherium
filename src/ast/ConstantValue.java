@@ -1,7 +1,7 @@
 package ast;
 
-import base.EntityException;
-import base.EntityException.MethodException;
+import ast.exception.EntityException;
+import ast.exception.EntityException.MethodException;
 
 public class ConstantValue extends Value {
   public static final ID id = ID.get("const");

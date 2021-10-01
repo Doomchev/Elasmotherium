@@ -1,3 +1,5 @@
+import Image;
+
 class TileMap {
   Int cellXQuantity, cellYQuantity, cellWidth, cellHeight;
   Array<Int> tiles;

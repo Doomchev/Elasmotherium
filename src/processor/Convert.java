@@ -1,8 +1,8 @@
 package processor;
 
 import processor.parameter.ProParameter;
-import base.ElException;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.EntityException;
 
 class Convert extends ProCommand {
   static final Convert instance = new Convert(null, null);

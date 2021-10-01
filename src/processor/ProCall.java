@@ -3,8 +3,8 @@ package processor;
 import processor.parameter.ProParameter;
 import ast.Entity;
 import ast.ID;
-import base.ElException;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.EntityException;
 
 public class ProCall extends ProCommand {
   private final ProParameter callObject, parameter;

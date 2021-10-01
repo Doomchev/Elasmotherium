@@ -1,8 +1,8 @@
 package processor;
 
-import base.ElException;
-import base.ElException.CannotCreate;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.ElException.CannotCreate;
+import ast.exception.EntityException;
 import vm.VMBase;
 import vm.VMCommand;
 

@@ -4,8 +4,8 @@ import ast.ClassEntity;
 import ast.Entity;
 import ast.ID;
 import ast.IDEntity;
-import base.ElException;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.EntityException;
 import vm.object.ObjectVarPush;
 
 public class Method extends StaticFunction {

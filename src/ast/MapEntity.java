@@ -1,6 +1,6 @@
 package ast;
 
-import base.ElException;
+import ast.exception.ElException;
 import base.LinkedMap;
 
 public class MapEntity extends Entity {

@@ -1,8 +1,8 @@
 package vm;
 
-import base.ElException;
-import base.ElException.CannotCreate;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.ElException.CannotCreate;
+import ast.exception.EntityException;
 import java.util.LinkedList;
 import processor.parameter.ProParameter;
 

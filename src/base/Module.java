@@ -1,15 +1,13 @@
 package base;
 
+import ast.exception.EntityException;
 import vm.texture.*;
 import vm.function.*;
 import ast.ClassEntity;
 import parser.Rules;
 import ast.function.StaticFunction;
 import ast.ID;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import ast.exception.NotFound;
 import java.util.Stack;
 import java.util.TreeSet;
 import processor.Processor;
@@ -116,27 +114,27 @@ public class Module extends Base {
   }
   
   private void newFunction(VMCommand command, int parametersQuantity)
-      throws EntityException {
+      throws NotFound {
     String functionName = decapitalize(command.getClass().getSimpleName());
     function.getFunction(ID.get(removeLastDigit(functionName))
         , parametersQuantity).setCommand(command);
   }
 
   private void newFunction(String className, String methodName
-      , int parametersQuantity, VMCommand command) throws EntityException {
+      , int parametersQuantity, VMCommand command) throws NotFound {
     ClassEntity.get(className).getMethod(methodName, parametersQuantity)
         .setCommand(command);
   }
 
   private void newConstructor(String className, int parametersQuantity
-      , VMCommand command, VMValue value) throws EntityException {
+      , VMCommand command, VMValue value) throws NotFound {
     ClassEntity classEntity = ClassEntity.get(className);
     classEntity.getConstructor(parametersQuantity)
         .setCommand(command);
     classEntity.setValue(value);
   }
   
-  public void process() throws EntityException {
+  public void process() throws EntityException, NotFound {
     function.processConstructors();
     
     currentFunction = function;

@@ -1,9 +1,9 @@
 package parser;
 
 import base.Base;
-import base.ElException;
-import base.ElException.MethodException;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.ElException.MethodException;
+import ast.exception.EntityException;
 import java.util.Stack;
 
 public abstract class Action extends Base {

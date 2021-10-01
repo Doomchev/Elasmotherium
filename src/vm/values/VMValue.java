@@ -1,9 +1,9 @@
 package vm.values;
 
-import base.ElException;
-import base.ElException.Cannot;
-import base.ElException.CannotGet;
-import base.ElException.CannotSet;
+import ast.exception.ElException;
+import ast.exception.ElException.Cannot;
+import ast.exception.ElException.CannotGet;
+import ast.exception.ElException.CannotSet;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import vm.VMBase;

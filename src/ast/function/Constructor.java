@@ -5,8 +5,9 @@ import ast.Entity;
 import ast.ID;
 import ast.Type;
 import ast.Variable;
-import base.ElException;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.EntityException;
+import ast.exception.NotFound;
 
 public class Constructor extends StaticFunction {
   protected ClassEntity parentClass = null;
@@ -39,7 +40,7 @@ public class Constructor extends StaticFunction {
 
   @Override
   public void processConstructor(ClassEntity classEntity)
-      throws EntityException {
+      throws NotFound {
     for(Variable param: parameters)
       param.processField(classEntity, code);
   }

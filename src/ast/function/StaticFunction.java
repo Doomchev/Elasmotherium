@@ -6,8 +6,8 @@ import ast.Entity;
 import ast.ID;
 import ast.IDEntity;
 import ast.Variable;
-import base.ElException;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.EntityException;
 import vm.VMCommand;
 
 public class StaticFunction extends CustomFunction {

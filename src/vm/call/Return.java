@@ -1,6 +1,6 @@
 package vm.call;
 
-import base.ElException;
+import ast.exception.ElException;
 import processor.parameter.ProParameter;
 import vm.VMCommand;
 

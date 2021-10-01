@@ -1,6 +1,6 @@
 package vm.collection;
 
-import base.ElException;
+import ast.exception.ElException;
 import vm.VMBase;
 import vm.VMCommand;
 import vm.values.I64ArrayValue;

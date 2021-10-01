@@ -3,8 +3,9 @@ package ast;
 import ast.function.CustomFunction;
 import ast.function.FunctionCall;
 import ast.function.NativeFunction;
-import base.ElException;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.EntityException;
+import ast.exception.NotFound;
 import processor.Processor;
 import vm.values.VMValue;
 
@@ -81,7 +82,7 @@ public class Variable extends NamedEntity {
   
   @Override
   public boolean isValue(ID name, boolean isThis) {
-    return this.name == name && isThis == isField;
+    return this.name == name && (!isThis || isField);
   }
   
   // preprocessing
@@ -109,7 +110,7 @@ public class Variable extends NamedEntity {
   }
 
   public void processField(ClassEntity classEntity, Code code)
-      throws EntityException {
+      throws NotFound {
     if(!isField) return;
     Variable field = classEntity.getField(name);
     FunctionCall equate = new FunctionCall(NativeFunction.equate);

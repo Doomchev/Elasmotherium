@@ -4,8 +4,9 @@ import base.Module;
 import ast.Block;
 import ast.ID;
 import ast.function.NativeFunction;
-import base.ElException;
-import base.ElException.MethodException;
+import ast.exception.ElException;
+import ast.exception.ElException.MethodException;
+import ast.exception.NotFound;
 
 public class ActionCreate extends Action {
   private final EntityStack stack;
@@ -30,7 +31,7 @@ public class ActionCreate extends Action {
       try {
         function0 = NativeFunction.get(id);
         stack0 = EntityStack.function;
-      } catch(ElException ex) {
+      } catch(NotFound ex) {
         function0 = null;
         stack0 = EntityStack.all.get(id);
         if(stack0 == null)

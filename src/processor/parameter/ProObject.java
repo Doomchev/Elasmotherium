@@ -1,6 +1,6 @@
 package processor.parameter;
 
-import base.ElException;
+import ast.exception.ElException;
 import vm.VMFieldCommand;
 
 public class ProObject extends ProParameter {

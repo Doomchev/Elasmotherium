@@ -1,4 +1,4 @@
-package base;
+package ast.exception;
 
 import ast.Entity;
 import ast.ID;
@@ -15,12 +15,6 @@ public class EntityException extends Exception {
   public static class NotFound extends EntityException {
     public NotFound(Entity entity, String what) {
       super(entity, what + " is not found");
-    }
-    public NotFound(Entity entity, String what, String where) {
-      super(entity, what + " is not found in " + where);
-    }
-    public NotFound(Entity entity, String what, Base where) {
-      this(entity, what, where.toString());
     }
   }
   

@@ -1,7 +1,7 @@
 package ast;
 
 import ast.function.FunctionCall;
-import base.ElException;
+import ast.exception.ElException;
 import java.util.LinkedList;
 
 public class Parameters extends Value {

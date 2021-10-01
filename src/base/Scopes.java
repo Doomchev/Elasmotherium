@@ -1,8 +1,10 @@
 package base;
 
+import ast.exception.ElException;
 import ast.ClassEntity;
 import ast.ID;
 import ast.NamedEntity;
+import ast.exception.NotFound;
 import static base.Debug.println;
 import java.util.LinkedList;
 
@@ -26,26 +28,26 @@ public class Scopes extends Debug {
   }
   
   public NamedEntity getFunctionFromScope(ID name, int parametersQuantity)
-      throws ElException {
+      throws NotFound {
     for(int i = lastScopeEntry; i >= 0; i--)
       if(scope[i].isFunction(name, parametersQuantity)) return scope[i];
-    throw new ElException.NotFound("getFunctionFromScope", name.string);
+    throw new NotFound("Function " + name.string, parametersQuantity);
   }
   
   public NamedEntity getVariableFromScope(ID name, boolean isThis)
-      throws ElException {
+      throws NotFound {
     for(int i = lastScopeEntry; i >= 0; i--)
       if(scope[i].isValue(name, isThis)) return scope[i];
-    throw new ElException.NotFound("getVariableFromScope", name.string);
+    throw new NotFound("Variable " + name.string);
   }
   
-  public ClassEntity getClassFromScope(ID name) throws ElException {
+  public ClassEntity getClassFromScope(ID name) throws NotFound {
     for(int i = lastScopeEntry; i >= 0; i--) {
       NamedEntity entity = scope[i];
       if(entity instanceof ClassEntity && entity.isValue(name, false))
         return (ClassEntity) entity;
     }
-    throw new ElException.NotFound("getClassFromScope", "Class " + name);
+    throw new NotFound("Class " + name);
   }
   
   public void printScope() {

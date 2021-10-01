@@ -1,6 +1,6 @@
 package vm.i64.field;
 
-import base.ElException;
+import ast.exception.ElException;
 import vm.VMCommand;
 import vm.VMFieldCommand;
 

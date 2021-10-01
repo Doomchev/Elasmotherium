@@ -1,6 +1,6 @@
 package vm.i64;
 
-import base.ElException;
+import ast.exception.ElException;
 import vm.VMCommand;
 import vm.values.I64Value;
 

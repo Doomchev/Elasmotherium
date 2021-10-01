@@ -1,6 +1,6 @@
 package vm.string;
 
-import base.ElException;
+import ast.exception.ElException;
 import vm.VMCommand;
 import vm.values.StringValue;
 

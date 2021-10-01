@@ -1,6 +1,6 @@
 package vm.i64;
 
-import base.ElException;
+import ast.exception.ElException;
 import vm.VMCommand;
 
 public class I64IteratorNext extends VMCommand {

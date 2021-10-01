@@ -6,11 +6,12 @@ import processor.block.BlockParameter;
 import ast.ClassEntity;
 import ast.Entity;
 import ast.ID;
-import base.ElException;
-import base.ElException.Cannot;
-import base.ElException.CannotGet;
-import base.ElException.MethodException;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.ElException.Cannot;
+import ast.exception.ElException.CannotGet;
+import ast.exception.ElException.MethodException;
+import ast.exception.EntityException;
+import ast.exception.NotFound;
 import processor.ProBase;
 import vm.VMCommand;
 

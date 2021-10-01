@@ -1,8 +1,9 @@
 package ast;
 
 import ast.function.CustomFunction;
-import base.ElException;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.EntityException;
+import ast.exception.NotFound;
 import java.util.LinkedList;
 
 public class Link extends Value {
@@ -55,7 +56,7 @@ public class Link extends Value {
         index++;
       }
       return new Type(basicClass, resolvedTypes);
-    } catch (ElException ex) {
+    } catch (NotFound ex) {
       throw new EntityException(this, ex.message);
     }
   }
@@ -65,7 +66,7 @@ public class Link extends Value {
       throws EntityException {
     try {
       return getFunctionFromScope(name, parametersQuantity);
-    } catch (ElException ex) {
+    } catch (NotFound ex) {
       throw new EntityException(this, ex.message);
     }
 }
@@ -74,7 +75,7 @@ public class Link extends Value {
   public void resolve(Entity type) throws EntityException {
     try {
       getVariableFromScope(name, isThis).resolve(type);
-    } catch (ElException ex) {
+    } catch (NotFound ex) {
       throw new EntityException(this, ex.message);
     }
   }

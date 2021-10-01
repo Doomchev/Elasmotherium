@@ -18,14 +18,16 @@ import ast.Entity;
 import ast.ID;
 import ast.function.FunctionCall;
 import base.LineReader;
-import base.ElException;
-import base.ElException.MethodException;
-import base.ElException.NotFound;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.ElException.MethodException;
+import ast.exception.ElException.NotFound;
+import ast.exception.EntityException;
 import base.LinkedMap;
 import base.Module;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Processor extends ProBase {
   public static final ID callMethod = ID.get("call");
@@ -179,7 +181,7 @@ public class Processor extends ProBase {
                 } else {
                   VMCommand command = commands.get(line);
                   if(command == null)
-                    throw new NotFound("Processor", "Command " + line);
+                    throw new ElException.NotFound(this, "Command " + line);
                   code.add(AppendCommand.create(command, param));
                 }
               }
@@ -274,6 +276,8 @@ public class Processor extends ProBase {
       module.process();
     } catch (EntityException ex) {
       ex.entity.showDebugMessage(ex.message);
+    } catch (ast.exception.NotFound ex) {
+      error("Processing error", ex.message);
     }
   }
 }

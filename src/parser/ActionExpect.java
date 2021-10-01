@@ -1,7 +1,7 @@
 package parser;
 
-import base.ElException;
-import base.ElException.ActionException;
+import ast.exception.ElException;
+import ast.exception.ElException.ActionException;
 
 public class ActionExpect extends Action {
   private final char symbol;

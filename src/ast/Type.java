@@ -1,8 +1,9 @@
 package ast;
 
 import ast.function.Method;
-import base.EntityException;
-import base.EntityException.Cannot;
+import ast.exception.EntityException;
+import ast.exception.EntityException.Cannot;
+import ast.exception.NotFound;
 import java.util.Arrays;
 import vm.values.VMValue;
 
@@ -29,7 +30,7 @@ public class Type extends Entity {
   }
   
   @Override
-  public Entity getMethod(ID id, int parametersQuantity) throws EntityException {
+  public Entity getMethod(ID id, int parametersQuantity) throws NotFound {
     Method method = basicClass.getMethod(id, parametersQuantity);
     if(subtypes.length == 0) return method;
     return new ParameterizedEntity(subtypes, method);

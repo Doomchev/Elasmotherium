@@ -2,9 +2,9 @@ package processor.parameter;
 
 import ast.Entity;
 import ast.function.FunctionCall;
-import base.ElException;
-import base.ElException.MethodException;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.ElException.MethodException;
+import ast.exception.NotFound;
 import processor.ProBase;
 
 public class ProCallParameter extends ProParameter {
@@ -21,8 +21,13 @@ public class ProCallParameter extends ProParameter {
   }
 
   @Override
-  public Entity getValue() throws EntityException {
-    return ((FunctionCall) ProBase.currentObject).getParameter(index);
+  public Entity getValue() throws ElException {
+    try {
+      return ((FunctionCall) ProBase.currentObject).getParameter(index);
+    } catch (NotFound ex) {
+      throw new ElException.MethodException("ProCallParameter", "getValue"
+          , ex.message);
+    }
   }
 
   @Override

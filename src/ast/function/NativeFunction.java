@@ -3,88 +3,97 @@ package ast.function;
 import ast.Entity;
 import ast.Formula;
 import ast.ID;
-import base.ElException;
-import base.EntityException;
-import base.ElException.NotFound;
+import ast.exception.ElException;
+import ast.exception.EntityException;
+import ast.exception.NotFound;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+@SuppressWarnings("ResultOfObjectAllocationIgnored")
 public class NativeFunction extends Function {
+  private static class UnaryNativeFunction extends NativeFunction {
+    public UnaryNativeFunction(String name, int priority, String operator) {
+      super(name, priority, operator);
+    }
+    @Override
+    public String toString(LinkedList<Entity> parameters) {
+      return operator + parameters.getFirst();
+    }
+  }
+  
   private static final HashMap<ID, NativeFunction> all = new HashMap<>();
-  public static NativeFunction ret, equate, dot, callFunction, at;
+  public static NativeFunction ret, equate, dot, callFunction;
   
   public final byte priority;
   public final String operator;
   
-  public NativeFunction(ID name, byte priority, String operator) {
-    super(name, 0, 0);
-    this.priority = priority;
+  private NativeFunction(String name, int priority, String operator) {
+    super(ID.get(name), 0, 0);
+    this.priority = (byte) priority;
     this.operator = operator;
+    all.put(this.name, this);
   }
   
-  private static NativeFunction create(String name, int priority
-      , String operator) {
-    ID functionID = ID.get(name);
-    NativeFunction function = new NativeFunction(functionID, (byte) priority
-        , operator);
-    all.put(functionID, function);
-    return function;
-  }
-  
-  private static NativeFunction create(String name, int priority) {
-    return create(name, priority, "");
+  private NativeFunction(String name, int priority) {
+    this(name, priority, "");
   }
 
-  public static NativeFunction get(String name) throws ElException {
+  public static NativeFunction get(String name) throws NotFound {
     return get(ID.get(name));
   }
 
-  public static NativeFunction get(ID name) throws ElException {
+  public static NativeFunction get(ID name) throws NotFound {
     NativeFunction function = all.get(name);
     if(function != null) return function;
-    throw new NotFound("NativeFunction.get", "Native function " + name);
+    throw new NotFound("Native function " + name);
   }
   
   static {
-    create("brackets", 18);
+    new NativeFunction("brackets", 18);
     
-    dot = create("dot", 17, ".");
-    callFunction = create("callFunction", 17);
-    at = create("at", 17);
+    dot = new NativeFunction("dot", 17, ".");
+    callFunction = new NativeFunction("callFunction", 17);
+    new NativeFunction("at", 17) {
+      @Override
+      public String toString(LinkedList<Entity> parameters) {
+        return parameters.getFirst() + "[" + parameters.getLast() + "]";
+      }
+    };
     
-    create("negative", 16, "-");
-    create("not", 16, "!");
-    create("iDivision", 14, " ~/ ");
-    create("mod", 14, " % ");
-    create("division", 14, " / ");
-    create("subtraction", 13, " - ");
-    create("multiplication", 14, " * ");
-    create("addition", 13, " + ");
-    create("bitAnd", 11, " & ");
-    create("bitOr", 10, " | ");
-    create("less", 8, " < ");
-    create("more", 8, " > ");
-    create("lessOrEqual", 8, " <= ");
-    create("moreOrEqual", 8, " >= ");
-    create("equal", 7, " == ");
-    create("notEqual", 7, " != ");
-    create("and", 6, " && ");
-    create("or", 5, " || ");
-    create("ifOp", 4);
+    new UnaryNativeFunction("negative", 16, "-");
+    new UnaryNativeFunction("not", 16, "!");
     
-    create("increment", 3);
-    create("decrement", 3);
-    equate = create("equate", 3, " = ");
-    create("add", 3);
-    create("subtract", 3);
-    create("multiply", 3);
-    create("divide", 3);
-    create("iDivide", 3);
-    create("mode", 3);
+    new NativeFunction("iDivision", 14, " ~/ ");
+    new NativeFunction("mod", 14, " % ");
+    new NativeFunction("division", 14, " / ");
+    new NativeFunction("subtraction", 13, " - ");
+    new NativeFunction("multiplication", 14, " * ");
+    new NativeFunction("addition", 13, " + ");
+    new NativeFunction("bitAnd", 11, " & ");
+    new NativeFunction("bitOr", 10, " | ");
+    new NativeFunction("less", 8, " < ");
+    new NativeFunction("more", 8, " > ");
+    new NativeFunction("lessOrEqual", 8, " <= ");
+    new NativeFunction("moreOrEqual", 8, " >= ");
+    new NativeFunction("equal", 7, " == ");
+    new NativeFunction("notEqual", 7, " != ");
+    new NativeFunction("and", 6, " && ");
+    new NativeFunction("or", 5, " || ");
+    new NativeFunction("ifOp", 4);
     
-    create("break", 0);
-    create("continue", 0);
-    ret = create("return", 0);
+    new NativeFunction("increment", 3);
+    new NativeFunction("decrement", 3);
+    equate = new NativeFunction("equate", 3, " = ");
+    new NativeFunction("add", 3);
+    new NativeFunction("subtract", 3);
+    new NativeFunction("multiply", 3);
+    new NativeFunction("divide", 3);
+    new NativeFunction("iDivide", 3);
+    new NativeFunction("mode", 3);
+    
+    new NativeFunction("break", 0);
+    new NativeFunction("continue", 0);
+    ret = new NativeFunction("return", 0);
   }
   
   // properties
@@ -131,11 +140,8 @@ public class NativeFunction extends Function {
 
   @Override
   public String toString(LinkedList<Entity> parameters) {
-    if(this == at)
-      return parameters.getFirst() + "[" + parameters.getLast() + "]";
     if(operator.isEmpty() || parameters.isEmpty())
       return super.toString(parameters);
-    if(parameters.size() == 1) return operator + parameters.getFirst();
     return parameters.getFirst() + operator + parameters.getLast();
   }
 }

@@ -1,7 +1,7 @@
 package vm.texture;
 
-import base.ElException;
-import base.ElException.NotFound;
+import ast.exception.ElException;
+import ast.exception.ElException.NotFound;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class Texture extends VMValue {
     try {
       this.image = ImageIO.read(new File(workingPath + "/" + fileName));
     } catch(IOException ex) {
-      throw new NotFound("Texture", fileName);
+      throw new NotFound(this, "Texture " + fileName);
     }
   }
   

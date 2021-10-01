@@ -1,8 +1,8 @@
 package ast;
 
-import base.ElException;
-import base.EntityException;
-import base.EntityException.NotFound;
+import ast.exception.ElException;
+import ast.exception.EntityException;
+import ast.exception.EntityException.NotFound;
 import base.LinkedMap;
 import java.util.LinkedList;
 import processor.parameter.ProParameter;
@@ -48,7 +48,7 @@ public class Block extends Entity {
   public Label getLabel(ID name) throws EntityException {
     for(Label label: labels) if(label.name == name) return label;
     if(parentBlock == null)
-      throw new NotFound(this, "Label " + name + " is not found.");
+      throw new NotFound(this, "Label " + name);
     return parentBlock.getLabel(name);
   }
 
@@ -68,8 +68,7 @@ public class Block extends Entity {
         while(true) {
           if(label.position >= 0) break;
           block = block.parentBlock;
-          if(block == null)
-            throw new NotFound(this, "Label " + name);
+          if(block == null) throw new NotFound(this, "Label " + name);
           label = block.getLabel(name);
         }
         command.setPosition(label.position);
@@ -91,7 +90,7 @@ public class Block extends Entity {
   public Variable getVariable(ID name) throws EntityException {
     for(Variable variable: variables)
       if(variable.name == name) return variable;
-    throw new NotFound(this, "Variable " + name, this);
+    throw new NotFound(this, "Variable " + name);
   }
   
   // properties
@@ -116,10 +115,10 @@ public class Block extends Entity {
     if(log) println(type.string);
     try {
       currentProcessor.processBlock(this, type);
+      applyLabels();
     } catch (ElException ex) {
       throw new EntityException(this, ex.message);
     }
-    applyLabels();
   }
   
   // moving functions

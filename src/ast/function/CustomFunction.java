@@ -6,9 +6,10 @@ import ast.Entity;
 import ast.ID;
 import ast.IDEntity;
 import ast.Variable;
-import base.ElException;
-import base.EntityException;
-import base.EntityException.Cannot;
+import ast.exception.ElException;
+import ast.exception.EntityException;
+import ast.exception.EntityException.Cannot;
+import ast.exception.NotFound;
 import java.util.LinkedList;
 import parser.EntityStack;
 import vm.VMCommand;
@@ -79,7 +80,7 @@ public abstract class CustomFunction extends Function {
   } 
   
   public StaticFunction getFunction(ID id, int parametersQuantity)
-      throws EntityException {
+      throws NotFound {
     return code.getFunction(id, parametersQuantity);
   }
   
@@ -112,12 +113,12 @@ public abstract class CustomFunction extends Function {
   
   // preprocessing
 
-  public void processConstructor(ClassEntity classEntity) throws EntityException {
+  public void processConstructor(ClassEntity classEntity) throws NotFound {
     for(Variable param: parameters)
       param.processField(classEntity, code);
   }
 
-  public void processConstructors() throws EntityException {
+  public void processConstructors() throws NotFound {
     code.processConstructors();
   }
   

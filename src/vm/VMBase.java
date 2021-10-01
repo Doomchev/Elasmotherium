@@ -2,7 +2,7 @@ package vm;
 
 import vm.call.VMFunctionCall;
 import base.Base;
-import base.ElException;
+import ast.exception.ElException;
 import base.Module;
 import java.awt.Graphics;
 import java.util.Arrays;

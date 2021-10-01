@@ -3,9 +3,10 @@ package parser;
 import ast.Entity;
 import ast.ID;
 import ast.function.NativeFunction;
-import base.ElException;
-import base.ElException.ActionException;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.ElException.ActionException;
+import ast.exception.EntityException;
+import ast.exception.NotFound;
 
 public class ActionMove extends Action {
   private final EntityStack<Entity> from, to;
@@ -23,8 +24,12 @@ public class ActionMove extends Action {
     String[] param = params.split(",");
     EntityStack<Entity> stack0 = EntityStack.all.get(ID.get(param[0]));
     if(stack0 == null) {
-      return new ActionMoveNewFunction(
-          NativeFunction.get(param[0]), EntityStack.get(param[1]));
+      try {
+        return new ActionMoveNewFunction(
+            NativeFunction.get(param[0]), EntityStack.get(param[1]));
+      } catch (NotFound ex) {
+        throw new ActionException(this, "MOVE", ex.message);
+      }
     } else {
       if(param.length == 1) {
         return new ActionMove(stack0, stack0, copy);
@@ -40,7 +45,7 @@ public class ActionMove extends Action {
   public void execute() throws ElException, EntityException {
     currentAction = this;
     Entity entity = copy ? from.peek() : from.pop();
-    if(log) log("MOVING " + from.name.string + " to " + to.name.string + "("
+    if(log) log("MOVING " + entity + " to " + to + "("
         + to.peek().toString() + ")");
     to.peek().move(entity);
     currentAction = nextAction;

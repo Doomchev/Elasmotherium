@@ -1,8 +1,8 @@
 package processor;
 
 import processor.parameter.ProParameter;
-import base.ElException;
-import base.EntityException;
+import ast.exception.ElException;
+import ast.exception.EntityException;
 
 public class GetField extends ProCommand {
   static final GetField instance = new GetField(null);

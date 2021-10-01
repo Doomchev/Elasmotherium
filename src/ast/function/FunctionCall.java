@@ -6,10 +6,10 @@ import ast.Entity;
 import ast.ID;
 import ast.Value;
 import ast.Variable;
-import base.ElException;
-import base.EntityException;
-import base.EntityException.Cannot;
-import base.EntityException.NotFound;
+import ast.exception.ElException;
+import ast.exception.EntityException;
+import ast.exception.EntityException.Cannot;
+import ast.exception.NotFound;
 import java.util.LinkedList;
 
 public class FunctionCall extends Value {
@@ -28,6 +28,10 @@ public class FunctionCall extends Value {
   // child objects
 
   public void add(Entity value) {
+    if(textEnd == 0) {
+      textStart = value.textStart;
+      textEnd = value.textEnd;
+    }
     parameters.add(value);
   }
 
@@ -53,10 +57,14 @@ public class FunctionCall extends Value {
 
   @Override
   public Variable getField() throws EntityException {
-    if(function == NativeFunction.dot && parameters.size() == 2)
-      return parameters.getFirst().getObject()
-          .getField(parameters.getLast().getName());
-    return super.getField();
+    try {
+      if(function == NativeFunction.dot && parameters.size() == 2)
+        return parameters.getFirst().getObject()
+            .getField(parameters.getLast().getName());
+      return super.getField();
+    } catch (NotFound ex) {
+      throw new EntityException(this, ex.message);
+    }
   }
 
   public Entity getFunction() {
@@ -67,9 +75,9 @@ public class FunctionCall extends Value {
     this.function = function;
   }
   
-  public Entity getParameter(int index) throws EntityException {
+  public Entity getParameter(int index) throws NotFound {
     if(index >= parameters.size())
-      throw new NotFound(this, "Parameter number " + index);
+      throw new NotFound("Parameter number " + index, this);
     return parameters.get(index);
   }
 
@@ -93,8 +101,12 @@ public class FunctionCall extends Value {
       if(parameters.size() != 2)
         throw new Cannot("resolve", this);
       Entity type = parameters.getFirst().getObject();
-      return type.getMethod(parameters.getLast().getName()
-          , parametersQuantity);
+      try {
+        return type.getMethod(parameters.getLast().getName()
+            , parametersQuantity);
+      } catch(NotFound ex) {
+        throw new EntityException(this, ex.message);
+      }
     }
     Entity func = function.resolveFunction(thisParametersQuantity);
     func.process(this);

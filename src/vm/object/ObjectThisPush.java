@@ -1,6 +1,6 @@
 package vm.object;
 
-import base.ElException;
+import ast.exception.ElException;
 import vm.VMCommand;
 
 public class ObjectThisPush extends VMCommand {
