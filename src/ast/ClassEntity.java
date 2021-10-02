@@ -9,6 +9,8 @@ import ast.exception.EntityException;
 import ast.exception.NotFound;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import vm.values.VMValue;
 
 public class ClassEntity extends NamedEntity {
@@ -198,6 +200,15 @@ public class ClassEntity extends NamedEntity {
     
     deallocateScope();
     current = oldCurrent;
+  }
+  
+  @Override
+  public void resolve(Entity type) throws EntityException {
+    try {
+      convert(getNativeClass(), type.getNativeClass());
+    } catch (ElException ex) {
+      throw new EntityException(this, ex.message);
+    }
   }
   
   // moving funcitons

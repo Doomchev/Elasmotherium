@@ -11,6 +11,8 @@ import ast.exception.EntityException;
 import ast.exception.EntityException.Cannot;
 import ast.exception.NotFound;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FunctionCall extends Value {
   public static final ID id = ID.get("call");
@@ -84,6 +86,11 @@ public class FunctionCall extends Value {
   public void setParameter(int index, Entity value) {
     parameters.set(index, value);
   }
+
+  @Override
+  public Entity getErrorEntity() {
+    return function.getErrorEntity();
+  }
   
   // processing
   
@@ -116,18 +123,22 @@ public class FunctionCall extends Value {
 
   @Override
   public void resolve(Entity type) throws EntityException {
-    if(function == NativeFunction.dot) {
-      parameters.getFirst().getObject()
-          .resolveField(parameters.getLast().getName(), type);
-    } else if(function instanceof NativeFunction) {
-      try {
-        currentProcessor.resolveCall(this, function.getName(), type);
-      } catch (ElException ex) {
-        throw new EntityException(this, ex.message);
+    try {
+      if(function == NativeFunction.dot) {
+        parameters.getFirst().getObject()
+            .resolveField(parameters.getLast().getName(), type);
+      } else if(function instanceof NativeFunction) {
+        try {
+          currentProcessor.resolveCall(this, function.getName(), type);
+        } catch (ElException ex) {
+          throw new EntityException(this, ex.message);
+        }
+      } else {
+        function.resolveFunction(parameters.size()).resolve(type, this);
       }
-    } else {
-      function.resolveFunction(parameters.size()).resolve(type, this);
-    }
+    } catch (EntityException ex) {
+      throw new EntityException(function, ex.message);
+    } 
   }
   
   @Override

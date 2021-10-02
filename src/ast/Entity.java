@@ -89,6 +89,10 @@ public abstract class Entity extends Base {
   public Entity[] getSubTypes(ID classID, int quantity) throws EntityException {
     throw new CannotGet("sub types", this);
   }
+
+  public Entity getErrorEntity() {
+    return this;
+  }
   
   // processing
     
@@ -228,7 +232,7 @@ public abstract class Entity extends Base {
   
   public void showDebugMessage(String message) {
     showDebugMessage(module.name + ".es", message
-        , module.readText().replace("\t", "  "), textStart, textEnd);
+        , module.readText(), textStart, textEnd);
   }
 
   public String toString(LinkedList<Entity> parameters) {

@@ -8,7 +8,7 @@ public class EntityException extends Exception {
   public final Entity entity;
 
   public EntityException(Entity entity, String message) {
-    this.entity = entity;
+    this.entity = entity.getErrorEntity();
     this.message = message;
   }
   

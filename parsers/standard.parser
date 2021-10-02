@@ -20,6 +20,48 @@ ERROR error: \0
 
 
 
+// functions
+
+FUNCTION brackets, 18, "(a)"
+
+FUNCTION dot, 17, "a.b"
+FUNCTION callFunction, 17
+FUNCTION at, 17, "a[b]"
+
+FUNCTION negative, 16, "-a"
+FUNCTION not, 16, "!a"
+
+FUNCTION multiplication, 14, "a * b"
+FUNCTION division, 14, "a / b"
+FUNCTION mod, 14, "a % b"
+FUNCTION addition, 13, "a + b"
+FUNCTION subtraction, 13, "a - b"
+FUNCTION bitAnd, 11, "a & b"
+FUNCTION bitOr, 10, "a | b"
+FUNCTION less, 8, "a < b"
+FUNCTION more, 8, "a > b"
+FUNCTION lessOrEqual, 8, "a <= b"
+FUNCTION moreOrEqual, 8, "a >= b"
+FUNCTION equal, 7, "a == b"
+FUNCTION notEqual, 7, "a != b"
+FUNCTION and, 6, "a && b"
+FUNCTION or, 5, "a || b"
+FUNCTION ifOp, 4
+
+FUNCTION increment, 3
+FUNCTION decrement, 3
+FUNCTION equate, 3, "a = b"
+FUNCTION add, 3
+FUNCTION subtract, 3
+FUNCTION multiply, 3
+FUNCTION divide, 3
+
+FUNCTION break, 0
+FUNCTION continue, 0
+FUNCTION return, 0
+
+
+
 /// default symbol switch
 
 DEFAULT nothing: >>

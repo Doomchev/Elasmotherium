@@ -1,3 +1,7 @@
+2021.09.02 (version 0.35.3)
+  + Parser: FUNCTION directive.
+  * Moved native functions definition from abstract syntax tree code to parser code.
+
 2021.09.01 (version 0.35.2)
   + NotFound exception is distinguished from other exceptions.
 

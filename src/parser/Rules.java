@@ -8,6 +8,7 @@ import ast.exception.ElException.MethodException;
 import ast.exception.ElException.ParserException;
 import ast.exception.EntityException;
 import ast.exception.NotFound;
+import ast.function.NativeFunction;
 import base.SymbolReader;
 import java.util.LinkedList;
 
@@ -24,8 +25,8 @@ public class Rules extends Base {
   
   private SymbolMask getMask(String name) throws NotFound {
     SymbolMask mask = masks.get(name);
-    if(mask == null) throw new NotFound(fileName
-        , "symbol mask \"" + name + "\"");
+    if(mask == null) throw new NotFound("symbol mask \"" + name + "\""
+      , fileName);
     return mask;
   }
   
@@ -63,36 +64,42 @@ public class Rules extends Base {
       currentLineReader = new LineReader(fileName);
       String line;
       while((line = currentLineReader.readLine()) != null) {
-        int equalPos = line.indexOf('=');
-        int colonPos = line.indexOf(':');
-        if(equalPos >= 0 && (equalPos < colonPos || colonPos < 0)) {
-          SymbolMask mask = new SymbolMask();
-          for(String symbol : line.substring(equalPos + 1).trim().split(" ")) {
-            if(symbol.length() == 1) {
-              mask.set(symbol.charAt(0));
-            } else if(symbol.length() == 3 && symbol.charAt(1) == '-') {
-              mask.set(symbol.charAt(0), symbol.charAt(2));
-            } else if(symbol.length() >= 2) {
-              SymbolMask mask2 = masks.get(symbol);
-              if(mask2 == null) throw new NotFound(fileName
-                  , "Mask \"" + symbol + "\"");
-              mask.or(mask2);
-            }
-          }
-          masks.put(line.substring(0, equalPos).trim(), mask);
-        } else if(line.startsWith("ERROR ")) {
+        if(line.startsWith("ERROR ")) {
           String[] parts = line.substring(6).split(":");
           errors.put(parts[0].trim(), new Error(parts[1].trim()));
         } else if(line.startsWith("DEFAULT ")) {
           defSym.add(line.substring(8));
+        } else if(line.startsWith("FUNCTION ")) {
+          String[] part = trimmedSplit(line.substring(9), ',');
+          NativeFunction.create(part[0], Byte.parseByte(part[1])
+              , part.length < 3 ? "" : stringParam(part[2]));
         } else {
-          if(colonPos < 0 && equalPos < 0)
-            throw new MethodException("Rules" ,"load", ": or = expected");
-          String name = line.substring(0, colonPos).trim();
-          Sub sub = getSub(name);
-          if(sub.action != null) throw new MethodException("Rules" ,"load"
-              , "Sub \"" + name + "\" is already defined");
-          sub.action = actionChain(line.substring(colonPos + 1), null, sub);
+          int equalPos = line.indexOf('=');
+          int colonPos = line.indexOf(':');
+          if(equalPos >= 0 && (equalPos < colonPos || colonPos < 0)) {
+            SymbolMask mask = new SymbolMask();
+            for(String symbol : line.substring(equalPos + 1).trim().split(" ")) {
+              if(symbol.length() == 1) {
+                mask.set(symbol.charAt(0));
+              } else if(symbol.length() == 3 && symbol.charAt(1) == '-') {
+                mask.set(symbol.charAt(0), symbol.charAt(2));
+              } else if(symbol.length() >= 2) {
+                SymbolMask mask2 = masks.get(symbol);
+                if(mask2 == null) throw new NotFound("Mask \"" + symbol + "\""
+                    , fileName);
+                mask.or(mask2);
+              }
+            }
+            masks.put(line.substring(0, equalPos).trim(), mask);
+          } else {
+            if(colonPos < 0 && equalPos < 0)
+              throw new MethodException("Rules" ,"load", ": or = expected");
+            String name = line.substring(0, colonPos).trim();
+            Sub sub = getSub(name);
+            if(sub.action != null) throw new MethodException("Rules" ,"load"
+                , "Sub \"" + name + "\" is already defined");
+            sub.action = actionChain(line.substring(colonPos + 1), null, sub);
+          }
         }
       }
     } catch (ElException ex) {
@@ -213,8 +220,12 @@ public class Rules extends Base {
     currentSymbolReader = new SymbolReader(text, fileName);
     currentFunction.pushCode();
     
-    Action.currentAction = root.action;
     try {
+      NativeFunction.dot = NativeFunction.get("dot");
+      NativeFunction.callFunction = NativeFunction.get("callFunction");
+      NativeFunction.equate = NativeFunction.get("equate");
+      
+      Action.currentAction = root.action;
       while(Action.currentAction != null)
         Action.currentAction.execute();
     
@@ -222,6 +233,8 @@ public class Rules extends Base {
     } catch (ElException ex) {
       currentSymbolReader.showDebugMessage(ex.message);
     } catch (EntityException ex) {
+      currentSymbolReader.showDebugMessage(ex.message);
+    } catch (NotFound ex) {
       currentSymbolReader.showDebugMessage(ex.message);
     }
   }

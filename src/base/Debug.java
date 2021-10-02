@@ -83,15 +83,20 @@ public class Debug extends StringFunctions {
       , String text, int textStart, int textEnd) {
     blockLine = 1; blockColumn = 0;
     for(int index = 0; index < textStart; index++) {
-      if(text.charAt(index) == '\n') {
-        blockLine++;
-        blockColumn = 0;
-      } else {
-        blockColumn++;
+      switch(text.charAt(index)) {
+        case '\n':
+          blockLine++;
+          blockColumn = 0;
+          break;
+        case '\t':
+          blockColumn += 2;
+          break;
+        default:
+          blockColumn++;
       }
     }
     blockWidth = textEnd - textStart;
-    showDebugMessage(title, message, text);
+    showDebugMessage(title, message, text.replace("\t", "  "));
   }
   
   public static void showDebugMessage(String title, String message

@@ -108,8 +108,9 @@ public class StringFunctions {
   }
 
   public static String stringParam(String str) throws ElException {
-    if(!str.endsWith("\"") || str.length() < 2) throw new ElException.MethodException(
-        "Base", "stringParam", "Invalid token");
+    if(!str.endsWith("\"") || str.length() < 2)
+      throw new ElException.MethodException("Base", "stringParam"
+          , "Invalid token");
     return str.substring(1, str.length() - 1);
   }
   
