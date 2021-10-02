@@ -1,13 +1,13 @@
 package base;
 
-import ast.exception.EntityException;
+import exception.EntityException;
 import vm.texture.*;
 import vm.function.*;
 import ast.ClassEntity;
 import parser.Rules;
 import ast.function.StaticFunction;
 import ast.ID;
-import ast.exception.NotFound;
+import exception.NotFound;
 import java.util.Stack;
 import java.util.TreeSet;
 import processor.Processor;

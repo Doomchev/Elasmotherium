@@ -1,8 +1,8 @@
 package processor;
 
 import processor.parameter.ProParameter;
-import ast.exception.ElException;
-import ast.exception.EntityException;
+import exception.ElException;
+import exception.EntityException;
 import java.util.LinkedList;
 import vm.VMCommand;
 

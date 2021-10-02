@@ -1,7 +1,7 @@
 package processor.parameter;
 
 import ast.Entity;
-import ast.exception.ElException;
+import exception.ElException;
 
 public class ProThis extends ProParameter {
   static ProThis instance = new ProThis();

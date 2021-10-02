@@ -1,6 +1,6 @@
 package vm.collection;
 
-import ast.exception.ElException;
+import exception.ElException;
 import vm.VMCommand;
 
 public class I64GetAtIndex extends VMCommand {

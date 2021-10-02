@@ -3,9 +3,9 @@ package ast.function;
 import ast.Entity;
 import ast.Formula;
 import ast.ID;
-import ast.exception.ElException;
-import ast.exception.EntityException;
-import ast.exception.NotFound;
+import exception.ElException;
+import exception.EntityException;
+import exception.NotFound;
 import java.util.HashMap;
 import java.util.LinkedList;
 

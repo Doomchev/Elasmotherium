@@ -1,6 +1,6 @@
 package vm.values;
 
-import ast.exception.ElException;
+import exception.ElException;
 import java.util.Arrays;
 
 public class ValueArrayValue extends VMValue {

@@ -1,9 +1,9 @@
 package ast;
 
 import ast.function.CustomFunction;
-import ast.exception.ElException;
-import ast.exception.EntityException;
-import ast.exception.NotFound;
+import exception.ElException;
+import exception.EntityException;
+import exception.NotFound;
 import java.util.LinkedList;
 
 public class Link extends Value {

@@ -1,6 +1,6 @@
 package vm.collection;
 
-import ast.exception.ElException;
+import exception.ElException;
 import vm.VMCommand;
 import vm.values.ListValue;
 

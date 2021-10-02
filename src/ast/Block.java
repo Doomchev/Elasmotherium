@@ -1,8 +1,8 @@
 package ast;
 
-import ast.exception.ElException;
-import ast.exception.EntityException;
-import ast.exception.EntityException.NotFound;
+import exception.ElException;
+import exception.EntityException;
+import exception.EntityException.NotFound;
 import base.LinkedMap;
 import java.util.LinkedList;
 import processor.parameter.ProParameter;

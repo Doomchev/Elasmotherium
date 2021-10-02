@@ -18,10 +18,10 @@ import ast.Entity;
 import ast.ID;
 import ast.function.FunctionCall;
 import base.LineReader;
-import ast.exception.ElException;
-import ast.exception.ElException.MethodException;
-import ast.exception.ElException.NotFound;
-import ast.exception.EntityException;
+import exception.ElException;
+import exception.ElException.MethodException;
+import exception.ElException.NotFound;
+import exception.EntityException;
 import base.LinkedMap;
 import base.Module;
 import java.util.HashMap;
@@ -276,7 +276,7 @@ public class Processor extends ProBase {
       module.process();
     } catch (EntityException ex) {
       ex.entity.showDebugMessage(ex.message);
-    } catch (ast.exception.NotFound ex) {
+    } catch (exception.NotFound ex) {
       error("Processing error", ex.message);
     }
   }

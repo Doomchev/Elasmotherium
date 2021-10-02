@@ -1,9 +1,9 @@
 package processor.block;
 
 import ast.ID;
-import ast.exception.ElException;
-import ast.exception.EntityException;
-import ast.exception.NotFound;
+import exception.ElException;
+import exception.EntityException;
+import exception.NotFound;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import processor.ProCommand;

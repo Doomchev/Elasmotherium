@@ -1,10 +1,10 @@
 package base;
 
-import ast.exception.ElException;
+import exception.ElException;
 import ast.ClassEntity;
 import ast.ID;
 import ast.NamedEntity;
-import ast.exception.NotFound;
+import exception.NotFound;
 import static base.Debug.println;
 import java.util.LinkedList;
 

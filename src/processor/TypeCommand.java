@@ -2,9 +2,9 @@ package processor;
 
 import processor.parameter.ProParameter;
 import ast.ClassEntity;
-import ast.exception.ElException;
-import ast.exception.ElException.MethodException;
-import ast.exception.EntityException;
+import exception.ElException;
+import exception.ElException.MethodException;
+import exception.EntityException;
 import vm.VMCommand;
 
 public class TypeCommand extends ProCommand {

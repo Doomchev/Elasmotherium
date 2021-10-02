@@ -2,9 +2,9 @@ package processor.parameter;
 
 import ast.Entity;
 import ast.function.FunctionCall;
-import ast.exception.ElException;
-import ast.exception.ElException.MethodException;
-import ast.exception.NotFound;
+import exception.ElException;
+import exception.ElException.MethodException;
+import exception.NotFound;
 import processor.ProBase;
 
 public class ProCallParameter extends ProParameter {

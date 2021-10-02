@@ -3,8 +3,8 @@ package parser;
 import ast.Block;
 import ast.Entity;
 import ast.ID;
-import ast.exception.ElException;
-import ast.exception.ElException.ActionException;
+import exception.ElException;
+import exception.ElException.ActionException;
 
 public class ActionSet extends Action {
   private final EntityStack<? extends Entity> value;
@@ -26,7 +26,7 @@ public class ActionSet extends Action {
   }
   
   @Override
-  public void execute() throws ast.exception.ElException {
+  public void execute() throws exception.ElException {
     if(log) log(value == null ? "SET BLOCK TYPE TO " + id
         : "SET " + id + " to " + value.name + "(" + value + ")");
       

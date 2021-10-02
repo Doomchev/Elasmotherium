@@ -1,7 +1,7 @@
 package vm.function;
 
-import ast.exception.ElException;
-import ast.exception.EntityException;
+import exception.ElException;
+import exception.EntityException;
 import processor.parameter.ProParameter;
 import vm.VMCommand;
 

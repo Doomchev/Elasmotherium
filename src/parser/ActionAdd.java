@@ -1,6 +1,6 @@
 package parser;
 
-import ast.exception.ElException;
+import exception.ElException;
 
 public class ActionAdd extends Action {
   private final String string;

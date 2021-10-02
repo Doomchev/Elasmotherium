@@ -1,6 +1,6 @@
 package ast;
 
-import ast.exception.ElException;
+import exception.ElException;
 
 public class ObjectEntry extends Entity {
   public ID key;

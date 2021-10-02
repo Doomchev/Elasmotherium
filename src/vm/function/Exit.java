@@ -1,7 +1,7 @@
 package vm.function;
 
-import ast.exception.ElException;
-import ast.exception.ElException.MethodException;
+import exception.ElException;
+import exception.ElException.MethodException;
 import vm.VMCommand;
 
 public class Exit extends VMCommand {

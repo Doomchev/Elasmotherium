@@ -4,9 +4,9 @@ import base.Module;
 import ast.Block;
 import ast.ID;
 import ast.function.NativeFunction;
-import ast.exception.ElException;
-import ast.exception.ElException.MethodException;
-import ast.exception.NotFound;
+import exception.ElException;
+import exception.ElException.MethodException;
+import exception.NotFound;
 
 public class ActionCreate extends Action {
   private final EntityStack stack;

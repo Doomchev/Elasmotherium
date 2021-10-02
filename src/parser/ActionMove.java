@@ -3,10 +3,10 @@ package parser;
 import ast.Entity;
 import ast.ID;
 import ast.function.NativeFunction;
-import ast.exception.ElException;
-import ast.exception.ElException.ActionException;
-import ast.exception.EntityException;
-import ast.exception.NotFound;
+import exception.ElException;
+import exception.ElException.ActionException;
+import exception.EntityException;
+import exception.NotFound;
 
 public class ActionMove extends Action {
   private final EntityStack<Entity> from, to;

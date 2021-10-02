@@ -5,9 +5,9 @@ import ast.Entity;
 import ast.ID;
 import ast.Type;
 import ast.Variable;
-import ast.exception.ElException;
-import ast.exception.EntityException;
-import ast.exception.NotFound;
+import exception.ElException;
+import exception.EntityException;
+import exception.NotFound;
 
 public class Constructor extends StaticFunction {
   protected ClassEntity parentClass = null;

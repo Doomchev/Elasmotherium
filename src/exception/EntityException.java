@@ -1,4 +1,4 @@
-package ast.exception;
+package exception;
 
 import ast.Entity;
 import ast.ID;

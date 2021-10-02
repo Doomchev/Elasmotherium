@@ -1,6 +1,6 @@
 package vm.variables;
 
-import ast.exception.ElException;
+import exception.ElException;
 import vm.VMCommand;
 
 public class ScreenHeight extends VMCommand {

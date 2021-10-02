@@ -1,6 +1,6 @@
 package parser;
 
-import ast.exception.ElException;
+import exception.ElException;
 
 public class ActionClear extends Action {
   @Override

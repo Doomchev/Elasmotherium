@@ -1,7 +1,7 @@
 package processor.parameter;
 
-import ast.exception.ElException;
-import ast.exception.EntityException;
+import exception.ElException;
+import exception.EntityException;
 import processor.ProCommand;
 
 public class SetParameter extends ProCommand {

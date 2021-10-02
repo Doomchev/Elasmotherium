@@ -1,7 +1,7 @@
 package parser;
 
 import ast.ID;
-import ast.exception.ElException;
+import exception.ElException;
 
 public class ActionDup extends Action {
   private final EntityStack stack;

@@ -1,8 +1,8 @@
 package ast;
 
 import ast.function.FunctionCall;
-import ast.exception.ElException;
-import ast.exception.EntityException;
+import exception.ElException;
+import exception.EntityException;
 
 public abstract class Value extends Entity {
   public Value(int textStart, int textEnd) {

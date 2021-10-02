@@ -1,7 +1,7 @@
 package vm.texture;
 
-import ast.exception.ElException;
-import ast.exception.ElException.NotFound;
+import exception.ElException;
+import exception.ElException.NotFound;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;

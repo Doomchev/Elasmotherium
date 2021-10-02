@@ -1,7 +1,7 @@
 package processor.block;
 
 import ast.ID;
-import ast.exception.ElException;
+import exception.ElException;
 import processor.ProCommand;
 
 public class BlockLabelInitialize extends ProCommand {

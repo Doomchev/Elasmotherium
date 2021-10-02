@@ -1,7 +1,7 @@
 package ast;
 
-import ast.exception.ElException;
-import ast.exception.EntityException;
+import exception.ElException;
+import exception.EntityException;
 import java.util.LinkedList;
 
 public class ListEntity extends Value {

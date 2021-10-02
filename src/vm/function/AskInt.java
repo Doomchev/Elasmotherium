@@ -1,6 +1,6 @@
 package vm.function;
 
-import ast.exception.ElException;
+import exception.ElException;
 import javax.swing.JOptionPane;
 import vm.VMCommand;
 

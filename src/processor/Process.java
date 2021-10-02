@@ -1,8 +1,8 @@
 package processor;
 
 import processor.parameter.ProParameter;
-import ast.exception.ElException;
-import ast.exception.EntityException;
+import exception.ElException;
+import exception.EntityException;
 
 public class Process extends ProCommand {
   public static final Process instance = new Process(null);

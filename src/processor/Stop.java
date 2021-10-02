@@ -1,6 +1,6 @@
 package processor;
 
-import ast.exception.ElException;
+import exception.ElException;
 
 public class Stop extends ProCommand {
   static final Stop instance = new Stop();

@@ -1,6 +1,6 @@
 package ast;
 
-import ast.exception.EntityException;
+import exception.EntityException;
 
 public class ClassParameter extends NamedEntity {
   private int index;

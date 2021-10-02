@@ -1,6 +1,6 @@
 package vm.texture;
 
-import ast.exception.ElException;
+import exception.ElException;
 import vm.VMCommand;
 
 public class TextureCreate extends VMCommand {

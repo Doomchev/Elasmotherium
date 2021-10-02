@@ -3,7 +3,7 @@ package processor.parameter;
 import processor.parameter.ProParameter;
 import ast.ClassEntity;
 import ast.Entity;
-import ast.exception.ElException;
+import exception.ElException;
 
 public class ProClass extends ProParameter {
   private final ClassEntity entity;

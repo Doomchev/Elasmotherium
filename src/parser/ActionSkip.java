@@ -1,6 +1,6 @@
 package parser;
 
-import ast.exception.ElException;
+import exception.ElException;
 
 class ActionSkip extends Action {
   @Override

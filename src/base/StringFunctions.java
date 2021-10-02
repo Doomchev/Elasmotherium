@@ -1,6 +1,6 @@
 package base;
 
-import ast.exception.ElException;
+import exception.ElException;
 import java.util.LinkedList;
 import java.util.List;
 

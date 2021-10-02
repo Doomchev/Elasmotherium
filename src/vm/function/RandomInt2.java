@@ -1,6 +1,6 @@
 package vm.function;
 
-import ast.exception.ElException;
+import exception.ElException;
 import java.util.Random;
 import vm.VMCommand;
 

@@ -1,9 +1,9 @@
 package ast;
 
 import ast.function.Method;
-import ast.exception.EntityException;
-import ast.exception.EntityException.Cannot;
-import ast.exception.NotFound;
+import exception.EntityException;
+import exception.EntityException.Cannot;
+import exception.NotFound;
 import java.util.Arrays;
 import vm.values.VMValue;
 

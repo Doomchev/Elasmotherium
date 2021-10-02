@@ -1,7 +1,7 @@
 package parser;
 
-import ast.exception.ElException;
-import ast.exception.ElException.ActionException;
+import exception.ElException;
+import exception.ElException.ActionException;
 
 public class ActionGoToSub extends Action {
   private final Sub sub;

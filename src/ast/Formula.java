@@ -2,8 +2,8 @@ package ast;
 
 import ast.function.FunctionCall;
 import ast.function.NativeFunction;
-import ast.exception.ElException;
-import ast.exception.ElException.MethodException;
+import exception.ElException;
+import exception.ElException.MethodException;
 import java.util.LinkedList;
 import java.util.Stack;
 

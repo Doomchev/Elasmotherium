@@ -1,6 +1,6 @@
 package vm.call;
 
-import ast.exception.ElException;
+import exception.ElException;
 import vm.VMBase;
 import vm.VMFieldCommand;
 import vm.values.VMValue;
