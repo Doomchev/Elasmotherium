@@ -28,6 +28,8 @@ public class ProCall extends ProCommand {
       subIndent.append("| ");
     }
     currentProcessor.call(newCurrent, method, callParam);
-    if(log) subIndent = subIndent.delete(0, 2);
+    if(log) {
+      subIndent.delete(0, 2);
+    }
   }
 }

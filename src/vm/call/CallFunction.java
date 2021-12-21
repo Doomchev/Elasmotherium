@@ -1,7 +1,6 @@
 package vm.call;
 
 import ast.function.CustomFunction;
-import ast.function.StaticFunction;
 import vm.VMCommand;
 
 public class CallFunction extends VMCommand {

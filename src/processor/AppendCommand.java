@@ -1,10 +1,11 @@
 package processor;
 
-import processor.parameter.ProParameter;
 import exception.ElException;
 import exception.EntityException;
-import java.util.LinkedList;
+import processor.parameter.ProParameter;
 import vm.VMCommand;
+
+import java.util.LinkedList;
 
 public class AppendCommand extends ProCommand {
   public static class AppendCommand1 extends AppendCommand {
@@ -39,8 +40,7 @@ public class AppendCommand extends ProCommand {
   
   protected final VMCommand command;
   
-  public AppendCommand(VMCommand command)
-      throws ElException {
+  public AppendCommand(VMCommand command) {
     this.command = command;
   }
   

@@ -146,7 +146,7 @@ public class Variable extends NamedEntity {
   }
 
   @Override
-  public void moveToFunction(CustomFunction function) throws ElException {
+  public void moveToFunction(CustomFunction function) {
     index = function.addParameter(this);
   }
 
@@ -182,7 +182,7 @@ public class Variable extends NamedEntity {
   
   @Override
   public void print(StringBuilder indent, String prefix) {
-    println(indent.toString() + prefix + type + " " + toString() + ":" + index
+    println(indent.toString() + prefix + type + " " + this + ":" + index
         + (value == null ? "" : " = " + value) + ";");
   }
 }

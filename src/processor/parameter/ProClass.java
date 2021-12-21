@@ -1,6 +1,5 @@
 package processor.parameter;
 
-import processor.parameter.ProParameter;
 import ast.ClassEntity;
 import ast.Entity;
 import exception.ElException;

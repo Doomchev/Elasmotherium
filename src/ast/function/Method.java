@@ -33,14 +33,14 @@ public class Method extends StaticFunction {
 
   @Override
   public void process(FunctionCall call) throws EntityException {
-    if(log) println(subIndent + "Resolving method " + toString());
+    if(log) println(subIndent + "Resolving method " + this);
     call.resolveParameters(parameters);
     append();
   }
 
   @Override
   public void process(FunctionCall call, Entity[] subTypes) throws EntityException {
-    if(log) println(subIndent + "Resolving method " + toString());
+    if(log) println(subIndent + "Resolving method " + this);
     call.resolveParameters(parameters, subTypes);
     append();
   }
@@ -53,7 +53,7 @@ public class Method extends StaticFunction {
 
   @Override
   public void resolveChild(Entity type) throws EntityException {
-    if(log) println(subIndent + "Resolving method " + toString());
+    if(log) println(subIndent + "Resolving method " + this);
     append();
     try {
       convert(returnType.getNativeClass(), type.getNativeClass());

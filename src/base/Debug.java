@@ -1,21 +1,15 @@
 package base;
 
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
 import vm.VMBase;
 import vm.VMCommand;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Debug extends StringFunctions {
   public static LineReader currentLineReader;
@@ -64,7 +58,7 @@ public class Debug extends StringFunctions {
   public static String readText(String fileName) {
     try {
       return new String(Files.readAllBytes(Paths.get(fileName))
-          , "UTF-8");
+          , StandardCharsets.UTF_8);
     } catch (FileNotFoundException ex) {
       error("I/O error", fileName + " not found.");
     } catch (IOException ex) {
@@ -141,7 +135,7 @@ public class Debug extends StringFunctions {
           <= getParent().getSize().width;
         }
       };
-      code.setFont(new java.awt.Font("Monospaced", 0, 13));
+      code.setFont(new java.awt.Font("Monospaced", Font.PLAIN, 13));
       
       codeView.setViewportView(code);
       frame.add(codeView);

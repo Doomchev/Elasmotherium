@@ -54,7 +54,7 @@ public class StaticFunction extends CustomFunction {
   
   @Override
   public boolean isValue(ID name, boolean isThis) {
-    return this.name == name && fromParametersQuantity == 0 && isThis == false;
+    return this.name == name && fromParametersQuantity == 0 && !isThis;
   }
   
   // preprocessing
@@ -71,14 +71,14 @@ public class StaticFunction extends CustomFunction {
 
   @Override
   public void process(FunctionCall call) throws EntityException {
-    if(log) println(subIndent + "Calling static function " + toString());
+    if(log) println(subIndent + "Calling static function " + this);
     call.resolveParameters(parameters);
     append();
   }
 
   @Override
   public void resolve(Entity type) throws EntityException {
-    if(log) println(subIndent + "Resolving static function " + toString()
+    if(log) println(subIndent + "Resolving static function " + this
       + " without parameters");
     append();
   }
@@ -86,7 +86,7 @@ public class StaticFunction extends CustomFunction {
   @Override
   public void resolve(Entity type, FunctionCall call)
       throws EntityException {
-    if(log) println(subIndent + "Resolving static function " + toString());
+    if(log) println(subIndent + "Resolving static function " + this);
     call.resolveParameters(parameters);
     append();
     try {
@@ -109,7 +109,7 @@ public class StaticFunction extends CustomFunction {
   }
   
   @Override
-  public VMCommand getEndingCommand() throws EntityException {
+  public VMCommand getEndingCommand() {
     return new vm.call.Return();
   }
   

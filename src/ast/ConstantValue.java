@@ -34,7 +34,7 @@ public class ConstantValue extends Value {
   }
   
   @Override
-  public String getStringValue() throws EntityException {
+  public String getStringValue() {
     return value;
   }
   

@@ -1,33 +1,45 @@
 package processor;
 
-import processor.parameter.SetParameter;
-import processor.block.BlockLabelInitialize;
-import processor.block.BlockLabelSet;
-import vm.call.*;
-import vm.string.var.*;
-import vm.string.field.*;
-import vm.i64.var.*;
-import vm.i64.field.*;
 import ast.Block;
-import vm.*;
-import vm.object.*;
-import vm.i64.*;
-import vm.string.*;
-import vm.collection.*;
 import ast.Entity;
 import ast.ID;
 import ast.function.FunctionCall;
 import base.LineReader;
-import exception.ElException;
-import exception.ElException.MethodException;
-import exception.ElException.NotFound;
-import exception.EntityException;
 import base.LinkedMap;
 import base.Module;
+import exception.ElException;
+import exception.ElException.MethodException;
+import exception.EntityException;
+import processor.block.BlockLabelInitialize;
+import processor.block.BlockLabelSet;
+import processor.parameter.SetParameter;
+import vm.GoTo;
+import vm.IfFalseGoTo;
+import vm.VMCommand;
+import vm.call.I64Return;
+import vm.call.StringReturn;
+import vm.collection.CollectionToIterator;
+import vm.collection.I64GetAtIndex;
+import vm.collection.I64SetAtIndex;
+import vm.collection.IteratorHasNext;
+import vm.i64.*;
+import vm.i64.field.I64FieldEquate;
+import vm.i64.field.I64FieldIncrement;
+import vm.i64.field.I64FieldPush;
+import vm.i64.var.I64VarEquate;
+import vm.i64.var.I64VarIncrement;
+import vm.i64.var.I64VarPush;
+import vm.object.ObjectVarEquate;
+import vm.object.ObjectVarPush;
+import vm.string.StringAdd;
+import vm.string.StringPush;
+import vm.string.field.StringFieldEquate;
+import vm.string.field.StringFieldPush;
+import vm.string.var.StringVarEquate;
+import vm.string.var.StringVarPush;
+
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Processor extends ProBase {
   public static final ID callMethod = ID.get("call");
@@ -119,7 +131,7 @@ public class Processor extends ProBase {
     Method method = function.get(methodName);
     if(method == null)
       throw new MethodException("Processor", "getMethod"
-          , "No code for " + currentParam + "." + method);
+          , "No code for " + currentParam);
     return method;
   }
   

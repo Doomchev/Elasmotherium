@@ -12,8 +12,8 @@ List<String> fruits = ["apples", "peaches", "oranges"];
 
 Option optionAsk = Option("Ask") {
 	execute() {
-		fruit = select("Select fruit you want ..= ask about:", fruits, "Question");
-		tell("\(yourName): Do you like \(fruits[fruit])?\n" + "\(myName): Yes, I like ..= eat \(fruits[fruit]).");
+		fruit = select("Select fruit you want to ask about:", fruits, "Question");
+		tell("\(yourName): Do you like \(fruits[fruit])?\n" + "\(myName): Yes, I like to eat \(fruits[fruit]).");
 	}
 }
 
@@ -25,4 +25,4 @@ myName = "Cyrus";
 yourName = ask("What is your name?");
 List<Option> options = [optionGreet, optionAsk, optionExit];
 
-repeat select("Choose what ..= do:", options, "Options").execute();
+repeat select("Choose what to do:", options, "Options").execute();

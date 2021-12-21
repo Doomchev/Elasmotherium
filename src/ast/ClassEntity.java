@@ -4,14 +4,13 @@ import ast.function.Constructor;
 import ast.function.Method;
 import ast.function.StaticFunction;
 import exception.ElException;
-import vm.values.ObjectEntity;
 import exception.EntityException;
 import exception.NotFound;
+import vm.values.ObjectEntity;
+import vm.values.VMValue;
+
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import vm.values.VMValue;
 
 public class ClassEntity extends NamedEntity {
   public static final HashMap<ID, ClassEntity> all = new HashMap<>();
@@ -151,7 +150,7 @@ public class ClassEntity extends NamedEntity {
   
   @Override
   public boolean isValue(ID name, boolean isThis) {
-    return this.name == name && isThis == false;
+    return this.name == name && !isThis;
   }
   
   // preprocessing

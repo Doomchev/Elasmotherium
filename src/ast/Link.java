@@ -103,7 +103,7 @@ public class Link extends Value {
   }
 
   @Override
-  public void moveToLink(Link link) throws ElException {
+  public void moveToLink(Link link) {
     link.addSubType(this);
   }
 

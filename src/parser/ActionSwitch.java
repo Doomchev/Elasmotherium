@@ -1,5 +1,6 @@
 package parser;
 
+import base.SymbolReader;
 import exception.ElException;
 import exception.ElException.ActionException;
 import base.LinkedMap;
@@ -40,7 +41,7 @@ public class ActionSwitch extends Action {
   
   private final Action[] action = new Action[130];
   
-  public void setStringAction(String token, Action action) throws ElException {
+  public void setStringAction(String token, Action action) {
     int firstSymbol = token.charAt(0);
     if(token.length() == 1) {
       this.action[firstSymbol] = action;
@@ -49,7 +50,7 @@ public class ActionSwitch extends Action {
       SwitchString sw = null;
       try {
         sw = (SwitchString) symbolAction;
-      } catch(ClassCastException ex) {}
+      } catch(ClassCastException ignored) {}
       if(sw == null) {
         sw = new SwitchString(symbolAction);
         this.action[firstSymbol] = sw;
@@ -76,7 +77,7 @@ public class ActionSwitch extends Action {
   public void execute() throws ElException {
     char currentChar = currentSymbolReader.getChar();
     if(log) {
-      if(currentChar == currentSymbolReader.END_OF_FILE)
+      if(currentChar == SymbolReader.END_OF_FILE)
         log("SWITCH TO END");
       else
         log("SWITCH TO " + currentChar);

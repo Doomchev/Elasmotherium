@@ -1,8 +1,5 @@
 package processor.parameter;
 
-import processor.block.BlockVariable;
-import processor.block.BlockLabel;
-import processor.block.BlockParameter;
 import ast.ClassEntity;
 import ast.Entity;
 import ast.ID;
@@ -11,8 +8,10 @@ import exception.ElException.Cannot;
 import exception.ElException.CannotGet;
 import exception.ElException.MethodException;
 import exception.EntityException;
-import exception.NotFound;
 import processor.ProBase;
+import processor.block.BlockLabel;
+import processor.block.BlockParameter;
+import processor.block.BlockVariable;
 import vm.VMCommand;
 
 public abstract class ProParameter extends ProBase {

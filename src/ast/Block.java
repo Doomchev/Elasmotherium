@@ -65,8 +65,7 @@ public class Block extends Entity {
       for(VMCommand command: label.commands) {
         ID name = label.name;
         Block block = this;
-        while(true) {
-          if(label.position >= 0) break;
+        while(label.position < 0) {
           block = block.parentBlock;
           if(block == null) throw new NotFound(this, "Label " + name);
           label = block.getLabel(name);
@@ -124,7 +123,7 @@ public class Block extends Entity {
   // moving functions
 
   @Override
-  public void moveToBlock() throws ElException {
+  public void moveToBlock() {
     deallocate();
   }
 

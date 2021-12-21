@@ -1,15 +1,16 @@
 package parser;
 
+import ast.function.NativeFunction;
 import base.Base;
 import base.LineReader;
-import java.util.HashMap;
+import base.SymbolReader;
 import exception.ElException;
 import exception.ElException.MethodException;
 import exception.ElException.ParserException;
 import exception.EntityException;
 import exception.NotFound;
-import ast.function.NativeFunction;
-import base.SymbolReader;
+
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class Rules extends Base {
@@ -206,8 +207,6 @@ public class Rules extends Base {
         switchAction.setOtherAction(actionChain);
       } else {
         SymbolMask symbolMask = getMask(token);
-        if(symbolMask == null) throw new NotFound(fileName
-            , "Mask \"" + token + "\"");
         switchAction.setMaskAction(symbolMask, actionChain);
         //break;
       }

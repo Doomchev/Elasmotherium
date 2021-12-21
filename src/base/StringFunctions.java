@@ -15,7 +15,7 @@ public class StringFunctions {
       }
     }
     list.add(text.substring(start).trim());
-    return list.toArray(new String[list.size()]);
+    return list.toArray(new String[0]);
   }
   
   public static String[] trimmedSplit(String text, char... separator) {
@@ -30,7 +30,7 @@ public class StringFunctions {
       }
     }
     list.add(text.substring(start));
-    return list.toArray(new String[list.size()]);
+    return list.toArray(new String[0]);
   }
   
   public static String between(String text, char opening
@@ -38,8 +38,8 @@ public class StringFunctions {
     int start = -1;
     for(int i = 0; i < text.length(); i++) {
       if(text.charAt(i) == opening) start = i;
-      if(text.charAt(i) == closing) return i < 0 ? "" : text.substring(
-          start + 1, i);
+      if(text.charAt(i) == closing) return text.substring(
+                start + 1, i);
     }
     return "";
   }
@@ -69,11 +69,11 @@ public class StringFunctions {
     return string.substring(0, 1).toLowerCase() + string.substring(1);
   }
   
-  public static String listToString(List<? extends Object> list) {
+  public static String listToString(List<?> list) {
     return listToString(list, ", ");
   }
   
-  public static String listToString(List<? extends Object> list
+  public static String listToString(List<?> list
       , String delimiter) {
     StringBuilder str = new StringBuilder();
     for(Object object : list) {

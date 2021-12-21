@@ -62,7 +62,7 @@ public class Constructor extends StaticFunction {
   @Override
   public void resolve(Entity type, FunctionCall call)
       throws EntityException {
-    if(log) println(subIndent + "Resolving constructor " + toString());
+    if(log) println(subIndent + "Resolving constructor " + this);
     
     try {
       if(command != null) {

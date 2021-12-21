@@ -1,7 +1,5 @@
 package base;
 
-import static base.Debug.error;
-
 public class LineReader extends Reader {
   private java.io.BufferedReader reader;
 

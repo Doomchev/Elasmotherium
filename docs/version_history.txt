@@ -1,182 +1,182 @@
-2021.09.02 (version 0.35.3)
-  + Parser: FUNCTION directive.
-  * Moved native functions definition from abstract syntax tree code to parser code.
+2021.10.02 (version 0.35.3)
++ Parser: FUNCTION directive.
+* Moved native functions definition from abstract syntax tree code to parser code.
 
-2021.09.01 (version 0.35.2)
-  + NotFound exception is distinguished from other exceptions.
+2021.10.01 (version 0.35.2)
++ NotFound exception is distinguished from other exceptions.
 
-2021.09.01 (version 0.35.1)
-  + AST: This object, isThis attribute for Links.
-  + Debugger: displaying parser code. 
-  * Logging: Standard string representation of native functions.
+2021.10.01 (version 0.35.1)
++ AST: This object, isThis attribute for Links.
++ Debugger: displaying parser code. 
+* Logging: Standard string representation of native functions.
 
-2021.09.01 (version 0.35)
-  + Error's module text displaying, error highlighting.
+2021.10.01 (version 0.35)
++ Error's module text displaying, error highlighting.
 
 2021.09.30 (version 0.34.6)
-  + EntityException is distinguished from ElException.
++ EntityException is distinguished from ElException.
 
 2021.09.30 (version 0.34.5)
-  + AST: Module, text start and end positions for Entity.
-  + AST: IDEntity class for storing text position with id.
++ AST: Module, text start and end positions for Entity.
++ AST: IDEntity class for storing text position with id.
 
 2021.09.30 (version 0.34.4)
-  * Added constructors for every distinct group of classes in exceptions.
+* Added constructors for every distinct group of classes in exceptions.
 
 2021.09.23 (version 0.34.3)
-  + Line and symbol readers.
-  - ParserBase class;
++ Line and symbol readers.
+- ParserBase class;
 
 2021.09.22 (version 0.34.2)
-  * Split base class into several parts.
-  
+* Split base class into several parts.
+
 2021.09.22 (version 0.34.1)
-  + Processor: "last" and "object" parameters for field commands.
-  * Syntax, parser code: For syntaх changed to for(type var = start ..=/< end), for(type var: collection).
-  * VM, processing code: ThisField commands are replaced by modified Field commands.
++ Processor: "last" and "object" parameters for field commands.
+* Syntax, parser code: For syntaх changed to for(type var = start ..=/< end), for(type var: collection).
+* VM, processing code: ThisField commands are replaced by modified Field commands.
 
 2021.09.21 (version 0.34)
-  + AST: ParameterizedEntity class for connecting methods and fields with subtypes.
-  * AST, processor, processor code: Class parameters resolving system is rewritten.
++ AST: ParameterizedEntity class for connecting methods and fields with subtypes.
+* AST, processor, processor code: Class parameters resolving system is rewritten.
 
 2021.09.16 (version 0.33.1)
-  + Test framework.
-  + VM, processor code: Negative funcion.
-  + VM: Assert function.
-  * New module importing system.
++ Test framework.
++ VM, processor code: Negative funcion.
++ VM: Assert function.
+* New module importing system.
 
 2021.09.15 (version 0.33)
-  + Procesing: Functions now can be resolved like variables (without brackets).
-  * AST, Processor: Resolving and getObject functions for entities.
-  - Processor code: Function and dot sections (are now hardcoded).
-  
++ Procesing: Functions now can be resolved like variables (without brackets).
+* AST, Processor: Resolving and getObject functions for entities.
+- Processor code: Function and dot sections (are now hardcoded).
+
 2021.09.14 (version 0.32)
-  * AST: Default values for functions and methods with overloading support.
+* AST: Default values for functions and methods with overloading support.
 
 2021.09.14 (version 0.31.1)
-  * Added separate parameters quantity parameter to scope entry.
+* Added separate parameters quantity parameter to scope entry.
 
 2021.09.14 (version 0.31)
-  + VM: Window and graphics.
-  + VM: Textures support, width(), height() and draw() methods.
-  + Processor code: division and brackets support.
-  * Module's path and filename system is tuned up.
++ VM: Window and graphics.
++ VM: Textures support, width(), height() and draw() methods.
++ Processor code: division and brackets support.
+* Module's path and filename system is tuned up.
 
 2021.09.10 (version 0.30.1)
-  * AST, parser code: CustomFunction class is split into StaticFunction, Constructor and Method.
-  * Error handling system: added many custom exceptions.
-  
+* AST, parser code: CustomFunction class is split into StaticFunction, Constructor and Method.
+* Error handling system: added many custom exceptions.
+
 2021.09.09 (version 0.30)
-  + Processor: Parameter quantity support for scope entries.
-  * Some strings are replaced by StringBuilders for performance.
-  * AST: Function overloading.
-  * AST: Formula resolving refactoring.
-  * AST: Function class is split to CustomFunction and NativeFunction.
++ Processor: Parameter quantity support for scope entries.
+* Some strings are replaced by StringBuilders for performance.
+* AST: Function overloading.
+* AST: Formula resolving refactoring.
+* AST: Function class is split to CustomFunction and NativeFunction.
 
 2021.09.05 (version 0.29)
-  + VM, parser code: at index support.
-  + VM: I64Array and iterator.
-  + VM: I64ArrayCreate, I64SetAtIndex, I64GetAtIndex, I64IteratorNext commands.
++ VM, parser code: at index support.
++ VM: I64Array and iterator.
++ VM: I64ArrayCreate, I64SetAtIndex, I64GetAtIndex, I64IteratorNext commands.
 
 2021.09.05 (version 0.28.3)
-  * Syntax, parser code: ternary operator(a ? b : c) syntax is changed to if(a then b else c).
-  
+* Syntax, parser code: ternary operator(a ? b : c) syntax is changed to if(a then b else c).
+
 2021.09.04 (version 0.28.2)
-  * Syntax, parser code: For syntaх changed to for(type var from start to/until end), for(each type var in collection).
-  - Parser code: For_collection with index.
+* Syntax, parser code: For syntaх changed to for(type var from start to/until end), for(each type var in collection).
+- Parser code: For_collection with index.
 
 2021.09.04 (version 0.28.1)
-  - Virtual machine: Allocate, Deallocate commands.
+- Virtual machine: Allocate, Deallocate commands.
 
 2021.09.04 (version 0.28)
-  * Parser, parser code: Switch symbol and switch id actions are merged.
-  * Syntax: "do" is renamed to "repeat".
-  * Syntax: "this": class body for constructor is renamed to "create";
-  * Syntax: "this.": constructor parameters is renamed to "field.";
+* Parser, parser code: Switch symbol and switch id actions are merged.
+* Syntax: "do" is renamed to "repeat".
+* Syntax: "this": class body for constructor is renamed to "create";
+* Syntax: "this.": constructor parameters is renamed to "field.";
 
 2021.09.04 (version 0.27.2)
-  * Processor, Processor code: Added parameter to call, setObject and setField processor functions.
+* Processor, Processor code: Added parameter to call, setObject and setField processor functions.
 
 2021.09.04 (version 0.27.1)
-  * Syntax tree: Type conversion methods are changed to type casting with error handling.
+* Syntax tree: Type conversion methods are changed to type casting with error handling.
 
 2021.09.04 (version 0.27)
-  + Standard library folder system.
-  + Syntax tree: Class parameters.
-  + Processor: Block variables.
-  + Processor code: Break command.
-  + Virtual machine: Support of 64-bit floating point values (double).
-  + Virtual machine: Iterator and List objects.
-  + Virtual machine: Sqrt, Floor, Mod, AddToList, ListCreate, ListToIterator functions.
-  + Virtual machine: Converter from F64 to I64.
-  * Syntax tree: Fixed list entity.
-  * Processor: Label system for blocks is rewritten to support use of parent block labels.
-  * Processor: AppendCommand refactoring.
-  * Parser: Command for creating block variable (CBV).
-  * Processor: Fixed method calling with parameters.
-  * Virtual machine: Object stack now contains VMValues.
-  * Virtual machine: VM package is split to several subpackages.
++ Standard library folder system.
++ Syntax tree: Class parameters.
++ Processor: Block variables.
++ Processor code: Break command.
++ Virtual machine: Support of 64-bit floating point values (double).
++ Virtual machine: Iterator and List objects.
++ Virtual machine: Sqrt, Floor, Mod, AddToList, ListCreate, ListToIterator functions.
++ Virtual machine: Converter from F64 to I64.
+* Syntax tree: Fixed list entity.
+* Processor: Label system for blocks is rewritten to support use of parent block labels.
+* Processor: AppendCommand refactoring.
+* Parser: Command for creating block variable (CBV).
+* Processor: Fixed method calling with parameters.
+* Virtual machine: Object stack now contains VMValues.
+* Virtual machine: VM package is split to several subpackages.
 
 2021.08.30 (version 0.26)
-  + Syntax tree: New link resolution system into classes or new type objects.
-  + Parser: Block type setting command.
-  + Processor code: Separated processor functions for if and if with else.
-  * Parser: Merged types with links.
++ Syntax tree: New link resolution system into classes or new type objects.
++ Parser: Block type setting command.
++ Processor code: Separated processor functions for if and if with else.
+* Parser: Merged types with links.
 
 2021.08.27 (version 0.25)
-  + Fibonacci numbers example.
-  + Processor code: For-until block.
-  * Processor: Block fields are now start with $.
++ Fibonacci numbers example.
++ Processor code: For-until block.
+* Processor: Block fields are now start with $.
 
 2021.08.25 (version 0.24.2)
-  * Massive class encapsulation.
-  * All fields are checked and useless fields are removed.
-  * Syntax tree: EntityStack is moved to parser package.
-  
+* Massive class encapsulation.
+* All fields are checked and useless fields are removed.
+* Syntax tree: EntityStack is moved to parser package.
+
 2021.08.25 (version 0.24.1)
-  + Virtual machine: Attaching vm commands to existing functions instead of creating new.
-  + Base.es import by default.
-  + Virtual machine: ShowCommands parameter for VM code execution.
-  * Fixed module import system.
++ Virtual machine: Attaching vm commands to existing functions instead of creating new.
++ Base.es import by default.
++ Virtual machine: ShowCommands parameter for VM code execution.
+* Fixed module import system.
 
 2021.08.24 (version 0.24)
-  + Processor: Constructor this value processing.
-  + Processor: Convert, getField commands.
-  + Processor: TypeFunction - processor command to add vm command depending on type.
-  + Processor: Object parameter and setObject command.
-  + Virtual machine: ThisFieldEquate, ThisFieldIncrement, ThisFieldPush
-  * Processor: Parent parameter is renamed to param.
-  * Virtual machine: Parent class for field commands.
-  - Processor: Automatic conversion system.
-  - Processor: Return type for processor functions.
-  - Processor: GetFromScope, ResolveAll, Switch commands;
-  - Virtual machine: NewMethodCall, NewThis, ReturnThis
++ Processor: Constructor this value processing.
++ Processor: Convert, getField commands.
++ Processor: TypeFunction - processor command to add vm command depending on type.
++ Processor: Object parameter and setObject command.
++ Virtual machine: ThisFieldEquate, ThisFieldIncrement, ThisFieldPush
+* Processor: Parent parameter is renamed to param.
+* Virtual machine: Parent class for field commands.
+- Processor: Automatic conversion system.
+- Processor: Return type for processor functions.
+- Processor: GetFromScope, ResolveAll, Switch commands;
+- Virtual machine: NewMethodCall, NewThis, ReturnThis
 
 2021.08.16 (version 0.23)
-  + Processor: Return type for processor functions, new type conversion system.
-  * Processor: Function call parameter changed to ClassEntity and renamed to targetClass.
-  * Virtual machine: Fixed function call system.
-  - Processor: Convert command.
++ Processor: Return type for processor functions, new type conversion system.
+* Processor: Function call parameter changed to ClassEntity and renamed to targetClass.
+* Virtual machine: Fixed function call system.
+- Processor: Convert command.
 
 2021.08.16 (version 0.22)
-  + Processor: Class and ID as function call parameters.
-  + Processor: Labels system.
-  + Processor: Stop and Process processor command.
-  + Debug log sections highlighing.
-  * Syntax tree: Function call now has separate function and functionID fields.
-  * Virtual machine: Allocated stack values are now undefined.
-  * Virtual machine: Changed command link system to indexed system.
++ Processor: Class and ID as function call parameters.
++ Processor: Labels system.
++ Processor: Stop and Process processor command.
++ Debug log sections highlighing.
+* Syntax tree: Function call now has separate function and functionID fields.
+* Virtual machine: Allocated stack values are now undefined.
+* Virtual machine: Changed command link system to indexed system.
 
 2021.08.10 (version 0.21)
-  + Syntax tree: Sections of Entity and subclasses separated by comments.
-  + Processor: New Syntax tree processing engine
++ Syntax tree: Sections of Entity and subclasses separated by comments.
++ Processor: New Syntax tree processing engine
 	+ Processor: Scope stack system.
-  + Processor: AppendCommand, Call, GetFromScope, ResolveAll, Switch, Convert processor commands.
-  + Processor: CallParameter, Parent, This, VariableValue processor parameters.
-  + Processor code: New Syntax tree processing engine code syntax
-  * New file reading system.
-  * Parser: Values and their methods are disjointed from Entity and moved to VM package.
-  - Syntax tree: ID constants.
++ Processor: AppendCommand, Call, GetFromScope, ResolveAll, Switch, Convert processor commands.
++ Processor: CallParameter, Parent, This, VariableValue processor parameters.
++ Processor code: New Syntax tree processing engine code syntax
+* New file reading system.
+* Parser: Values and their methods are disjointed from Entity and moved to VM package.
+- Syntax tree: ID constants.
 
 2021.08.05 (version 0.20)
 	* Processor: Variable, field and parameter indexation system.
@@ -189,157 +189,157 @@
 	* Parser: Formula resolving is restored.
 
 2021.07.20 (version 0.19)
-  + Parser: multiple symbols: symbolswitch token.
-  + Parser: multiple tokens for symbolswitch.
-  + Parser: default symbolswitch entries.
-  * Error handling system.
-  * Parser: spaces: error messages.
-  * Parser: spaces inside brackets.
-  * Parser: : and +: tokens.
-  * Parser code: done refactoring.
-  * Restructurized file / directory system.
-  - Export system.
-  - Old links resolving system.
-  - Old bytecode generation system.
++ Parser: multiple symbols: symbolswitch token.
++ Parser: multiple tokens for symbolswitch.
++ Parser: default symbolswitch entries.
+* Error handling system.
+* Parser: spaces: error messages.
+* Parser: spaces inside brackets.
+* Parser: : and +: tokens.
+* Parser code: done refactoring.
+* Restructurized file / directory system.
+- Export system.
+- Old links resolving system.
+- Old bytecode generation system.
 
 2020.10.24 (version 0.18)
-  + Code generator: Class methods, increment.
-  + Virtual machine: I64Increment, I64ThisIncrement, VMNewMethodCall commands.
-  + Syntax tree: Function parameter's link to function.
-  * Syntax tree: Printing.
++ Code generator: Class methods, increment.
++ Virtual machine: I64Increment, I64ThisIncrement, VMNewMethodCall commands.
++ Syntax tree: Function parameter's link to function.
+* Syntax tree: Printing.
 
 2020.10.17 (version 0.17.1)
-  + Syntax tree: Function list of code object.
-  + Syntax tree: Cascading variables lists.
-  - Syntax tree: Scopes.
-  - Syntax tree: Flags list and FlagEntity class.
++ Syntax tree: Function list of code object.
++ Syntax tree: Cascading variables lists.
+- Syntax tree: Scopes.
+- Syntax tree: Flags list and FlagEntity class.
 
 2020.10.11 (version 0.17)
-  + Code generator: Constructors.
-  * Syntax tree: Rewrote equation byte code generation mechanism.
-  * Virtual machine: Changed command execution mechanism.
-  * Replaced error function execution with throwing exceptions.
++ Code generator: Constructors.
+* Syntax tree: Rewrote equation byte code generation mechanism.
+* Virtual machine: Changed command execution mechanism.
+* Replaced error function execution with throwing exceptions.
 
 2020.09.28 (version 0.16)
-  + Code generator: New objects.
-  + Virtual machine: Object entity, new object command.
-  + Virtual machine: Field setting and retrieving commands.
-  * Syntax tree: Equation system.
++ Code generator: New objects.
++ Virtual machine: Object entity, new object command.
++ Virtual machine: Field setting and retrieving commands.
+* Syntax tree: Equation system.
 
 2020.09.28 (version 0.15.1)
-  * Syntax tree: Converted anonymous classes of native functions to standalone classes.
-  * Syntax tree: Moved "parser.structure" package to "ast" package.
+* Syntax tree: Converted anonymous classes of native functions to standalone classes.
+* Syntax tree: Moved "parser.structure" package to "ast" package.
 
 2020.09.14 (version 0.15)
-  * Virtual machine: Converted several type stack pointers to one stack pointer.
-  
+* Virtual machine: Converted several type stack pointers to one stack pointer.
+
 2020.09.14 (version 0.14)
-  + Code generator: if ternary operator, function calling
-  + Virtual machine: FunctionCall object
-  + Virtual machine: Commands: I64Deallocate, I64StackPush, Call, NewFunctionCall, I64StackMoveReturnValue, Return
++ Code generator: if ternary operator, function calling
++ Virtual machine: FunctionCall object
++ Virtual machine: Commands: I64Deallocate, I64StackPush, Call, NewFunctionCall, I64StackMoveReturnValue, Return
 
 2020.09.09 (version 0.13)
-  + Syntax tree: Numeric value types (I8, I16, I32, I64, F32, F64)
-  + Syntax tree: Function call return type and covertTo type
-  + Low-level code generator
-  + Code generator: do block, if block, main function, string sequence
-  + Code generator: Type conversion
-  + Code generator: Variable indexation and allocation quantity counting
-  + Virtual machine for low-level code with stacks, command adding function and goto linking support
-  + Virtual machine: Commands: I64Allocate, I64Push, I64Equate, I64StackPush, I64Add, StringPush, I64ToString, StringAdd, VMPrint, VMEnd, VMRandom, VMInput, StringToI64, I64Less, IfFalseGoto, VMShowMessage, VMGoto, I64More
-  * Code generator: Native functions type inference
-  * Syntax tree: Converted scope entries hash map to list of entries
-  - Type inference
++ Syntax tree: Numeric value types (I8, I16, I32, I64, F32, F64)
++ Syntax tree: Function call return type and covertTo type
++ Low-level code generator
++ Code generator: do block, if block, main function, string sequence
++ Code generator: Type conversion
++ Code generator: Variable indexation and allocation quantity counting
++ Virtual machine for low-level code with stacks, command adding function and goto linking support
++ Virtual machine: Commands: I64Allocate, I64Push, I64Equate, I64StackPush, I64Add, StringPush, I64ToString, StringAdd, VMPrint, VMEnd, VMRandom, VMInput, StringToI64, I64Less, IfFalseGoto, VMShowMessage, VMGoto, I64More
+* Code generator: Native functions type inference
+* Syntax tree: Converted scope entries hash map to list of entries
+- Type inference
 
 2019.07.25 (version 0.12)
-  + Parser: import keyword, modules and java binding support
-  + Export: user functions
-  * Export, Java export: proper use of semicolons
++ Parser: import keyword, modules and java binding support
++ Export: user functions
+* Export, Java export: proper use of semicolons
 
 2019.06.17 (version 0.11)
-  + Export: postfixes for entity child and children
-  + ID system (instead of strings)
-  * Parser: new stack-based parser
-  * Parser: new abstract syntax tree structure
-  * Parser code: new parsing language
-  * Processor: new syntax tree processing engine
-  * Type inference: new type inference engine
-  * New file extensions
-  
++ Export: postfixes for entity child and children
++ ID system (instead of strings)
+* Parser: new stack-based parser
+* Parser: new abstract syntax tree structure
+* Parser code: new parsing language
+* Processor: new syntax tree processing engine
+* Type inference: new type inference engine
+* New file extensions
+
 2019.03.25 (version 0.10)
-  + Parser code: abstract methods
-  + Parser code: native classes and functions (will be skipped during export)
-  + Processor: generic subtypes
-  * Processor: native class replacement
-  * Parser code: generic subtypes
-  
++ Parser code: abstract methods
++ Parser code: native classes and functions (will be skipped during export)
++ Processor: generic subtypes
+* Processor: native class replacement
+* Parser code: generic subtypes
+
 2019.03.13 (version 0.9)
-  + Parser code: generic subtypes
-  + Parser code, Parser, Java export: getters
-  + Parser code: // and /* */ comments
-  + Parser code: "extends" keyword
-  * Separate classes for field structure, function scope and class scope
++ Parser code: generic subtypes
++ Parser code, Parser, Java export: getters
++ Parser code: // and /* */ comments
++ Parser code: "extends" keyword
+* Separate classes for field structure, function scope and class scope
 
 2019.02.13 (version 0.8)
-  + Type inference engine
-  + Abstract syntax tree processing engine
-  + Java export
-  + Parser code: "global" keyword
++ Type inference engine
++ Abstract syntax tree processing engine
++ Java export
++ Parser code: "global" keyword
 
 2019.01.05 (version 0.7)
-  + Parser: parser code lines: error messages and parsing log
-  + Parser code: field and variable types
-  + Parser code: $ prefix
-  * Parser, export: error messages
-  * Parser: parsing logging
-  ! Parser: node resolving
++ Parser: parser code lines: error messages and parsing log
++ Parser code: field and variable types
++ Parser code: $ prefix
+* Parser, export: error messages
+* Parser: parsing logging
+! Parser: node resolving
 
 2018.12.02 (version 0.6)
-  + Parser: INCLUDE command
-  
++ Parser: INCLUDE command
+
 2018.11.24 (version 0.5)
-  + Parser: ADD command
-  + Parser code: value returns string if there is only one string: string sequence
-  + Parser code: default values and this: function definition parameters
-  + Parser code, JavaScript export: classes, objects, methods, constructors
-  + Parser code, JavaScript export: anonymous functions
-  + Parser code, JavaScript export: return
-  ! Parser: // comments
-  
++ Parser: ADD command
++ Parser code: value returns string if there is only one string: string sequence
++ Parser code: default values and this: function definition parameters
++ Parser code, JavaScript export: classes, objects, methods, constructors
++ Parser code, JavaScript export: anonymous functions
++ Parser code, JavaScript export: return
+! Parser: // comments
+
 2018.11.23 (version 0.4)
-  + Parser, Export: // comments
-  + Parser code: multiple loops: one for operator
-  + JavaScript export: for loops
-  * Export, JavaScript export: new format of tokens (as escape sequences)
++ Parser, Export: // comments
++ Parser code: multiple loops: one for operator
++ JavaScript export: for loops
+* Export, JavaScript export: new format of tokens (as escape sequences)
 
 2018.11.22 (version 0.3)
-  + Parser: expression parser (shutting-yard algorithm with ternary conditional operator)
-  + Parser code: ranges: for loop
-  + JavaScript export: other numeric and boolean operators
-  + JavaScript export: if-then-else clause
-  * Parser code: # changed to \
-  ! Parser code: arrays: expressions
-  ! Parser code: operators
-  ! Parser code: if-then-else clause
-  ! JavaScript export: function calls
-  
++ Parser: expression parser (shutting-yard algorithm with ternary conditional operator)
++ Parser code: ranges: for loop
++ JavaScript export: other numeric and boolean operators
++ JavaScript export: if-then-else clause
+* Parser code: # changed to \
+! Parser code: arrays: expressions
+! Parser code: operators
+! Parser code: if-then-else clause
+! JavaScript export: function calls
+
 2018.11.13 (version 0.2)
-  * Parser, Parser code: fully rewritten
+* Parser, Parser code: fully rewritten
 
 2018.11.07 (version 0.1)
-  + Parsing engine
-  + Parser code
-  + Abstract syntax tree
-  + Exporting engine
-  + Javascript export code
++ Parsing engine
++ Parser code
++ Abstract syntax tree
++ Exporting engine
++ Javascript export code
 
-To do:  
-  + ranges
-  + $[] syntax
-  + string slices
+To do:
++ ranges
++ $[] syntax
++ string slices
 
 Possible improvements:
-  + Parser: function unpacking
-  + Parser: change ActionGoTo actions to straight links
-  + Parser: faster subs with no return value
-  + Parser: faster inline subs
++ Parser: function unpacking
++ Parser: change ActionGoTo actions to straight links
++ Parser: faster subs with no return value
++ Parser: faster inline subs

@@ -1,18 +1,12 @@
 package ast.function;
 
-import ast.ClassEntity;
-import ast.Code;
-import ast.Entity;
-import ast.ID;
-import ast.Value;
-import ast.Variable;
+import ast.*;
 import exception.ElException;
 import exception.EntityException;
 import exception.EntityException.Cannot;
 import exception.NotFound;
+
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class FunctionCall extends Value {
   public static final ID id = ID.get("call");

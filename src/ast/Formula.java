@@ -43,7 +43,7 @@ public class Formula extends Entity {
   }
 
   @Override
-  public void moveToFormula(Formula formula) throws ElException {
+  public void moveToFormula(Formula formula) {
     formula.chunks.addAll(chunks);
   }
 
@@ -81,7 +81,7 @@ public class Formula extends Entity {
             break;
           }
         }
-        if(log) currentSymbolReader.log("PUSH " + entity.toString()
+        if(log) currentSymbolReader.log("PUSH " + entity
             + " TO OPERATOR STACK");
         opStack.push(function);
       } else {
@@ -122,11 +122,10 @@ public class Formula extends Entity {
   
   public void print(String indent) {
     System.out.print("\n    ");
-    for(int i = 0; i < opStack.size(); i++)
-      System.out.print(opStack.get(i).toString() + ", "); 
+    for(NativeFunction nativeFunction: opStack)
+      System.out.print(nativeFunction.toString() + ", ");
     System.out.print("\n    ");
-    for(int i = 0; i < valueStack.size(); i++)
-      System.out.print(valueStack.get(i).toString() + ", "); 
+    for(Value value: valueStack) System.out.print(value.toString() + ", ");
     System.out.println();
   }
 

@@ -20,7 +20,7 @@ public class ClassParameter extends NamedEntity {
   
   @Override
   public boolean isValue(ID name, boolean isThis) {
-    return this.name == name && isThis == false;
+    return this.name == name && !isThis;
   }
   
   // moving functions

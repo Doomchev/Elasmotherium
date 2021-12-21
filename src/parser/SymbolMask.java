@@ -27,9 +27,8 @@ public class SymbolMask {
     return this;
   }
   
-  public SymbolMask or(SymbolMask mask) {
+  public void or(SymbolMask mask) {
     for(int c = 0; c < 130; c++) symbols[c] |= mask.symbols[c];
-    return this;
   }
   
   public SymbolMask flip() {

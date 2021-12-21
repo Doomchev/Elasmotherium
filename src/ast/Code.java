@@ -6,8 +6,9 @@ import ast.function.StaticFunction;
 import exception.ElException;
 import exception.EntityException;
 import exception.NotFound;
-import java.util.LinkedList;
 import vm.VMCommand;
+
+import java.util.LinkedList;
 
 public class Code extends Entity {
   private final LinkedList<Entity> lines = new LinkedList<>();
@@ -101,7 +102,7 @@ public class Code extends Entity {
   }
 
   @Override
-  public void moveToBlock() throws ElException {
+  public void moveToBlock() {
     deallocate();
   }
   

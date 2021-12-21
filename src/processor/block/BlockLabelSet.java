@@ -1,11 +1,7 @@
 package processor.block;
 
 import ast.ID;
-import exception.ElException;
 import exception.EntityException;
-import exception.NotFound;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import processor.ProCommand;
 import vm.VMBase;
 

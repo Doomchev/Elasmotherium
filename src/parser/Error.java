@@ -10,7 +10,7 @@ public class Error extends Action {
     this.errorText = text;
   }
   
-  public Error derive(String param) throws ElException {
+  public Error derive(String param) {
     return new Error(errorText.replace("\\0", param));
   }
 
@@ -25,7 +25,7 @@ public class Error extends Action {
     if(errorActionSub == null) throw new ActionException(this, "ERROR"
         , errorText);
     if(log) log("ERROR - RETURNING TO " + errorActionSub.name);
-    subIndent = subIndent.delete(0, 2);
+    subIndent.delete(0, 2);
     currentAction = errorActionSub.action;
   }
 }

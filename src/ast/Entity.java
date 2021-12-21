@@ -3,16 +3,17 @@ package ast;
 import ast.function.CustomFunction;
 import ast.function.FunctionCall;
 import base.Base;
+import base.Module;
 import exception.ElException;
 import exception.ElException.CannotMove;
 import exception.EntityException;
 import exception.EntityException.CannotGet;
 import exception.NotFound;
-import base.Module;
-import java.util.LinkedList;
 import processor.Processor;
 import vm.VMCommand;
 import vm.values.VMValue;
+
+import java.util.LinkedList;
 
 public abstract class Entity extends Base {
   public Module module;
@@ -165,7 +166,7 @@ public abstract class Entity extends Base {
     throw new CannotMove(this, "code");
   }
 
-  public void moveToBlock() throws ElException {
+  public void moveToBlock() {
   }
 
   public void moveToFormula(Formula formula) throws ElException {
@@ -227,7 +228,7 @@ public abstract class Entity extends Base {
   }
   
   public void print(StringBuilder indent, String prefix) {
-    println(indent.toString() + prefix + toString() + ";");
+    println(indent.toString() + prefix + this + ";");
   }
   
   public void showDebugMessage(String message) {
@@ -236,6 +237,6 @@ public abstract class Entity extends Base {
   }
 
   public String toString(LinkedList<Entity> parameters) {
-    return toString() + "(" + listToString(parameters) + ")";
+    return this + "(" + listToString(parameters) + ")";
   }
 }

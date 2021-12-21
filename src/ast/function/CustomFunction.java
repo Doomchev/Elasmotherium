@@ -99,7 +99,7 @@ public abstract class CustomFunction extends Function {
     return id;
   }
   
-  public Entity getParameter(int index) throws EntityException {
+  public Entity getParameter(int index) {
     return parameters.get(index);
   }
 
@@ -155,7 +155,7 @@ public abstract class CustomFunction extends Function {
   }
 
   @Override
-  public void moveToBlock() throws ElException {
+  public void moveToBlock() {
     deallocateFunction();
   }
   
