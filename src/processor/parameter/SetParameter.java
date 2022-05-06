@@ -11,6 +11,7 @@ public class SetParameter extends ProCommand {
 
   private SetParameter(ProParameter value) {
     this.parameter = value;
+    this.line = currentLineReader.getLineNum();
   }
 
   @Override

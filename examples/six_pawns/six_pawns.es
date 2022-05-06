@@ -4,6 +4,7 @@ import Tilemap;
 Int empty = 0;
 Int white = 1;
 Int black = 2;
+
 Int cellsQuantity = 7;
 Int pawnsQuantity = (cellsQuantity - 1) / 2;
 Int blackStart = pawnsQuantity + 1;

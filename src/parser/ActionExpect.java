@@ -5,16 +5,22 @@ import exception.ElException.ActionException;
 
 public class ActionExpect extends Action {
   private final char symbol;
+  private final String errorText;
 
-  public ActionExpect(char symbol) {
+  public ActionExpect(char symbol, String errorText) {
     this.symbol = symbol;
+    this.errorText = errorText;
   }
 
   @Override
   public Action create(String params) throws ElException {
-    if(params.length() != 3) throw new ActionException(this, 
-        "EXPECT", "requires one symbol as parameter");
-    return new ActionExpect(params.charAt(1));
+    String[] paramArray = params.split(",");
+    if(paramArray[0].length() != 3 || paramArray.length < 1) {
+      throw new ActionException(this, "EXPECT"
+          , "requires one symbol and error text as parameters");
+    }
+    return new ActionExpect(paramArray[0].charAt(1)
+        , paramArray.length == 1 ? "" : paramArray[1]);
   }
   
   @Override
@@ -33,7 +39,8 @@ public class ActionExpect extends Action {
             currentAction = nextAction;
             return;
           }
-          throw new ActionException(this, "EXPECT", symbol + " expected");
+          throw new ActionException(this, "EXPECT"
+              , errorText + ", \"" + symbol + "\" expected");
       }
     }
   }

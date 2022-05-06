@@ -1,25 +1,25 @@
 package vm.object;
 
+import exception.ElException;
 import vm.VMCommand;
+import vm.VMFieldCommand;
+import vm.i64.field.I64FieldEquate;
 
-public class ObjectFieldEquate extends VMCommand {
-  private final int stackIndex, fieldIndex;
-
-  public ObjectFieldEquate(int stackIndex, int fieldIndex) {
-    this.stackIndex = stackIndex;
-    this.fieldIndex = fieldIndex;
+public class ObjectFieldEquate extends VMFieldCommand {
+  public ObjectFieldEquate(int fieldIndex, int varIndex) {
+    super(fieldIndex, varIndex);
   }
-  
+
   @Override
-  public void execute() {
-    //objectStack[stackIndex + currentCall.paramPosition]
-    //    .objectSet(objectStack[stackPointer]);
-    stackPointer--;
+  public VMCommand create(int fieldIndex, int varIndex) {
+    return new I64FieldEquate(fieldIndex, varIndex);
+  }
+
+  @Override
+  public void execute() throws ElException {
+    objectStack[currentCall.varIndex(varIndex)].setField(
+        fieldIndex, objectStack[stackPointer]);
+    stackPointer -= varIndex == LAST ? 2 : 1;
     currentCommand++;
-  }
-  
-  @Override
-  public String toString() {
-    return super.toString() + " " + stackIndex + " " + fieldIndex;
   }
 }

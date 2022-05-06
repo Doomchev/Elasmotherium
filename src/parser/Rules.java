@@ -123,7 +123,7 @@ public class Rules extends Base {
     actions.put("SAVEPOS", new ActionSavePos());
     actions.put("LOADPOS", new ActionLoadPos());
     actions.put("ADD", new ActionAdd(""));
-    actions.put("EXPECT", new ActionExpect(' '));
+    actions.put("EXPECT", new ActionExpect(' ', ""));
     actions.put("CLEAR", new ActionClear());
     actions.put("CREATE", new ActionCreate(null, null, null));
     actions.put("CBV", new ActionCreateBlockVariable(null));

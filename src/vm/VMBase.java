@@ -1,14 +1,14 @@
 package vm;
 
-import vm.call.VMFunctionCall;
 import base.Base;
-import exception.ElException;
 import base.Module;
-import java.awt.Graphics;
-import java.util.Arrays;
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
+import exception.ElException;
+import vm.call.VMFunctionCall;
 import vm.values.VMValue;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Arrays;
 
 public class VMBase extends Base{
   private static final int STACK_SIZE = 16, COMMANDS_SIZE = 256;
@@ -39,8 +39,7 @@ public class VMBase extends Base{
   }
   
   public static void appendLog(VMCommand command) {
-    if(log) 
-    append(command);
+    if(log) append(command);
   }
 
   public static void execute(boolean showCommands, Module module) {

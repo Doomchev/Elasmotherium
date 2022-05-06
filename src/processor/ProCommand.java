@@ -7,9 +7,13 @@ import vm.VMBase;
 import vm.VMCommand;
 
 public abstract class ProCommand extends ProBase {
+  public int line;
+
   public ProCommand create(String param) throws ElException {
     try {
-      return getClass().newInstance();
+      ProCommand command = getClass().newInstance();
+      command.line = currentLineReader.getLineNum();
+      return command;
     } catch(InstantiationException | IllegalAccessException ex) {
       throw new CannotCreate(this, toString());
     }
@@ -23,6 +27,6 @@ public abstract class ProCommand extends ProBase {
   }
   
   public void log(String message) {
-    currentLineReader.log(message);
+    currentLineReader.log(message, line);
   }
 }

@@ -42,6 +42,7 @@ public class AppendCommand extends ProCommand {
   
   public AppendCommand(VMCommand command) {
     this.command = command;
+    this.line = currentLineReader.getLineNum();
   }
   
   public static ProCommand create(VMCommand command, String parameters)

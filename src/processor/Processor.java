@@ -10,33 +10,20 @@ import base.Module;
 import exception.ElException;
 import exception.ElException.MethodException;
 import exception.EntityException;
-import processor.block.BlockLabelInitialize;
-import processor.block.BlockLabelSet;
-import processor.parameter.SetParameter;
+import processor.block.*;
+import processor.parameter.*;
 import vm.GoTo;
 import vm.IfFalseGoTo;
 import vm.VMCommand;
-import vm.call.I64Return;
-import vm.call.StringReturn;
-import vm.collection.CollectionToIterator;
-import vm.collection.I64GetAtIndex;
-import vm.collection.I64SetAtIndex;
-import vm.collection.IteratorHasNext;
+import vm.call.*;
+import vm.collection.*;
 import vm.i64.*;
-import vm.i64.field.I64FieldEquate;
-import vm.i64.field.I64FieldIncrement;
-import vm.i64.field.I64FieldPush;
-import vm.i64.var.I64VarEquate;
-import vm.i64.var.I64VarIncrement;
-import vm.i64.var.I64VarPush;
-import vm.object.ObjectVarEquate;
-import vm.object.ObjectVarPush;
-import vm.string.StringAdd;
-import vm.string.StringPush;
-import vm.string.field.StringFieldEquate;
-import vm.string.field.StringFieldPush;
-import vm.string.var.StringVarEquate;
-import vm.string.var.StringVarPush;
+import vm.i64.field.*;
+import vm.i64.var.*;
+import vm.object.*;
+import vm.string.*;
+import vm.string.field.*;
+import vm.string.var.*;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -72,7 +59,8 @@ public class Processor extends ProBase {
     
     addCommand(new I64FieldEquate(0, 0));
     addCommand(new StringFieldEquate(0, 0));
-    
+    addCommand(new ObjectFieldEquate(0, 0));
+
     addCommand(new I64Negative());
     addCommand(new I64Add());
     addCommand(new I64Subtract());
@@ -193,7 +181,8 @@ public class Processor extends ProBase {
                 } else {
                   VMCommand command = commands.get(line);
                   if(command == null)
-                    throw new ElException.NotFound(this, "Command " + line);
+                    throw new ElException.NotFound(this, "Command "
+                        + line);
                   code.add(AppendCommand.create(command, param));
                 }
               }
@@ -257,7 +246,7 @@ public class Processor extends ProBase {
   
   public void process(ID functionName, ID methodName)
       throws ElException, EntityException {
-    if(log) currentLineReader.log(functionName + "." + methodName);
+    //if(log) currentLineReader.log(functionName + "." + methodName, 0);
     Method method;
     try {
       method = getMethod(functionName, methodName);
@@ -287,7 +276,8 @@ public class Processor extends ProBase {
       currentProcessor = this;
       module.process();
     } catch (EntityException ex) {
-      ex.entity.showDebugMessage(ex.message);
+      //ex.entity.showDebugMessage(ex.message);
+      error("Processing error", ex.message);
     } catch (exception.NotFound ex) {
       error("Processing error", ex.message);
     }

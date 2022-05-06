@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Elasmotherium:jar">
+    <output-path>$PROJECT_DIR$/../../temp2/elasmotherium/artifacts/Elasmotherium_jar</output-path>
+    <root id="archive" name="Elasmotherium.jar">
+      <element id="module-output" name="Elasmotherium" />
+    </root>
+  </artifact>
+</component>

@@ -9,16 +9,7 @@ spacing = tab space
 nothing = tab space newline
 op = + - * / =
 
-
-
-/// errors
-
-ERROR expected: \0 expected
-ERROR syntaxError: Syntax error
-ERROR invalid: Invalid \0
 ERROR error: \0
-
-
 
 // functions
 
@@ -85,7 +76,7 @@ root: {
 }
 
 code: CREATE(code) {
-  "{": >> сodeLines() EXPECT("}") RETURN
+  "{": >> сodeLines() EXPECT("}", "No } after block") RETURN
   other: codeLine
 }
 
@@ -124,7 +115,7 @@ codeLine: {
         other: CREATE(link) CREATE(formula) CREATE(link) MOVE(link, formula) CREATE(parameters) CREATE(formula) MOVE(link, formula) separator() MOVE(formula, parameters) {
           ",": >> callParameter
           ")": >> callParameterEnd
-          other: expected(", or )")
+          other: ("Invalid separator, comma or ) expected")
         }
       }
       other: CREATE(formula) CREATE(link) MOVE(link, formula) functionCall
@@ -140,9 +131,9 @@ codeLine: {
   "class": >> class() MOVE(class, code) RETURN
   "for": >> for
   "repeat": >> CREATE(block, repeat) code() SET(code, code) MOVE(block, code) RETURN
-  "if": >> EXPECT("(") formula() {
+  "if": >> EXPECT("(", "( expected after if") formula() {
     "then": then
-    other: CREATE(block, if) SET(condition, formula) EXPECT(")") code() SET(code, code) {
+    other: CREATE(block, if) SET(condition, formula) EXPECT(")", ") expected after formula") code() SET(code, code) {
       "else": >> code() SET(else, code) SET(if_else) MOVE(block, code) RETURN
       other: MOVE(block, code) RETURN
     }
@@ -158,15 +149,13 @@ codeLine: {
   "[": >> CREATE(formula) list() MOVE(list, formula) {
     "[": >> index
     ".": >> dot
-    other: expected("[ or .")
+    other: error("[ or .")
   }
   ";": >> RETURN
-  other: syntaxError
+  other: error("$ symbol cannot be start of code line")
 }
 
 codeLineEnd: EXPECT(";") RETURN
-
-if: 
 
 // Type[<Type...>] var
 // Type[<Type...>] function
@@ -176,7 +165,7 @@ def: id() {
   // Type var = value;
   // Type var;
   ",", ";", "=": varDefault
-  other: syntaxError
+  other: error("Invalid separator $ in function / variable definition")
 }
 
 varDefault: CREATE(variable) {
@@ -190,7 +179,7 @@ varEnd: {
   ",": >> DUP(link) MOVE(link, variable) MOVE(variable, code) id() varDefault
   // Type var;
   ";": >> MOVE(link, variable) MOVE(variable, code) RETURN
-  other: syntaxError
+  other: error("Invalid separator $ after variable")
 }
 
 // Type function(Type
@@ -202,15 +191,15 @@ functionParameter: {
     // function(Type<Type> var
     "<": >> type() id() CREATE(variable) MOVE(link, variable) functionParamDefault
     // function(var = formula
-    "=": expected("Type")
+    "=": error("Variable without a type")
     // function(var,
     // function(var)
-    ",", ")": expected("Type for parameter")
-    other: expected("Identifier or subtype")
+    ",", ")": error("No type defined")
+    other: error("Invalid separator $ after function parameter")
   }
   // Type function()
   ")": >> functionCode
-  other: expected("Identifier or )")
+  other: error("Identifier or )")
 }
 
 functionParamDefault: {
@@ -225,7 +214,7 @@ functionParamEnd: MOVE(variable, function) {
   ",": >> functionParameter
   // function(params)
   ")": >> functionCode
-  other: expected(", or )")
+  other: error(", or )")
 }
 
 functionCode: {
@@ -251,7 +240,7 @@ slashComment: {
 multiLineComment: {
   "*/": >> RETURN
   "/", nothing, other: >>
-  eof: expected("*/")
+  eof: error("No closing symbols */ found for multiline comment")
 }
 
 
@@ -263,7 +252,7 @@ id: {
     idSymbol: >>
     "/", nothing, other: CREATE(id) RETURN
   }
-  other: expected("Identifier")
+  other: error("Expected identifier")
 }
 
 
@@ -273,24 +262,24 @@ id: {
 for: EXPECT("(") CREATE(block, for) {
 	letter: variable() {
     "=": >> SET(variable, variable) formula() {
-      ")", ";": SET(init, formula) EXPECT(";") formula() SET(condition, formula) {
+      ")", ";": SET(init, formula) EXPECT(";", "; expected in for definition") formula() SET(condition, formula) {
         // for(Type variable = formula; condition)
         ")": >> forEnd
         // for(Type variable = formula; condition; iterator)
         ";": >> CREATE(code) id() var() SET(iterator, code) forEnd
-        other: syntaxError
+        other: error("Invalid separator $ in for definition block")
       }
       // for(Type variable = start ..= end
       "..=": >> SET(from, formula) formula() SET(to, formula) SET(for_to) forEnd
       // for(Type variable = start ..< end
       "..<": >> SET(from, formula) formula() SET(until, formula) SET(for_until) forEnd
-      other: syntaxError
+      other: error("Invalid separator $ in for definition block")
     }
     // for(Type variable: collection)
     ":": >> SET(item, variable) formula() SET(collection, formula) CBV(iterator) SET(for_collection) forEnd
-    other: syntaxError
+    other: error("Invalid separator $ in for definition block")
   }
-	other: syntaxError
+	other: error("Variable expected instead of $ in for definition block")
 }
 
 forEnd: EXPECT(")") code() SET(code, code) MOVE(block, code) RETURN
@@ -320,7 +309,7 @@ subtype: id() CREATE(link) {
   "<": >> subtype()
   ",": >> MOVE(link) subtype
   ">": >> MOVE(link) RETURN
-  other: error("Error: type syntax")
+  other: error("Invalid separator $ in type syntax")
 }
 
 
@@ -334,7 +323,7 @@ var: {
   op: operator
   "//": >> slashComment()
   "/*": >> multiLineComment()
-  other: syntaxError
+  other: error("Invalid start $ of variable definition line")
 }
 
 
@@ -343,7 +332,7 @@ var: {
 
 dot: MOVE(dot, formula) {
   letter: id() CREATE(link) MOVE(link, formula) var
-  other: expected("Identifier")
+  other: error("Expected identifier after .")
 }
 
 
@@ -355,7 +344,7 @@ index: MOVE(at, formula) CREATE(parameters) indexValue
 indexValue: formula() MOVE(formula, parameters) {
   ",": >> indexValue
   "]": >> afterIndex
-  other: syntaxError
+  other: error("Invalid separator in object index")
 }
 
 afterIndex: MOVE(parameters, formula) {
@@ -365,7 +354,7 @@ afterIndex: MOVE(parameters, formula) {
   op: operator
   "//": >> slashComment()
   "/*": >> multiLineComment()
-  other: syntaxError
+  other: error("Invalid symbol $ after index definition")
 }
 
 
@@ -380,7 +369,7 @@ functionCall: CREATE(parameters) {
 callParameter: formula() MOVE(formula, parameters) {
   ",": >> callParameter
   ")": >> callParameterEnd
-  other: expected(", or )")
+  other: error("Invalid separator $ in function call")
 }
 
 callParameterEnd: MOVE(callFunction, formula) {
@@ -395,7 +384,7 @@ afterCallParameter: {
   "(": >> functionCall
   "[": >> index
   ";": MOVE(formula, code) RETURN
-  other: syntaxError
+  other: error("Invalid separator $ after call parameter")
 }
 
 
@@ -410,7 +399,7 @@ operator: CREATE(call) {
   "-=": >> MOVE(subtract, call) binaryOperator
   "/=": >> MOVE(divide, call) binaryOperator
   "*=": >> MOVE(multiply, call) binaryOperator
-  other: syntaxError
+  other: error("Invalid command symbol $")
 }
 
 unaryOperator: MOVE(formula, call) MOVE(call, code) EXPECT(";") RETURN
@@ -431,22 +420,22 @@ value: {
     ".": >> id() CREATE(link) MOVE(link, formula) separator
     other: CREATE(this) MOVE(this, formula) separator
   }
-  "if": >> EXPECT("(") CREATE(call) MOVE(ifOp, call) formula() MOVE(formula, call) {
+  "if": >> EXPECT("(", "Invalid separator $ for if block") CREATE(call) MOVE(ifOp, call) formula() MOVE(formula, call) {
     "then": >> then 
-    other: syntaxError
+    other: error("Invalid separator for if block")
   }
   "-": >> CREATE(call) MOVE(negative, call) formula() MOVE(formula, call) MOVE(call, formula) separator
   "!": >> formula() CREATE(call) MOVE(not, call) MOVE(formula, call) MOVE(call, formula) separator
-  "(": >> formula() EXPECT(")") CREATE(call) MOVE(brackets, call) MOVE(formula, call) MOVE(call, formula) separator
+  "(": >> formula() EXPECT(")", "No ) found in bracketed value") CREATE(call) MOVE(brackets, call) MOVE(formula, call) MOVE(call, formula) separator
   "[": >> list() MOVE(list, formula) separator
   "{": >> map() MOVE(map, formula) separator
   quotes: >> CLEAR string
-  other: expected("Value")
+  other: error("Value expected")
 }
 
 then: formula() MOVE(formula, call) {
-  "else": >> formula() MOVE(formula, call) EXPECT(")") MOVE(call, formula) separator
-  other: syntaxError
+  "else": >> formula() MOVE(formula, call) EXPECT(")", "Invalid separator $ / ( expected in if block") MOVE(call, formula) separator
+  other: error("Invalid separator $ in if block")
 }
 
 formulaId: {
@@ -476,7 +465,7 @@ linkParameter: MOVE(link) {
   //Type0<Type1>
   ">": >> MOVE(link, formula) EXPECT("(") parameters
   ",": >> id() CREATE(link) linkParameter
-  other: SyntaxError
+  other: error("Invalid separator $ for link parameter")
 }
 
 
@@ -513,7 +502,7 @@ valueIndex: MOVE(at, formula) CREATE(parameters) valueIndexValue
 valueIndexValue: formula() MOVE(formula, parameters) {
   ",": >> valueIndexValue
   "]": >> MOVE(parameters, formula) separator
-  other: syntaxError
+  other: error("Invalid separator $ for index values")
 }
 
 
@@ -528,7 +517,7 @@ parameters: CREATE(parameters) {
 parameter: formula() MOVE(formula, parameters) {
   ",": >> parameter
   ")": >> parameterEnd
-  other: expected(", or )")
+  other: error("Invalid separator $ for parameters")
 }
 
 parameterEnd: MOVE(callFunction, formula) MOVE(parameters, formula) separator
@@ -578,7 +567,7 @@ list: CREATE(list) {
 listItem: formula() MOVE(formula, list) {
   ",": >> listItem
   "]": >> RETURN
-  other: expected(", or ]")
+  other: error("Invalid separator $ in list body")
 }
 
 
@@ -590,7 +579,7 @@ mapEntry: {
   letter: id() CREATE(entry) EXPECT(":") formula() MOVE(formula, entry) MOVE(entry, map)
 	",": >>
   "}": >> MOVE(map, formula) separator
-  other: expected("Identifier or }")
+  other: error("Invalid separator $ in map body")
 }
 
 
@@ -605,7 +594,7 @@ class: id() CREATE(class) {
 classParameter: id() CREATE(classParameter) MOVE(classParameter, class) {
   ",": >> classParameter
   ">": >> classExtends
-  other: syntaxError
+  other: error("Invalid separator for class parameters")
 }
 
 classExtends: {
@@ -616,7 +605,7 @@ classExtends: {
 classBracket: {
   "{": >> classBody
   ";": >> RETURN
-  other: syntaxError
+  other: error("")
 }
 
 classBody: {
@@ -630,22 +619,22 @@ classBody: {
       // Type var = value
       ",", ";", "=": classFieldValue
       // Type method(
-      "(": >> CREATE(method) MOVE(link, function) methodParameter
-      other: syntaxError
+      "(": >> CREATE(method) MOVE(link, method) methodParameter
+      other: error("( expected in class body after identifier")
     }
     // Type0<Type1> var
     // Type0<Type1> method
     "<": >> type() id() {
-      "(": >> CREATE(method) methodParameter
+      "(": >> CREATE(method) MOVE(link, method) methodParameter
       other: classFieldValue
     }
     // method(
     "(": >> CREATE(method) methodParameter
-    other: syntaxError
+    other: error("Invalid separator $ for class body")
   }
   "create": >> EXPECT("(") CREATE(constructor) methodParameter
   "}": >> RETURN
-  other: syntaxError
+  other: error("Invalid separator $ for class body")
 }
 
 classFieldValue: CREATE(variable) {
@@ -659,7 +648,7 @@ classFieldEnd: {
   ",": >> DUP(link) MOVE(link, variable) MOVE(variable, class) id() classFieldValue
   // Type field;
   ";": >> MOVE(link, variable) MOVE(variable, class) classBody
-  other: syntaxError
+  other: error("Invalid separator $ for class field")
 }
 
 methodParameter: {
@@ -669,17 +658,17 @@ methodParameter: {
     // method(Type<Type> var
     "<": >> type() id() CREATE(variable) MOVE(link, variable) methodParamDefault
     // method(var = formula
-    "=": expected("Type")
+    "=": error("Type")
     // method(var,
     // method(var)
-    ",", ")": expected("Type for parameter")
-    other: expected("Identifier or subtype")
+    ",", ")": error("Invalid separator $ for method parameters")
+    other: error("Identifier or subtype")
   }
   // method(field.var
   "field.": >> id() CREATE(field) methodParamDefault
   // Type method()
   ")": >> methodCode
-  other: expected("Identifier or )")
+  other: error("Invalid separator $ for method parameters")
 }
 
 methodParamDefault: {
@@ -694,7 +683,7 @@ methodParamEnd: MOVE(variable, function) {
   ",": >> methodParameter
   // method(params)
   ")": >> methodCode
-  other: expected(", or )")
+  other: error("Invalid separator $ for method parameters")
 }
 
 methodCode: {

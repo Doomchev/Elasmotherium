@@ -16,6 +16,7 @@ public class TypeCommand extends ProCommand {
     this.type = ProParameter.get(type);
     this.postfix = postfix;
     this.parameter = ProParameter.get(parameter);
+    this.line = currentLineReader.getLineNum();
   }
 
   public static VMCommand getCommand(ClassEntity type, String postfix

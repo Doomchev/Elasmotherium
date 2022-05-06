@@ -1,9 +1,30 @@
-Tiles extends Enum<Color> {
-	wall: Color("000")
-	floor: Color("FF0")
-	apple: Color("F00")
-	snake: Color("0F0")
-}
+import Wsad
+
+upKey = Key("W")
+downKey = Key("S")
+leftKey = Key("A")
+rightKey = Key("D")
+
+import Colors
+  import Color
+    class Color extends I32
+      create
+  black = Color("0")
+  grey = Color("8")
+  red = Color("F00")
+
+import TileMap
+  class TileMap<TileType>
+    
+
+import Window
+  class Window
+
+enum Tiles<Color>
+	wall: black
+	floor: grey
+	apple: red
+	snake: green
 
 // params
 
@@ -12,16 +33,20 @@ height = 48
 food = 10
 appleFood = 5
 
+TileMap gameField
+tileSet = ColorTileSet<Tiles>()
+Int score, x, y, dx, dy
+
 // options
 
-options = Window {
-	start: Centered.Button("Start") {
+options = Window
+	start = Centered.Button("Start") {
 		onClick() {
 			options.close()
 			
-			global field = Color[width, height].fill(floor)
-			for(x = 0 ..< width) field[x, 0] = field[x, height - 1] = wall
-			for(y = 0 ..< height) field[0, y] = field[width - 1, y] = wall
+			gameField = TileMap<Tiles>(width, height, tileSet, floor)
+			for(x = 0 ..< width) gameField(x, 0) = gameField(x, height - 1) = wall
+			for(y = 0 ..< height) gameField(0, y) = gameField(width - 1, y) = wall
 			placeApple()
 			
 			global score = 0, x = y = 2, dx = 1, dy = 0
@@ -30,16 +55,16 @@ options = Window {
 			game.open()
 		}
 	}
-	object: Column {
-		Table(2) {
+	object = Column
+		Table(2)
 			Right.Text("Field width: ")
-			TextField(#width, 10..100)
+			TextField(reference width, 10 ..= 100)
 			Right.Text("Field height: ")
-			TextField(#height, 10..100)
+			TextField(reference height, 10 ..= 100)
 			Right.Text("Initial length: ")
-			TextField(#food, 1..)
+			TextField(reference food, 1)
 			Right.Text("Length increment: ")
-			TextField(#appleFood, 1..)
+			TextField(reference appleFood, 1)
 			$start
 		}
 	}	
@@ -47,77 +72,57 @@ options = Window {
 
 // main
 
-Pos {
-	Int x, y
+Pos
 	Pos next
-	($x, $y) {}
-}
+	create(Int field x, Int field y)
+  
 Pos first, last
 
-placeApple() {
-	repeat {
+placeApple()
+	repeat
 		appleX = Int.random(0 ..< width)
 		appleY = Int.random(0 ..< height)
-		if(field[appleX, appleY] == floor) {
-			field[appleX, appleY] = apple
+		if(gameField(appleX, appleY) == floor)
+			gameField(appleX, appleY) = apple
 			break
-		}
-	}
-}
 
-game = Hidden.Window("Game") {
-	canvas: MaxIntScaled.Canvas {
-		get originalWidth -> width
-		get originalheight -> height
-		render() {
-			for(y = 0 ..< height, x = 0 ..< width) $drawRectangle(field[x, y], $xScale * x, $yScale * y, $xScale, $yScale)
-		}
-	}
-	object: Column {
+game = Hidden.Game.Window("Color snake") {
+	hud = Column
 		Center.Text("Score: \(score)")
-		$canvas
-	}
-	logicPerSecond: 6
-	onKeyDown(key) {
-		switch(key) {
-			case A: dx = -1, dy = 0
-			case D: dx = 1, dy = 0
-			case W: dx = 0, dy = -1
-			case S: dx = 0, dy = 1
-		}
-	}
-	logic() {
+	logicPerSecond = 6
+	onKeyDown(key)
+		switch(key)
+			case upKey
+        dx = -1, dy = 0
+			case rightKey
+        dx = 1, dy = 0
+			case leftKey
+        dx = 0, dy = -1
+			case downKey
+        dx = 0, dy = 1
+	logic()
 		last.next = last = Pos(x, y)
 		x += dx
 		y += dy
-		switch(field[x, y]) {
-			case floor:
-			case apple:
+		switch(gameField(x, y)) {
+			case floor
+			case apple
 				food += appleFood
 				score++
 				placeApple()
 			default:
 				game.close()
-				gameOver = Window("Game over!") {
-					ok: Centered.Button("OK") {
-						onClick() {
-							gameOver.close()
-							options.open()
-						}
-					}
-					object: Column {
+				gameOver = Window("Game over!")
+					gui = Column
 						Center.Text("You scored \score\ points.")
-						$ok
-					}
-				}
-		}
-		field[x, y] = snake
-		if(food > 0) {
+            Centered.Button("OK")
+              onClick()
+                gameOver.close()
+                game.close()
+                options.open()
+		gameField(x, y) = snake
+		if(food > 0)
 			food--
-		} else {
-			field[first.x, first.y] = floor
+		else
+			gameField(first.x, first.y) = floor
 			first = first.next
-		}
-	}
-}
-

@@ -38,8 +38,8 @@ public class LineReader extends Reader {
     return lineNum;
   }
 
-  public void log(String message) {
-    System.out.println(subIndent.toString() + lineNum + ": " + message);
+  public void log(String message, int line) {
+    System.out.println(subIndent.toString() + line + ": " + message);
   }
 
   public void showDebugMessage(String message) {

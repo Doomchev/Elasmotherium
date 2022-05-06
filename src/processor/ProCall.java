@@ -16,6 +16,7 @@ public class ProCall extends ProCommand {
     this.callObject = ProParameter.get(object);
     this.method = ID.get(method);
     this.parameter = parameter.isEmpty() ? null : ProParameter.get(parameter);
+    this.line = currentLineReader.getLineNum();
   }
   
   @Override
