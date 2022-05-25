@@ -24,6 +24,13 @@ brackets.getObject {
   v0.getObject;
 }
 
+at.getObject {
+  v0.getObject;
+  v1.resolve(Int);
+  [this]getAtIndex;
+  setParameter(this);
+}
+
 // equate
 
 equate {
@@ -49,8 +56,9 @@ dot.equate {
 at.equate {
   v0.getObject;
   v1.resolve(Int);
-  param.resolve(Int);
-  [Int]SetAtIndex;
+  getSubType;
+  param.resolve(this);
+  [this]SetAtIndex;
 }
 
 // increment
@@ -97,7 +105,9 @@ const.resolve {
 at.resolve {
   v0.getObject;
   v1.resolve(Int);
-  [Int]GetAtIndex;
+  getSubType;
+  [this]GetAtIndex;
+  convert(this, param);
 }
 
 // arithmetic

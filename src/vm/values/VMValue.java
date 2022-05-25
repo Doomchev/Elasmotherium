@@ -4,9 +4,10 @@ import exception.ElException;
 import exception.ElException.Cannot;
 import exception.ElException.CannotGet;
 import exception.ElException.CannotSet;
+import vm.VMBase;
+
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
-import vm.VMBase;
 
 public abstract class VMValue extends VMBase {
   public abstract VMValue create();
@@ -27,6 +28,10 @@ public abstract class VMValue extends VMBase {
 
   public void i64Set(int index, long value) throws ElException {
     throw new CannotSet("i64 at index", this);
+  }
+
+  public VMValue objectGet(int index) throws ElException {
+    throw new CannotGet("object at index", this);
   }
   
   public long i64Next() throws ElException {

@@ -223,7 +223,8 @@ public class Rules extends Base {
       NativeFunction.dot = NativeFunction.get("dot");
       NativeFunction.callFunction = NativeFunction.get("callFunction");
       NativeFunction.equate = NativeFunction.get("equate");
-      
+      NativeFunction.at = NativeFunction.get("at");
+
       Action.currentAction = root.action;
       while(Action.currentAction != null)
         Action.currentAction.execute();

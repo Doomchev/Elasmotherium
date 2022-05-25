@@ -78,6 +78,10 @@ public class Constructor extends StaticFunction {
       throw new EntityException(this, ex.message);
     }
   }
+
+  public Entity resolveFunction(int parametersQuantity) throws EntityException {
+    return this;
+  }
   
   // moving functions
 

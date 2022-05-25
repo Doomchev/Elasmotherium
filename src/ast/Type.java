@@ -4,17 +4,18 @@ import ast.function.Method;
 import exception.EntityException;
 import exception.EntityException.Cannot;
 import exception.NotFound;
-import java.util.Arrays;
 import vm.values.VMValue;
+
+import java.util.Arrays;
 
 public class Type extends Entity {
   private final ClassEntity basicClass;
-  private final Entity[] subtypes;
+  private final Entity[] subTypes;
 
-  public Type(ClassEntity basicClass, Entity[] subtypes) {
+  public Type(ClassEntity basicClass, Entity[] subTypes) {
     super(0, 0);
     this.basicClass = basicClass;
-    this.subtypes = subtypes;
+    this.subTypes = subTypes;
   }
   
   // properties
@@ -28,19 +29,23 @@ public class Type extends Entity {
   public Entity getType() throws EntityException {
     return this;
   }
+
+  public Entity getSubType() throws EntityException {
+    return subTypes[0];
+  }
   
   @Override
   public Entity getMethod(ID id, int parametersQuantity) throws NotFound {
     Method method = basicClass.getMethod(id, parametersQuantity);
-    if(subtypes.length == 0) return method;
-    return new ParameterizedEntity(subtypes, method);
+    if(subTypes.length == 0) return method;
+    return new ParameterizedEntity(subTypes, method);
   }
 
   @Override
   public Entity[] getSubTypes(ID className, int quantity) throws EntityException {
-    if(basicClass.name != className || quantity != subtypes.length)
+    if(basicClass.name != className || quantity != subTypes.length)
       throw new Cannot("convert " + basicClass.name + " to ", this);
-    return subtypes;
+    return subTypes;
   }
   
   // other
@@ -53,6 +58,6 @@ public class Type extends Entity {
   @Override
   public String toString() {
     return basicClass.name
-        + (subtypes.length == 0 ? "" : Arrays.toString(subtypes));
+        + (subTypes.length == 0 ? "" : Arrays.toString(subTypes));
   }
 }

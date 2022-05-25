@@ -63,6 +63,11 @@ public class FunctionCall extends Value {
     }
   }
 
+  @Override
+  public Entity getSubType() throws EntityException {
+    return parameters.getFirst().resolve().getType().getSubType();
+  }
+
   public Entity getFunction() {
     return function;
   }
@@ -173,7 +178,12 @@ public class FunctionCall extends Value {
     func.process(this);
     return func.getNativeClass();
   }
-  
+
+  @Override
+  public ClassEntity getNativeClass() throws EntityException {
+    return parameters.get(0).resolve().getNativeClass();
+  }
+
   // moving functions
 
   @Override

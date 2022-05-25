@@ -14,8 +14,8 @@ TileMap tileMap = TileMap(cellsQuantity, 1, Texture("pawns.png").cut(3), empty);
 
 init() {
 	for(Int n = 0 ..< pawnsQuantity) {
-    tileMap[n] = white;
-    tileMap[blackStart + n] = black;
+    tileMap.set(n, 0, white);
+    tileMap.set(blackStart + n, 0, black);
   }
 	say("Вам нужно поменять черные и белые пешки местами.\nЧерные пешки ходят влево, белые - вправо.\n"
 			+ "Пешка может пойти на одну клетку вперед\nили перепрыгнуть через следующую пешку\nна свободное поле."
@@ -31,29 +31,29 @@ render() {
 
 onClick(Int x, Int y) {
   Int tileNum = bound(tileMap.tileX(x - tileMapX), 0, tileMap.cellXQuantity - 1);
-  Int tile = tileMap[tileNum, 0];
+  Int tile = tileMap.get(tileNum, 0);
   if(tile == white && tileNum < cellsQuantity - 1) {
-    Field nextTile = tileMap[tileNum + 1, 0];
+    Field nextTile = tileMap.get(tileNum + 1, 0);
     if(nextTile == empty) {
-      tileMap[tileNum, 0] = empty;
-      tileMap[tileNum + 1, 0] = white;
-    } else if(tileNum < cellsQuantity - 2 && tileMap[tileNum + 2, 0] == empty) {
-      tileMap[tileNum, 0] = empty;
-      tileMap[tileNum + 2, 0] = white;
+      tileMap.set(tileNum, 0, empty);
+      tileMap.set(tileNum + 1, 0, white);
+    } else if(tileNum < cellsQuantity - 2 && tileMap.get(tileNum + 2, 0) == empty) {
+      tileMap.set(tileNum, 0, empty);
+      tileMap.set(tileNum + 2, 0, white);
     }
   } else if(tile == black && tileNum > 0) {
     Int prevTile = tileMap[tileNum - 1, 0];
     if(prevTile == empty) {
-      tileMap[tileNum, 0] = empty;
-      tileMap[tileNum - 1, 0] = black;
-    } else if(tileNum > 1 && tileMap[tileNum - 2, 0] == empty) {
-      tileMap[tileNum, 0] = empty;
-      tileMap[tileNum - 2, 0] = black;
+      tileMap.set(tileNum, 0, empty);
+      tileMap.set(tileNum - 1, 0, black);
+    } else if(tileNum > 1 && tileMap.get(tileNum - 2, 0) == empty) {
+      tileMap.set(tileNum, 0, empty);
+      tileMap.set(tileNum - 2, 0, black);
     }
   } else return;
   
   for(Int n = 0 ..< pawnsQuantity)
-    if(tileMap[n, 0] != black || tileMap[n + blackStart, 0] != white) return;
+    if(tileMap.get(n, 0) != black || tileMap.get(n + blackStart, 0) != white) return;
   
   say("Вы выиграли!");
   init();

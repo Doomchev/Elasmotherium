@@ -10,6 +10,7 @@ public class GetField extends ProCommand {
   private final ProParameter parameter;
 
   private GetField(ProParameter parameter) {
+    super();
     this.parameter = parameter;
   }
   

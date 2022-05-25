@@ -18,11 +18,11 @@ class TileMap {
   draw(Int x = (screenWidth - width) / 2, Int y = (screenHeight - height) / 2) {
     for(Int tileY = 0 ..< rowsQuantity)
 			for(Int tileX = 0 ..< columnsQuantity)
-				images[tiles[tileX + tileY * columnsQuantity]].draw(x + tileX * cellWidth, y + tileY * cellHeight);
+				images.get(tiles[tileX + tileY * columnsQuantity]).draw(x + tileX * cellWidth, y + tileY * cellHeight);
   }
   
-  Int getAtIndex(Int cellX, Int cellY) -> tiles[cellX + cellY * columnsQuantity];
-  setAtIndex(Int cellX, Int cellY, Int tileNumber) tiles[cellX + cellY * columnsQuantity] = tileNumber;
+  Int get(Int cellX, Int cellY) -> tiles[cellX + cellY * columnsQuantity];
+  set(Int cellX, Int cellY, Int tileNumber) tiles[cellX + cellY * columnsQuantity] = tileNumber;
   
   Int tileX(Int screenX) -> screenX / cellWidth;
   Int tileY(Int screenY) -> screenY / cellHeight;

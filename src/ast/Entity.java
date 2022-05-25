@@ -44,6 +44,10 @@ public abstract class Entity extends Base {
   public Entity getType() throws EntityException {
     throw new CannotGet("type", this);
   }
+
+  public Entity getSubType() throws EntityException {
+    throw new CannotGet("subtype", this);
+  }
   
   public Entity getType(Entity[] subTypes) throws EntityException {
     throw new CannotGet("type using subtypes", this);

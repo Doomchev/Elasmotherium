@@ -77,12 +77,15 @@ public class ClassEntity extends NamedEntity {
   
   @Override
   public Variable getField(ID name) throws NotFound {
+    if(log2) println("[getting field " + name + " from " + this +"]");
     for(Variable field: fields) if(field.name == name) return field;
     throw new NotFound("Field " + name, this);
   }
 
   @Override
   public void resolveField(ID name, Entity type) throws EntityException {
+    if(log2) println("[resolve field " + name + " of " + type + " from " + this
+        + "]");
     for(Variable field: fields) {
       if(field.name == name) {
         field.resolve(type);

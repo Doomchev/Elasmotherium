@@ -11,7 +11,7 @@ import java.util.LinkedList;
 
 public class NativeFunction extends Function {
   private static final HashMap<ID, NativeFunction> all = new HashMap<>();
-  public static NativeFunction equate, dot, callFunction;
+  public static NativeFunction equate, dot, callFunction, at;
   
   public final byte priority;
   public final String operator;

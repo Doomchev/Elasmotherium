@@ -87,11 +87,13 @@ public class Processor extends ProBase {
     addCommand(new I64IteratorNext());
     addCommand(new I64GetAtIndex());
     addCommand(new I64SetAtIndex());
-    
+    addCommand(new ObjectGetAtIndex());
+
     addCommand(new GoTo());
     addCommand(new IfFalseGoTo());
     
     proCommands.put("getField", GetField.instance);
+    proCommands.put("getSubType", GetSubType.instance);
     proCommands.put("setParameter", SetParameter.instance);
     proCommands.put("convert", Convert.instance);
     proCommands.put("stop", Stop.instance);
@@ -112,6 +114,7 @@ public class Processor extends ProBase {
   
   private Method getMethod(ID functionName, ID methodName)
       throws ElException {
+    if(log2) println("[getting method " + functionName + "." + methodName +"]");
     LinkedMap<ID, Method> function = functions.get(functionName);
     if(function == null)
       throw new MethodException("Processor", "getMethod"
@@ -198,6 +201,7 @@ public class Processor extends ProBase {
 
   public void processBlock(Block block, ID type)
       throws ElException, EntityException {
+    if(log2) println("[processing block " + block + " with type " + type + "]");
     block.parentBlock = currentBlock;
     currentBlock = block;
     getMethod(type, callMethod).execute();
@@ -225,6 +229,8 @@ public class Processor extends ProBase {
   
   public void call(Entity entity, ID function, ID method, Entity type)
       throws ElException, EntityException {
+    if(log2) println("[call" + entity + "." + function + "." + method + " of "
+        + type + "]");
     Entity oldParam = Processor.currentParam;
     Processor.currentParam = type;
     call(entity, function, method);
@@ -238,6 +244,8 @@ public class Processor extends ProBase {
   
   public void call(Entity object, ID functionName, ID methodName)
       throws ElException, EntityException {
+    if(log2) println("[call object " + object + " " + functionName + "."
+        + methodName + "]");
     Entity oldCurrent = currentObject;
     currentObject = object.resolve();
     process(functionName, methodName);
@@ -246,7 +254,8 @@ public class Processor extends ProBase {
   
   public void process(ID functionName, ID methodName)
       throws ElException, EntityException {
-    //if(log) currentLineReader.log(functionName + "." + methodName, 0);
+    if(log2) currentLineReader.log("[" + functionName + "."
+        + methodName + "]", 0);
     Method method;
     try {
       method = getMethod(functionName, methodName);

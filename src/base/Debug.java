@@ -15,7 +15,7 @@ public class Debug extends StringFunctions {
   public static LineReader currentLineReader;
   public static SymbolReader currentSymbolReader;
   public static StringBuilder subIndent = new StringBuilder();
-  public static final boolean log = true;
+  public static final boolean log = true, log2 = true;
 
   public String getClassName() {
     return getClass().getSimpleName();
