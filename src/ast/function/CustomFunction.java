@@ -127,7 +127,7 @@ public abstract class CustomFunction extends Function {
   // processing
   
   @Override
-  public void process() throws EntityException {
+  public void compile() throws EntityException {
     if(command != null) return;
     startingCommand = vm.VMBase.currentCommand + 1;
     CustomFunction oldFunction = currentFunction;

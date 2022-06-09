@@ -101,24 +101,20 @@ public abstract class Entity extends Base {
   
   // processing
     
-  public void process() throws EntityException {
+  public void compile() throws EntityException {
     throw new EntityException.Cannot("process", this);
   }
   
-  public void process(FunctionCall call) throws EntityException {
+  public void compileCall(FunctionCall call) throws EntityException {
     throw new EntityException.Cannot("process", this, "with call");
   }
 
-  public void process(FunctionCall call, Entity[] subTypes)
+  public void compileCall(FunctionCall call, Entity[] subTypes)
       throws EntityException {
     throw new EntityException.Cannot("process", this, "with call and subtypes");
   }
   
   public Entity resolve() throws EntityException {
-    return this;
-  }
-  
-  public Entity resolveFunction(int parametersQuantity) throws EntityException {
     return this;
   }
 
@@ -128,6 +124,10 @@ public abstract class Entity extends Base {
     } catch (ElException ex) {
       throw new EntityException(this, ex.message);
     }
+  }
+  
+  public Entity resolveFunction(int parametersQuantity) throws EntityException {
+    return this;
   }
 
   public void resolve(Entity type, FunctionCall call)
@@ -153,7 +153,7 @@ public abstract class Entity extends Base {
     } catch (ElException ex) {
       throw new EntityException(this, ex.message);
     }
-    return Processor.currentParam;
+    return Processor.currentType;
   }
   
   // moving functions

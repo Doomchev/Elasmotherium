@@ -23,8 +23,8 @@ public abstract class ProParameter extends ProBase {
     switch(name) {
       case "this":
         return ProThis.instance;
-      case "param":
-        return ProParam.instance;
+      case "type":
+        return ProType.instance;
       case "value":
         return ProVariableValue.instance;
       case "currentFunction":

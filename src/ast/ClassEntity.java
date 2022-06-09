@@ -189,7 +189,7 @@ public class ClassEntity extends NamedEntity {
   }
   
   @Override
-  public void process() throws EntityException {
+  public void compile() throws EntityException {
     ClassEntity oldCurrent = current;
     current = this;
     allocateScope();
@@ -197,8 +197,8 @@ public class ClassEntity extends NamedEntity {
     for(Variable field: fields) addToScope(field);
     for(StaticFunction method: methods) addToScope(method);
     
-    for(StaticFunction constructor: constructors) constructor.process();
-    for(StaticFunction method: methods) method.process();
+    for(StaticFunction constructor: constructors) constructor.compile();
+    for(StaticFunction method: methods) method.compile();
     
     deallocateScope();
     current = oldCurrent;

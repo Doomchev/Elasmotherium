@@ -96,7 +96,7 @@ public class Variable extends NamedEntity {
   // processing
   
   @Override
-  public void process() throws EntityException {
+  public void compile() throws EntityException {
     if(log) print(new StringBuilder(), "");
     addToScope(this);
     resolveType();

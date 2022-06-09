@@ -94,9 +94,10 @@ public class FunctionCall extends Value {
   // processing
   
   @Override
-  public void process() throws EntityException {
+  public void compile() throws EntityException {
     if(log) println(subIndent + toString());
-    function.resolveFunction(parameters.size()).process(this);
+    function = function.resolveFunction(parameters.size());
+    function.compileCall(this);
   }
   
   @Override
@@ -115,7 +116,7 @@ public class FunctionCall extends Value {
       }
     }
     Entity func = function.resolveFunction(thisParametersQuantity);
-    func.process(this);
+    func.compileCall(this);
     throw new EntityException.NotImplemented(this, "resolveFunction");
     //return func.getType(null);
   }
@@ -175,7 +176,7 @@ public class FunctionCall extends Value {
   @Override
   public ClassEntity getObject() throws EntityException {
     Entity func = function.resolveFunction(parameters.size());
-    func.process(this);
+    func.compileCall(this);
     return func.getNativeClass();
   }
 

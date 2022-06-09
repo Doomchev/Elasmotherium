@@ -47,7 +47,7 @@ public class NativeFunction extends Function {
   // processing
   
   @Override
-  public void process(FunctionCall call) throws EntityException {
+  public void compileCall(FunctionCall call) throws EntityException {
     try {
       currentProcessor.processCall(call, name);
     } catch (ElException ex) {

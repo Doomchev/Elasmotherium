@@ -70,7 +70,7 @@ public class StaticFunction extends CustomFunction {
   // processing
 
   @Override
-  public void process(FunctionCall call) throws EntityException {
+  public void compileCall(FunctionCall call) throws EntityException {
     if(log) println(subIndent + "Calling static function " + this);
     call.resolveParameters(parameters);
     append();

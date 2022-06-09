@@ -16,8 +16,8 @@ public class ParameterizedEntity extends Entity {
   // processing
 
   @Override
-  public void process(FunctionCall call) throws EntityException {
-    entity.process(call, subTypes);
+  public void compileCall(FunctionCall call) throws EntityException {
+    entity.compileCall(call, subTypes);
   }
 
   @Override
