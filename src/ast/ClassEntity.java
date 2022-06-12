@@ -74,12 +74,23 @@ public class ClassEntity extends NamedEntity {
   public Entity getType() throws EntityException {
     return this;
   }
-  
-  @Override
+
   public Variable getField(ID name) throws NotFound {
-    if(log2) println("[getting field " + name + " from " + this +"]");
     for(Variable field: fields) if(field.name == name) return field;
-    throw new NotFound("Field " + name, this);
+    throw new NotFound("field " + name, this);
+  }
+  
+  public Entity getChild(ID name) throws NotFound {
+    try {
+      return getField(name);
+    } catch(NotFound ignored) {
+    }
+
+    try {
+      return getMethod(name, 0);
+    } catch(NotFound ex) {
+      throw new NotFound("Child " + name, this);
+    }
   }
 
   @Override
@@ -156,9 +167,9 @@ public class ClassEntity extends NamedEntity {
     return this.name == name && !isThis;
   }
   
-  // preprocessing
+  // resolving
   
-  public void resolveTypes() throws EntityException {
+  public void resolveLinks() throws EntityException {
     ClassEntity oldCurrent = current;
     current = this;
     allocateScope();
@@ -166,27 +177,32 @@ public class ClassEntity extends NamedEntity {
     for(ClassParameter parameter: parameters) addToScope(parameter);
     
     for(Variable field: fields) {
-      field.resolveType();
+      field.resolveLinks();
       addToScope(field);
     }
-    for(StaticFunction constructor: constructors) constructor.resolveTypes();
-    for(StaticFunction method: methods) method.resolveTypes();
+    for(StaticFunction constructor: constructors) constructor.resolveLinks();
+    for(StaticFunction method: methods) method.resolveLinks();
     
     deallocateScope();
     current = oldCurrent;
   }
 
-  public void processConstructors() throws NotFound {
-    for(StaticFunction constructor: constructors)
-      constructor.processConstructor(this);
+  @Override
+  public Entity resolveType() throws EntityException {
+    return this;
   }
-   
-  // processing
 
   public void addToScope() {
     addToScope(this);
     for(StaticFunction constructor: constructors) addToScope(constructor);
   }
+
+  public void resolveConstructors() throws NotFound {
+    for(StaticFunction constructor: constructors)
+      constructor.resolveConstructor(this);
+  }
+   
+  // compiling
   
   @Override
   public void compile() throws EntityException {

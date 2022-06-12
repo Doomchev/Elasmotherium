@@ -1,18 +1,14 @@
 package ast.function;
 
-import ast.ClassEntity;
-import ast.Code;
-import ast.Entity;
-import ast.ID;
-import ast.IDEntity;
-import ast.Variable;
+import ast.*;
 import exception.ElException;
 import exception.EntityException;
 import exception.EntityException.Cannot;
 import exception.NotFound;
-import java.util.LinkedList;
 import parser.EntityStack;
 import vm.VMCommand;
+
+import java.util.LinkedList;
 
 public abstract class CustomFunction extends Function {
   protected final LinkedList<Variable> parameters = new LinkedList<>();
@@ -111,22 +107,20 @@ public abstract class CustomFunction extends Function {
     EntityStack.code.push(code);
   }
   
-  // preprocessing
+  // resolving
 
-  public void processConstructor(ClassEntity classEntity) throws NotFound {
+  public void resolveConstructor(ClassEntity classEntity) throws NotFound {
     for(Variable param: parameters)
       param.processField(classEntity, code);
   }
 
-  public void processConstructors() throws NotFound {
-    code.processConstructors();
+  public void resolveConstructors() throws NotFound {
+    code.resolveConstructors();
   }
   
-  public abstract void resolveTypes() throws EntityException;
+  // compiling
   
-  // processing
-  
-  @Override
+  /*@Override
   public void compile() throws EntityException {
     if(command != null) return;
     startingCommand = vm.VMBase.currentCommand + 1;
@@ -145,7 +139,7 @@ public abstract class CustomFunction extends Function {
   
   public void processCode(VMCommand endingCommand) throws EntityException {
     code.processWithoutScope(endingCommand);
-  }
+  }*/
   
   // moving functions
 

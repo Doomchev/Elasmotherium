@@ -1,21 +1,25 @@
 package base;
 
-import exception.EntityException;
-import vm.texture.*;
-import vm.function.*;
 import ast.ClassEntity;
-import parser.Rules;
-import ast.function.StaticFunction;
 import ast.ID;
+import ast.function.StaticFunction;
+import exception.EntityException;
 import exception.NotFound;
+import parser.Rules;
+import processor.Processor;
+import vm.VMBase;
+import vm.VMCommand;
+import vm.collection.I64ArrayCreate;
+import vm.function.*;
+import vm.i64.I64AddToList;
+import vm.texture.*;
+import vm.values.I64ArrayValue;
+import vm.values.VMValue;
+import vm.variables.ScreenHeight;
+import vm.variables.ScreenWidth;
+
 import java.util.Stack;
 import java.util.TreeSet;
-import processor.Processor;
-import vm.*;
-import vm.collection.*;
-import vm.i64.*;
-import vm.values.*;
-import vm.variables.*;
 
 public class Module extends Base {
   public static final ID id = ID.get("module");
@@ -100,16 +104,16 @@ public class Module extends Base {
     return readText(getFileName());
   }
 
-  public static void execute(String examples, String name
+  public static void execute(String path, String name
       , boolean showCommands) {
-    Module module = Module.read("examples", name);
-    processor.process(module);
+    Module module = Module.read(path, name);
+    processor.compile(module);
     module.execute(showCommands);
   }
   
   public static void execute(StringBuffer text) {
     Module module = Module.read(text);
-    processor.process(module);
+    processor.compile(module);
     module.execute(true);    
   }
   
@@ -134,9 +138,9 @@ public class Module extends Base {
     classEntity.setValue(value);
   }
   
-  public void process() throws EntityException, NotFound {
-    function.processConstructors();
-    
+  public void compile() throws EntityException, NotFound {
+    function.resolveConstructors();
+
     currentFunction = function;
     
     ClassEntity.Int.addToScope();
@@ -172,14 +176,18 @@ public class Module extends Base {
       newFunction("Texture", "width", 0, new TextureWidth());
       newFunction("Texture", "height", 0, new TextureHeight());
     }
-    
+
     print();
-    
-    if(log) printChapter("Processing");
-    
-    function.processCode(new Exit());
-    
+
+    if(log) printChapter("Resolving links");
+    function.resolveLinks();
     print();
+
+    //if(log) printChapter("Processing");
+    
+    //function.processCode(new Exit());
+    
+    System.exit(0);
   }
 
   public void execute(boolean showCommands) {
@@ -187,7 +195,8 @@ public class Module extends Base {
   }
 
   public void print() {
-    if(log) {printChapter("Abstract syntax tree");
+    if(log) {
+      printChapter("Abstract syntax tree");
       function.printAllocation(getFileName());
       printScope();
     }

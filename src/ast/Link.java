@@ -37,22 +37,26 @@ public class Link extends Value {
     return id;
   }
   
+  // resolving
+
   @Override
-  public Entity getType(Entity[] subTypes) throws EntityException {
-    return resolve().getType(subTypes);
+  public Entity resolveEntity() throws EntityException {
+    try {
+      return getEntityFromScope(name, isThis).resolveEntity();
+    } catch (NotFound ex) {
+      throw new EntityException(this, ex.message);
+    }
   }
   
-  // processing
-  
   @Override
-  public Entity resolve() throws EntityException {
+  public Entity resolveType() throws EntityException {
     try {
-      if(subTypes.isEmpty()) return getVariableFromScope(name, isThis);
+      if(subTypes.isEmpty()) return getEntityFromScope(name, isThis);
       ClassEntity basicClass = getClassFromScope(name);
       Entity[] resolvedTypes = new Entity[subTypes.size()];
       int index = 0;
       for(Link subType: subTypes) {
-        resolvedTypes[index] = subType.resolve();
+        resolvedTypes[index] = subType.resolveType();
         index++;
       }
       return new Type(basicClass, resolvedTypes);
@@ -65,34 +69,11 @@ public class Link extends Value {
   public Entity resolveFunction(int parametersQuantity)
       throws EntityException {
     try {
-      return getFunctionFromScope(name, parametersQuantity);
+      return getFunctionFromScope(name, parametersQuantity)
+          .resolveFunction(parametersQuantity);
     } catch (NotFound ex) {
       throw new EntityException(this, ex.message);
     }
-}
-
-  @Override
-  public void resolve(Entity type) throws EntityException {
-    try {
-      getVariableFromScope(name, isThis).resolve(type);
-    } catch (NotFound ex) {
-      throw new EntityException(this, ex.message);
-    }
-  }
-  
-  @Override
-  public Entity resolveRecursively() throws EntityException {
-    return resolve();
-  }
-
-  @Override
-  public Entity resolveRecursively(int parametersQuantity) throws EntityException {
-    return resolveFunction(parametersQuantity);
-  }
-
-  @Override
-  public Entity getObject() throws EntityException {
-    return resolve().getObject();
   }
   
   // moving functions

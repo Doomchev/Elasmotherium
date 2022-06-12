@@ -3,7 +3,6 @@ package ast.function;
 import ast.*;
 import exception.ElException;
 import exception.EntityException;
-import exception.EntityException.Cannot;
 import exception.NotFound;
 
 import java.util.LinkedList;
@@ -45,6 +44,10 @@ public class FunctionCall extends Value {
   public ID getID() throws EntityException {
     return function instanceof NativeFunction ? function.getID() : id;
   }
+
+  public Entity getType() throws EntityException {
+    return function.getType();
+  }
   
   @Override
   public Entity getType(Entity[] subTypes) throws EntityException {
@@ -52,11 +55,11 @@ public class FunctionCall extends Value {
   }
 
   @Override
-  public Variable getField() throws EntityException {
+  public Entity getChild(ID name) throws EntityException {
     try {
       if(function == NativeFunction.dot && parameters.size() == 2)
         return parameters.getFirst().getObject()
-            .getField(parameters.getLast().getName());
+            .getChild(parameters.getLast().getName());
       return super.getField();
     } catch (NotFound ex) {
       throw new EntityException(this, ex.message);
@@ -65,7 +68,7 @@ public class FunctionCall extends Value {
 
   @Override
   public Entity getSubType() throws EntityException {
-    return parameters.getFirst().resolve().getType().getSubType();
+    return parameters.getFirst().getType().getSubType();
   }
 
   public Entity getFunction() {
@@ -90,10 +93,57 @@ public class FunctionCall extends Value {
   public Entity getErrorEntity() {
     return function.getErrorEntity();
   }
-  
-  // processing
-  
+
+  // resolving
+
   @Override
+  public void resolveLinks() throws EntityException {
+    if(function == NativeFunction.dot) {
+      Entity param0 = parameters.getFirst();
+      Entity object = param0.resolveEntity();
+      parameters.set(0, object);
+      try {
+        parameters.set(1, object.getChild(parameters.getLast().getName()));
+      } catch(NotFound ex) {
+        throw new EntityException(this, ex.message);
+      }
+    } else {
+      resolveFunction(parameters.size());
+    }
+  }
+
+  @Override
+  public Entity resolveFunction(int parametersQuantity) throws EntityException {
+    if(function == NativeFunction.dot) {
+      Entity param0 = parameters.getFirst();
+      Entity object = param0.resolveEntity();
+      parameters.set(0, object);
+      try {
+        parameters.set(1, object.getType().getMethod(parameters.getLast()
+            .getName(), parametersQuantity));
+      } catch(NotFound ex) {
+        throw new EntityException(this, ex.message);
+      }
+    } else {
+      function = function.resolveFunction(parametersQuantity);
+      int index = 0;
+      for(Entity parameter: parameters) {
+        parameters.set(index, parameter.resolveEntity());
+        index++;
+      }
+    }
+    return this;
+  }
+
+  @Override
+  public Entity resolveEntity() throws EntityException {
+    resolveLinks();
+    return this;
+  }
+
+  // compiling
+  
+  /*@Override
   public void compile() throws EntityException {
     if(log) println(subIndent + toString());
     function = function.resolveFunction(parameters.size());
@@ -140,17 +190,6 @@ public class FunctionCall extends Value {
       throw new EntityException(function, ex.message);
     } 
   }
-  
-  @Override
-  public Entity resolveRecursively() throws EntityException {
-    function = function.resolveRecursively(parameters.size());
-    int index = 0;
-    for(Entity parameter: parameters) {
-      parameters.set(index, parameter.resolveRecursively());
-      index++;
-    }
-    return this;
-  }
 
   protected void resolveParameters(LinkedList<Variable> functionParameters)
       throws EntityException {
@@ -182,8 +221,8 @@ public class FunctionCall extends Value {
 
   @Override
   public ClassEntity getNativeClass() throws EntityException {
-    return parameters.get(0).resolve().getNativeClass();
-  }
+    return parameters.get(0).getNativeClass();
+  }*/
 
   // moving functions
 

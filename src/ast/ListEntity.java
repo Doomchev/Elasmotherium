@@ -28,7 +28,7 @@ public class ListEntity extends Value {
     return id;
   }
   
-  // processing
+  // compiling
   
   @Override
   public void resolve(Entity type) throws EntityException {

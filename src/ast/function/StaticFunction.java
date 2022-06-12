@@ -1,14 +1,7 @@
 package ast.function;
 
-import ast.ClassEntity;
-import ast.Code;
-import ast.Entity;
-import ast.ID;
-import ast.IDEntity;
-import ast.Variable;
-import exception.ElException;
+import ast.*;
 import exception.EntityException;
-import vm.VMCommand;
 
 public class StaticFunction extends CustomFunction {
   protected Entity returnType = null;
@@ -57,22 +50,39 @@ public class StaticFunction extends CustomFunction {
     return this.name == name && fromParametersQuantity == 0 && !isThis;
   }
   
-  // preprocessing
-  
-  @Override
-  public void resolveTypes() throws EntityException {
-    addToScope(this);
-    if(returnType != null) returnType = returnType.resolve();
-    for(Variable parameter: parameters) addToScope(parameter);
-    for(Variable parameter: parameters) parameter.resolveType();
+  // resolving
+
+  public void resolveMain() throws EntityException {
+    code.resolveMain();
   }
   
-  // processing
+  @Override
+  public void resolveLinks() throws EntityException {
+    allocateScope();
+    if(returnType != null) returnType = returnType.resolveType();
+    for(Variable parameter: parameters) addToScope(parameter);
+    for(Variable parameter: parameters) parameter.resolveLinks();
+    code.resolveLinks();
+    deallocateScope();
+  }
 
   @Override
+  public Entity resolveEntity() throws EntityException {
+    resolveLinks();
+    return this;
+  }
+
+  @Override
+  public Entity resolveFunction(int parametersQuantity) throws EntityException {
+    return this;
+  }
+
+  // compiling
+
+  /*@Override
   public void compileCall(FunctionCall call) throws EntityException {
     if(log) println(subIndent + "Calling static function " + this);
-    call.resolveParameters(parameters);
+    //call.resolveParameters(parameters);
     append();
   }
 
@@ -87,7 +97,7 @@ public class StaticFunction extends CustomFunction {
   public void resolve(Entity type, FunctionCall call)
       throws EntityException {
     if(log) println(subIndent + "Resolving static function " + this);
-    call.resolveParameters(parameters);
+    //call.resolveParameters(parameters);
     append();
     try {
       convert(returnType.getNativeClass(), type.getNativeClass());
@@ -111,7 +121,7 @@ public class StaticFunction extends CustomFunction {
   @Override
   public VMCommand getEndingCommand() {
     return new vm.call.Return();
-  }
+  }*/
   
   // moving functions
 
@@ -127,5 +137,10 @@ public class StaticFunction extends CustomFunction {
   public void print(StringBuilder indent, String prefix) {
     if(returnType != null) prefix += returnType + " ";
     print(indent, prefix, name.string);
+  }
+
+  @Override
+  public String toString() {
+    return (name == null ? "" : name.string) + parameters.size();
   }
 }

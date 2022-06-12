@@ -6,7 +6,6 @@ import ast.function.StaticFunction;
 import exception.ElException;
 import exception.EntityException;
 import exception.NotFound;
-import vm.VMCommand;
 
 import java.util.LinkedList;
 
@@ -51,15 +50,35 @@ public class Code extends Entity {
     throw new NotFound("Function " + id, this);
   }
   
-  // preprocessing
+  // resolving
 
-  public void processConstructors() throws NotFound {
-    for(ClassEntity classEntity: classes) classEntity.processConstructors();
+  public void resolveMain() throws EntityException {
+    for(Entity line: lines) line.addToScopeIfVariable();
+  }
+
+  public void resolveConstructors() throws NotFound {
+    for(ClassEntity classEntity: classes)
+      classEntity.resolveConstructors();
+  }
+
+  @Override
+  public Entity resolveEntity() throws EntityException {
+    resolveLinks();
+    return this;
+  }
+
+  public void resolveLinks() throws EntityException {
+    for(ClassEntity classEntity: classes) classEntity.addToScope();
+    for(Entity line: lines) line.addToScopeIfVariable();
+    for(StaticFunction function: functions) addToScope(function);
+    for(StaticFunction function: functions) function.resolveLinks();
+    for(ClassEntity classEntity: classes) classEntity.resolveLinks();
+    for(Entity line: lines) line.resolveLinks();
   }
   
-  // processing
+  // compiling
   
-  @Override
+  /*@Override
   public void compile() throws EntityException {
     allocateScope();
     processWithoutScope(null);
@@ -71,17 +90,17 @@ public class Code extends Entity {
     for(ClassEntity classEntity: classes) classEntity.addToScope();
     for(StaticFunction function: functions) {
       addToScope(function);
-      function.resolveTypes();
+      function.resolveLinks();
     }
     
-    for(ClassEntity classEntity: classes) classEntity.resolveTypes();
+    for(ClassEntity classEntity: classes) classEntity.resolveLinks();
     
     for(Entity line: lines) line.compile();
     if(endingCommand != null) append(endingCommand);
     
     for(ClassEntity classEntity: classes) classEntity.compile();
     for(StaticFunction function: functions) function.compile();
-  }
+  }*/
   
   // moving functions
 
