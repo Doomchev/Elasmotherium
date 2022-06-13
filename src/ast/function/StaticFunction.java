@@ -58,6 +58,7 @@ public class StaticFunction extends CustomFunction {
   
   @Override
   public void resolveLinks() throws EntityException {
+    println(toString());
     allocateScope();
     if(returnType != null) returnType = returnType.resolveType();
     for(Variable parameter: parameters) addToScope(parameter);

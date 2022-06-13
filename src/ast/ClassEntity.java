@@ -75,6 +75,10 @@ public class ClassEntity extends NamedEntity {
     return this;
   }
 
+  public Entity getSubType() throws EntityException {
+    throw new EntityException(this, "has no subtypes");
+  }
+
   public Variable getField(ID name) throws NotFound {
     for(Variable field: fields) if(field.name == name) return field;
     throw new NotFound("field " + name, this);
@@ -176,10 +180,10 @@ public class ClassEntity extends NamedEntity {
     
     for(ClassParameter parameter: parameters) addToScope(parameter);
     
-    for(Variable field: fields) {
-      field.resolveLinks();
-      addToScope(field);
-    }
+    for(Variable field: fields) addToScope(field);
+    for(StaticFunction method: methods) addToScope(method);
+
+    for(Variable field: fields) field.resolveLinks();
     for(StaticFunction constructor: constructors) constructor.resolveLinks();
     for(StaticFunction method: methods) method.resolveLinks();
     
@@ -198,8 +202,9 @@ public class ClassEntity extends NamedEntity {
   }
 
   public void resolveConstructors() throws NotFound {
-    for(StaticFunction constructor: constructors)
+    for(StaticFunction constructor: constructors) {
       constructor.resolveConstructor(this);
+    }
   }
    
   // compiling

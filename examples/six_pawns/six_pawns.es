@@ -41,7 +41,7 @@ onClick(Int x, Int y) {
       tileMap.set(tileNum + 2, 0, white);
     }
   } else if(tile == black && tileNum > 0) {
-    Int prevTile = tileMap[tileNum - 1, 0];
+    Int prevTile = tileMap.get(tileNum - 1, 0);
     if(prevTile == empty) {
       tileMap.set(tileNum, 0, empty);
       tileMap.set(tileNum - 1, 0, black);

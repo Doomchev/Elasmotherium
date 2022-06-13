@@ -69,10 +69,11 @@ public class Code extends Entity {
 
   public void resolveLinks() throws EntityException {
     for(ClassEntity classEntity: classes) classEntity.addToScope();
-    for(Entity line: lines) line.addToScopeIfVariable();
     for(StaticFunction function: functions) addToScope(function);
-    for(StaticFunction function: functions) function.resolveLinks();
+    for(Entity line: lines) line.addToScopeIfVariable();
+
     for(ClassEntity classEntity: classes) classEntity.resolveLinks();
+    for(StaticFunction function: functions) function.resolveLinks();
     for(Entity line: lines) line.resolveLinks();
   }
   

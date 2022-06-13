@@ -31,7 +31,8 @@ public class Type extends Entity {
   }
 
   public Entity getSubType() throws EntityException {
-    return subTypes[0];
+    if(subTypes.length >= 1) return subTypes[0];
+    throw new EntityException(this, "has no subtypes");
   }
   
   @Override
