@@ -60,7 +60,7 @@ public class Code extends Entity {
   // processing
   
   @Override
-  public void compile() throws EntityException {
+  public void process() throws EntityException {
     allocateScope();
     processWithoutScope(null);
     deallocateScope();
@@ -76,11 +76,11 @@ public class Code extends Entity {
     
     for(ClassEntity classEntity: classes) classEntity.resolveTypes();
     
-    for(Entity line: lines) line.compile();
+    for(Entity line: lines) line.process();
     if(endingCommand != null) append(endingCommand);
     
-    for(ClassEntity classEntity: classes) classEntity.compile();
-    for(StaticFunction function: functions) function.compile();
+    for(ClassEntity classEntity: classes) classEntity.process();
+    for(StaticFunction function: functions) function.process();
   }
   
   // moving functions

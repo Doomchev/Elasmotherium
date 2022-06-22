@@ -4,22 +4,22 @@ import processor.parameter.ProParameter;
 import exception.ElException;
 import exception.EntityException;
 
-public class Compile extends ProCommand {
-  public static final Compile instance = new Compile(null);
+public class Process extends ProCommand {
+  public static final Process instance = new Process(null);
   
   private final ProParameter parameter;
 
-  private Compile(ProParameter parameter) {
+  private Process(ProParameter parameter) {
     this.parameter = parameter;
   }
   
   @Override
-  public Compile create(String param) throws ElException {
-    return new Compile(ProParameter.get(param));
+  public Process create(String param) throws ElException {
+    return new Process(ProParameter.get(param));
   }
   
   @Override
   public void execute() throws ElException, EntityException {
-    parameter.getValue().compile();
+    parameter.getValue().process();
   }
 }

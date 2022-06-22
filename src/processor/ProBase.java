@@ -5,6 +5,6 @@ import ast.Entity;
 import base.Base;
 
 public class ProBase extends Base {
-  public static Entity currentObject, currentType;
+  public static Entity currentObject, currentParam;
   protected static Block currentBlock;
 }

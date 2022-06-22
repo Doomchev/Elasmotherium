@@ -1,269 +1,269 @@
 variable {
-  value.resolve(this)
-  [this]VarEquate
+  value.resolve(this);
+  [this]VarEquate;
 }
 
 return {
-  v0.resolve(currentFunction)
-  [currentFunction]Return
+  v0.resolve(currentFunction);
+  [currentFunction]Return;
 }
 
 // get object
 
 variable.getObject {
-  [this]VarPush
-  setType(this)
+  [this]VarPush;
+  setParameter(this);
 }
 
 field.getObject {
-  [this]FieldPush(object)
-  setType(this)
+  [this]FieldPush(object);
+  setParameter(this);
 }
 
 brackets.getObject {
-  v0.getObject
+  v0.getObject;
 }
 
 at.getObject {
-  v0.getObject
-  v1.resolve(Int)
-  [this]getAtIndex
-  setType(this)
+  v0.getObject;
+  v1.resolve(Int);
+  [this]getAtIndex;
+  setParameter(this);
 }
 
 // equate
 
 equate {
-  v0.equate(v1)
+  v0.equate(v1);
 }
 
 variable.equate {
-  type.resolve(this)
-  [this]VarEquate
+  param.resolve(this);
+  [this]VarEquate;
 }
 
 field.equate {
-  type.resolve(this)
-  [this]FieldEquate(object)
+  param.resolve(this);
+  [this]FieldEquate(object);
 }
 
 dot.equate {
-  getField
-  type.resolve(this)
-  [this]FieldEquate(last)
+  getField;
+  param.resolve(this);
+  [this]FieldEquate(last);
 }
 
 at.equate {
-  v0.getObject
-  v1.resolve(Int)
-  getSubType
-  type.resolve(this)
-  [this]SetAtIndex
+  v0.getObject;
+  v1.resolve(Int);
+  getSubType;
+  param.resolve(this);
+  [this]SetAtIndex;
 }
 
 // increment
 
 increment {
-  v0.increment
+  v0.increment;
 }
 
 variable.increment {
-  [this]VarIncrement
+  [this]VarIncrement;
 }
 
 field.increment {
-  [this]FieldIncrement(object)
+  [this]FieldIncrement(object);
 }
 
 dot.increment {
-  getField
-  [this]FieldIncrement(last)
+  getField;
+  [this]FieldIncrement(last);
 }
 
 // resolution
 
 variable.resolve {
-  [this]VarPush
-  convert(this, type)
+  [this]VarPush;
+  convert(this, param);
 }
 
 field.resolve {
-  [this]FieldPush(object)
-  convert(this, type)
+  [this]FieldPush(object);
+  convert(this, param);
 }
 
 dot.resolve {
-  getField
-  [this]FieldPush(last)
-  convert(this, type)
+  getField;
+  [this]FieldPush(last);
+  convert(this, param);
 }
 
 const.resolve {
-  [type]Push
+  [param]Push;
 }
 
 at.resolve {
-  v0.getObject
-  v1.resolve(Int)
-  getSubType
-  [this]GetAtIndex
-  convert(this, type)
+  v0.getObject;
+  v1.resolve(Int);
+  getSubType;
+  [this]GetAtIndex;
+  convert(this, param);
 }
 
 // arithmetic
 
 brackets.resolve {
-  v0.resolve(type)
+  v0.resolve(param);
 }
 
 negative.resolve {
-  v0.resolve(Int)
-  [Int]Negative
+  v0.resolve(Int);
+  [Int]Negative;
 }
 
 addition.resolve {
-	v0.resolve(type)
-	v1.resolve(type)
-  [type]Add
+	v0.resolve(param);
+	v1.resolve(param);
+  [param]Add;
 }
 
 subtraction.resolve {
-	v0.resolve(Int)
-	v1.resolve(Int)
-  [Int]Subtract
-  convert(Int, type)
+	v0.resolve(Int);
+	v1.resolve(Int);
+  [Int]Subtract;
+  convert(Int, param);
 }
 
 multiplication.resolve {
-	v0.resolve(Int)
-	v1.resolve(Int)
-  [Int]Multiply
-  convert(Int, type)
+	v0.resolve(Int);
+	v1.resolve(Int);
+  [Int]Multiply;
+  convert(Int, param);
 }
 
 division.resolve {
-	v0.resolve(Int)
-	v1.resolve(Int)
-  [Int]Divide
-  convert(Int, type)
+	v0.resolve(Int);
+	v1.resolve(Int);
+  [Int]Divide;
+  convert(Int, param);
 }
 
 mod.resolve {
-	v0.resolve(Int)
-	v1.resolve(Int)
-  [Int]Mod
-  convert(Int, type)
+	v0.resolve(Int);
+	v1.resolve(Int);
+  [Int]Mod;
+  convert(Int, param);
 }
 
 equal.resolve {
-  v0.resolve(Int)
-  v1.resolve(Int)
-  [Int]IsEqual
-  convert(Bool, type)
+  v0.resolve(Int);
+  v1.resolve(Int);
+  [Int]IsEqual;
+  convert(Bool, param);
 }
 
 less.resolve {
-  v0.resolve(Int)
-  v1.resolve(Int)
-  [Int]IsLess
-  convert(Bool, type)
+  v0.resolve(Int);
+  v1.resolve(Int);
+  [Int]IsLess;
+  convert(Bool, param);
 }
 
 lessOrEqual.resolve {
-  v0.resolve(Int)
-  v1.resolve(Int)
-  [Int]IsLessOrEqual
-  convert(Bool, type)
+  v0.resolve(Int);
+  v1.resolve(Int);
+  [Int]IsLessOrEqual;
+  convert(Bool, param);
 }
 
 more.resolve {
-  v0.resolve(Int)
-  v1.resolve(Int)
-  [Int]IsMore
-  convert(Bool, type)
+  v0.resolve(Int);
+  v1.resolve(Int);
+  [Int]IsMore;
+  convert(Bool, param);
 }
 
 ifOp.resolve {
-  v0.resolve(Bool)
-  IfFalseGoTo(#opElse)
-  v1.resolve(type)
-  GoTo(#opEnd)
+  v0.resolve(Bool);
+  IfFalseGoTo(#opElse);
+  v1.resolve(param);
+  GoTo(#opEnd);
   #opElse:
-  v2.resolve(type)
+  v2.resolve(param);
   #opEnd:
 }
 
 // blocks
 
 if {
-  $condition.resolve(Bool)
-  IfFalseGoTo(#endIf)
-  compile($code)
+  $condition.resolve(Bool);
+  IfFalseGoTo(#endIf);
+  process($code);
   #endIf:
 }
 
 if_else {
-  $condition.resolve(Bool)
-  IfFalseGoTo(#else)
-  compile($code)
-  GoTo(#endIf)
+  $condition.resolve(Bool);
+  IfFalseGoTo(#else);
+  process($code);
+  GoTo(#endIf);
   #else:
-  compile($else)
+  process($else);
   #endIf:
 }
 
 repeat {
   #start:
-  compile($code)
-  GoTo(#start)
+  process($code);
+  GoTo(#start);
   #end:
 }
 
 for_to {
-  compile($variable)
-  $variable.equate($from)
+  process($variable);
+  $variable.equate($from);
   #start:
-  $variable.resolve(Int)
-  $to.resolve($variable)
-  [Int]IsLessOrEqual
-  IfFalseGoTo(#end)
-  compile($code)
-  $variable.increment
-  GoTo(#start)
+  $variable.resolve(Int);
+  $to.resolve($variable);
+  [Int]IsLessOrEqual;
+  IfFalseGoTo(#end);
+  process($code);
+  $variable.increment;
+  GoTo(#start);
   #end:
 }
 
 for_until {
-  compile($variable)
-  $variable.equate($from)
+  process($variable);
+  $variable.equate($from);
   #start:
-  $variable.resolve(Int)
-  $until.resolve($variable)
-  [Int]IsLess
-  IfFalseGoTo(#end)
-  compile($code)
-  $variable.increment
-  GoTo(#start)
+  $variable.resolve(Int);
+  $until.resolve($variable);
+  [Int]IsLess;
+  IfFalseGoTo(#end);
+  process($code);
+  $variable.increment;
+  GoTo(#start);
   #end:
 }
 
 for_collection {
-  compile($item)
-  $collection.resolve(Object)
-  CollectionToIterator
-  ObjectVarEquate(@iterator)
+  process($item);
+  $collection.resolve(Object);
+  CollectionToIterator;
+  ObjectVarEquate(@iterator);
   #start:
-  @iterator.resolve(Object)
-  IteratorHasNext
-  IfFalseGoTo(#end)
-  @iterator.resolve(Object)
-  [$item]IteratorNext
-  [$item]VarEquate($item)
-  compile($code)
-  GoTo(#start)
+  @iterator.resolve(Object);
+  IteratorHasNext;
+  IfFalseGoTo(#end);
+  @iterator.resolve(Object);
+  [$item]IteratorNext;
+  [$item]VarEquate($item);
+  process($code);
+  GoTo(#start);
   #end:
 }
 
 break {
-  GoTo(#end)
+  GoTo(#end);
 }

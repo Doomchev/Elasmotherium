@@ -94,10 +94,10 @@ public class Processor extends ProBase {
     
     proCommands.put("getField", GetField.instance);
     proCommands.put("getSubType", GetSubType.instance);
-    proCommands.put("setType", SetType.instance);
+    proCommands.put("setParameter", SetParameter.instance);
     proCommands.put("convert", Convert.instance);
     proCommands.put("stop", Stop.instance);
-    proCommands.put("compile", Compile.instance);
+    proCommands.put("process", Process.instance);
   }
   
   private static class Method {
@@ -122,7 +122,7 @@ public class Processor extends ProBase {
     Method method = function.get(methodName);
     if(method == null)
       throw new MethodException("Processor", "getMethod"
-          , "No code for " + currentType);
+          , "No code for " + currentParam);
     return method;
   }
   
@@ -167,6 +167,7 @@ public class Processor extends ProBase {
             code.addFirst(new BlockLabelInitialize(labelID));
             method.hasLabels = true;
           } else {
+            line = expectEnd(line, ";");
             String param = line.contains("(") ? betweenBrackets(line) : "";
             line = stringUntil(line, '(');
             if(line.startsWith("[")) {
@@ -221,19 +222,19 @@ public class Processor extends ProBase {
     call(call, functionName, resolveMethod, type);
   }
   
-  public void call(Entity entity, ID method, Entity type)
+  public void call(Entity entity, ID method, Entity param)
       throws ElException, EntityException {
-    call(entity, entity.getID(), method, type);
+    call(entity, entity.getID(), method, param);
   }
   
   public void call(Entity entity, ID function, ID method, Entity type)
       throws ElException, EntityException {
     if(log2) println("[call" + entity + "." + function + "." + method + " of "
         + type + "]");
-    Entity oldParam = Processor.currentType;
-    Processor.currentType = type;
+    Entity oldParam = Processor.currentParam;
+    Processor.currentParam = type;
     call(entity, function, method);
-    Processor.currentType = oldParam;
+    Processor.currentParam = oldParam;
   }
 
   public void processCall(FunctionCall call, ID functionName)
@@ -260,9 +261,9 @@ public class Processor extends ProBase {
       method = getMethod(functionName, methodName);
     } catch(ElException ex) {
       if(methodName == resolveMethod) {
-        currentObject.resolve(currentType.getType());
+        currentObject.resolve(currentParam.getType());
       } else if(methodName == getObjectMethod) {
-        currentType = currentObject.getObject();
+        currentParam = currentObject.getObject();
       } else {
         throw ex;
       }

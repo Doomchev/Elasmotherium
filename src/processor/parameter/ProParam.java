@@ -4,14 +4,14 @@ import ast.Entity;
 import exception.ElException;
 import processor.ProBase;
 
-public class ProType extends ProParameter {
-  static ProType instance = new ProType();
+public class ProParam extends ProParameter {
+  static ProParam instance = new ProParam();
   
-  private ProType() {}
+  private ProParam() {}
   
   @Override
   public Entity getValue() throws ElException {
-    return ProBase.currentType;
+    return ProBase.currentParam;
   }
 
   @Override

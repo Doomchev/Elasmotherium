@@ -32,14 +32,14 @@ public class Method extends StaticFunction {
   // processing
 
   @Override
-  public void compileCall(FunctionCall call) throws EntityException {
+  public void process(FunctionCall call) throws EntityException {
     if(log) println(subIndent + "Resolving method " + this);
     call.resolveParameters(parameters);
     append();
   }
 
   @Override
-  public void compileCall(FunctionCall call, Entity[] subTypes) throws EntityException {
+  public void process(FunctionCall call, Entity[] subTypes) throws EntityException {
     if(log) println(subIndent + "Resolving method " + this);
     call.resolveParameters(parameters, subTypes);
     append();

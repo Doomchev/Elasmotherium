@@ -110,7 +110,7 @@ public class Block extends Entity {
   // processing
   
   @Override
-  public void compile() throws EntityException {
+  public void process() throws EntityException {
     if(log) println(type.string);
     try {
       currentProcessor.processBlock(this, type);
