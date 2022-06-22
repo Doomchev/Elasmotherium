@@ -138,7 +138,12 @@ public class Variable extends NamedEntity {
 
   @Override
   public Entity getObject() throws EntityException {
-    return type;
+    try {
+      currentProcessor.getObject(this);
+      return type;
+    } catch (ElException ex) {
+      throw new EntityException(this, ex.message);
+    }
   }
   
   // moving functions

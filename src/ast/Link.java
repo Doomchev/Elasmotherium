@@ -72,11 +72,7 @@ public class Link extends Value {
       return getFunctionFromScope(name, parametersQuantity)
           .resolveFunction(parametersQuantity);
     } catch (NotFound ex) {
-      try {
-        return getClassFromScope(name).getConstructor(parametersQuantity);
-      } catch(NotFound ex2) {
-        throw new EntityException(this, ex2.message);
-      }
+      throw new EntityException(this, ex.message);
     }
   }
   

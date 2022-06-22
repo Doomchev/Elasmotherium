@@ -110,9 +110,8 @@ public abstract class CustomFunction extends Function {
   // resolving
 
   public void resolveConstructor(ClassEntity classEntity) throws NotFound {
-    for(Variable param: parameters) {
+    for(Variable param: parameters)
       param.processField(classEntity, code);
-    }
   }
 
   public void resolveConstructors() throws NotFound {

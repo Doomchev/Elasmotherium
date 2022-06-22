@@ -48,7 +48,7 @@ public abstract class Entity extends Base {
   }
 
   public Entity getSubType() throws EntityException {
-    return getType().getSubType();
+    throw new CannotGet("subtype", this);
   }
   
   public Entity getType(Entity[] subTypes) throws EntityException {
@@ -205,6 +205,10 @@ public abstract class Entity extends Base {
 
   public void moveToVariable(Variable variable) throws ElException {
     throw new CannotMove(this, "variable");
+  }
+
+  public void moveToType(Type type) throws ElException {
+    throw new CannotMove(this, "type");
   }
 
   public void moveToParameters(Parameters parameters) throws ElException {

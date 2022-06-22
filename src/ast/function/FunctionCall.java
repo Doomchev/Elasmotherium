@@ -46,9 +46,6 @@ public class FunctionCall extends Value {
   }
 
   public Entity getType() throws EntityException {
-    if(function == NativeFunction.at) {
-      return parameters.getFirst().getSubType();
-    }
     return function.getType();
   }
   
@@ -60,12 +57,9 @@ public class FunctionCall extends Value {
   @Override
   public Entity getChild(ID name) throws EntityException {
     try {
-      if(function == NativeFunction.dot) {
-        return parameters.getFirst().getObject().getChild(parameters.getLast()
-            .getName());
-      } else if(function == NativeFunction.at) {
-        return parameters.getFirst().getSubType();
-      }
+      if(function == NativeFunction.dot && parameters.size() == 2)
+        return parameters.getFirst().getObject()
+            .getChild(parameters.getLast().getName());
       return super.getField();
     } catch (NotFound ex) {
       throw new EntityException(this, ex.message);
@@ -74,7 +68,7 @@ public class FunctionCall extends Value {
 
   @Override
   public Entity getSubType() throws EntityException {
-    return parameters.getFirst().getSubType();
+    return parameters.getFirst().getType().getSubType();
   }
 
   public Entity getFunction() {
@@ -102,18 +96,8 @@ public class FunctionCall extends Value {
 
   // resolving
 
-  private void resolveParameters(int parametersQuantity) throws EntityException {
-    function = function.resolveFunction(parametersQuantity);
-    int index = 0;
-    for(Entity parameter: parameters) {
-      parameters.set(index, parameter.resolveEntity());
-      index++;
-    }
-  }
-
   @Override
   public void resolveLinks() throws EntityException {
-    println(toString());
     if(function == NativeFunction.dot) {
       Entity param0 = parameters.getFirst();
       Entity object = param0.resolveEntity();
@@ -123,11 +107,8 @@ public class FunctionCall extends Value {
       } catch(NotFound ex) {
         throw new EntityException(this, ex.message);
       }
-    } else if(function == NativeFunction.at) {
-      parameters.set(0, parameters.getFirst().resolveEntity());
-      parameters.set(1, parameters.getLast().resolveEntity());
     } else {
-      resolveParameters(parameters.size());
+      resolveFunction(parameters.size());
     }
   }
 
@@ -144,7 +125,12 @@ public class FunctionCall extends Value {
         throw new EntityException(this, ex.message);
       }
     } else {
-      resolveParameters(parametersQuantity);
+      function = function.resolveFunction(parametersQuantity);
+      int index = 0;
+      for(Entity parameter: parameters) {
+        parameters.set(index, parameter.resolveEntity());
+        index++;
+      }
     }
     return this;
   }
