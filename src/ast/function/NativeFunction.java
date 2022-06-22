@@ -43,15 +43,8 @@ public class NativeFunction extends Function {
   public ID getID() throws EntityException {
     return name;
   }
-
-  // resolving
-
-  @Override
-  public Entity resolveFunction(int parametersQuantity) throws EntityException {
-    return this;
-  }
-
-  // compiling
+  
+  // processing
   
   @Override
   public void compileCall(FunctionCall call) throws EntityException {

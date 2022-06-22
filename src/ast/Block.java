@@ -1,13 +1,12 @@
 package ast;
 
-import base.LinkedMap;
 import exception.ElException;
 import exception.EntityException;
 import exception.EntityException.NotFound;
+import base.LinkedMap;
+import java.util.LinkedList;
 import processor.parameter.ProParameter;
 import vm.VMCommand;
-
-import java.util.LinkedList;
 
 public class Block extends Entity {
   public static class Label extends ProParameter {
@@ -107,23 +106,10 @@ public class Block extends Entity {
   public ID getID() throws EntityException {
     return type;
   }
-
-  // resolving
-
-  @Override
-  public void resolveLinks() throws EntityException {
-    for(Variable variable: variables) addToScope(variable);
-    for(LinkedMap.Entry<ID, Entity> entry: entries) {
-      entry.value.addToScopeIfVariable();
-    }
-    for(LinkedMap.Entry<ID, Entity> entry: entries) {
-      entry.value = entry.value.resolveEntity();
-    }
-  }
-
-  // compiling
   
-  /*@Override
+  // processing
+  
+  @Override
   public void compile() throws EntityException {
     if(log) println(type.string);
     try {
@@ -132,7 +118,7 @@ public class Block extends Entity {
     } catch (ElException ex) {
       throw new EntityException(this, ex.message);
     }
-  }*/
+  }
   
   // moving functions
 

@@ -12,18 +12,16 @@ public class ParameterizedEntity extends Entity {
     this.subTypes = subTypes;
     this.entity = entity;
   }
-
-  // resolving
-
-  /*@Override
-  public void resolve() throws EntityException {
-    return subTypes[0];
-  }*/
   
-  // compiling
+  // processing
 
   @Override
   public void compileCall(FunctionCall call) throws EntityException {
     entity.compileCall(call, subTypes);
+  }
+
+  @Override
+  public Entity resolve() throws EntityException {
+    return subTypes[0];
   }
 }

@@ -18,7 +18,8 @@ init() {
     tileMap.set(blackStart + n, 0, black);
   }
 	say("Вам нужно поменять черные и белые пешки местами.\nЧерные пешки ходят влево, белые - вправо.\n"
-			+ "Пешка может пойти на одну клетку вперед\nили перепрыгнуть через следующую пешку\nна свободное поле.");
+			+ "Пешка может пойти на одну клетку вперед\nили перепрыгнуть через следующую пешку\nна свободное поле."
+			, "Правила игры");
 }
 
 init();
@@ -29,10 +30,10 @@ render() {
 }
 
 onClick(Int x, Int y) {
-  Int tileNum = 0;//bound(tileMap.tileX(x - tileMapX), 0, tileMap.cellXQuantity - 1);
+  Int tileNum = bound(tileMap.tileX(x - tileMapX), 0, tileMap.cellXQuantity - 1);
   Int tile = tileMap.get(tileNum, 0);
   if(tile == white && tileNum < cellsQuantity - 1) {
-    Int nextTile = tileMap.get(tileNum + 1, 0);
+    Field nextTile = tileMap.get(tileNum + 1, 0);
     if(nextTile == empty) {
       tileMap.set(tileNum, 0, empty);
       tileMap.set(tileNum + 1, 0, white);

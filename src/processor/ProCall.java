@@ -21,7 +21,7 @@ public class ProCall extends ProCommand {
   
   @Override
   public void execute() throws ElException, EntityException {
-    Entity newCurrent = callObject.getValue();
+    Entity newCurrent = callObject.getValue().resolve();
     Entity callParam = parameter == null ? null : parameter.getValue();
     if(log) {
       log(callObject + "(" + newCurrent.toString() + ")."

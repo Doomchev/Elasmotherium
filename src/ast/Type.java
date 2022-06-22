@@ -47,15 +47,6 @@ public class Type extends Entity {
       throw new Cannot("convert " + basicClass.name + " to ", this);
     return subTypes;
   }
-
-  @Override
-  public Entity getChild(ID name) throws EntityException, NotFound {
-    return basicClass.getChild(name);
-  }
-
-  public Entity resolveType() throws EntityException {
-    return this;
-  }
   
   // other
 

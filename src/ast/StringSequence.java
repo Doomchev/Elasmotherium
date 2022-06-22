@@ -3,12 +3,11 @@ package ast;
 import exception.ElException;
 import exception.EntityException;
 import java.util.LinkedList;
-import java.util.ListIterator;
 
 public class StringSequence extends Value {
   public final static ID id = ID.get("stringSequence");
   
-  private final LinkedList<Entity> chunks = new LinkedList<>();
+  private final LinkedList<Value> chunks = new LinkedList<>();
 
   public StringSequence() {
     super(0, 0);
@@ -26,32 +25,21 @@ public class StringSequence extends Value {
   public ID getID() throws EntityException {
     return id;
   }
-
-  // resolving
-
-  public Entity resolveEntity() throws EntityException {
-    ListIterator<Entity> it = chunks.listIterator();
-    while(it.hasNext()) {
-      Entity entity = it.next();
-      it.set(entity.resolveEntity());
-    }
-    return this;
-  }
   
-  // compiling
+  // processing
   
-  /*@Override
+  @Override
   public void resolve(Entity parameter) throws EntityException {
     boolean isNotFirst = false;
-    for(Entity entity: chunks) {
-      entity.resolve(ClassEntity.String);
+    for(Value value: chunks) {
+      value.resolve(ClassEntity.String);
       if(isNotFirst) {
         append(new vm.string.StringAdd());
       } else {
         isNotFirst = true;
       }
     }
-  }*/
+  }
   
   // moving functions
   

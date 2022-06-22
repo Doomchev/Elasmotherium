@@ -1,6 +1,11 @@
 package ast.function;
 
-import ast.*;
+import ast.ClassEntity;
+import ast.Entity;
+import ast.ID;
+import ast.Type;
+import ast.Variable;
+import exception.ElException;
 import exception.EntityException;
 import exception.NotFound;
 
@@ -15,11 +20,6 @@ public class Constructor extends StaticFunction {
   }
   
   // properties
-
-  @Override
-  public Entity getType() throws EntityException {
-    return parentClass;
-  }
   
   @Override
   public Entity getType(Entity[] subTypes) throws EntityException {
@@ -36,23 +36,16 @@ public class Constructor extends StaticFunction {
     return parameters.size();
   }
   
-  // resolving
+  // preprocessing
 
   @Override
-  public void resolveConstructor(ClassEntity classEntity)
+  public void processConstructor(ClassEntity classEntity)
       throws NotFound {
-    for(Variable param: parameters) param.processField(classEntity, code);
-  }
-
-  public Entity resolveEntity() throws EntityException {
-    return this;
-  }
-
-  public Entity resolveFunction(int parametersQuantity) throws EntityException {
-    return this;
+    for(Variable param: parameters)
+      param.processField(classEntity, code);
   }
   
-  // compiling
+  // processing
 
   @Override
   public boolean isFunction(ID name, int parametersQuantity) {
@@ -66,7 +59,7 @@ public class Constructor extends StaticFunction {
         && parametersQuantity <= toParametersQuantity;
   }
 
-  /*@Override
+  @Override
   public void resolve(Entity type, FunctionCall call)
       throws EntityException {
     if(log) println(subIndent + "Resolving constructor " + this);
@@ -84,7 +77,11 @@ public class Constructor extends StaticFunction {
     } catch (ElException ex) {
       throw new EntityException(this, ex.message);
     }
-  }*/
+  }
+
+  public Entity resolveFunction(int parametersQuantity) throws EntityException {
+    return this;
+  }
   
   // moving functions
 

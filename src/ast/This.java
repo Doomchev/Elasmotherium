@@ -1,7 +1,7 @@
 package ast;
 
 import exception.EntityException;
-
+import static base.StringFunctions.listToString;
 import java.util.LinkedList;
 
 public class This extends Value {
@@ -18,25 +18,28 @@ public class This extends Value {
   public ID getID() throws EntityException {
     return id;
   }
-
-  // resolving
-
-  @Override
-  public Entity resolve() {
-    return ClassEntity.current;
-  }
   
-  /*@Override
+  @Override
   public Entity getType(Entity[] subTypes) throws EntityException {
     return resolve().getType(subTypes);
   }
   
-  // compiling
+  // processing
+  
+  @Override
+  public Entity resolve() throws EntityException {
+    return ClassEntity.current;
+  }
+  
+  @Override
+  public Entity resolveRecursively() throws EntityException {
+    return resolve();
+  }
 
   @Override
   public Entity getObject() throws EntityException {
-    return resolveEntity().getObject();
-  }*/
+    return resolve().getObject();
+  }
   
   // other
   

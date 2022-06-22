@@ -246,7 +246,7 @@ public class Processor extends ProBase {
     if(log2) println("[call object " + object + " " + functionName + "."
         + methodName + "]");
     Entity oldCurrent = currentObject;
-    currentObject = object;
+    currentObject = object.resolve();
     process(functionName, methodName);
     currentObject = oldCurrent;
   }
@@ -279,10 +279,10 @@ public class Processor extends ProBase {
     }
   }
 
-  public void compile(Module module) {
+  public void process(Module module) {
     try {
       currentProcessor = this;
-      module.compile();
+      module.process();
     } catch (EntityException ex) {
       //ex.entity.showDebugMessage(ex.message);
       error("Processing error", ex.message);

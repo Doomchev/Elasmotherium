@@ -32,13 +32,11 @@ public abstract class Entity extends Base {
   }
   
   // properties
-
-  // returns name of named entity
+  
   public ID getName() throws EntityException {
     throw new CannotGet("name", this);
   }
-
-  // returns id of class
+  
   public ID getID() throws EntityException {
     throw new CannotGet("id", this);
   }
@@ -83,12 +81,8 @@ public abstract class Entity extends Base {
     throw new CannotGet("field " + name, this);
   }
 
-  public Entity getChild(ID name) throws EntityException, NotFound {
-    throw new CannotGet("child " + name, this);
-  }
-
   public void resolveField(ID name, Entity type) throws EntityException {
-    throw new EntityException.Cannot("resolve field " + name, this
+    throw new EntityException.Cannot("resolve field " + name + " of", this
         , "to " + type);
   }
   
@@ -104,36 +98,8 @@ public abstract class Entity extends Base {
   public Entity getErrorEntity() {
     return this;
   }
-
-  // resolving
-
-  public void addToScopeIfVariable() {
-  }
-
-  public void resolveLinks() throws EntityException {
-  }
-
-  public Entity resolveEntity() throws EntityException {
-    return this;
-  }
-
-  public Entity resolveType() throws EntityException {
-    throw new EntityException.Cannot("resolve type", this);
-  }
-
-  public Entity resolveFunction(int parametersQuantity) throws EntityException {
-    throw new EntityException.Cannot("resolve function", this);
-  }
-
-  public void resolveChild(Entity type) throws EntityException {
-    throw new EntityException.Cannot("resolve child", this);
-  }
-
-  // compiling
-
-  public Entity resolve() {
-    return this;
-  }
+  
+  // processing
     
   public void compile() throws EntityException {
     throw new EntityException.Cannot("process", this);
@@ -147,6 +113,10 @@ public abstract class Entity extends Base {
       throws EntityException {
     throw new EntityException.Cannot("process", this, "with call and subtypes");
   }
+  
+  public Entity resolve() throws EntityException {
+    return this;
+  }
 
   public void resolve(Entity type) throws EntityException {
     try {
@@ -155,10 +125,26 @@ public abstract class Entity extends Base {
       throw new EntityException(this, ex.message);
     }
   }
+  
+  public Entity resolveFunction(int parametersQuantity) throws EntityException {
+    return this;
+  }
 
   public void resolve(Entity type, FunctionCall call)
       throws EntityException {
     throw new EntityException.Cannot("resolve", this, "to " + type);
+  }
+  
+  public Entity resolveRecursively() throws EntityException {
+    return this;
+  }
+
+  public Entity resolveRecursively(int parametersQuantity) throws EntityException {
+    return this;
+  }
+  
+  public void resolveChild(Entity type) throws EntityException {
+    throw new EntityException.Cannot("resolve child", this);
   }
 
   public Entity getObject() throws EntityException {

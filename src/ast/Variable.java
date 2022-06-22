@@ -79,18 +79,35 @@ public class Variable extends NamedEntity {
   public int getIndex() {
     return index;
   }
-
-  @Override
-  public Entity getChild(ID name) throws EntityException, NotFound {
-    return type.getChild(name);
-  }
-
+  
   @Override
   public boolean isValue(ID name, boolean isThis) {
     return this.name == name && (!isThis || isField);
   }
   
-  // resolving
+  // preprocessing
+  
+  public void resolveType() throws EntityException {
+    type = type.resolve();
+    if(value != null) 
+      value = value.resolveRecursively();
+  }
+   
+  // processing
+  
+  @Override
+  public void compile() throws EntityException {
+    if(log) print(new StringBuilder(), "");
+    addToScope(this);
+    resolveType();
+    if(value != null) {
+      try {
+        currentProcessor.call(this, id, Processor.callMethod);
+      } catch (ElException ex) {
+        throw new EntityException(this, ex.message);
+      }
+    }
+  }
 
   public void processField(ClassEntity classEntity, Code code)
       throws NotFound {
@@ -103,37 +120,6 @@ public class Variable extends NamedEntity {
     isField = false;
     type = field.type;
     value = null;
-  }
-
-  public void addToScopeIfVariable() {
-    addToScope(this);
-  }
-
-  public void resolveLinks() throws EntityException {
-    type = type.resolveType();
-    if(value != null) value = value.resolveEntity();
-  }
-
-  @Override
-  public Entity resolveEntity() throws EntityException {
-    resolveLinks();
-    return this;
-  }
-
-  // compiling
-  
-  @Override
-  public void compile() throws EntityException {
-    if(log) print(new StringBuilder(), "");
-
-    resolveLinks();
-    if(value != null) {
-      try {
-        currentProcessor.call(this, id, Processor.callMethod);
-      } catch (ElException ex) {
-        throw new EntityException(this, ex.message);
-      }
-    }
   }
 
   @Override

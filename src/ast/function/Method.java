@@ -1,8 +1,12 @@
 package ast.function;
 
 import ast.ClassEntity;
+import ast.Entity;
 import ast.ID;
 import ast.IDEntity;
+import exception.ElException;
+import exception.EntityException;
+import vm.object.ObjectVarPush;
 
 public class Method extends StaticFunction {
   public Method(IDEntity name) {
@@ -25,9 +29,9 @@ public class Method extends StaticFunction {
     return this.name == name && fromParametersQuantity == 0;
   }
   
-  // compiling
+  // processing
 
-  /*@Override
+  @Override
   public void compileCall(FunctionCall call) throws EntityException {
     if(log) println(subIndent + "Resolving method " + this);
     call.resolveParameters(parameters);
@@ -56,7 +60,7 @@ public class Method extends StaticFunction {
     } catch (ElException ex) {
       throw new EntityException(this, ex.message);
     }
-  }*/
+  }
   
   // moving functions
 
