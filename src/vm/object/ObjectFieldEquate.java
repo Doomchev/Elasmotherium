@@ -17,8 +17,8 @@ public class ObjectFieldEquate extends VMFieldCommand {
 
   @Override
   public void execute() throws ElException {
-    objectStack[currentCall.varIndex(varIndex)].setField(
-        fieldIndex, objectStack[stackPointer]);
+    valueStack[currentCall.varIndex(varIndex)].setField(
+        fieldIndex, valueStack[stackPointer]);
     stackPointer -= varIndex == LAST ? 2 : 1;
     currentCommand++;
   }

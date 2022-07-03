@@ -29,10 +29,6 @@ public abstract class VMValue extends VMBase {
   public void i64Set(int index, long value) throws ElException {
     throw new CannotSet("i64 at index", this);
   }
-
-  public VMValue objectGet(int index) throws ElException {
-    throw new CannotGet("object at index", this);
-  }
   
   public long i64Next() throws ElException {
     throw new CannotGet("next I64", this);
@@ -59,6 +55,10 @@ public abstract class VMValue extends VMBase {
   }
   
   // value
+
+  public VMValue objectGet() throws ElException {
+    throw new CannotGet("i64", this);
+  }
 
   public VMValue valueGet(int index) throws ElException {
     throw new CannotGet("value at index", this);

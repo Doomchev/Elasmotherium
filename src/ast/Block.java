@@ -107,13 +107,13 @@ public class Block extends Entity {
     return type;
   }
   
-  // processing
+  // compiling
   
   @Override
-  public void process() throws EntityException {
+  public void compile() throws EntityException {
     if(log) println(type.string);
     try {
-      currentProcessor.processBlock(this, type);
+      currentProcessor.compileBlock(this, type);
       applyLabels();
     } catch (ElException ex) {
       throw new EntityException(this, ex.message);

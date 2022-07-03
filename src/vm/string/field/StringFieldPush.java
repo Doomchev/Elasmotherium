@@ -17,7 +17,7 @@ public class StringFieldPush extends VMFieldCommand {
   @Override
   public void execute() throws ElException {
     if(varIndex != LAST) stackPointer++;
-    stringStack[stackPointer] = objectStack[currentCall.varIndex(varIndex)]
+    stringStack[stackPointer] = valueStack[currentCall.varIndex(varIndex)]
         .getField(fieldIndex).stringGet();
     if(log) typeStack[stackPointer] = ValueType.STRING;
     currentCommand++;

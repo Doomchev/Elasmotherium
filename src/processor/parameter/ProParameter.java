@@ -45,10 +45,6 @@ public abstract class ProParameter extends ProBase {
     }
   }
   
-  public Entity getType(Entity[] subTypes) throws ElException, EntityException {
-    return getValue().getType(subTypes);
-  }
-  
   public ClassEntity getNativeClass() throws ElException, EntityException {
     return getValue().getNativeClass();
   }

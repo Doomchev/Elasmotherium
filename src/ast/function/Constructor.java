@@ -3,7 +3,6 @@ package ast.function;
 import ast.ClassEntity;
 import ast.Entity;
 import ast.ID;
-import ast.Type;
 import ast.Variable;
 import exception.ElException;
 import exception.EntityException;
@@ -20,11 +19,6 @@ public class Constructor extends StaticFunction {
   }
   
   // properties
-  
-  @Override
-  public Entity getType(Entity[] subTypes) throws EntityException {
-    return new Type(parentClass, subTypes);
-  }
   
   @Override
   public ClassEntity getNativeClass() throws EntityException {
@@ -45,7 +39,7 @@ public class Constructor extends StaticFunction {
       param.processField(classEntity, code);
   }
   
-  // processing
+  // compiling
 
   @Override
   public boolean isFunction(ID name, int parametersQuantity) {
@@ -60,19 +54,22 @@ public class Constructor extends StaticFunction {
   }
 
   @Override
-  public void resolve(Entity type, FunctionCall call)
+  public void resolveCallTo(Entity type, FunctionCall call)
       throws EntityException {
     if(log) println(subIndent + "Resolving constructor " + this);
     
     try {
+      Entity oldType = currentType;
+      currentType = type;
+      call.resolveParameters(parameters);
       if(command != null) {
         call.resolveParameters(parameters);
         append(command.create());
       } else {
         append(new vm.object.ObjectCreate(parentClass));
-        call.resolveParameters(parameters);
         append(new vm.call.CallFunction(this));
       }
+      currentType = oldType;
       convert(parentClass.getNativeClass(), type.getNativeClass());
     } catch (ElException ex) {
       throw new EntityException(this, ex.message);

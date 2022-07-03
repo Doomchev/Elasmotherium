@@ -23,6 +23,7 @@ public class TypeCommand extends ProCommand {
       , ProParameter parameter) throws ElException, EntityException {
     String typeName = type.nativeClass.getName().string;
     if(typeName.equals("Int")) typeName = "I64";
+    if(typeName.equals("Float")) typeName = "F64";
     VMCommand command = Processor.commands.get(typeName + postfix);
     if(command == null)
       throw new MethodException("TypeCommand", "getCommand", "Command "

@@ -13,7 +13,7 @@ public class ObjectCreate extends VMCommand {
   @Override
   public void execute() {
     stackPointer++;
-    objectStack[stackPointer] = classEntity.newObject();
+    valueStack[stackPointer] = classEntity.newObject();
     if(log) typeStack[stackPointer] = ValueType.OBJECT;
     currentCommand++;
   }

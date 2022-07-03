@@ -4,14 +4,17 @@ import exception.ElException;
 import processor.parameter.ProParameter;
 import vm.VMCommand;
 
-public class Return extends VMCommand {
+public class ObjectReturn extends VMCommand {
   @Override
   public VMCommand create(ProParameter parameter) throws ElException {
-    return new Return();
+    return new ObjectReturn();
   }
   
   @Override
   public void execute() {
-    currentCall.returnFromCall(0);
+    int pos = stackPointer;
+    currentCall.returnFromCall(1);
+    valueStack[stackPointer] = valueStack[pos];
+    if(log) typeStack[stackPointer] = ValueType.OBJECT;
   }
 }

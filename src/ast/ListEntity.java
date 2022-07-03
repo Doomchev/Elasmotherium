@@ -28,14 +28,14 @@ public class ListEntity extends Value {
     return id;
   }
   
-  // processing
+  // compiling
   
   @Override
-  public void resolve(Entity type) throws EntityException {
-    Entity elementType = type.getSubTypes(classID, 1)[0];
+  public void resolveTo(Entity type) throws EntityException {
+    Entity elementType = type.getSubtype(0);
     append(new vm.collection.ListCreate());
     for(Value value: values) {
-      value.resolve(elementType);
+      value.resolveTo(elementType);
       append(new vm.i64.I64AddToList.I64AddToListNoDelete());
     }
   }

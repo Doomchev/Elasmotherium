@@ -20,6 +20,6 @@ public class Process extends ProCommand {
   
   @Override
   public void execute() throws ElException, EntityException {
-    parameter.getValue().process();
+    parameter.getValue().compile();
   }
 }

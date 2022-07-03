@@ -14,13 +14,12 @@ public class ClassParameter extends NamedEntity {
   // properties
   
   @Override
-  public Entity getType(Entity[] subTypes) throws EntityException {
-    return subTypes[index];
-  }
-  
-  @Override
   public boolean isValue(ID name, boolean isThis) {
     return this.name == name && !isThis;
+  }
+
+  public Entity getType() throws EntityException {
+    return currentType.getSubtype(index);
   }
   
   // moving functions

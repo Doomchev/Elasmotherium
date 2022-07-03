@@ -6,14 +6,14 @@ class Texture {
   
   Array<Image> cut(Int columnsQuantity, Int rowsQuantity = 1) {
     Int quantity = columnsQuantity * rowsQuantity;
-    Float cellWidth = width / rowsQuantity;
-    Float cellHeight = height / columnsQuantity;
+    Int cellWidth = width / rowsQuantity;
+    Int cellHeight = height / columnsQuantity;
     Array<Image> images = Array<Image>(quantity);
     Int index = 0;
     for(Int y = 0 ..< rowsQuantity) {
-      Float yy = cellHeight * y;
+      Int yy = cellHeight * y;
       for(Int x = 0 ..< columnsQuantity) {
-        Float xx = cellWidth * x;
+        Int xx = cellWidth * x;
         images[index] = Image(this, xx, yy, cellWidth, cellHeight);
       }
     }

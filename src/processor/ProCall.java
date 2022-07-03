@@ -28,7 +28,7 @@ public class ProCall extends ProCommand {
           + method + "(" + callParam + ")");
       subIndent.append("| ");
     }
-    currentProcessor.call(newCurrent, method, callParam);
+    currentProcessor.compileCall(newCurrent, method, callParam);
     if(log) {
       subIndent.delete(0, 2);
     }

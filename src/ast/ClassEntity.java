@@ -88,7 +88,7 @@ public class ClassEntity extends NamedEntity {
         + "]");
     for(Variable field: fields) {
       if(field.name == name) {
-        field.resolve(type);
+        field.resolveTo(type);
         return;
       }
     }
@@ -181,7 +181,7 @@ public class ClassEntity extends NamedEntity {
       constructor.processConstructor(this);
   }
    
-  // processing
+  // compiling
 
   public void addToScope() {
     addToScope(this);
@@ -189,7 +189,7 @@ public class ClassEntity extends NamedEntity {
   }
   
   @Override
-  public void process() throws EntityException {
+  public void compile() throws EntityException {
     ClassEntity oldCurrent = current;
     current = this;
     allocateScope();
@@ -197,15 +197,15 @@ public class ClassEntity extends NamedEntity {
     for(Variable field: fields) addToScope(field);
     for(StaticFunction method: methods) addToScope(method);
     
-    for(StaticFunction constructor: constructors) constructor.process();
-    for(StaticFunction method: methods) method.process();
+    for(StaticFunction constructor: constructors) constructor.compile();
+    for(StaticFunction method: methods) method.compile();
     
     deallocateScope();
     current = oldCurrent;
   }
   
   @Override
-  public void resolve(Entity type) throws EntityException {
+  public void resolveTo(Entity type) throws EntityException {
     try {
       convert(getNativeClass(), type.getNativeClass());
     } catch (ElException ex) {

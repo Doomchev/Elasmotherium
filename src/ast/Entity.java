@@ -16,6 +16,8 @@ import vm.values.VMValue;
 import java.util.LinkedList;
 
 public abstract class Entity extends Base {
+  public static Entity currentType = null;
+
   public Module module;
   public int textStart, textEnd;
   
@@ -45,12 +47,8 @@ public abstract class Entity extends Base {
     throw new CannotGet("type", this);
   }
 
-  public Entity getSubType() throws EntityException {
+  public Entity getSubtype(int index) throws EntityException {
     throw new CannotGet("subtype", this);
-  }
-  
-  public Entity getType(Entity[] subTypes) throws EntityException {
-    throw new CannotGet("type using subtypes", this);
   }
   
   public ClassEntity getNativeClass() throws EntityException {
@@ -91,27 +89,18 @@ public abstract class Entity extends Base {
     throw new CannotGet("method " + name, this);
   }
 
-  public Entity[] getSubTypes(ID classID, int quantity) throws EntityException {
-    throw new CannotGet("sub types", this);
-  }
-
   public Entity getErrorEntity() {
     return this;
   }
   
-  // processing
+  // compiling
     
-  public void process() throws EntityException {
-    throw new EntityException.Cannot("process", this);
+  public void compile() throws EntityException {
+    throw new EntityException.Cannot("compile", this);
   }
   
-  public void process(FunctionCall call) throws EntityException {
-    throw new EntityException.Cannot("process", this, "with call");
-  }
-
-  public void process(FunctionCall call, Entity[] subTypes)
-      throws EntityException {
-    throw new EntityException.Cannot("process", this, "with call and subtypes");
+  public void compileCall(FunctionCall call) throws EntityException {
+    throw new EntityException.Cannot("compile", this, "with call");
   }
   
   public Entity resolve() throws EntityException {
@@ -122,7 +111,7 @@ public abstract class Entity extends Base {
     return this;
   }
 
-  public void resolve(Entity type) throws EntityException {
+  public void resolveTo(Entity type) throws EntityException {
     try {
       currentProcessor.resolve(this, type);
     } catch (ElException ex) {
@@ -130,16 +119,16 @@ public abstract class Entity extends Base {
     }
   }
 
-  public void resolve(Entity type, FunctionCall call)
+  public void resolveCallTo(Entity type, FunctionCall call)
       throws EntityException {
     throw new EntityException.Cannot("resolve", this, "to " + type);
   }
   
-  public Entity resolveRecursively() throws EntityException {
+  public Entity resolveLinks() throws EntityException {
     return this;
   }
 
-  public Entity resolveRecursively(int parametersQuantity) throws EntityException {
+  public Entity resolveLinks(int parametersQuantity) throws EntityException {
     return this;
   }
   

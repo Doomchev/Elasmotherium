@@ -65,14 +65,13 @@ public class Variable extends NamedEntity {
   public Entity getType() throws EntityException {
     return type.getType();
   }
-  
-  @Override
-  public Entity getType(Entity[] subTypes) throws EntityException {
-    return type.getType(subTypes);
-  }
 
   public void setType(Entity type) {
     this.type = type;
+  }
+
+  public Entity getSubtype(int index) throws EntityException {
+    return  type.getSubtype(index);
   }
   
   @Override
@@ -89,20 +88,21 @@ public class Variable extends NamedEntity {
   
   public void resolveType() throws EntityException {
     type = type.resolve();
-    if(value != null) 
-      value = value.resolveRecursively();
+    if(value != null) {
+      value = value.resolveLinks();
+    }
   }
    
-  // processing
+  // compiling
   
   @Override
-  public void process() throws EntityException {
+  public void compile() throws EntityException {
     if(log) print(new StringBuilder(), "");
     addToScope(this);
     resolveType();
     if(value != null) {
       try {
-        currentProcessor.call(this, id, Processor.callMethod);
+        currentProcessor.compileCall(this, id, Processor.callMethod);
       } catch (ElException ex) {
         throw new EntityException(this, ex.message);
       }

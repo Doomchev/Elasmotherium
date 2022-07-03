@@ -21,7 +21,7 @@ public class SetParameter extends ProCommand {
 
   @Override
   public void execute() throws ElException, EntityException {
-    currentParam = parameter.getValue();
+    currentParam = parameter.getValue().getType();
     if(log) log("Set current type to " + currentParam);
   }
 }

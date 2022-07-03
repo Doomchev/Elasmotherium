@@ -10,20 +10,38 @@ import base.Module;
 import exception.ElException;
 import exception.ElException.MethodException;
 import exception.EntityException;
-import processor.block.*;
-import processor.parameter.*;
+import processor.block.BlockLabelInitialize;
+import processor.block.BlockLabelSet;
+import processor.parameter.SetParameter;
 import vm.GoTo;
 import vm.IfFalseGoTo;
 import vm.VMCommand;
-import vm.call.*;
+import vm.bool.And;
+import vm.bool.Or;
+import vm.call.I64Return;
+import vm.call.ObjectReturn;
+import vm.call.ReturnVoid;
+import vm.call.StringReturn;
 import vm.collection.*;
+import vm.f64.var.F64VarEquate;
+import vm.f64.var.F64VarPush;
 import vm.i64.*;
-import vm.i64.field.*;
-import vm.i64.var.*;
-import vm.object.*;
-import vm.string.*;
-import vm.string.field.*;
-import vm.string.var.*;
+import vm.i64.field.I64FieldEquate;
+import vm.i64.field.I64FieldIncrement;
+import vm.i64.field.I64FieldPush;
+import vm.i64.var.I64VarEquate;
+import vm.i64.var.I64VarIncrement;
+import vm.i64.var.I64VarPush;
+import vm.object.ObjectFieldEquate;
+import vm.object.ObjectFieldPush;
+import vm.object.ObjectVarEquate;
+import vm.object.ObjectVarPush;
+import vm.string.StringAdd;
+import vm.string.StringPush;
+import vm.string.field.StringFieldEquate;
+import vm.string.field.StringFieldPush;
+import vm.string.var.StringVarEquate;
+import vm.string.var.StringVarPush;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -47,10 +65,12 @@ public class Processor extends ProBase {
     addCommand(new StringPush(""));
     
     addCommand(new I64VarPush(0));
+    addCommand(new F64VarPush(0));
     addCommand(new StringVarPush(0));
     addCommand(new ObjectVarPush(0));
     
     addCommand(new I64VarEquate(0));
+    addCommand(new F64VarEquate(0));
     addCommand(new StringVarEquate(0));
     addCommand(new ObjectVarEquate(0));
     
@@ -72,22 +92,30 @@ public class Processor extends ProBase {
     addCommand(new I64VarIncrement(0));
     
     addCommand(new StringAdd());
+
+    addCommand(new ObjectFieldPush(0, 0));
     
     addCommand(new I64IsEqual());
-    
+    addCommand(new I64IsNotEqual());
     addCommand(new I64IsLess());
     addCommand(new I64IsLessOrEqual());
     addCommand(new I64IsMore());
-    
+
+    addCommand(new And());
+    addCommand(new Or());
+
+    addCommand(new ReturnVoid());
     addCommand(new I64Return());
     addCommand(new StringReturn());
-    
+    addCommand(new ObjectReturn());
+
     addCommand(new CollectionToIterator());
     addCommand(new IteratorHasNext());
     addCommand(new I64IteratorNext());
     addCommand(new I64GetAtIndex());
     addCommand(new I64SetAtIndex());
     addCommand(new ObjectGetAtIndex());
+    addCommand(new ObjectSetAtIndex());
 
     addCommand(new GoTo());
     addCommand(new IfFalseGoTo());
@@ -97,7 +125,7 @@ public class Processor extends ProBase {
     proCommands.put("setParameter", SetParameter.instance);
     proCommands.put("convert", Convert.instance);
     proCommands.put("stop", Stop.instance);
-    proCommands.put("process", Process.instance);
+    proCommands.put("compile", Process.instance);
   }
   
   private static class Method {
@@ -167,7 +195,6 @@ public class Processor extends ProBase {
             code.addFirst(new BlockLabelInitialize(labelID));
             method.hasLabels = true;
           } else {
-            line = expectEnd(line, ";");
             String param = line.contains("(") ? betweenBrackets(line) : "";
             line = stringUntil(line, '(');
             if(line.startsWith("[")) {
@@ -199,7 +226,7 @@ public class Processor extends ProBase {
     return this;
   }
 
-  public void processBlock(Block block, ID type)
+  public void compileBlock(Block block, ID type)
       throws ElException, EntityException {
     if(log2) println("[processing block " + block + " with type " + type + "]");
     block.parentBlock = currentBlock;
@@ -209,50 +236,50 @@ public class Processor extends ProBase {
   }
   
   public void getObject(Entity entity) throws EntityException, ElException {
-    call(entity, entity.getID(), getObjectMethod);
+    compileCall(entity, entity.getID(), getObjectMethod);
   }
   
   public void resolve(Entity entity, Entity type)
       throws ElException, EntityException {
-    call(entity, entity.getID(), resolveMethod, type);
+    compileCall(entity, entity.getID(), resolveMethod, type);
   }
   
   public void resolveCall(FunctionCall call, ID functionName, Entity type)
       throws ElException, EntityException {
-    call(call, functionName, resolveMethod, type);
+    compileCall(call, functionName, resolveMethod, type);
   }
   
-  public void call(Entity entity, ID method, Entity param)
+  public void compileCall(Entity entity, ID method, Entity param)
       throws ElException, EntityException {
-    call(entity, entity.getID(), method, param);
+    compileCall(entity, entity.getID(), method, param);
   }
   
-  public void call(Entity entity, ID function, ID method, Entity type)
+  public void compileCall(Entity entity, ID function, ID method, Entity type)
       throws ElException, EntityException {
     if(log2) println("[call" + entity + "." + function + "." + method + " of "
         + type + "]");
     Entity oldParam = Processor.currentParam;
     Processor.currentParam = type;
-    call(entity, function, method);
+    compileCall(entity, function, method);
     Processor.currentParam = oldParam;
   }
 
-  public void processCall(FunctionCall call, ID functionName)
+  public void compileCall(FunctionCall call, ID functionName)
       throws ElException, EntityException {
-    call(call, functionName, callMethod);
+    compileCall(call, functionName, callMethod);
   }
   
-  public void call(Entity object, ID functionName, ID methodName)
+  public void compileCall(Entity object, ID functionName, ID methodName)
       throws ElException, EntityException {
     if(log2) println("[call object " + object + " " + functionName + "."
         + methodName + "]");
     Entity oldCurrent = currentObject;
     currentObject = object.resolve();
-    process(functionName, methodName);
+    compile(functionName, methodName);
     currentObject = oldCurrent;
   }
   
-  public void process(ID functionName, ID methodName)
+  public void compile(ID functionName, ID methodName)
       throws ElException, EntityException {
     if(log2) currentLineReader.log("[" + functionName + "."
         + methodName + "]", 0);
@@ -261,7 +288,7 @@ public class Processor extends ProBase {
       method = getMethod(functionName, methodName);
     } catch(ElException ex) {
       if(methodName == resolveMethod) {
-        currentObject.resolve(currentParam.getType());
+        currentObject.resolveTo(currentParam.getType());
       } else if(methodName == getObjectMethod) {
         currentParam = currentObject.getObject();
       } else {
@@ -280,7 +307,7 @@ public class Processor extends ProBase {
     }
   }
 
-  public void process(Module module) {
+  public void compile(Module module) {
     try {
       currentProcessor = this;
       module.process();

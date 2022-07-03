@@ -1,5 +1,6 @@
 package processor;
 
+import ast.Entity;
 import processor.parameter.ProParameter;
 import exception.ElException;
 import exception.EntityException;
@@ -22,6 +23,8 @@ public class GetField extends ProCommand {
   @Override
   public void execute() throws ElException, EntityException {
     if(log) println("Getting field of " + currentObject + ".");
+    Entity old = currentParam;
     currentObject = currentObject.getField();
+    currentParam = old;
   }  
 }

@@ -22,6 +22,7 @@ Int screenHeight();
 
 class Array<ElementType> {
   create(Int size);
+  create(Int size, ElementType element);
 	Int size();
 }
 

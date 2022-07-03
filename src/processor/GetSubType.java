@@ -22,6 +22,6 @@ public class GetSubType extends ProCommand {
   @Override
   public void execute() throws ElException, EntityException {
     if(log) println("Getting subtype of " + currentObject + ".");
-    currentObject = currentObject.getSubType();
+    currentObject = currentObject.getSubtype(0);
   }  
 }

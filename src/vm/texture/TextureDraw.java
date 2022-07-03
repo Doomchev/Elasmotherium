@@ -17,7 +17,7 @@ public class TextureDraw extends VMCommand {
     int ty = (int) i64Stack[stackPointer + 3];
     int sx = (int) i64Stack[stackPointer + 6];
     int sy = (int) i64Stack[stackPointer + 7];
-    currentGraphics.drawImage(objectStack[stackPointer + 1].getImage()
+    currentGraphics.drawImage(valueStack[stackPointer + 1].getImage()
         , tx, ty
         , tx + (int) i64Stack[stackPointer + 4]
         , ty + (int) i64Stack[stackPointer + 5]

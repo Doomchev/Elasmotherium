@@ -16,7 +16,7 @@ public class I64FieldIncrement extends VMFieldCommand {
   
   @Override
   public void execute() throws ElException {
-    objectStack[currentCall.varIndex(varIndex)]
+    valueStack[currentCall.varIndex(varIndex)]
         .getField(fieldIndex).increment();
     if(varIndex == LAST) stackPointer--;
     currentCommand++;

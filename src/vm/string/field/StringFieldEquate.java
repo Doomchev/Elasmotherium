@@ -16,7 +16,7 @@ public class StringFieldEquate extends VMFieldCommand {
   
   @Override
   public void execute() throws ElException {
-    objectStack[currentCall.varIndex(varIndex)].getField(fieldIndex)
+    valueStack[currentCall.varIndex(varIndex)].getField(fieldIndex)
         .stringSet(stringStack[stackPointer]);
     stackPointer -= varIndex == LAST ? 2 : 1;
     currentCommand++;

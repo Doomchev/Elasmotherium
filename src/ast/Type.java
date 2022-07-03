@@ -2,7 +2,6 @@ package ast;
 
 import ast.function.Method;
 import exception.EntityException;
-import exception.EntityException.Cannot;
 import exception.NotFound;
 import vm.values.VMValue;
 
@@ -30,22 +29,15 @@ public class Type extends Entity {
     return this;
   }
 
-  public Entity getSubType() throws EntityException {
-    return subTypes[0];
+  public Entity getSubtype(int index) throws EntityException {
+    return subTypes[index];
   }
   
   @Override
   public Entity getMethod(ID id, int parametersQuantity) throws NotFound {
     Method method = basicClass.getMethod(id, parametersQuantity);
     if(subTypes.length == 0) return method;
-    return new ParameterizedEntity(subTypes, method);
-  }
-
-  @Override
-  public Entity[] getSubTypes(ID className, int quantity) throws EntityException {
-    if(basicClass.name != className || quantity != subTypes.length)
-      throw new Cannot("convert " + basicClass.name + " to ", this);
-    return subTypes;
+    return method;
   }
   
   // other

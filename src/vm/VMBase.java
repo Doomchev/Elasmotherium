@@ -11,7 +11,7 @@ import java.awt.*;
 import java.util.Arrays;
 
 public class VMBase extends Base{
-  private static final int STACK_SIZE = 16, COMMANDS_SIZE = 256;
+  private static final int STACK_SIZE = 16, COMMANDS_SIZE = 65536;
   
   protected static ValueType[] typeStack = new ValueType[STACK_SIZE];
   
@@ -19,7 +19,7 @@ public class VMBase extends Base{
   protected static double [] f64Stack = new double[STACK_SIZE];
   protected static String[] stringStack = new String[STACK_SIZE];
   protected static boolean[] booleanStack = new boolean[STACK_SIZE];
-  protected static VMValue[] objectStack = new VMValue[STACK_SIZE];
+  protected static VMValue[] valueStack = new VMValue[STACK_SIZE];
   
   protected static VMFunctionCall[] callStack = new VMFunctionCall[STACK_SIZE];
   protected static int stackPointer = -1, callStackPointer = -1;
@@ -105,7 +105,7 @@ public class VMBase extends Base{
               stack.append(booleanStack[index] ? "true " : "false ");
               break;
             case OBJECT:
-              stack.append(objectStack[index].toString()).append(" ");
+              stack.append(valueStack[index].toString()).append(" ");
               break;
           }
         System.out.println("Stack: " + stack);

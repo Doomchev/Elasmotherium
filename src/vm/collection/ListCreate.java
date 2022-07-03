@@ -8,7 +8,7 @@ public class ListCreate extends VMCommand {
   @Override
   public void execute() throws ElException {
     stackPointer++;
-    objectStack[stackPointer] = new ListValue();
+    valueStack[stackPointer] = new ListValue();
     if(log) typeStack[stackPointer] = ValueType.OBJECT;
     currentCommand++;
   }

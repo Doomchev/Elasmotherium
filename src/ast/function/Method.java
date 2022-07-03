@@ -29,24 +29,17 @@ public class Method extends StaticFunction {
     return this.name == name && fromParametersQuantity == 0;
   }
   
-  // processing
+  // compiling
 
   @Override
-  public void process(FunctionCall call) throws EntityException {
+  public void compileCall(FunctionCall call) throws EntityException {
     if(log) println(subIndent + "Resolving method " + this);
     call.resolveParameters(parameters);
     append();
   }
 
   @Override
-  public void process(FunctionCall call, Entity[] subTypes) throws EntityException {
-    if(log) println(subIndent + "Resolving method " + this);
-    call.resolveParameters(parameters, subTypes);
-    append();
-  }
-
-  @Override
-  public void resolve(Entity type) throws EntityException {
+  public void resolveTo(Entity type) throws EntityException {
     append(new ObjectVarPush(currentFunction.allocation));
     resolveChild(type);
   }

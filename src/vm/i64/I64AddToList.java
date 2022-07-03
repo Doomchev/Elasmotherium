@@ -9,7 +9,7 @@ public class I64AddToList extends VMCommand {
     @Override
     public void execute() throws ElException {
       stackPointer -= 1;
-      objectStack[stackPointer].listGet().add(
+      valueStack[stackPointer].listGet().add(
           new I64Value(i64Stack[stackPointer + 1]));
       currentCommand++;
     }
@@ -18,7 +18,7 @@ public class I64AddToList extends VMCommand {
   @Override
   public void execute() throws ElException {
     stackPointer -= 2;
-    objectStack[stackPointer + 1].listGet().add(
+    valueStack[stackPointer + 1].listGet().add(
         new I64Value(i64Stack[stackPointer + 2]));
     currentCommand++;
   }

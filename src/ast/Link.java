@@ -37,12 +37,7 @@ public class Link extends Value {
     return id;
   }
   
-  @Override
-  public Entity getType(Entity[] subTypes) throws EntityException {
-    return resolve().getType(subTypes);
-  }
-  
-  // processing
+  // compiling
   
   @Override
   public Entity resolve() throws EntityException {
@@ -72,21 +67,21 @@ public class Link extends Value {
 }
 
   @Override
-  public void resolve(Entity type) throws EntityException {
+  public void resolveTo(Entity type) throws EntityException {
     try {
-      getVariableFromScope(name, isThis).resolve(type);
+      getVariableFromScope(name, isThis).resolveTo(type);
     } catch (NotFound ex) {
       throw new EntityException(this, ex.message);
     }
   }
   
   @Override
-  public Entity resolveRecursively() throws EntityException {
+  public Entity resolveLinks() throws EntityException {
     return resolve();
   }
 
   @Override
-  public Entity resolveRecursively(int parametersQuantity) throws EntityException {
+  public Entity resolveLinks(int parametersQuantity) throws EntityException {
     return resolveFunction(parametersQuantity);
   }
 

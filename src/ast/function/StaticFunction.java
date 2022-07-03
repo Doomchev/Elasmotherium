@@ -9,6 +9,7 @@ import ast.Variable;
 import exception.ElException;
 import exception.EntityException;
 import vm.VMCommand;
+import vm.call.ReturnVoid;
 
 public class StaticFunction extends CustomFunction {
   protected Entity returnType = null;
@@ -38,11 +39,6 @@ public class StaticFunction extends CustomFunction {
   }
   
   @Override
-  public Entity getType(Entity[] subTypes) throws EntityException {
-    return returnType.getType(subTypes);
-  }
-  
-  @Override
   public ClassEntity getNativeClass() throws EntityException {
     return returnType.getNativeClass();
   }
@@ -67,24 +63,24 @@ public class StaticFunction extends CustomFunction {
     for(Variable parameter: parameters) parameter.resolveType();
   }
   
-  // processing
+  // compiling
 
   @Override
-  public void process(FunctionCall call) throws EntityException {
+  public void compileCall(FunctionCall call) throws EntityException {
     if(log) println(subIndent + "Calling static function " + this);
     call.resolveParameters(parameters);
     append();
   }
 
   @Override
-  public void resolve(Entity type) throws EntityException {
+  public void resolveTo(Entity type) throws EntityException {
     if(log) println(subIndent + "Resolving static function " + this
       + " without parameters");
     append();
   }
 
   @Override
-  public void resolve(Entity type, FunctionCall call)
+  public void resolveCallTo(Entity type, FunctionCall call)
       throws EntityException {
     if(log) println(subIndent + "Resolving static function " + this);
     call.resolveParameters(parameters);
@@ -110,7 +106,7 @@ public class StaticFunction extends CustomFunction {
   
   @Override
   public VMCommand getEndingCommand() {
-    return new vm.call.Return();
+    return new ReturnVoid();
   }
   
   // moving functions

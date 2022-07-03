@@ -45,27 +45,34 @@ public class FunctionCall extends Value {
   public ID getID() throws EntityException {
     return function instanceof NativeFunction ? function.getID() : id;
   }
-  
+
   @Override
-  public Entity getType(Entity[] subTypes) throws EntityException {
-    return function.getType(subTypes);
+  public Entity getType() throws EntityException {
+    if(function == NativeFunction.at) {
+      return parameters.getFirst().resolve().getSubtype(0);
+    }
+    return super.getType();
+  }
+
+  @Override
+  public Entity getSubtype(int index) throws EntityException {
+    if(function == NativeFunction.at) {
+      return parameters.getFirst().resolve().getSubtype(0);
+    }
+    return function.resolve().getSubtype(0);
   }
 
   @Override
   public Variable getField() throws EntityException {
     try {
-      if(function == NativeFunction.dot && parameters.size() == 2)
+      if(function == NativeFunction.dot) {
         return parameters.getFirst().getObject()
             .getField(parameters.getLast().getName());
+      }
       return super.getField();
     } catch (NotFound ex) {
       throw new EntityException(this, ex.message);
     }
-  }
-
-  @Override
-  public Entity getSubType() throws EntityException {
-    return parameters.getFirst().resolve().getType().getSubType();
   }
 
   public Entity getFunction() {
@@ -91,12 +98,12 @@ public class FunctionCall extends Value {
     return function.getErrorEntity();
   }
   
-  // processing
+  // compiling
   
   @Override
-  public void process() throws EntityException {
+  public void compile() throws EntityException {
     if(log) println(subIndent + toString());
-    function.resolveFunction(parameters.size()).process(this);
+    function.resolveFunction(parameters.size()).compileCall(this);
   }
   
   @Override
@@ -115,13 +122,13 @@ public class FunctionCall extends Value {
       }
     }
     Entity func = function.resolveFunction(thisParametersQuantity);
-    func.process(this);
+    func.compileCall(this);
     throw new EntityException.NotImplemented(this, "resolveFunction");
     //return func.getType(null);
   }
 
   @Override
-  public void resolve(Entity type) throws EntityException {
+  public void resolveTo(Entity type) throws EntityException {
     try {
       if(function == NativeFunction.dot) {
         parameters.getFirst().getObject()
@@ -133,7 +140,7 @@ public class FunctionCall extends Value {
           throw new EntityException(this, ex.message);
         }
       } else {
-        function.resolveFunction(parameters.size()).resolve(type, this);
+        function.resolveFunction(parameters.size()).resolveCallTo(type, this);
       }
     } catch (EntityException ex) {
       throw new EntityException(function, ex.message);
@@ -141,12 +148,16 @@ public class FunctionCall extends Value {
   }
   
   @Override
-  public Entity resolveRecursively() throws EntityException {
-    function = function.resolveRecursively(parameters.size());
-    int index = 0;
-    for(Entity parameter: parameters) {
-      parameters.set(index, parameter.resolveRecursively());
-      index++;
+  public Entity resolveLinks() throws EntityException {
+    if(function == NativeFunction.dot) {
+      parameters.set(0, parameters.getFirst().resolveLinks());
+    } else {
+      function = function.resolveLinks(parameters.size());
+      int index = 0;
+      for(Entity parameter: parameters) {
+        parameters.set(index, parameter.resolveLinks());
+        index++;
+      }
     }
     return this;
   }
@@ -155,33 +166,29 @@ public class FunctionCall extends Value {
       throws EntityException {
     int i = 0, callParametersQuantity = parameters.size();
     for(Entity parameter: functionParameters) {
-      (callParametersQuantity > i ? parameters.get(i)
-          : parameter.getValue()).resolve(parameter.getType());
-      i++;
-    }
-  }
-
-  protected void resolveParameters(LinkedList<Variable> functionParameters
-      , Entity[] subTypes)
-      throws EntityException {
-    int i = 0, callParametersQuantity = parameters.size();
-    for(Entity parameter: functionParameters) {
-      (callParametersQuantity > i ? parameters.get(i)
-          : parameter.getValue()).resolve(parameter.getType(subTypes));
+      Entity functionParameter = callParametersQuantity > i ? parameters.get(i)
+          : parameter.getValue();
+      functionParameter.resolveTo(parameter.getType());
       i++;
     }
   }
 
   @Override
-  public ClassEntity getObject() throws EntityException {
+  public Entity getObject() throws EntityException {
     Entity func = function.resolveFunction(parameters.size());
-    func.process(this);
+    func.compileCall(this);
+    if(func == NativeFunction.at) {
+      return parameters.getFirst().resolve().getType().getSubtype(0);
+    }
     return func.getNativeClass();
   }
 
   @Override
   public ClassEntity getNativeClass() throws EntityException {
-    return parameters.get(0).resolve().getNativeClass();
+    if(function == NativeFunction.at) {
+      return parameters.getFirst().resolve().getSubtype(0).getNativeClass();
+    }
+    return parameters.getFirst().resolve().getNativeClass();
   }
 
   // moving functions

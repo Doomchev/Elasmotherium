@@ -6,7 +6,7 @@ import vm.VMCommand;
 public class IteratorHasNext extends VMCommand {
   @Override
   public void execute() throws ElException {
-    booleanStack[stackPointer] = objectStack[stackPointer].hasNext();
+    booleanStack[stackPointer] = valueStack[stackPointer].hasNext();
     if(log) typeStack[stackPointer] = ValueType.BOOLEAN;
     currentCommand++;
   }

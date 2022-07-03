@@ -1,18 +1,15 @@
 package ast.function;
 
-import ast.ClassEntity;
-import ast.Code;
-import ast.Entity;
-import ast.ID;
-import ast.IDEntity;
-import ast.Variable;
+import ast.*;
 import exception.ElException;
 import exception.EntityException;
 import exception.EntityException.Cannot;
 import exception.NotFound;
-import java.util.LinkedList;
 import parser.EntityStack;
 import vm.VMCommand;
+import vm.call.ReturnVoid;
+
+import java.util.LinkedList;
 
 public abstract class CustomFunction extends Function {
   protected final LinkedList<Variable> parameters = new LinkedList<>();
@@ -124,10 +121,10 @@ public abstract class CustomFunction extends Function {
   
   public abstract void resolveTypes() throws EntityException;
   
-  // processing
+  // compiling
   
   @Override
-  public void process() throws EntityException {
+  public void compile() throws EntityException {
     if(command != null) return;
     startingCommand = vm.VMBase.currentCommand + 1;
     CustomFunction oldFunction = currentFunction;
@@ -140,7 +137,7 @@ public abstract class CustomFunction extends Function {
   }
   
   public VMCommand getEndingCommand() throws EntityException {
-    return new vm.call.Return();
+    return new ReturnVoid();
   }
   
   public void processCode(VMCommand endingCommand) throws EntityException {

@@ -49,7 +49,8 @@ FUNCTION divide, 3
 
 FUNCTION break, 0
 FUNCTION continue, 0
-FUNCTION return, 0
+FUNCTION returnVoid, 0
+FUNCTION returnValue, 0
 
 
 
@@ -139,9 +140,9 @@ codeLine: {
     }
   }
   "break": >> CREATE(call) MOVE(break, call) MOVE(call, code) codeLineEnd
-  "return": >> CREATE(call) MOVE(return, call) {
-    ";": >> MOVE(call, code) RETURN
-    other: formula() MOVE(formula, call) MOVE(call, code) codeLineEnd
+  "return": >> CREATE(call) {
+    ";": >> MOVE(returnVoid, call) MOVE(call, code) RETURN
+    other: MOVE(returnValue, call) formula() MOVE(formula, call) MOVE(call, code) codeLineEnd
   }
   
   /// separators
@@ -219,7 +220,7 @@ functionParamEnd: MOVE(variable, function) {
 
 functionCode: {
   // [Type ]function([params]) -> expression;
-  "->": >> formula() CREATE(call) MOVE(return, call) MOVE(formula, call) CREATE(code) MOVE(call, code) MOVE(code, function) functionEnd
+  "->": >> formula() CREATE(call) MOVE(returnValue, call) MOVE(formula, call) CREATE(code) MOVE(call, code) MOVE(code, function) functionEnd
   // [Type ]function([params]) codeLine;
   ";": functionEnd
   other: code() MOVE(code, function) functionEnd
@@ -688,7 +689,7 @@ methodParamEnd: MOVE(variable, function) {
 
 methodCode: {
   // [Type ]method([params]) -> expression;
-  "->": >> formula() CREATE(call) MOVE(return, call) MOVE(formula, call) CREATE(code) MOVE(call, code) MOVE(code, function) EXPECT(";") methodEnd
+  "->": >> formula() CREATE(call) MOVE(returnValue, call) MOVE(formula, call) CREATE(code) MOVE(call, code) MOVE(code, function) EXPECT(";") methodEnd
   // [Type ]method([params]) codeLine;
   ";": >> methodEnd
   other: code() MOVE(code, function) methodEnd

@@ -6,6 +6,8 @@ import ast.ID;
 import exception.ElException;
 import exception.EntityException;
 import exception.NotFound;
+import processor.Processor;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -44,19 +46,23 @@ public class NativeFunction extends Function {
     return name;
   }
   
-  // processing
+  // compiling
   
   @Override
-  public void process(FunctionCall call) throws EntityException {
+  public void compileCall(FunctionCall call) throws EntityException {
     try {
-      currentProcessor.processCall(call, name);
+      if(this == at) {
+        currentProcessor.compileCall(call, name, Processor.getObjectMethod);
+      } else {
+        currentProcessor.compileCall(call, name);
+      }
     } catch (ElException ex) {
       throw new EntityException(this, ex.message);
     }
   }
 
   @Override
-  public void resolve(Entity type, FunctionCall call)
+  public void resolveCallTo(Entity type, FunctionCall call)
       throws EntityException {
     try {
       currentProcessor.resolveCall(call, name, type);

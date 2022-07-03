@@ -26,13 +26,13 @@ public class StringSequence extends Value {
     return id;
   }
   
-  // processing
+  // compiling
   
   @Override
-  public void resolve(Entity parameter) throws EntityException {
+  public void resolveTo(Entity parameter) throws EntityException {
     boolean isNotFirst = false;
     for(Value value: chunks) {
-      value.resolve(ClassEntity.String);
+      value.resolveTo(ClassEntity.String);
       if(isNotFirst) {
         append(new vm.string.StringAdd());
       } else {

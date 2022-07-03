@@ -7,7 +7,7 @@ import vm.VMCommand;
 public class TextureWidth extends VMCommand {
   @Override
   public void execute() throws ElException {
-    i64Stack[stackPointer] = objectStack[stackPointer].getImage().getWidth();
+    i64Stack[stackPointer] = valueStack[stackPointer].getImage().getWidth();
     if(log) typeStack[stackPointer] = VMBase.ValueType.I64;
     currentCommand++;
   }
