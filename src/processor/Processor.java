@@ -213,7 +213,8 @@ public class Processor extends ProBase {
                   if(command == null)
                     throw new ElException.NotFound(this, "Command "
                         + line);
-                  code.add(AppendCommand.create(command, param));
+                  code.add(AppendCommand.create(command, param
+                      , currentLineReader.getLineNum()));
                 }
               }
             }
@@ -290,7 +291,7 @@ public class Processor extends ProBase {
       if(methodName == resolveMethod) {
         currentObject.resolveTo(currentParam.getType());
       } else if(methodName == getObjectMethod) {
-        currentParam = currentObject.getObject();
+        currentParam = currentObject.resolveObject();
       } else {
         throw ex;
       }

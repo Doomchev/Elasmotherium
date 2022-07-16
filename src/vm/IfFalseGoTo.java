@@ -6,7 +6,11 @@ import processor.parameter.ProParameter;
 
 public class IfFalseGoTo extends VMCommand {
   private int command;
-  
+
+  public IfFalseGoTo() {
+    super();
+  }
+
   @Override
   public VMCommand create(ProParameter parameter)
       throws ElException, EntityException {

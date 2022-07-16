@@ -95,12 +95,12 @@ public class StaticFunction extends CustomFunction {
   public void append() throws EntityException {
     if(command != null) {
       try {
-        append(command.create());
+        append(command.create(), 0);
       } catch (ElException ex) {
         throw new EntityException(this, ex.message);
       }
     } else {
-      append(new vm.call.CallFunction(this));
+      append(new vm.call.CallFunction(this), 0);
     }
   }
   

@@ -14,7 +14,7 @@ public class VMFunctionCall extends VMBase {
     this.deallocation = deallocation;
   }
 
-  public void thisPush() throws ElException {
+  public void thisPush() {
     stackPointer++;
     valueStack[stackPointer] = valueStack[paramPosition - 1];
     if(log) typeStack[stackPointer] = ValueType.OBJECT;

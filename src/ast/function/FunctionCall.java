@@ -3,7 +3,6 @@ package ast.function;
 import ast.*;
 import exception.ElException;
 import exception.EntityException;
-import exception.EntityException.Cannot;
 import exception.NotFound;
 
 import java.util.LinkedList;
@@ -66,7 +65,7 @@ public class FunctionCall extends Value {
   public Variable getField() throws EntityException {
     try {
       if(function == NativeFunction.dot) {
-        return parameters.getFirst().getObject()
+        return parameters.getFirst().resolveObject()
             .getField(parameters.getLast().getName());
       }
       return super.getField();
@@ -103,7 +102,9 @@ public class FunctionCall extends Value {
   @Override
   public void compile() throws EntityException {
     if(log) println(subIndent + toString());
+    Entity oldType = currentType;
     function.resolveFunction(parameters.size()).compileCall(this);
+    currentType = oldType;
   }
   
   @Override
@@ -111,11 +112,9 @@ public class FunctionCall extends Value {
       throws EntityException {
     int thisParametersQuantity = parameters.size();
     if(function == NativeFunction.dot) {
-      if(parameters.size() != 2)
-        throw new Cannot("resolve", this);
-      Entity type = parameters.getFirst().getObject();
+      currentType = parameters.getFirst().resolveObject();
       try {
-        return type.getMethod(parameters.getLast().getName()
+        return currentType.getMethod(parameters.getLast().getName()
             , parametersQuantity);
       } catch(NotFound ex) {
         throw new EntityException(this, ex.message);
@@ -131,7 +130,7 @@ public class FunctionCall extends Value {
   public void resolveTo(Entity type) throws EntityException {
     try {
       if(function == NativeFunction.dot) {
-        parameters.getFirst().getObject()
+        parameters.getFirst().resolveObject()
             .resolveField(parameters.getLast().getName(), type);
       } else if(function instanceof NativeFunction) {
         try {
@@ -174,7 +173,7 @@ public class FunctionCall extends Value {
   }
 
   @Override
-  public Entity getObject() throws EntityException {
+  public Entity resolveObject() throws EntityException {
     Entity func = function.resolveFunction(parameters.size());
     func.compileCall(this);
     if(func == NativeFunction.at) {

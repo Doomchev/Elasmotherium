@@ -15,7 +15,7 @@ public abstract class CustomFunction extends Function {
   protected final LinkedList<Variable> parameters = new LinkedList<>();
   protected Code code = new Code();
   protected int startingCommand;
-  protected int allocation = 0;
+  protected int allocation = 0, variablesQuantity = 0;
   protected int fromParametersQuantity = 0, toParametersQuantity = 0;
   protected VMCommand command = null;
   
@@ -31,12 +31,8 @@ public abstract class CustomFunction extends Function {
   
   // properties
 
-  public int getCallAllocation() {
-    return parameters.size() - 1;
-  }
-
-  public int getCallDeallocation() {
-    return parameters.size();
+  public int getVariablesQuantity() {
+    return variablesQuantity;
   }
 
   public int getStartingCommand() {
@@ -55,6 +51,14 @@ public abstract class CustomFunction extends Function {
   }
   
   // allocation
+
+  public void incrementAllocation() {
+    allocation++;
+  }
+
+  public int getAllocation() {
+    return allocation;
+  }
 
   public void setAllocation() {
     allocation = Math.max(allocation, currentAllocation);
@@ -86,22 +90,31 @@ public abstract class CustomFunction extends Function {
   }
   
   // properties
-
-  public int getAllocation() {
-    return allocation;
-  }
   
   @Override
   public ID getID() throws EntityException {
     return id;
   }
-  
+
+  public boolean isConstructor() {
+    return false;
+  }
+
+  public boolean isMethod() {
+    return false;
+  }
+
   public Entity getParameter(int index) {
     return parameters.get(index);
   }
 
+  public int getParametersQuantity() {
+    return parameters.size();
+  }
+
   public void setCode(Code code) {
     this.code = code;
+    this.variablesQuantity = currentAllocation;
   }
 
   public void pushCode() {
@@ -126,6 +139,7 @@ public abstract class CustomFunction extends Function {
   @Override
   public void compile() throws EntityException {
     if(command != null) return;
+    if(name != null) printChapter(name.string);
     startingCommand = vm.VMBase.currentCommand + 1;
     CustomFunction oldFunction = currentFunction;
     currentFunction = this;
@@ -184,5 +198,4 @@ public abstract class CustomFunction extends Function {
   public void print(StringBuilder indent, String prefix) {
     print(indent, prefix, name.string);
   }
-
 }

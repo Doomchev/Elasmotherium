@@ -190,6 +190,8 @@ public class ClassEntity extends NamedEntity {
   
   @Override
   public void compile() throws EntityException {
+    if(name != null) printChapter(name.string);
+
     ClassEntity oldCurrent = current;
     current = this;
     allocateScope();

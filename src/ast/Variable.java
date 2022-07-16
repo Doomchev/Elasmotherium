@@ -15,7 +15,7 @@ public class Variable extends NamedEntity {
   
   private Entity type;
   private Entity value = null;
-  private boolean isField = false;
+  private boolean isField = false, isGlobal = false;
   private int index;
   
   // creating
@@ -99,6 +99,7 @@ public class Variable extends NamedEntity {
   public void compile() throws EntityException {
     if(log) print(new StringBuilder(), "");
     addToScope(this);
+    index += currentFunction.getParametersQuantity();
     resolveType();
     if(value != null) {
       try {
@@ -123,7 +124,7 @@ public class Variable extends NamedEntity {
   }
 
   @Override
-  public Entity getObject() throws EntityException {
+  public Entity resolveObject() throws EntityException {
     try {
       currentProcessor.getObject(this);
       return type;
@@ -148,6 +149,7 @@ public class Variable extends NamedEntity {
   @Override
   public void moveToFunction(CustomFunction function) {
     index = function.addParameter(this);
+    if(module.function == function) isGlobal = true;
   }
 
   @Override

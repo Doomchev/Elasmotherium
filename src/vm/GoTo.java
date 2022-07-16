@@ -6,7 +6,11 @@ import processor.parameter.ProParameter;
 
 public class GoTo extends VMCommand {
   private int command;
-  
+
+  public GoTo() {
+    super();
+  }
+
   @Override
   public VMCommand create(ProParameter parameter)
       throws ElException, EntityException {

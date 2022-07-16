@@ -9,7 +9,6 @@ public class ObjectSetAtIndex extends VMCommand {
     stackPointer -= 3;
     valueStack[stackPointer + 1].valueSet(
         (int) i64Stack[stackPointer + 2], valueStack[stackPointer + 3]);
-    if(log) typeStack[stackPointer] = ValueType.OBJECT;
     currentCommand++;
   }
 }

@@ -1,6 +1,8 @@
 package ast;
 
 import exception.EntityException;
+import vm.VMFieldCommand;
+import vm.object.ObjectVarPush;
 
 import java.util.LinkedList;
 
@@ -20,20 +22,26 @@ public class This extends Value {
   }
   
   // compiling
-  
+
   @Override
   public Entity resolve() throws EntityException {
+    append(new ObjectVarPush(VMFieldCommand.OBJECT), 0);
     return ClassEntity.current;
   }
-  
+
+  @Override
+  public void resolveTo(Entity type) throws EntityException {
+    append(new ObjectVarPush(VMFieldCommand.OBJECT), 0);
+  }
+
   @Override
   public Entity resolveLinks() throws EntityException {
     return resolve();
   }
 
   @Override
-  public Entity getObject() throws EntityException {
-    return resolve().getObject();
+  public Entity resolveObject() throws EntityException {
+    return resolve().resolveObject();
   }
   
   // other

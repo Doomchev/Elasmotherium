@@ -11,7 +11,7 @@ Int pawnsQuantity = (cellsQuantity - 1) / 2;
 Int blackStart = pawnsQuantity + 1;
 
 Texture board = Texture("board.png");
-TileMap tileMap = TileMap(cellsQuantity, 1, Texture("pawns.png").cut(3), empty);
+TileMap tileMap = TileMap(cellsQuantity, 1, Texture("pawns.png").cut(3, 1), empty);
 
 init() {
 	for(Int n = 0 ..< pawnsQuantity) {

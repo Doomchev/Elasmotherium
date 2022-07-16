@@ -36,6 +36,6 @@ public class Conversion extends Scopes {
       throw new ElException(from, "Converters from " + from + " to " + to
           + " are not found.");
     }
-    appendLog(command.create());
+    appendLog(command.create(), 0);
   }
 }

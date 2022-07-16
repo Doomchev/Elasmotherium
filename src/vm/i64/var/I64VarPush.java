@@ -9,6 +9,7 @@ public class I64VarPush extends VMCommand {
   private final int index;
 
   public I64VarPush(int index) {
+    super();
     this.index = index;
   }
   

@@ -34,6 +34,10 @@ public abstract class Entity extends Base {
   }
   
   // properties
+
+  public boolean isParameter() {
+    return false;
+  }
   
   public ID getName() throws EntityException {
     throw new CannotGet("name", this);
@@ -136,7 +140,7 @@ public abstract class Entity extends Base {
     throw new EntityException.Cannot("resolve child", this);
   }
 
-  public Entity getObject() throws EntityException {
+  public Entity resolveObject() throws EntityException {
     try {
       currentProcessor.getObject(this);
     } catch (ElException ex) {
@@ -216,8 +220,8 @@ public abstract class Entity extends Base {
     throw new NullPointerException();
   }
 
-  public static void append(VMCommand command) {
-    appendLog(command);
+  public static void append(VMCommand command, int proLine) {
+    appendLog(command, proLine);
   }
   
   public void print(StringBuilder indent, String prefix) {

@@ -9,6 +9,7 @@ public class StringVarEquate extends VMCommand {
   private final int index;
 
   public StringVarEquate(int index) {
+    super();
     this.index = index;
   }
   

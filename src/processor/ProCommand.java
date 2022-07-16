@@ -21,9 +21,9 @@ public abstract class ProCommand extends ProBase {
   
   public abstract void execute() throws ElException, EntityException;
   
-  void append(VMCommand command) {
+  void append(VMCommand command, int proLine) {
     if(log) log(command.toString());
-    VMBase.append(command);
+    VMBase.append(command, proLine);
   }
   
   public void log(String message) {

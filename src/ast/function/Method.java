@@ -6,6 +6,7 @@ import ast.ID;
 import ast.IDEntity;
 import exception.ElException;
 import exception.EntityException;
+import vm.VMFieldCommand;
 import vm.object.ObjectVarPush;
 
 public class Method extends StaticFunction {
@@ -20,8 +21,8 @@ public class Method extends StaticFunction {
   // properties
 
   @Override
-  public int getCallDeallocation() {
-    return parameters.size() + 1;
+  public boolean isMethod() {
+    return true;
   }
   
   @Override
@@ -40,7 +41,7 @@ public class Method extends StaticFunction {
 
   @Override
   public void resolveTo(Entity type) throws EntityException {
-    append(new ObjectVarPush(currentFunction.allocation));
+    append(new ObjectVarPush(VMFieldCommand.OBJECT), 0);
     resolveChild(type);
   }
 

@@ -86,8 +86,8 @@ public class Link extends Value {
   }
 
   @Override
-  public Entity getObject() throws EntityException {
-    return resolve().getObject();
+  public Entity resolveObject() throws EntityException {
+    return resolve().resolveObject();
   }
   
   // moving functions

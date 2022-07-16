@@ -9,11 +9,9 @@ import parser.Rules;
 import processor.Processor;
 import vm.VMBase;
 import vm.VMCommand;
-import vm.collection.I64ArrayCreate;
 import vm.function.*;
 import vm.i64.I64AddToList;
 import vm.texture.*;
-import vm.values.I64ArrayValue;
 import vm.values.VMValue;
 import vm.variables.ScreenHeight;
 import vm.variables.ScreenWidth;
@@ -31,7 +29,7 @@ public class Module extends Base {
   public final String name, path;
   private static final TreeSet<String> moduleNames = new TreeSet<>();
   private static final Stack<Module> moduleStack = new Stack<>();
-  private final StaticFunction function = new StaticFunction();
+  public final StaticFunction function = new StaticFunction();
 
   public Module() {
     this.name = "";
@@ -41,10 +39,6 @@ public class Module extends Base {
   public Module(String path, String name) {
     this.name = name;
     this.path = path;
-  }
-
-  public int getAllocation() {
-    return function.getAllocation();
   }
 
   public String getFileName() {
@@ -104,9 +98,9 @@ public class Module extends Base {
     return readText(getFileName());
   }
 
-  public static void execute(String examples, String name
+  public static void execute(String path, String name
       , boolean showCommands) {
-    Module module = Module.read("examples", name);
+    Module module = Module.read(path, name);
     processor.compile(module);
     module.execute(showCommands);
   }
@@ -162,7 +156,7 @@ public class Module extends Base {
       newFunction(new ScreenWidth(), 0);
 
       newFunction("List", "add", 1, new I64AddToList());
-      newConstructor("Array", 1, new I64ArrayCreate(), new I64ArrayValue(0));
+      newConstructor("Array", 1, null, null);
     }
     
     if(hasModule("Math")) {
@@ -180,18 +174,24 @@ public class Module extends Base {
     print();
     
     if(log) printChapter("Processing");
-    
+
     function.processCode(new Exit());
     
     print();
   }
 
   public void execute(boolean showCommands) {
-    VMBase.execute(showCommands, this);
+    VMBase.execute(showCommands, this, function.getStartingCommand());
+    try {
+      VMBase.execute(showCommands, this, function.getFunction(
+          ID.get("render"), 0).getStartingCommand());
+    } catch(NotFound ignored) {
+    }
   }
 
   public void print() {
-    if(log) {printChapter("Abstract syntax tree");
+    if(log) {
+      printChapter("Abstract syntax tree");
       function.printAllocation(getFileName());
       printScope();
     }

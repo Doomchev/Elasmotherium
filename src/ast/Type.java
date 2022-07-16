@@ -39,11 +39,17 @@ public class Type extends Entity {
     if(subTypes.length == 0) return method;
     return method;
   }
+
+  public Entity resolveObject() throws EntityException {
+    currentType = this;
+    return this;
+  }
   
   // other
 
   @Override
   public VMValue createValue() {
+    if(basicClass.name.string.equals("Array")) return null;
     return basicClass.createValue();
   }
 

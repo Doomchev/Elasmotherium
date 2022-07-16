@@ -9,6 +9,7 @@ public class ObjectVarEquate extends VMCommand {
   private final int index;
 
   public ObjectVarEquate(int index) {
+    super();
     this.index = index;
   }
   

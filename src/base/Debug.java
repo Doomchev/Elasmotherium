@@ -21,9 +21,9 @@ public class Debug extends StringFunctions {
     return getClass().getSimpleName();
   }
 
-  public static void appendLog(VMCommand command) {
+  public static void appendLog(VMCommand command, int proLine) {
     if(log) println(subIndent + command.toString());
-    VMBase.append(command);
+    VMBase.append(command, proLine);
   }
   
   public static void error(String title, String message) {

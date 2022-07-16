@@ -6,7 +6,10 @@ class Player {
   
   incrementAge() age++;
   
-  addToAge(Int value) age = age + value;
+  addToAge(Int value) {
+    Int newAge = age + value;
+    age = newAge;
+  }
 	
 	String description() -> "\(firstName) \(lastName) is \(age) years old";
 }

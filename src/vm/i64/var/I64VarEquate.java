@@ -9,6 +9,7 @@ public class I64VarEquate extends VMCommand {
   private final int index;
 
   public I64VarEquate(int index) {
+    super();
     this.index = index;
   }
   

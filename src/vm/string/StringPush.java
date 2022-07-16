@@ -9,6 +9,7 @@ public class StringPush extends VMCommand {
   private final String value;
 
   public StringPush(String value) {
+    super();
     this.value = value;
   }
   

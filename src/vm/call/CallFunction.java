@@ -13,9 +13,16 @@ public class CallFunction extends VMCommand {
   public static void execute(CustomFunction function) {
     callStackPointer++;
     callStack[callStackPointer] = currentCall;
-    currentCall = new VMFunctionCall(
-        stackPointer - function.getCallAllocation()
-        , function.getCallDeallocation());
+    int isMethod = function.isMethod() ? 1 : 0;
+    int isConstructor = function.isConstructor() ? 1 : 0;
+    int variablesQuantity = function.getVariablesQuantity();
+    int parametersQuantity = function.getParametersQuantity();
+    int deallocation = variablesQuantity + parametersQuantity + isMethod;
+    int paramPosition = stackPointer + 1 - parametersQuantity;
+    currentCall = new VMFunctionCall(paramPosition, deallocation);
+    System.out.println("(parampos = " + paramPosition + ", varpos = "
+        + (stackPointer + 1) + ", dealloc = " + deallocation + ")");
+    stackPointer += variablesQuantity;
     currentCommand = function.getStartingCommand();
   }
   

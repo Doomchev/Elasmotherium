@@ -5,6 +5,10 @@ import processor.parameter.ProParameter;
 import vm.VMCommand;
 
 public class ReturnVoid extends VMCommand {
+  public ReturnVoid() {
+    super();
+  }
+
   @Override
   public VMCommand create(ProParameter parameter) throws ElException {
     return new ReturnVoid();

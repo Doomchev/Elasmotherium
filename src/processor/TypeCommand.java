@@ -33,6 +33,6 @@ public class TypeCommand extends ProCommand {
   
   @Override
   public void execute() throws ElException, EntityException {
-    append(getCommand(type.getNativeClass(), postfix, parameter));
+    append(getCommand(type.getNativeClass(), postfix, parameter), line);
   }
 }

@@ -1,15 +1,30 @@
 package vm;
 
+import ast.Entity;
 import exception.ElException;
 import exception.ElException.CannotCreate;
 import exception.EntityException;
-import java.util.LinkedList;
 import processor.parameter.ProParameter;
 
+import java.util.LinkedList;
+
 public abstract class VMCommand extends VMBase {
+  public Entity entity = null;
+  public int proLine = 0;
+
+  public VMCommand() {
+    if(currentLineReader != null) {
+      this.entity = currentEntity;
+      this.proLine = currentProLine;
+    }
+  }
+
   public VMCommand create() throws ElException {
     try {
-      return getClass().newInstance();
+      VMCommand command = getClass().newInstance();
+      command.entity = currentEntity;
+      command.proLine = currentLineReader.getLineNum();
+      return command;
     } catch(InstantiationException | IllegalAccessException ex) {
       throw new CannotCreate(this);
     }

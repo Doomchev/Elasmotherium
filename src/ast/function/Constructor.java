@@ -7,6 +7,7 @@ import ast.Variable;
 import exception.ElException;
 import exception.EntityException;
 import exception.NotFound;
+import vm.collection.ArrayCreate;
 
 public class Constructor extends StaticFunction {
   protected ClassEntity parentClass = null;
@@ -26,8 +27,8 @@ public class Constructor extends StaticFunction {
   }
 
   @Override
-  public int getCallDeallocation() {
-    return parameters.size();
+  public boolean isConstructor() {
+    return true;
   }
   
   // preprocessing
@@ -35,8 +36,9 @@ public class Constructor extends StaticFunction {
   @Override
   public void processConstructor(ClassEntity classEntity)
       throws NotFound {
-    for(Variable param: parameters)
+    for(Variable param: parameters) {
       param.processField(classEntity, code);
+    }
   }
   
   // compiling
@@ -61,13 +63,16 @@ public class Constructor extends StaticFunction {
     try {
       Entity oldType = currentType;
       currentType = type;
-      call.resolveParameters(parameters);
-      if(command != null) {
+      if(parentClass.name.string.equals("Array")) {
         call.resolveParameters(parameters);
-        append(command.create());
+        append(new ArrayCreate(type.getSubtype(0).getNativeClass()), 0);
+      } else if(command == null) {
+        append(new vm.object.ObjectCreate(parentClass), 0);
+        call.resolveParameters(parameters);
+        append(new vm.call.CallFunction(this), 0);
       } else {
-        append(new vm.object.ObjectCreate(parentClass));
-        append(new vm.call.CallFunction(this));
+        call.resolveParameters(parameters);
+        append(command.create(), 0);
       }
       currentType = oldType;
       convert(parentClass.getNativeClass(), type.getNativeClass());

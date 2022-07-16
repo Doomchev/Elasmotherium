@@ -9,6 +9,7 @@ public class ObjectVarPush extends VMCommand {
   private final int index;
 
   public ObjectVarPush(int index) {
+    super();
     this.index = index;
   }
   

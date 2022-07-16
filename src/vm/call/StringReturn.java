@@ -5,6 +5,10 @@ import processor.parameter.ProParameter;
 import vm.VMCommand;
 
 public class StringReturn extends VMCommand {
+  public StringReturn() {
+    super();
+  }
+
   @Override
   public VMCommand create(ProParameter parameter) throws ElException {
     return new StringReturn();

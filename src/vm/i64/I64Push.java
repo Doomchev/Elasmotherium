@@ -9,6 +9,7 @@ public class I64Push extends VMCommand {
   long value;
 
   public I64Push(long value) {
+    super();
     this.value = value;
   }
   

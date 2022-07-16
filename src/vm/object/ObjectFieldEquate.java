@@ -12,7 +12,7 @@ public class ObjectFieldEquate extends VMFieldCommand {
 
   @Override
   public VMCommand create(int fieldIndex, int varIndex) {
-    return new I64FieldEquate(fieldIndex, varIndex);
+    return new ObjectFieldEquate(fieldIndex, varIndex);
   }
 
   @Override

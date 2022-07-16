@@ -9,6 +9,7 @@ public class StringVarPush extends VMCommand {
   private final int index;
 
   public StringVarPush(int index) {
+    super();
     this.index = index;
   }
 

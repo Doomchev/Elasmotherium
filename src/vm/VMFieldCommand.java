@@ -11,6 +11,7 @@ public abstract class VMFieldCommand extends VMCommand {
   protected final int fieldIndex, varIndex;
 
   public VMFieldCommand(int fieldIndex, int varIndex) {
+    super();
     this.fieldIndex = fieldIndex;
     this.varIndex = varIndex;
   }

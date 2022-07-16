@@ -14,7 +14,7 @@ public class Code extends Entity {
   private final LinkedList<Entity> lines = new LinkedList<>();
   private final LinkedList<StaticFunction> functions = new LinkedList<>();
   private final LinkedList<ClassEntity> classes = new LinkedList<>();
-  
+
   // creating
   
   public Code() {
@@ -77,7 +77,7 @@ public class Code extends Entity {
     for(ClassEntity classEntity: classes) classEntity.resolveTypes();
     
     for(Entity line: lines) line.compile();
-    if(endingCommand != null) append(endingCommand);
+    if(endingCommand != null) append(endingCommand, 0);
     
     for(ClassEntity classEntity: classes) classEntity.compile();
     for(StaticFunction function: functions) function.compile();
