@@ -1,22 +1,22 @@
 package vm.string.var;
 
+import ast.Entity;
 import exception.ElException;
-import exception.EntityException;
 import processor.parameter.ProParameter;
 import vm.VMCommand;
 
 public class StringVarPush extends VMCommand {
   private final int index;
 
-  public StringVarPush(int index) {
-    super();
+  public StringVarPush(int index, int proLine, Entity entity) {
+    super(proLine, entity);
     this.index = index;
   }
 
   @Override
-  public VMCommand create(ProParameter parameter)
-      throws ElException, EntityException {
-    return new StringVarPush(parameter.getIndex());
+  public VMCommand create(ProParameter parameter, int proLine, Entity entity)
+      throws ElException {
+    return new StringVarPush(parameter.getIndex(), proLine, entity);
   }
   
   @Override

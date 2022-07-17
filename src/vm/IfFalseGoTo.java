@@ -1,5 +1,6 @@
 package vm;
 
+import ast.Entity;
 import exception.ElException;
 import exception.EntityException;
 import processor.parameter.ProParameter;
@@ -7,14 +8,14 @@ import processor.parameter.ProParameter;
 public class IfFalseGoTo extends VMCommand {
   private int command;
 
-  public IfFalseGoTo() {
-    super();
+  public IfFalseGoTo(int proLine, Entity entity) {
+    super(proLine, entity);
   }
 
   @Override
-  public VMCommand create(ProParameter parameter)
+  public VMCommand create(ProParameter parameter, int proLine, Entity entity)
       throws ElException, EntityException {
-    IfFalseGoTo goTo = new IfFalseGoTo();
+    IfFalseGoTo goTo = new IfFalseGoTo(proLine, entity);
     parameter.addLabelCommand(goTo);
     return goTo;
   }

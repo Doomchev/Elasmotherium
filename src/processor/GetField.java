@@ -6,18 +6,18 @@ import exception.ElException;
 import exception.EntityException;
 
 public class GetField extends ProCommand {
-  static final GetField instance = new GetField(null);
+  static final GetField instance = new GetField(null, 0);
 
   private final ProParameter parameter;
 
-  private GetField(ProParameter parameter) {
-    super();
+  private GetField(ProParameter parameter, int proLine) {
+    super(proLine);
     this.parameter = parameter;
   }
   
   @Override
-  public ProCommand create(String param) throws ElException {
-    return new GetField(ProParameter.get(param));
+  public ProCommand create(String param, int proLine) throws ElException {
+    return new GetField(ProParameter.get(param), 0);
   }
 
   @Override

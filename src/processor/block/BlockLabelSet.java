@@ -8,7 +8,8 @@ import vm.VMBase;
 public class BlockLabelSet extends ProCommand {
   private final ID label;
 
-  public BlockLabelSet(ID label) {
+  public BlockLabelSet(ID label, int proLine) {
+    super(proLine);
     this.label = label;
   }
 

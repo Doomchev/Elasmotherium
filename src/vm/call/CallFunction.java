@@ -1,12 +1,14 @@
 package vm.call;
 
+import ast.Entity;
 import ast.function.CustomFunction;
 import vm.VMCommand;
 
 public class CallFunction extends VMCommand {
   private final CustomFunction function;
 
-  public CallFunction(CustomFunction function) {
+  public CallFunction(CustomFunction function, int proLine, Entity entity) {
+    super(proLine, entity);
     this.function = function; 
   }
   

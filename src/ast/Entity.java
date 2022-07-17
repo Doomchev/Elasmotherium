@@ -17,6 +17,7 @@ import java.util.LinkedList;
 
 public abstract class Entity extends Base {
   public static Entity currentType = null;
+  public static int currentObjectIndex = -1;
 
   public Module module;
   public int textStart, textEnd;
@@ -220,8 +221,8 @@ public abstract class Entity extends Base {
     throw new NullPointerException();
   }
 
-  public static void append(VMCommand command, int proLine) {
-    appendLog(command, proLine);
+  public static void append(VMCommand command) {
+    appendLog(command);
   }
   
   public void print(StringBuilder indent, String prefix) {

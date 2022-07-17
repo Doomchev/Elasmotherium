@@ -34,7 +34,7 @@ public class StringSequence extends Value {
     for(Value value: chunks) {
       value.resolveTo(ClassEntity.String);
       if(isNotFirst) {
-        append(new vm.string.StringAdd(), 0);
+        append(new vm.string.StringAdd());
       } else {
         isNotFirst = true;
       }

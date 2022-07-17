@@ -95,18 +95,18 @@ public class StaticFunction extends CustomFunction {
   public void append() throws EntityException {
     if(command != null) {
       try {
-        append(command.create(), 0);
+        append(command.create(0, this));
       } catch (ElException ex) {
         throw new EntityException(this, ex.message);
       }
     } else {
-      append(new vm.call.CallFunction(this), 0);
+      append(new vm.call.CallFunction(this, 0, this));
     }
   }
   
   @Override
   public VMCommand getEndingCommand() {
-    return new ReturnVoid();
+    return new ReturnVoid(0, this);
   }
   
   // moving functions

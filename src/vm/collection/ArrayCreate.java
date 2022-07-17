@@ -1,6 +1,7 @@
 package vm.collection;
 
 import ast.ClassEntity;
+import ast.Entity;
 import exception.ElException;
 import vm.VMBase;
 import vm.VMCommand;
@@ -10,7 +11,9 @@ import vm.values.ValueArrayValue;
 public class ArrayCreate extends VMCommand {
   private ClassEntity elementType;
 
-  public ArrayCreate(ClassEntity elementType) throws ElException {
+  public ArrayCreate(ClassEntity elementType, int proLine, Entity entity)
+      throws ElException {
+    super(proLine, entity);
     this.elementType = elementType;
   }
 

@@ -21,9 +21,9 @@ public class Debug extends StringFunctions {
     return getClass().getSimpleName();
   }
 
-  public static void appendLog(VMCommand command, int proLine) {
+  public static void appendLog(VMCommand command) {
     if(log) println(subIndent + command.toString());
-    VMBase.append(command, proLine);
+    VMBase.append(command);
   }
   
   public static void error(String title, String message) {
@@ -78,15 +78,12 @@ public class Debug extends StringFunctions {
     blockLine = 1; blockColumn = 0;
     for(int index = 0; index < textStart; index++) {
       switch(text.charAt(index)) {
-        case '\n':
+        case '\n' -> {
           blockLine++;
           blockColumn = 0;
-          break;
-        case '\t':
-          blockColumn += 2;
-          break;
-        default:
-          blockColumn++;
+        }
+        case '\t' -> blockColumn += 2;
+        default -> blockColumn++;
       }
     }
     blockWidth = textEnd - textStart;

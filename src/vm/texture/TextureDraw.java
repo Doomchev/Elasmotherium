@@ -1,13 +1,21 @@
 package vm.texture;
 
+import ast.Entity;
 import exception.ElException;
 import vm.VMCommand;
 
 public class TextureDraw extends VMCommand {
+  public TextureDraw() {
+  }
+
+  public TextureDraw(int proLine, Entity entity) {
+    super(proLine, entity);
+  }
+
   @Override
-  public VMCommand create() throws ElException {
+  public VMCommand create(int proLine, Entity entity) throws ElException {
     usesWindow = true;
-    return super.create();
+    return super.create(proLine, entity);
   }
   
   @Override

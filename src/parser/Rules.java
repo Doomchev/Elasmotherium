@@ -230,9 +230,9 @@ public class Rules extends Base {
         Action.currentAction.execute();
     
       EntityStack.code.clear();
-    } catch (ElException ex) {
-      currentSymbolReader.showDebugMessage(ex.message);
     } catch (EntityException ex) {
+      currentSymbolReader.showDebugMessage(ex.message);
+    } catch (ElException ex) {
       currentSymbolReader.showDebugMessage(ex.message);
     } catch (NotFound ex) {
       currentSymbolReader.showDebugMessage(ex.message);

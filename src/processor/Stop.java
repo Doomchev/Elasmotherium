@@ -3,14 +3,15 @@ package processor;
 import exception.ElException;
 
 public class Stop extends ProCommand {
-  static final Stop instance = new Stop();
+  static final Stop instance = new Stop(0);
 
-  private Stop() {
+  private Stop(int proLine) {
+    super(proLine);
   }
 
   @Override
-  public ProCommand create(String param) throws ElException {
-    return new Stop();
+  public ProCommand create(String param, int proLine) throws ElException {
+    return new Stop(proLine);
   }
   
   @Override

@@ -33,10 +33,10 @@ public class ListEntity extends Value {
   @Override
   public void resolveTo(Entity type) throws EntityException {
     Entity elementType = type.getSubtype(0);
-    append(new vm.collection.ListCreate(), 0);
+    append(new vm.collection.ListCreate());
     for(Value value: values) {
       value.resolveTo(elementType);
-      append(new vm.i64.I64AddToList.I64AddToListNoDelete(), 0);
+      append(new vm.i64.I64AddToList.I64AddToListNoDelete());
     }
   }
   

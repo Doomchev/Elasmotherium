@@ -1,17 +1,18 @@
 package vm.string.field;
 
+import ast.Entity;
 import exception.ElException;
 import vm.VMCommand;
 import vm.VMFieldCommand;
 
 public class StringFieldEquate extends VMFieldCommand {
-  public StringFieldEquate(int fieldIndex, int varIndex) {
-    super(fieldIndex, varIndex);
+  public StringFieldEquate(int fieldIndex, int varIndex, int proLine, Entity entity) {
+    super(fieldIndex, varIndex, proLine, entity);
   }
   
   @Override
-  public VMCommand create(int fieldIndex, int varIndex) {
-    return new StringFieldEquate(fieldIndex, varIndex);
+  public VMCommand create(int fieldIndex, int varIndex, int proLine, Entity entity) {
+    return new StringFieldEquate(fieldIndex, varIndex, proLine, entity);
   }
   
   @Override

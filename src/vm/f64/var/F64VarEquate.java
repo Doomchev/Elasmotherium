@@ -1,5 +1,6 @@
 package vm.f64.var;
 
+import ast.Entity;
 import exception.ElException;
 import exception.EntityException;
 import processor.parameter.ProParameter;
@@ -8,15 +9,15 @@ import vm.VMCommand;
 public class F64VarEquate extends VMCommand {
   private final int index;
 
-  public F64VarEquate(int index) {
-    super();
+  public F64VarEquate(int index, int proLine, Entity entity) {
+    super(proLine, entity);
     this.index = index;
   }
   
   @Override
-  public VMCommand create(ProParameter parameter)
+  public VMCommand create(ProParameter parameter, int proLine, Entity entity)
       throws EntityException, ElException {
-    return new F64VarEquate(parameter.getValue().getIndex());
+    return new F64VarEquate(parameter.getValue().getIndex(), proLine, entity);
   }
   
   @Override

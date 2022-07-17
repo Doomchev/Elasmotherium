@@ -7,7 +7,8 @@ import processor.ProCommand;
 public class BlockLabelInitialize extends ProCommand {
   ID name;
 
-  public BlockLabelInitialize(ID name) {
+  public BlockLabelInitialize(ID name, int proLine) {
+    super(proLine);
     this.name = name;
   }
   

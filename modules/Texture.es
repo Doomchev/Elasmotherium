@@ -20,5 +20,9 @@ class Texture {
     return images;
   }
   
-  draw(Int targetX = (screenWidth - width) / 2, Int targetY = (screenHeight - height) / 2, Int targetWidth = width, Int targetHeight = height, Int sourceX = 0, Int sourceY = 0, Int sourceWidth = width, Int sourceHeight = height);
+  draw() {
+    draw((screenWidth - width) / 2, (screenHeight - height) / 2, width, height, 0, 0, width, height);
+  }
+  
+  draw(Int targetX, Int targetY, Int targetWidth, Int targetHeight, Int sourceX, Int sourceY, Int sourceWidth, Int sourceHeight);
 }

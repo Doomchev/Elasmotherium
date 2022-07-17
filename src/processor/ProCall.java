@@ -10,9 +10,8 @@ public class ProCall extends ProCommand {
   private final ProParameter callObject, parameter;
   private final ID method;
   
-  public ProCall(String object, String method, String parameter)
-      throws ElException {
-    super();
+  public ProCall(String object, String method, String parameter, int proLine) throws ElException {
+    super(proLine);
     this.callObject = ProParameter.get(object);
     this.method = ID.get(method);
     this.parameter = parameter.isEmpty() ? null : ProParameter.get(parameter);

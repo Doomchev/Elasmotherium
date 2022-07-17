@@ -69,10 +69,11 @@ public class Module extends Base {
     moduleNames.clear();
     
     currentFunction = function;
-    if(text == null)
+    if(text == null) {
       readCode();
-    else
+    } else {
       readCode(text);
+    }
     currentFunction.setAllocation();
     
     if(base) add("Base");
@@ -143,7 +144,7 @@ public class Module extends Base {
     ClassEntity.String.addToScope();
     
     if(hasModule("Base")) {
-      newFunction(new Println(), 1);
+      newFunction(new Println(0, null), 1);
 
       newFunction(new AskInt(), 1);
       newFunction(new RandomInt(), 1);
@@ -166,7 +167,7 @@ public class Module extends Base {
     
     if(hasModule("Texture")) {
       newConstructor("Texture", 1, new TextureCreate(), new Texture());
-      newFunction("Texture", "draw", 8, new TextureDraw());
+      newFunction("Texture", "draw", 8, new TextureDraw(0, null));
       newFunction("Texture", "width", 0, new TextureWidth());
       newFunction("Texture", "height", 0, new TextureHeight());
     }

@@ -151,7 +151,7 @@ public abstract class CustomFunction extends Function {
   }
   
   public VMCommand getEndingCommand() throws EntityException {
-    return new ReturnVoid();
+    return new ReturnVoid(0, this);
   }
   
   public void processCode(VMCommand endingCommand) throws EntityException {

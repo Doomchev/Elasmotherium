@@ -1,4 +1,8 @@
 import Texture;
 import Image;
 
-Texture("six_pawns/board.png").draw();
+Texture texture = Texture("six_pawns/board.png");
+
+render() {
+  texture.draw();
+}

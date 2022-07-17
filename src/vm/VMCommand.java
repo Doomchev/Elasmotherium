@@ -9,34 +9,37 @@ import processor.parameter.ProParameter;
 import java.util.LinkedList;
 
 public abstract class VMCommand extends VMBase {
-  public Entity entity = null;
-  public int proLine = 0;
+  public Entity entity;
+  public int proLine;
 
   public VMCommand() {
-    if(currentLineReader != null) {
-      this.entity = currentEntity;
-      this.proLine = currentProLine;
-    }
+    this.proLine = 0;
+    this.entity = null;
   }
 
-  public VMCommand create() throws ElException {
+  public VMCommand(int proLine, Entity entity) {
+    this.proLine = proLine;
+    this.entity = entity;
+  }
+
+  public VMCommand create(int proLine, Entity entity) throws ElException {
     try {
       VMCommand command = getClass().newInstance();
-      command.entity = currentEntity;
-      command.proLine = currentLineReader.getLineNum();
+      command.proLine = proLine;
+      command.entity = entity;
       return command;
     } catch(InstantiationException | IllegalAccessException ex) {
       throw new CannotCreate(this);
     }
   }
   
-  public VMCommand create(ProParameter parameter)
-      throws EntityException, ElException {
-    return create();
+  public VMCommand create(ProParameter parameter, int proLine, Entity entity)
+      throws ElException {
+    return create(proLine, entity);
   }
   
-  public VMCommand create(LinkedList<ProParameter> parameters)
-      throws ElException, EntityException {
+  public VMCommand create(LinkedList<ProParameter> parameters, int proLine
+      , Entity entity) throws ElException, EntityException {
     throw new CannotCreate(this, toString() + " with "
         + parameters.size() + " parameters");
   }

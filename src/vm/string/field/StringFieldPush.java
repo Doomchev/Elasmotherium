@@ -1,17 +1,18 @@
 package vm.string.field;
 
+import ast.Entity;
 import exception.ElException;
 import vm.VMCommand;
 import vm.VMFieldCommand;
 
 public class StringFieldPush extends VMFieldCommand {
-  public StringFieldPush(int fieldIndex, int varIndex) {
-    super(fieldIndex, varIndex);
+  public StringFieldPush(int fieldIndex, int varIndex, int proLine, Entity entity) {
+    super(fieldIndex, varIndex, proLine, entity);
   }
   
   @Override
-  public VMCommand create(int fieldIndex, int varIndex) {
-    return new StringFieldPush(fieldIndex, varIndex);
+  public VMCommand create(int fieldIndex, int varIndex, int proLine, Entity entity) {
+    return new StringFieldPush(fieldIndex, varIndex, proLine, entity);
   }
   
   @Override

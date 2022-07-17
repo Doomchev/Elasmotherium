@@ -1,22 +1,22 @@
 package vm.object;
 
+import ast.Entity;
 import exception.ElException;
-import exception.EntityException;
 import processor.parameter.ProParameter;
 import vm.VMCommand;
 
 public class ObjectVarEquate extends VMCommand {
   private final int index;
 
-  public ObjectVarEquate(int index) {
-    super();
+  public ObjectVarEquate(int index, int proLine, Entity entity) {
+    super(proLine, entity);
     this.index = index;
   }
   
   @Override
-  public VMCommand create(ProParameter parameter)
-      throws ElException, EntityException {
-    return new ObjectVarEquate(parameter.getValue().getIndex());
+  public VMCommand create(ProParameter parameter, int proLine, Entity entity)
+      throws ElException {
+    return new ObjectVarEquate(parameter.getValue().getIndex(), proLine, entity);
   }
   
   @Override

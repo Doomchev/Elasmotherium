@@ -11,15 +11,15 @@ public class AppendCommand extends ProCommand {
   public static class AppendCommand1 extends AppendCommand {
     private final ProParameter parameter;
   
-    public AppendCommand1(VMCommand command, String parameter, int proLine)
-        throws ElException {
+    public AppendCommand1(VMCommand command, String parameter
+        , int proLine) throws ElException {
       super(command, proLine);
       this.parameter = ProParameter.get(parameter);
     }
 
     @Override
     public void execute() throws ElException, EntityException {
-      append(command.create(parameter), line);
+      append(command.create(parameter, line, null));
     } 
   }
   
@@ -34,16 +34,15 @@ public class AppendCommand extends ProCommand {
 
     @Override
     public void execute() throws ElException, EntityException {
-      append(command.create(parameters), line);
+      append(command.create(parameters, line, null));
     } 
   }
   
   protected final VMCommand command;
   
   public AppendCommand(VMCommand command, int proLine) {
+    super(proLine);
     this.command = command;
-    command.proLine = proLine;
-    this.line = currentLineReader.getLineNum();
   }
   
   public static ProCommand create(VMCommand command, String parameters
@@ -56,6 +55,6 @@ public class AppendCommand extends ProCommand {
 
   @Override
   public void execute() throws ElException, EntityException {
-    append(command.create(), line);
+    append(command.create(line, null));
   } 
 }

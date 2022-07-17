@@ -1,18 +1,18 @@
 package vm.object;
 
+import ast.Entity;
 import exception.ElException;
 import vm.VMCommand;
 import vm.VMFieldCommand;
-import vm.i64.field.I64FieldEquate;
 
 public class ObjectFieldEquate extends VMFieldCommand {
-  public ObjectFieldEquate(int fieldIndex, int varIndex) {
-    super(fieldIndex, varIndex);
+  public ObjectFieldEquate(int fieldIndex, int varIndex, int proLine, Entity entity) {
+    super(fieldIndex, varIndex, proLine, entity);
   }
 
   @Override
-  public VMCommand create(int fieldIndex, int varIndex) {
-    return new ObjectFieldEquate(fieldIndex, varIndex);
+  public VMCommand create(int fieldIndex, int varIndex, int proLine, Entity entity) {
+    return new ObjectFieldEquate(fieldIndex, varIndex, proLine, entity);
   }
 
   @Override

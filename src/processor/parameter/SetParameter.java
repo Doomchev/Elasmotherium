@@ -5,18 +5,19 @@ import exception.EntityException;
 import processor.ProCommand;
 
 public class SetParameter extends ProCommand {
-  public static final SetParameter instance = new SetParameter(null);
+  public static final SetParameter instance = new SetParameter(null, 0);
   
   private final ProParameter parameter;
 
-  private SetParameter(ProParameter value) {
+  private SetParameter(ProParameter value, int proLine) {
+    super(proLine);
     this.parameter = value;
     this.line = currentLineReader.getLineNum();
   }
 
   @Override
-  public ProCommand create(String param) throws ElException {
-    return new SetParameter(ProParameter.get(param));
+  public ProCommand create(String param, int proLine) throws ElException {
+    return new SetParameter(ProParameter.get(param), proLine);
   }
 
   @Override

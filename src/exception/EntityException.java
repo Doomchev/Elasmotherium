@@ -3,13 +3,12 @@ package exception;
 import ast.Entity;
 import ast.ID;
 
-public class EntityException extends Exception {
-  public final String message;
+public class EntityException extends ElException {
   public final Entity entity;
 
   public EntityException(Entity entity, String message) {
+    super(message);
     this.entity = entity.getErrorEntity();
-    this.message = message;
   }
   
   public static class NotFound extends EntityException {

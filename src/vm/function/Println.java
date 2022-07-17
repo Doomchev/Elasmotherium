@@ -1,16 +1,23 @@
 package vm.function;
 
+import ast.Entity;
 import exception.ElException;
-import exception.EntityException;
 import processor.parameter.ProParameter;
 import vm.VMCommand;
 
 public class Println extends VMCommand {
+  public Println() {
+  }
+
+  public Println(int proLine, Entity entity) {
+    super(proLine, entity);
+  }
+
   @Override
-  public VMCommand create(ProParameter parameter)
-      throws ElException, EntityException {
+  public VMCommand create(ProParameter parameter, int proLine, Entity entity)
+      throws ElException {
     usesConsole = true;
-    return super.create(parameter);
+    return super.create(parameter, proLine, entity);
   }
   
   @Override

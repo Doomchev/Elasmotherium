@@ -25,13 +25,13 @@ public class This extends Value {
 
   @Override
   public Entity resolve() throws EntityException {
-    append(new ObjectVarPush(VMFieldCommand.OBJECT), 0);
+    append(new ObjectVarPush(VMFieldCommand.OBJECT, 0, this));
     return ClassEntity.current;
   }
 
   @Override
   public void resolveTo(Entity type) throws EntityException {
-    append(new ObjectVarPush(VMFieldCommand.OBJECT), 0);
+    append(new ObjectVarPush(VMFieldCommand.OBJECT, 0, this));
   }
 
   @Override

@@ -77,7 +77,7 @@ public class Code extends Entity {
     for(ClassEntity classEntity: classes) classEntity.resolveTypes();
     
     for(Entity line: lines) line.compile();
-    if(endingCommand != null) append(endingCommand, 0);
+    if(endingCommand != null) append(endingCommand);
     
     for(ClassEntity classEntity: classes) classEntity.compile();
     for(StaticFunction function: functions) function.compile();

@@ -34,14 +34,14 @@ public class Method extends StaticFunction {
 
   @Override
   public void compileCall(FunctionCall call) throws EntityException {
-    if(log) println(subIndent + "Resolving method " + this);
+    if(name != null) printChapter(name.string);
     call.resolveParameters(parameters);
     append();
   }
 
   @Override
   public void resolveTo(Entity type) throws EntityException {
-    append(new ObjectVarPush(VMFieldCommand.OBJECT), 0);
+    append(new ObjectVarPush(VMFieldCommand.OBJECT, 0, this));
     resolveChild(type);
   }
 

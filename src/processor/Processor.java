@@ -61,25 +61,25 @@ public class Processor extends ProBase {
   }
   
   static {
-    addCommand(new I64Push(0));
-    addCommand(new StringPush(""));
+    addCommand(new I64Push(0, 0, null));
+    addCommand(new StringPush("", 0, null));
     
-    addCommand(new I64VarPush(0));
-    addCommand(new F64VarPush(0));
-    addCommand(new StringVarPush(0));
-    addCommand(new ObjectVarPush(0));
+    addCommand(new I64VarPush(0, 0, null));
+    addCommand(new F64VarPush(0, 0, null));
+    addCommand(new StringVarPush(0, 0, null));
+    addCommand(new ObjectVarPush(0, 0, null));
     
-    addCommand(new I64VarEquate(0));
-    addCommand(new F64VarEquate(0));
-    addCommand(new StringVarEquate(0));
-    addCommand(new ObjectVarEquate(0));
+    addCommand(new I64VarEquate(0, 0, null));
+    addCommand(new F64VarEquate(0, 0, null));
+    addCommand(new StringVarEquate(0, 0, null));
+    addCommand(new ObjectVarEquate(0, 0, null));
     
-    addCommand(new I64FieldPush(0, 0));
-    addCommand(new StringFieldPush(0, 0));
+    addCommand(new I64FieldPush(0, 0, 0, null));
+    addCommand(new StringFieldPush(0, 0, 0, null));
     
-    addCommand(new I64FieldEquate(0, 0));
-    addCommand(new StringFieldEquate(0, 0));
-    addCommand(new ObjectFieldEquate(0, 0));
+    addCommand(new I64FieldEquate(0, 0, 0, null));
+    addCommand(new StringFieldEquate(0, 0, 0, null));
+    addCommand(new ObjectFieldEquate(0, 0, 0, null));
 
     addCommand(new I64Negative());
     addCommand(new I64Add());
@@ -88,12 +88,12 @@ public class Processor extends ProBase {
     addCommand(new I64Divide());
     addCommand(new I64Mod());
     
-    addCommand(new I64FieldIncrement(0, 0));
-    addCommand(new I64VarIncrement(0));
+    addCommand(new I64FieldIncrement(0, 0, 0, null));
+    addCommand(new I64VarIncrement(0, 0, null));
     
     addCommand(new StringAdd());
 
-    addCommand(new ObjectFieldPush(0, 0));
+    addCommand(new ObjectFieldPush(0, 0, 0, null));
     
     addCommand(new I64IsEqual());
     addCommand(new I64IsNotEqual());
@@ -104,10 +104,10 @@ public class Processor extends ProBase {
     addCommand(new And());
     addCommand(new Or());
 
-    addCommand(new ReturnVoid());
-    addCommand(new I64Return());
-    addCommand(new StringReturn());
-    addCommand(new ObjectReturn());
+    addCommand(new ReturnVoid(0, null));
+    addCommand(new I64Return(0, null));
+    addCommand(new StringReturn(0, null));
+    addCommand(new ObjectReturn(0, null));
 
     addCommand(new CollectionToIterator());
     addCommand(new IteratorHasNext());
@@ -117,8 +117,8 @@ public class Processor extends ProBase {
     addCommand(new ObjectGetAtIndex());
     addCommand(new ObjectSetAtIndex());
 
-    addCommand(new GoTo());
-    addCommand(new IfFalseGoTo());
+    addCommand(new GoTo(0, null));
+    addCommand(new IfFalseGoTo(0, null));
     
     proCommands.put("getField", GetField.instance);
     proCommands.put("getSubType", GetSubType.instance);
@@ -188,33 +188,35 @@ public class Processor extends ProBase {
           if((line = currentLineReader.readLine()) == null)
             throw new MethodException("Processor", "load"
                 , "Unexpected end of file");
+          int lineNum = currentLineReader.getLineNum();
           if(line.equals("}")) break;
           if(line.startsWith("#")) {
             ID labelID = ID.get(expectEnd(line, ":").substring(1));
-            code.add(new BlockLabelSet(labelID));
-            code.addFirst(new BlockLabelInitialize(labelID));
+            code.add(new BlockLabelSet(labelID, lineNum));
+            code.addFirst(new BlockLabelInitialize(labelID, lineNum));
             method.hasLabels = true;
           } else {
             String param = line.contains("(") ? betweenBrackets(line) : "";
             line = stringUntil(line, '(');
             if(line.startsWith("[")) {
               part = trimmedSplit(line, '[', ']');
-              code.add(new TypeCommand(part[1], part[2], param));
+              code.add(new TypeCommand(part[1], part[2], param
+                  , lineNum));
             } else {
               part = trimmedSplit(line, '.', '(');
               if(line.contains(".")) {
-                code.add(new ProCall(part[0], part[1], param));
+                code.add(new ProCall(part[0], part[1], param, lineNum));
               } else {
                 ProCommand proCommand = proCommands.get(line);
                 if(proCommand != null) {
-                  code.add(proCommand.create(param));
+                  code.add(proCommand.create(param, lineNum));
                 } else {
                   VMCommand command = commands.get(line);
                   if(command == null)
                     throw new ElException.NotFound(this, "Command "
                         + line);
                   code.add(AppendCommand.create(command, param
-                      , currentLineReader.getLineNum()));
+                      , lineNum));
                 }
               }
             }

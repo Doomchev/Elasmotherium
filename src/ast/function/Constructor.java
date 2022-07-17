@@ -65,14 +65,14 @@ public class Constructor extends StaticFunction {
       currentType = type;
       if(parentClass.name.string.equals("Array")) {
         call.resolveParameters(parameters);
-        append(new ArrayCreate(type.getSubtype(0).getNativeClass()), 0);
+        append(new ArrayCreate(type.getSubtype(0).getNativeClass(), 0, this));
       } else if(command == null) {
-        append(new vm.object.ObjectCreate(parentClass), 0);
+        append(new vm.object.ObjectCreate(parentClass, 0, this));
         call.resolveParameters(parameters);
-        append(new vm.call.CallFunction(this), 0);
+        append(new vm.call.CallFunction(this, 0, this));
       } else {
         call.resolveParameters(parameters);
-        append(command.create(), 0);
+        append(command.create(0, this));
       }
       currentType = oldType;
       convert(parentClass.getNativeClass(), type.getNativeClass());

@@ -9,10 +9,14 @@ import vm.VMCommand;
 public abstract class ProCommand extends ProBase {
   public int line;
 
-  public ProCommand create(String param) throws ElException {
+  public ProCommand(int line) {
+    this.line = line;
+  }
+
+  public ProCommand create(String param, int proLine) throws ElException {
     try {
       ProCommand command = getClass().newInstance();
-      command.line = currentLineReader.getLineNum();
+      command.line = proLine;
       return command;
     } catch(InstantiationException | IllegalAccessException ex) {
       throw new CannotCreate(this, toString());
@@ -21,9 +25,9 @@ public abstract class ProCommand extends ProBase {
   
   public abstract void execute() throws ElException, EntityException;
   
-  void append(VMCommand command, int proLine) {
+  void append(VMCommand command) {
     if(log) log(command.toString());
-    VMBase.append(command, proLine);
+    VMBase.append(command);
   }
   
   public void log(String message) {

@@ -1,17 +1,18 @@
 package vm.i64.field;
 
+import ast.Entity;
 import exception.ElException;
 import vm.VMCommand;
 import vm.VMFieldCommand;
 
 public class I64FieldPush extends VMFieldCommand {
-  public I64FieldPush(int fieldIndex, int varIndex) {
-    super(fieldIndex, varIndex);
+  public I64FieldPush(int fieldIndex, int varIndex, int proLine, Entity entity) {
+    super(fieldIndex, varIndex, proLine, entity);
   }
   
   @Override
-  public VMCommand create(int fieldIndex, int varIndex) {
-    return new I64FieldPush(fieldIndex, varIndex);
+  public VMCommand create(int fieldIndex, int varIndex, int proLine, Entity entity) {
+    return new I64FieldPush(fieldIndex, varIndex, proLine, entity);
   }
   
   @Override
